@@ -10,9 +10,11 @@
 #' This function is a wrapper of \code{clusthaplo} package functions.
 #' It can only be run after package Clusthaplo has been installed.
 #' It can be found there:
-#' \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. In order to
-#' cluster parental lines using hidden Markov models
-#' \code{clustering.method = "hmm"}, the user needs to use an R version
+#' \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
+#' visualisation of ancestral haplotype blocks can be obtained setting
+#' \code{plot = TRUE}. The plots will be saved at the location specified
+#' in \code{plot.loc}. In order to cluster parental lines using hidden Markov
+#' models (\code{clustering.method = "hmm"}), the user needs to use an R version
 #' where package \code{clusthaplo} and \code{RHmm} can be used simultaneously.
 #' R 2.14 is a possibility.
 #' 
@@ -71,6 +73,14 @@
 #' automatically. It must be a plain integer xx with 80 <= xx <= 100.
 #' Default = 95.
 #' 
+#' @param plot \code{Logical} value indicating if the plot of the clustering
+#' results must be saved at the location specified in argument \code{plot.loc}.
+#' Default = TRUE.
+#' 
+#' @param plot.loc Path where a folder will be created to save the plot of
+#' the clustering results. By default the function uses the current working
+#' directory.
+#' 
 #' @return Return:
 #' 
 #' \code{List} with the following objects
@@ -81,6 +91,9 @@
 #' ancestral group.}
 #' 
 #' \item{av.cl }{Average number of cluster. }
+#' 
+#' Plot of the ancestral haplotypes are saved in a folder at the location
+#' specified in \code{plot.loc} if \code{plot = TRUE}.
 #' 
 #' @author Vincent Garin
 #' 
@@ -115,7 +128,7 @@
 #' 
 #' par.clu <- parent_cluster(haplo.map = map.par, consensus.map = map,
 #' marker.data = geno.par, clustering.method = "threshold",
-#' step.size = 1000, window = 25)
+#' step.size = 1000, window = 25, plot = TRUE, plot.loc = getwd())
 #' 
 #' 
 #' par.clu$av.cl # Average number of inferred ancestral cluster along the genome
@@ -139,7 +152,8 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
                            w2 = "kernel.unif", step.size = 10000,
                            window, K = 10, clustering.method = "threshold",
                            simulation.type = "equi", simulation.Ng = 50, 
-                           simulation.Nrep = 3, threshold.quantile = 95) {
+                           simulation.Nrep = 3, threshold.quantile = 95,
+                           plot = TRUE, plot.loc = getwd()) {
   
   # 1. check data format
   ######################
@@ -154,16 +168,17 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   # test if some makers are at the same position in the consensus map
   
-   if ( sum((diff(consensus.map[, 3]) == 0) * 1) > 0) {
-     
-     stop("Some marker of the consensus.map are at the same position")
-     
-   }
+  if ( sum((diff(consensus.map[, 3]) == 0) * 1) > 0) {
+    
+    stop("Some marker of the consensus.map are at the same position")
+    
+  }
   
-  # keep marker and parents names for later
+  # keep marker, parents names, number of parents and chr length for later
   
   mk.names <- consensus.map[, 1]
   par.names <- colnames(marker.data)
+  n.par <- length(par.names)
   
   
   # 2. transformation of the maps into MapMaker format
@@ -171,6 +186,8 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   haplo.map <- toMapMaker(haplo.map)
   consensus.map <- toMapMaker(consensus.map)
+  
+  l.chr <- unlist(lapply(X = haplo.map, FUN = function(x) max(x[, 4])))
   
   # get the number of chromosome and the number of position per
   # chromosome for after checks.
@@ -202,6 +219,26 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
                simulation.Nrep = simulation.Nrep, 
                threshold.quantile = threshold.quantile)
   
+  # prepare folder path to save the plots if user want it
+  
+  if(plot){
+    
+    end.char <- substr(plot.loc, nchar(plot.loc), nchar(plot.loc))
+    
+    if(end.char == "/"){
+      
+      folder.loc <- paste0(plot.loc, "par_clu_plots")
+      
+    } else {
+      
+      folder.loc <- paste0(plot.loc, "/par_clu_plots")
+      
+    }
+    
+    dir.create(folder.loc)
+    
+  }
+  
   tc <- c()
   
   for (i in 1:n.chr) {
@@ -212,6 +249,8 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
     clust$train()
     tc.i <- clust$transitive.closure(clust$pairwise.similarities())
     
+    
+    
     # check if the tc has the same length as the number of positions on the
     # chromsome
     
@@ -219,12 +258,24 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
       
       tc <- rbind(tc, tc.i)
       
+      if(plot){
+        
+        file <- paste0(folder.loc, paste0("/chr_", i, ".jpg"))
+        
+        jpeg(file, height = 600, width = 800)
+        
+        print(plot(tc.i))
+        
+        dev.off()
+        
+      }
+      
     } else {
       
       
       stop(paste("clusthaplo produce results for less position than the number",
-            "of the consensus map. Some marker of the consensus map have",
-            "potentially the same position."))
+                 "of the consensus map. Some marker of the consensus map have",
+                 "potentially the same position."))
       
     }
     

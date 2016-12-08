@@ -7,7 +7,8 @@
 parent_cluster(haplo.map, consensus.map, marker.data, na.strings = NA,
   w1 = "kernel.exp", w2 = "kernel.unif", step.size = 10000, window,
   K = 10, clustering.method = "threshold", simulation.type = "equi",
-  simulation.Ng = 50, simulation.Nrep = 3, threshold.quantile = 95)
+  simulation.Ng = 50, simulation.Nrep = 3, threshold.quantile = 95,
+  plot = TRUE, plot.loc = getwd())
 }
 \arguments{
 \item{haplo.map}{Three columns \code{data.frame} with: 1)
@@ -64,6 +65,14 @@ default value = 3.}
 \item{threshold.quantile}{The quantile to use to select the threshold
 automatically. It must be a plain integer xx with 80 <= xx <= 100.
 Default = 95.}
+
+\item{plot}{\code{Logical} value indicating if the plot of the clustering
+results must be saved at the location specified in argument \code{plot.loc}.
+Default = TRUE.}
+
+\item{plot.loc}{Path where a folder will be created to save the plot of
+the clustering results. By default the function uses the current working
+directory.}
 }
 \value{
 Return:
@@ -76,6 +85,9 @@ marker position, parents with the same value were clustered in the same
 ancestral group.}
 
 \item{av.cl }{Average number of cluster. }
+
+Plot of the ancestral haplotypes are saved in a folder at the location
+specified in \code{plot.loc} if \code{plot = TRUE}.
 }
 \description{
 Local clustering of the parental lines obtained using the R package
@@ -85,9 +97,11 @@ clushaplo (Leroux et al. 2014).
 This function is a wrapper of \code{clusthaplo} package functions.
 It can only be run after package Clusthaplo has been installed.
 It can be found there:
-\url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. In order to
-cluster parental lines using hidden Markov models
-\code{clustering.method = "hmm"}, the user needs to use an R version
+\url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
+visualisation of ancestral haplotype blocks can be obtained setting
+\code{plot = TRUE}. The plots will be saved at the location specified
+in \code{plot.loc}. In order to cluster parental lines using hidden Markov
+models (\code{clustering.method = "hmm"}), the user needs to use an R version
 where package \code{clusthaplo} and \code{RHmm} can be used simultaneously.
 R 2.14 is a possibility.
 }
@@ -113,7 +127,7 @@ map <- USNAM_mppData$map[, -3]
 
 par.clu <- parent_cluster(haplo.map = map.par, consensus.map = map,
 marker.data = geno.par, clustering.method = "threshold",
-step.size = 1000, window = 25)
+step.size = 1000, window = 25, plot = TRUE, plot.loc = getwd())
 
 
 par.clu$av.cl # Average number of inferred ancestral cluster along the genome
