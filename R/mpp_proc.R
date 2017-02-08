@@ -112,25 +112,15 @@
 #' the backward elimination. Terms with p-values above this value will
 #' iteratively be removed. Default = 0.05.
 #' 
-#' @param LR.R2 \code{Logical} value. If \code{LR.R2 = TRUE}, the likelihood
-#' ratio R squared will be used if \code{VCOV = "cr.err"}. In all other
-#' situations R squared from a linear model will be computed. For more details
-#' see \code{\link{QTL_R2}}. Default = TRUE.
-#' 
-#' @param const \code{Character} expression indicating the type of contstraint
-#' used for the estimation of the genetic effect of the HRT (linear) model
-#' (\code{VCOV = "h.err"}) for the parental or ancestral models
-#' (\code{Q.eff = "par" or "anc"}). If const = "set.0", the value of the
-#' parent or the ancestral class containing the parent specified in argument
-#' (\code{par.ref}) is set to 0. If const = "sum.0", the sum of
-#' the parental (ancestral) effects is constrained to sum to 0. For more details
-#' about estimation of genetic effects see \code{\link{QTL_genEffects}}.
-#' Default = "set.0".
-#' 
-#' @param par.ref \code{Character} expression indicating the parent or the
-#' ancestral class containing the specified parent that will be set as reference
-#' for the computation of the genetic effect. By default the function will use
-#' the first parent of the \code{mppData$parents} list. Default = NULL.
+#' @param ref.all.most \code{Logical} value specifying which parental
+#' (ancestral) allele should be used as reference. If
+#' \code{ref.all.most = TRUE}, within each connected part of the design,
+#' the most used allele will be used as reference. Allele usage is first defined
+#' in term of number of crosses where the allele segregates. Then, if two
+#' alleles segregate in an equal number of crosses, we look at the total cross
+#' sizes. If \code{ref.all.most = FALSE},
+#' the less used allele will be used as reference within each connected part.
+#' Default = TRUE.
 #' 
 #' @param CI \code{Logical} value. If \code{CI = TRUE}, the function will
 #' compute a -log10(pval) drop confidence interval for each QTL after
@@ -262,365 +252,346 @@
 #'
 
 
+
 mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                      est.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-                     backward = TRUE, alpha.bk = 0.05, LR.R2 = TRUE, 
-                     const = "set.0", par.ref = NULL, CI = FALSE,
-                     drop = 1.5, parallel = FALSE, cluster = NULL,
+                     backward = TRUE, alpha.bk = 0.05, ref.all.most = TRUE,
+                     CI = FALSE, drop = 1.5, parallel = FALSE, cluster = NULL,
                      silence.print = FALSE, output.loc = getwd()) {
   
   
-# 1. Check the validity of the parameters that have been introduced
-###################################################################
-
-if(is.null(par.ref)){ par.ref <- mppData$parents[1]}
-
-check.mpp.proc(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-               par.clu = par.clu, est.gen.eff = est.gen.eff,
-               parallel = parallel, cluster = cluster, par.ref = par.ref,
-               const = const, output.loc = output.loc)
-
-
-# 2. Create a directory to store the results
-############################################
-
-# create a directory to store the results of the QTL analysis
-
-end.char <- substr(output.loc, nchar(output.loc), nchar(output.loc))
-
-if(end.char == "/"){
-
-  folder.loc <- paste0(output.loc, paste("QTLan", pop.name, trait.name, Q.eff,
-                                         VCOV, sep = "_"))
-
-} else {
-
-  folder.loc <- paste0(output.loc, "/", paste("QTLan", pop.name, trait.name,
-                                              Q.eff, VCOV, sep = "_"))
-
-}
-
-dir.create(folder.loc)
-
-
-# 3. Cofactors selection - SIM
-##############################
-
-if(!silence.print){
-
-  cat("\n")
-  cat("Cofactors selection - SIM")
-  cat("\n")
-  cat("\n")
-
-}
-
-SIM <- mpp_SIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-               VCOV = VCOV, est.gen.eff = est.gen.eff, parallel = parallel,
-               cluster = cluster)
-
-# save SIM results in output location
-
-write.table(SIM, file = paste0(folder.loc, "/", "SIM.txt"), quote = FALSE,
-            sep = "\t", row.names = FALSE)
-
-# cofactors selection
-
-cofactors <- QTL_select(Qprof = SIM, threshold = thre.cof, window = win.cof)
-
-
-if (is.null(cofactors)) { # test if cofactors have been selected
+  # 1. Check the validity of the parameters that have been introduced
+  ###################################################################
   
-  message("No QTL/cofactor position detected based on the SIM profile.")
+  check.mpp.proc(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
+                 par.clu = par.clu, est.gen.eff = est.gen.eff,
+                 parallel = parallel, cluster = cluster,
+                 output.loc = output.loc)
   
-  return(NULL)
-
   
-
-}
-
-# 4. Multi-QTL model search - CIM
-#################################
-
-if(!silence.print){
-
-  cat("\n")
-  cat("Multi-QTL model search - CIM")
-  cat("\n")
-  cat("\n")
-
-}
-
-CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-               VCOV = VCOV, cofactors = cofactors, window = window,
-               est.gen.eff = est.gen.eff, parallel = parallel,
-               cluster = cluster)
-
-
-if (N.cim > 1) {
-
-  for (i in 1:(N.cim - 1)) {
-
-    # take the cofactors of the previous analysis
-
-    cofactors <- QTL_select(Qprof = CIM, threshold = thre.cof,
-                            window = win.cof)
-
-    if (is.null(cofactors)) { # test if cofactors have been selected
+  # 2. Create a directory to store the results
+  ############################################
+  
+  # create a directory to store the results of the QTL analysis
+  
+  end.char <- substr(output.loc, nchar(output.loc), nchar(output.loc))
+  
+  if(end.char == "/"){
+    
+    folder.loc <- paste0(output.loc, paste("QTLan", pop.name, trait.name, Q.eff,
+                                           VCOV, sep = "_"))
+    
+  } else {
+    
+    folder.loc <- paste0(output.loc, "/", paste("QTLan", pop.name, trait.name,
+                                                Q.eff, VCOV, sep = "_"))
+    
+  }
+  
+  dir.create(folder.loc)
+  
+  
+  # 3. Cofactors selection - SIM
+  ##############################
+  
+  if(!silence.print){
+    
+    cat("\n")
+    cat("Cofactors selection - SIM")
+    cat("\n")
+    cat("\n")
+    
+  }
+  
+  SIM <- mpp_SIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+                 VCOV = VCOV, est.gen.eff = est.gen.eff, parallel = parallel,
+                 cluster = cluster)
+  
+  # save SIM results in output location
+  
+  write.table(SIM, file = paste0(folder.loc, "/", "SIM.txt"), quote = FALSE,
+              sep = "\t", row.names = FALSE)
+  
+  # cofactors selection
+  
+  cofactors <- QTL_select(Qprof = SIM, threshold = thre.cof, window = win.cof)
+  
+  
+  if (is.null(cofactors)) { # test if cofactors have been selected
+    
+    message("No QTL/cofactor position detected based on the SIM profile.")
+    
+    return(NULL)
+    
+    
+    
+  }
+  
+  # 4. Multi-QTL model search - CIM
+  #################################
+  
+  if(!silence.print){
+    
+    cat("\n")
+    cat("Multi-QTL model search - CIM")
+    cat("\n")
+    cat("\n")
+    
+  }
+  
+  CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+                 VCOV = VCOV, cofactors = cofactors, window = window,
+                 est.gen.eff = est.gen.eff, parallel = parallel,
+                 cluster = cluster)
+  
+  
+  if (N.cim > 1) {
+    
+    for (i in 1:(N.cim - 1)) {
       
-      mes.text <- paste("No cofactor position detected in CIM profile nb", i)
-      message(mes.text)
+      # take the cofactors of the previous analysis
       
-      return(NULL)
-
-    } else {
+      cofactors <- QTL_select(Qprof = CIM, threshold = thre.cof,
+                              window = win.cof)
       
-      if(!silence.print){
+      if (is.null(cofactors)) { # test if cofactors have been selected
         
-        cat("\n")
-        cat(paste("CIM scan", (i+1)))
-        cat("\n")
-        cat("\n")
+        mes.text <- paste("No cofactor position detected in CIM profile nb", i)
+        message(mes.text)
+        
+        return(NULL)
+        
+      } else {
+        
+        if(!silence.print){
+          
+          cat("\n")
+          cat(paste("CIM scan", (i+1)))
+          cat("\n")
+          cat("\n")
+          
+        }
+        
+        CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+                       VCOV = VCOV, cofactors = cofactors, window = window,
+                       est.gen.eff = est.gen.eff, parallel = parallel,
+                       cluster = cluster)
         
       }
-
-      CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-                     VCOV = VCOV, cofactors = cofactors, window = window,
-                     est.gen.eff = est.gen.eff, parallel = parallel,
-                     cluster = cluster)
-
+      
     }
-
+    
   }
-
-}
-
-# save the list of cofactors
-
-write.table(cofactors[, 1:5], file = paste0(folder.loc, "/", "cofactors.txt"),
-            quote = FALSE, sep = "\t", row.names = FALSE)
-
-# save CIM results
-
-write.table(CIM, file = paste0(folder.loc, "/", "CIM.txt"), quote = FALSE,
-            sep = "\t", row.names = FALSE)
-
-# select QTL candidates
-
-QTL <- QTL_select(Qprof = CIM, threshold = thre.QTL, window = win.QTL)
-
-if (is.null(QTL)) { # test if QTL have been selected
-
-  message("No QTL position detected based on the (last) CIM profile.")
-  return(NULL)
-
-}
-
-
-# 5. Backward elimination
-#########################
-
-if (backward){
-
-  if(!silence.print){
-
-    cat("\n")
-    cat("Backward elimination")
-    cat("\n")
-    cat("\n")
-
-  }
-
-  QTL <- mpp_BackElim(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
-                      par.clu = par.clu, VCOV = VCOV, alpha = alpha.bk)
+  
+  # save the list of cofactors
+  
+  write.table(cofactors[, 1:5], file = paste0(folder.loc, "/", "cofactors.txt"),
+              quote = FALSE, sep = "\t", row.names = FALSE)
+  
+  # save CIM results
+  
+  write.table(CIM, file = paste0(folder.loc, "/", "CIM.txt"), quote = FALSE,
+              sep = "\t", row.names = FALSE)
+  
+  # select QTL candidates
+  
+  QTL <- QTL_select(Qprof = CIM, threshold = thre.QTL, window = win.QTL)
   
   if (is.null(QTL)) { # test if QTL have been selected
     
-    stop("No QTL position stayed in the model after the backward elimination.
-         This is probably due to an error in the computation of the model
-         in asreml() function.")
+    message("No QTL position detected based on the (last) CIM profile.")
+    return(NULL)
     
   }
-
-}
-
-# save the final list of QTLs
-
-write.table(QTL[, 1:5], file = paste0(folder.loc, "/", "QTL.txt"),
-            quote = FALSE, sep = "\t", row.names = FALSE)
-
-
-# 6. R squared computation
-##########################
-
-if(!silence.print){
-
-  cat("\n")
-  cat("R squared computation")
-  cat("\n")
-  cat("\n")
-
-}
-
-
-R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = Q.eff, par.clu = par.clu,
-             VCOV = VCOV, LR.R2 = LR.R2)
-
-# try to calcuate R2 with the linear method if it fail with LR R2
-# for VCOV = "cr.err".
-
-if(((VCOV == "cr.err") & (LR.R2)) & is.na(R2[[1]][1])){
   
-  R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = Q.eff, par.clu = par.clu,
-               VCOV = "h.err")
   
-  message <- paste("The computation of",
-                   "the likelihood R squared statistics failed probably",
-                   "due to some singularities. The R2 were re-calculated",
-                   "using linear models.")
+  # 5. Backward elimination
+  #########################
   
-  message(message)
-  
-}
-
-# save R2 results
-
-QTL.R2 <- data.frame(QTL[, 1:5], round(R2[[3]], 2), round(R2[[4]], 2),
-                     round(R2[[5]], 2), round(R2[[6]], 2),
-                     stringsAsFactors = FALSE)
-
-colnames(QTL.R2)[6:9] <- c("R2.diff", "adj.R2.diff", "R2.sg", "adj.R2.sg")
-
-write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
-            quote = FALSE, sep = "\t", row.names = FALSE)
-
-# 7. QTL effects estimation
-###########################
-
-if(!silence.print){
-
-  cat("\n")
-  cat("QTL effects estimation")
-  cat("\n")
-  cat("\n")
-
-}
-
-QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
-                              par.clu = par.clu, VCOV = VCOV, const = const,
-                              par.ref = par.ref)
-
-# 8. CIM- and confidence interval computation
-#############################################
-
-if(CI){
-
-  if(!silence.print){
-
-    cat("\n")
-    cat("CIM- and confidence intervals computation")
-    cat("\n")
-    cat("\n")
-
+  if (backward){
+    
+    if(!silence.print){
+      
+      cat("\n")
+      cat("Backward elimination")
+      cat("\n")
+      cat("\n")
+      
+    }
+    
+    QTL <- mpp_BackElim(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
+                        par.clu = par.clu, VCOV = VCOV, alpha = alpha.bk)
+    
+    if (is.null(QTL)) { # test if QTL have been selected
+      
+      stop("No QTL position stayed in the model after the backward elimination.
+           This is probably due to an error in the computation of the model
+           in asreml() function.")
+      
+    }
+    
   }
-
-  CIM.m <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-                   VCOV = VCOV, cofactors = cofactors, window = 1000000,
-                   est.gen.eff = FALSE, parallel = parallel,
-                   cluster = cluster)
-
-  QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM.m, drop = drop)
   
-  write.table(QTL.CI, file = paste0(folder.loc, "/", "QTL_CI.txt"),
+  # save the final list of QTLs
+  
+  write.table(QTL[, 1:5], file = paste0(folder.loc, "/", "QTL.txt"),
               quote = FALSE, sep = "\t", row.names = FALSE)
-
-} else { QTL.CI <- NULL}
-
-
-
+  
+  
+  # 6. R squared computation
+  ##########################
+  
+  if(!silence.print){
+    
+    cat("\n")
+    cat("R squared computation")
+    cat("\n")
+    cat("\n")
+    
+  }
+  
+  
+  R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = Q.eff, par.clu = par.clu)
+  
+  # save R2 results
+  
+  QTL.R2 <- data.frame(QTL[, 1:5], round(R2[[3]], 2), round(R2[[4]], 2),
+                       round(R2[[5]], 2), round(R2[[6]], 2),
+                       stringsAsFactors = FALSE)
+  
+  colnames(QTL.R2)[6:9] <- c("R2.diff", "adj.R2.diff", "R2.sg", "adj.R2.sg")
+  
+  write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
+              quote = FALSE, sep = "\t", row.names = FALSE)
+  
+  # 7. QTL effects estimation
+  ###########################
+  
+  if(!silence.print){
+    
+    cat("\n")
+    cat("QTL effects estimation")
+    cat("\n")
+    cat("\n")
+    
+  }
+  
+  QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
+                                par.clu = par.clu, VCOV = VCOV,
+                                ref.all.most = ref.all.most)
+  
+  # 8. CIM- and confidence interval computation
+  #############################################
+  
+  if(CI){
+    
+    if(!silence.print){
+      
+      cat("\n")
+      cat("CIM- and confidence intervals computation")
+      cat("\n")
+      cat("\n")
+      
+    }
+    
+    CIM.m <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+                     VCOV = VCOV, cofactors = cofactors, window = 1000000,
+                     est.gen.eff = FALSE, parallel = parallel,
+                     cluster = cluster)
+    
+    QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM.m, drop = drop)
+    
+    write.table(QTL.CI, file = paste0(folder.loc, "/", "QTL_CI.txt"),
+                quote = FALSE, sep = "\t", row.names = FALSE)
+    
+  } else { QTL.CI <- NULL}
+  
+  
+  
   # 9. Results processing
   #######################
-
+  
   if(!silence.print){
-
+    
     cat("\n")
     cat("Results processing")
     cat("\n")
     cat("\n")
-
+    
   }
-
+  
   ### 9.1: general results
-
+  
   gen.res <- c(dim(QTL)[1], round(R2[[1]][1], 2), round(R2[[2]][1], 2))
   names(gen.res) <- c("nb.QTL", "glb.R2", "glb.adj.R2")
-
+  
   write.table(gen.res, file = paste0(folder.loc, "/", "QTL_genResults.txt"),
-            quote = FALSE, sep = "\t", col.names = FALSE)
-
+              quote = FALSE, sep = "\t", col.names = FALSE)
+  
   
   ### 9.2: Plots
-
-
-   main.cim <- paste("CIM", pop.name, trait.name, Q.eff, VCOV)
-   main.Qeff <- paste("QTL gen. effects", pop.name, trait.name, Q.eff, VCOV)
-
+  
+  
+  main.cim <- paste("CIM", pop.name, trait.name, Q.eff, VCOV)
+  main.Qeff <- paste("QTL gen. effects", pop.name, trait.name, Q.eff, VCOV)
+  
   if (Q.eff == "biall") {
-  
-  pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
-  
-  print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "h", main = main.cim,
-                     threshold = thre.QTL))
-  
-  dev.off()
-  
-  } else {
-  
-  # CIM profile
-  
-  pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
-  
-  
-    print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "l", main = main.cim,
+    
+    pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
+    
+    print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "h", main = main.cim,
                        threshold = thre.QTL))
-  
-  dev.off()
-  
-  # genetic effect plot
-  
-  if (est.gen.eff) {
-    
-    pdf(paste0(folder.loc, "/", "gen_eff.pdf"), height = 10, width = 16)
-    
-    print(plot_genEffects(Qprof = CIM, QTL = QTL, main = main.Qeff))
     
     dev.off()
     
+  } else {
+    
+    # CIM profile
+    
+    pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
+    
+    
+    print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "l", main = main.cim,
+                       threshold = thre.QTL))
+    
+    dev.off()
+    
+    # genetic effect plot
+    
+    if (est.gen.eff) {
+      
+      pdf(paste0(folder.loc, "/", "gen_eff.pdf"), height = 10, width = 16)
+      
+      print(plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = Q.eff,
+                            QTL = QTL, main = main.Qeff))
+      
+      dev.off()
+      
+    }
+    
   }
   
-}
-
   ### 9.3: Report
-
-
-if(CI) {QTL.info <- data.frame(QTL[, c(1, 2, 4, 5)], QTL.CI[, 4:8],
-                               stringsAsFactors = FALSE)
-} else {QTL.info <-  QTL[, c(1, 2, 4, 5)]}
-
-QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
-           main = paste(pop.name, trait.name, Q.eff, VCOV), QTL.info = QTL.info,
-           QTL.effects = QTL.effects, R2 = R2)
-   
-
+  
+  
+  if(CI) {QTL.info <- data.frame(QTL[, c(1, 2, 4, 5)], QTL.CI[, 4:8],
+                                 stringsAsFactors = FALSE)
+  } else {QTL.info <-  QTL[, c(1, 2, 4, 5)]}
+  
+  QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
+             main = paste(pop.name, trait.name, Q.eff, VCOV), QTL.info = QTL.info,
+             QTL.effects = QTL.effects, R2 = R2)
+  
+  
   ### 9.4: Return R object
-   
-   
-   results <- list(n.QTL = dim(QTL)[1], cofactors = cofactors[, 1:5],
-                   QTL = QTL[, 1:5], R2 = R2, QTL.effects = QTL.effects,
-                   QTL.CI = QTL.CI)
-   
-   return(results)
-
-}
+  
+  
+  results <- list(n.QTL = dim(QTL)[1], cofactors = cofactors[, 1:5],
+                  QTL = QTL[, 1:5], R2 = R2, QTL.effects = QTL.effects,
+                  QTL.CI = QTL.CI)
+  
+  return(results)
+  
+  }

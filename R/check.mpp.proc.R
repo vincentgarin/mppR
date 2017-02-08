@@ -7,7 +7,7 @@
 
 check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
                              est.gen.eff = FALSE, parallel = FALSE,
-                             cluster, par.ref = NULL, const = NULL, output.loc){
+                             cluster, output.loc){
   
   # 1. test the validity of the provided path to store the results
   
@@ -147,24 +147,4 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
       
     }
     
-    # 10. Test if the reference parent is in the list
-    
-    if (!(par.ref %in% mppData$parents)){
-      
-      stop(paste("The specified reference parent (par.ref) is not present in",
-           "mppData$parents"))
-      
-    }
-    
-    if ((VCOV != "h.err") && (const == "sum.0")){
-      
-      
-      
-      stop(paste("The sum to zero constraint is not allowed with this VCOV.",
-           "Please use the default value 'set.0'."))
-      
-      
-    }
-    
-  
 }

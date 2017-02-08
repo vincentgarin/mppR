@@ -90,7 +90,16 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
     if (!identical(as.character(mppData$map$mk.names),
                    as.character(mppData_bi$map$mk.names))) {
       
-      stop("The list of markers of the two mppData objects are not the same.")
+      
+      
+  stop(paste("The list of markers of the two mppData objects are not the same.",
+             "For the computation of an MQE model marker list of the two",
+             "mppData object must be strictly equivalent. This is potentially",
+             "due to the addition of in between position in the formation of the",
+             "mppData object. To avoid this problem, in the formation of the",
+             "mppData object (mppData_form()), set the argument step with a large",
+             "value (bigger than the largest inbetween marker gap) to avoid",
+             "The introduction of inbetween positions."))
       
     } 
     
@@ -190,16 +199,18 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
   # 5. check the VCOV argument
   ############################
   
-  if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
-    
-    stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
-               "'pedigree' or 'ped_cr.err'."))
-    
-  }
   
   # test if the asreml function is present for the compuation of the mixed models
   
   if(fct != "R2") {
+    
+    if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
+      
+      stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
+                 "'pedigree' or 'ped_cr.err'."))
+      
+    }
+    
     
     if (VCOV != "h.err"){
       

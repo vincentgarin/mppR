@@ -4,12 +4,20 @@
 \alias{plot_genEffects}
 \title{plot of QTL genetic effects}
 \usage{
-plot_genEffects(Qprof, QTL = NULL, main = "QTL genetic effects plot")
+plot_genEffects(mppData, Qprof, Q.eff, QTL = NULL,
+  main = "QTL genetic effects plot")
 }
 \arguments{
+\item{mppData}{An object of class \code{mppData}.
+See \code{\link{mppData_form}} for details.}
+
 \item{Qprof}{Object of class \code{QTLprof} returned by the function
 \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} with argument
 \code{est.gen.eff = TRUE}.}
+
+\item{Q.eff}{\code{Character} expression indicating the assumption concerning
+the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
+effects; 3) "anc" for an ancestral effects.}
 
 \item{QTL}{Optional argument. Object of class \code{QTLlist} representing a
 list of selected position obtained with the function \code{\link{QTL_select}}
@@ -26,14 +34,30 @@ to the argument \code{QTL} are also drawn on the graph.
 }
 \details{
 Plot the significance of the cross-specific or parental components of the QTL
-effects. White colour means no significant effect. For a cross-specific
-QTL profile: Red color means that the allele coming from parent A(1)
-increases the phenotypic value and parent B(2) decreases it
-and blue that parent A(1) decreases the trait and parent B(2) increases it.
+effects. White colour means no significant effect.
 
-For a parental or an ancestral QTL profile: Red colour means a significant
-negative difference with respect to the first parent (ancestral group)
-taken as reference, Blue represent a significant positive difference.
+For a cross-specific QTL profile (\code{Q.eff = "cr"}): Red color means
+that the allele coming from parent A(1) increases the phenotypic value and
+parent B(2) decreases it and blue that parent A(1) decreases the trait and
+parent B(2) increases it.
+
+For a parental model (\code{Q.eff = "par"}): Effect are defined within
+connected part (indicated as ci). Red (Blue) colour means a signicative
+negative (positive) effect with respect to the reference of the connected
+part. The reference alleles are defined as the most used one regarding first
+the number of cross where it segregates and second the number of genotypes
+where it potentially segregates.
+
+For an ancestral model the the parent with a red (blue) colour receive an
+allele that has a positive (negative) effect with respect to the reference
+ancestral allele of the connected part. Since the results of the ancetral
+clustering potentially change at each position. It is not possible to
+indicate which allele are the reference alleles. But the reference allele
+within each connected part are defined as for the parental model as the one
+that segregate the most. Therefore interpretation
+of the genetic effect plot should be done with caution. In that case, the
+plot should be taken as a rough indication of the signal distribution.
+
 The colour intensity increase with the significance of the effect.
 There are five colour intensities according to the p-value of the QTL
 effect: 0.05<p-val<0.01; 0.01<p-val<0.001; 0.001<p-val<0.0001;
@@ -49,9 +73,12 @@ data(USNAM_mppData)
 SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", est.gen.eff = TRUE)
 QTL <- QTL_select(SIM)
 
-plot_genEffects(Qprof = SIM) # without QTL positions
+# without QTL positions
+plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr") 
 
-plot_genEffects(Qprof = SIM, QTL = QTL) # with QTL positions
+# with QTL positions
+plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr",
+QTL = QTL) 
 
 }
 \author{

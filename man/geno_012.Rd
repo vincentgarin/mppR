@@ -23,7 +23,10 @@ represent the allele with the highest MAF, the second the one with the
 lowest and the two other line represent the heterozygous scores.}
 }
 \description{
-Translates genotype marker score into 0, 1, 2 format
+Translates genotype marker score into 0, 1, 2 format. The score represents the
+number of copies of the allele with the lowest MAF. An homozygous marker score
+with two alleles having the highest frequency is therefore set as reference
+(0).
 }
 \examples{
 

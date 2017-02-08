@@ -4,7 +4,10 @@
 
 #' Marker scores into 0, 1, 2 format
 #'
-#' Translates genotype marker score into 0, 1, 2 format
+#' Translates genotype marker score into 0, 1, 2 format. The score represents the
+#' number of copies of the allele with the lowest MAF. An homozygous marker score
+#' with two alleles having the highest frequency is therefore set as reference
+#' (0).
 #' 
 #' @param mk.mat \code{Character} genotype  marker score \code{matrix}.
 #' \strong{Marker scores must be coded using one letter for each allele.
@@ -73,7 +76,7 @@ geno_012 <- function(mk.mat) {
         
       } else {
         
-        all.sc <- unlist(attr(sort(alleles.sum, decreasing = TRUE), "dimnames"))
+        all.sc <- unlist(attr(sort(alleles.sum, decreasing = FALSE), "dimnames"))
         all.sc <- c(paste0(all.sc[1], all.sc[1]), paste0(all.sc[2], all.sc[2]),
                     paste0(all.sc[1], all.sc[2]), paste0(all.sc[2], all.sc[1]))
         

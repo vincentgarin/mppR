@@ -6,7 +6,7 @@
 
 
 QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
-                        cof.list, cof.part, est.gen.eff){
+                        cof.list, cof.part, est.gen.eff, ref.all.most){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
@@ -16,13 +16,17 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
                     par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff)
   
-  # apply set to zero constrain on QTL and cofactor elements
-  
-  if((Q.eff == "par") || (Q.eff == "anc")){  
-    QTL <- QTL[, -1, drop = FALSE] 
-    cof.list <- lapply(X = cof.list, FUN = function(x) x[, -1, drop = FALSE])}
-  
   QTL.el <- dim(QTL)[2] # number of QTL elements
+  
+  if(est.gen.eff){
+    
+    QTL <- IncMat_QTL_Qeff(x = x, QTL = QTL, mppData = mppData,
+                           Q.eff = Q.eff, par.clu = par.clu,
+                           ref.all.most = ref.all.most)
+    
+    ref.name <- colnames(QTL)
+    
+  }
   
   ### 2.1 cofactors
   
@@ -79,6 +83,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
           gen.eff <- QTL_pval(mppData = mppData, model = model,
                               Q.eff = Q.eff, x = x, par.clu = par.clu)
           
+          
           results <- c(results, gen.eff)
           
         }
@@ -92,7 +97,8 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   } else if ((VCOV == "h.err.as") || (VCOV == "cr.err")){
     
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1])
     
     colnames(dataset) <- c(paste0("cof",1:cof.el),paste0("Q",1:QTL.el),
@@ -117,7 +123,8 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   } else if ((VCOV == "pedigree") || (VCOV == "ped_cr.err")){
     
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1],
                           genotype = mppData$geno.id)
     
@@ -183,7 +190,8 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         if(est.gen.eff){
           
           gen.eff  <- QTL_pval_mix(model = model, Q.eff = Q.eff, QTL.el = QTL.el,
-                                   x = x, par.clu = par.clu, fct = "CIM")
+                                   x = x, par.clu = par.clu,
+                                   ref.name = ref.name, fct = "CIM")
           
           results  <- c(results, gen.eff)
           

@@ -78,7 +78,7 @@ parental, ancestral or bi-allelic effect. Therefore, the function will
 calculate three profiles. Then it will select in each profile the most
 significant position if a position is above the \code{threshold} value.
 The position and its QTL effect that increase the most the global adjusted R
-squared (\code{MQE_R2]}) will be selected as the new QTL position and included
+squared (\code{MQE_R2}) will be selected as the new QTL position and included
 in the list of cofactors. The function continue to iterate until no position
 is significant anymore.
 }

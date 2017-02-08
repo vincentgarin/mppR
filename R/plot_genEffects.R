@@ -10,14 +10,30 @@
 #' to the argument \code{QTL} are also drawn on the graph.
 #' 
 #' Plot the significance of the cross-specific or parental components of the QTL
-#' effects. White colour means no significant effect. For a cross-specific
-#' QTL profile: Red color means that the allele coming from parent A(1)
-#' increases the phenotypic value and parent B(2) decreases it
-#' and blue that parent A(1) decreases the trait and parent B(2) increases it.
+#' effects. White colour means no significant effect.
 #' 
-#' For a parental or an ancestral QTL profile: Red colour means a significant
-#' negative difference with respect to the first parent (ancestral group)
-#' taken as reference, Blue represent a significant positive difference.
+#' For a cross-specific QTL profile (\code{Q.eff = "cr"}): Red color means
+#' that the allele coming from parent A(1) increases the phenotypic value and
+#' parent B(2) decreases it and blue that parent A(1) decreases the trait and
+#' parent B(2) increases it.
+#' 
+#' For a parental model (\code{Q.eff = "par"}): Effect are defined within
+#' connected part (indicated as ci). Red (Blue) colour means a signicative
+#' negative (positive) effect with respect to the reference of the connected
+#' part. The reference alleles are defined as the most used one regarding first
+#' the number of cross where it segregates and second the number of genotypes
+#' where it potentially segregates.
+#' 
+#' For an ancestral model the the parent with a red (blue) colour receive an
+#' allele that has a positive (negative) effect with respect to the reference
+#' ancestral allele of the connected part. Since the results of the ancetral
+#' clustering potentially change at each position. It is not possible to
+#' indicate which allele are the reference alleles. But the reference allele
+#' within each connected part are defined as for the parental model as the one
+#' that segregate the most. Therefore interpretation
+#' of the genetic effect plot should be done with caution. In that case, the
+#' plot should be taken as a rough indication of the signal distribution.
+#' 
 #' The colour intensity increase with the significance of the effect.
 #' There are five colour intensities according to the p-value of the QTL
 #' effect: 0.05<p-val<0.01; 0.01<p-val<0.001; 0.001<p-val<0.0001;
@@ -26,10 +42,16 @@
 #' The dashed lines indicate the position that have been introduce in the
 #' argument \code{QTL}.
 #' 
+#' @param mppData An object of class \code{mppData}.
+#' See \code{\link{mppData_form}} for details.
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function
 #' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} with argument
 #' \code{est.gen.eff = TRUE}.
+#' 
+#' @param Q.eff \code{Character} expression indicating the assumption concerning
+#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
+#' effects; 3) "anc" for an ancestral effects.
 #' 
 #' @param QTL Optional argument. Object of class \code{QTLlist} representing a
 #' list of selected position obtained with the function \code{\link{QTL_select}}
@@ -53,15 +75,18 @@
 #' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", est.gen.eff = TRUE)
 #' QTL <- QTL_select(SIM)
 #' 
-#' plot_genEffects(Qprof = SIM) # without QTL positions
+#' # without QTL positions
+#' plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr") 
 #' 
-#' plot_genEffects(Qprof = SIM, QTL = QTL) # with QTL positions
+#' # with QTL positions
+#' plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr",
+#' QTL = QTL) 
 #' 
 #' @export
 #' 
 
 
-plot_genEffects <- function(Qprof, QTL = NULL,
+plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
                             main = "QTL genetic effects plot")
 {
   
@@ -69,6 +94,12 @@ plot_genEffects <- function(Qprof, QTL = NULL,
   ######################
   
   stopifnot(inherits(Qprof, "QTLprof"))
+  
+  if(!(Q.eff %in% c("cr", "par", "anc"))){
+    
+    stop("The Q.eff argument must take value: 'cr', 'par', 'anc'.")
+    
+  }
   
   
   n.eff <- dim(Qprof)[2] - 5
@@ -102,15 +133,14 @@ plot_genEffects <- function(Qprof, QTL = NULL,
   
   y <- factor(rep(1:n.eff, each = dim(Qprof)[1]))
   
-  # chr <- factor(rep(Qprof$chr, n.eff))
-  
   chr <- rep(Qprof$chr, n.eff)
   
   ### 2.4 genetic map positions in cM with width between two positions.
   
   x <- rep(Qprof$pos.cM, n.eff)
   
-  w <- tapply(X = Qprof$pos.cM, INDEX = Qprof$chr, FUN = function(x) c(diff(x), 1))
+  w <- tapply(X = Qprof$pos.cM, INDEX = Qprof$chr,
+              FUN = function(x) c(diff(x), 1))
   w <- unlist(w)
   w <- rep(w, n.eff)
   
@@ -118,7 +148,57 @@ plot_genEffects <- function(Qprof, QTL = NULL,
   
   ### 2.5 legend for the y-axis (cross or parents)
   
-  y.names <- colnames(Qprof)[6:dim(Qprof)[2]]
+  if(Q.eff == "cr") {
+    
+    cross.names <- unique(mppData$cross.ind)
+    par.cross.names <- paste0("(", mppData$par.per.cross[, 2], 
+                              "x", mppData$par.per.cross[, 3], ")")
+    
+    y.names <- paste(cross.names, par.cross.names, sep = "\n")
+    
+  } else if (Q.eff == "par"){
+    
+    con.part <- design_connectedness(par.per.cross = mppData$par.per.cross,
+                                     plot.des = FALSE)
+    
+    allele_order <- c()
+    
+    for(i in seq_along(con.part)){
+      
+      con.part_i <- con.part[[i]]
+      
+      # subset the par.per.cross object
+      
+      index <- apply(X = mppData$par.per.cross[, c(2,3)], MARGIN = 1,
+                     FUN = function(x, ref) sum(x %in% ref) > 0,
+                     ref = con.part_i)
+      
+      par.per.cross_i <- mppData$par.per.cross[index, , drop = FALSE]
+      
+      # susbet the cross indicator according to the cross retained
+      
+      cross.ind_i <- mppData$cross.ind[mppData$cross.ind %in% par.per.cross_i[, 1]]
+      
+      allele_ord_i <- most.used.allele(par.per.cross_i, cross.ind_i,
+                                       most.used = FALSE)
+      
+      allele_ord_i <- c(paste(allele_ord_i[-length(allele_ord_i)],
+                              paste0("(c", i,")"), sep = "\n"),
+                        paste(allele_ord_i[length(allele_ord_i)],
+                              paste0("(Ref.c", i,")"), sep = "\n"))
+      
+      allele_order <- c(allele_order, allele_ord_i)
+      
+    }
+    
+    y.names <- allele_order
+    
+    
+  } else if (Q.eff == "anc"){
+    
+    y.names <- mppData$parents
+    
+  }
   
   ### 2.6 gather data for the plot
   

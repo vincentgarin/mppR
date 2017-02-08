@@ -36,17 +36,17 @@
 #' \item{Determine markers having a problematic MAF within cross
 #' \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical value
 #' for MAF within cross is defined by the following function of the cross-size
-#' (n.cr): MAF(n.cr) = (5/n.cr) + 0.05. This means that for small cross sizes,
+#' (n.cr): MAF(n.cr) = (5/n.cr) + 0.05. This means that for small cross sizes
+#' (n.cr = \code{n.lim} = 15),
 #' the crosses must have at least a bit more than five genotypes that segreate.
 #' When the number of genotypes per cross increases, then the within cross MAF
 #' tend to 0.05. If the within cross MAF is below the limit in at least one
-#' cross, then markers are either removed (\code{MAF.cr.miss = FALSE} default)
-#' or put as missing value in the considered cross(es)
-#' (\code{MAF.cr.miss = TRUE}). The reasons for removing or put these markers as
-#' missing is to ensure that QTL effects within cross can be estimated.}
+#' cross, then marker scores of the problematic cross are either put as missing
+#' (\code{MAF.cr.miss = TRUE} default) or the whole marker is discared
+#' (\code{MAF.cr.miss = FALSE}).}
 #' 
-#' \item{If \code{rem.NA.cr = TRUE} (default), remove the marker that are
-#' completely missing in at least one cross.}
+#' \item{If \code{rem.NA.cr = TRUE}, remove the markers that are
+#' completely missing in at least one cross. Default = FALSE}
 #' 
 #' \item{If \code{ABH = TRUE}, convert offspring genotype data into ABH format
 #' (\code{\link{cross_ABH}}).
@@ -117,12 +117,14 @@
 #' frequency for a marker at the population level. Default = 0.05.
 #' 
 #' @param MAF.cr.miss Logical value specifying if maker with a too low
-#' segregation rate within cross should be put as missing. if
-#' \code{MAF.cr.miss = FALSE}, marker with problematic segregation rate in at
-#' least one cross will be discarded. Default = FALSE.
+#' segregation rate within cross should be put as missing or discarded. If
+#' \code{MAF.cr.miss = TRUE}, marker scores with a problematic segregation rate
+#' in at least one cross will be put as missing in the problematic cross(es).
+#' If \code{MAF.cr.miss = FALSE}, the whole marker will be discarded.
+#' Default = TRUE.
 #' 
 #' @param rem.NA.cr \code{Logical} value specifying if the marker that are
-#' completely missing in at least one cross should be remored. Default = TRUE.
+#' completely missing in at least one cross should be remored. Default = FALSE.
 #' 
 #' @param mk.miss \code{Numerical} value comprised between 0 and 1 indicating
 #' the missingness rate at the population level above which a marker will be
@@ -208,7 +210,7 @@
 #' data <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
 #'                 trait = trait, cross.ind = cross.ind,
 #'                 par.per.cross = par.per.cross, n.lim = 15,
-#'                 MAF.pop.lim = 0.05, rem.NA.cr = TRUE, mk.miss = 0.1,
+#'                 MAF.pop.lim = 0.05, mk.miss = 0.1,
 #'                 gen.miss = 0.25, ABH = TRUE, het.par = TRUE,
 #'                 parallel = FALSE)
 #' 
@@ -252,8 +254,8 @@
 
 QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                     subcross.ind = NULL, par.per.subcross = NULL,
-                    n.lim = 15, MAF.pop.lim = 0.05, MAF.cr.miss = FALSE,
-                    rem.NA.cr = TRUE, mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE,
+                    n.lim = 15, MAF.pop.lim = 0.05, MAF.cr.miss = TRUE,
+                    rem.NA.cr = FALSE, mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE,
                     het.par = FALSE, parallel = FALSE, cluster = NULL){
   
   

@@ -37,13 +37,16 @@ R2_lin <- function(mppData, QTL){
   } else {
     
     RSS.full <-  anova(model.full)$S[3]
+    
+    df.QTL <- anova(model.full)[2, 1]
+    
     RSS.fam <- anova(model.fam)$S[2]
     
     R2 <- 1-(RSS.full/RSS.fam)
     
     # adjust
     
-    z <- dim(QTL)[2]
+    z <- df.QTL
     N <- anova(model.full)[3, 1]
     R2.adj <- R2 - ((z/N)*(1-R2))
     
@@ -51,6 +54,6 @@ R2_lin <- function(mppData, QTL){
     
   }
   
-  return(c(R2, R2.adj))
+  return(list(R2 = R2, R2.adj = R2.adj, df.QTL = df.QTL))
   
 }

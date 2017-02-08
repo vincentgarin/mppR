@@ -74,7 +74,8 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
   } else if ((VCOV == "h.err.as") || (VCOV == "cr.err")){
     
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1])
     
     colnames(dataset) <- c(paste0("cof", 1:cof.el), paste0("Q", 1:QTL.el),
@@ -99,7 +100,8 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
   } else if ((VCOV == "pedigree") || (VCOV == "ped_cr.err")){
     
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1],
                           genotype = mppData$geno.id)
     

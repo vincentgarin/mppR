@@ -227,10 +227,19 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       
       # subset ped.mat
       
-      ped.mat.found <- mppData$ped.mat[mppData$ped.mat[, 1] == "founder", ]
-      ped.mat.off <- mppData$ped.mat[mppData$ped.mat[, 1] == "offspring", ]
+      ped.temp <- as.matrix(mppData$ped.mat)
+      
+      ped.mat.found <- ped.temp[ped.temp[, 1] == "founder", ]
+      ped.mat.off <- ped.temp[ped.temp[, 1] == "offspring", ]
       ped.mat.off <- ped.mat.off[geno.ind, ]
-      mppData$ped.mat <- rbind(ped.mat.found, ped.mat.off)
+      
+      found.sub <- unique(c(ped.mat.off[, 3], ped.mat.off[, 4]))
+      ped.mat.found <- ped.mat.found[ped.mat.found[, 2] %in% found.sub, ,
+                                     drop = FALSE]
+      
+      pedigree.new <- rbind(ped.mat.found, ped.mat.off)
+      
+      mppData$ped.mat <- data.frame(pedigree.new, stringsAsFactors = FALSE)
       
       # review the par.per.cross, parents, n.cr and n.par objects
       

@@ -35,7 +35,9 @@ QTLModelQeff <- function(mppData, trait, cross.mat, Q.list, VCOV){
     n.QTL <- length(Q.list)
     
     dataset <- data.frame(do.call(cbind, Q.list),
-                          cr.mat = factor(mppData$cross.ind), trait = trait)
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
+                          trait = trait)
     
     Q.names <- function(x, Q.list){
       paste0("Q", x, attr(Q.list[[x]], "dimnames")[[2]])
@@ -62,7 +64,8 @@ QTLModelQeff <- function(mppData, trait, cross.mat, Q.list, VCOV){
     n.QTL <- length(Q.list)
     
     dataset <- data.frame(do.call(cbind, Q.list),
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = trait,
                           genotype = mppData$geno.id)
     

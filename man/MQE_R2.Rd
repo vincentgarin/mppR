@@ -5,7 +5,7 @@
 \title{Global and partial R squared for multi-QTL effects}
 \usage{
 MQE_R2(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-  par.clu = NULL, VCOV = "h.err", LR.R2 = TRUE, glb.only = FALSE)
+  par.clu = NULL, glb.only = FALSE)
 }
 \arguments{
 \item{mppData}{An IBD object of class \code{mppData}
@@ -32,18 +32,6 @@ the same as the map marker list of the mppData object.} At a particular
 position, parents with the same value are assumed to inherit from the same
 ancestor. for more details, see \code{\link{USNAM_parClu}} and
 \code{\link{parent_cluster}}. Default = NULL.}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
-
-\item{LR.R2}{\code{Logical} value. If \code{LR.R2 = TRUE}, the likelihood ratio
-R squared will be used if \code{VCOV = "cr.err"}. In all other situations
-R squared from a linear model will be computed. Default = TRUE.}
 
 \item{glb.only}{\code{Logical} value. If \code{LR.R2 = TRUE}, only the global
 and global adjusted R squared will be returned. Default = FALSE.}
@@ -75,8 +63,9 @@ position one is a parental effect, position two a bi-allelic QTL, etc.
 The type of effect of the QTL position are specified in \code{Q.eff}.
 }
 \details{
-For details about the different types of R squared computation and adjustement
-look at function \code{\link{QTL_R2}}.
+The R squared computation is done using a linear model
+corresponding to \code{VCOV = 'h.err'} For more details about R squared
+computation and adjustement look at function \code{\link{QTL_R2}}.
 }
 \examples{
 

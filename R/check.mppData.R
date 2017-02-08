@@ -172,6 +172,20 @@ check.mppData <- function(geno, geno.par = NULL, type, type.mating, nb.gen,
     
   }
   
+  # test par.per.cross
+  
+  if(!is.matrix(par.per.cross)){
+    
+    stop("The par.per.cross argument is not a matrix.")
+    
+  }
+  
+  if(!is.character(par.per.cross)){
+    
+    stop("The par.per.cross argument is not a character matrix.")
+    
+  }
+  
   # remove the eventual rownames of par.per.cross
   
   if(!is.null(rownames(par.per.cross))){

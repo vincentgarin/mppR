@@ -10,12 +10,10 @@
 
 # Q.list: list of QTL incidence matrices
 
-# zi : degree of freedom for the adjustment.
-
 # within.cross: indicate if the prediction must be computed within cross
 
 
-R2_pred <- function(mppData.vs, B.ts, Q.list, zi, within.cross) {
+R2_pred <- function(mppData.vs, B.ts, Q.list, within.cross) {
   
   y.vs <- mppData.vs$trait
   
@@ -32,29 +30,26 @@ R2_pred <- function(mppData.vs, B.ts, Q.list, zi, within.cross) {
   y.pred <- rowSums(y.pred)
   
   dataset <- cbind(y.vs, y.pred)
-  dataset <- dataset[complete.cases(dataset), ]
+  cross.ind <- mppData.vs$cross.ind
+  
+  index <- complete.cases(dataset)
+  dataset <- dataset[index, ]
+  cross.ind <- cross.ind[index]
   
   if(within.cross){
     
     with.cross.cor <- function(x){
       if((length(unique(x[, 1])) == 1) || (length(unique(x[, 2])) == 1)){ NA
-        } else {cor(x[, 1], x[, 2])^2}
-      }
+      } else {cor(x[, 1], x[, 2])^2}
+    }
     
-    dataset.cr <- split(x = dataset, f = as.factor(mppData.vs$cross.ind))
+    dataset.cr <- split(x = dataset,
+                        f = factor(cross.ind, levels = unique(cross.ind)))
     R2 <- lapply(X = dataset.cr, FUN =  with.cross.cor)
-    R2 <- mean(unlist(R2), na.rm = TRUE)
+    R2 <- 100 * (mean(unlist(R2), na.rm = TRUE))
     
-  } else { R2 <-  cor(dataset[, 1], dataset[, 2])^2 }
+  } else { R2 <-  100 * (cor(dataset[, 1], dataset[, 2])^2) }
   
-  # adjust R squared
-  
-  z <- sum(zi)
-  N <- dim(dataset)[1]
-  R2.adj <- R2 - ((z/N)*(1 - R2))
-  
-  R2 <- 100 * R2; R2.adj <- 100 * R2.adj
-  
-  return(c(R2, R2.adj))
+  return(R2)
   
 }

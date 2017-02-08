@@ -7,7 +7,7 @@
 #' Computes single QTL models with different possible assumptions concerning
 #' the number of alleles at the QTL position and the variance covariance
 #' structure (VCOV) of the model. The function returns a -log10(p-value) QTL
-#' profile. 
+#' profile.
 #' 
 #' The implemented models vary according to the number of alleles assumed at the
 #' QTL position (and their origin) and their variance covariance structure.
@@ -146,8 +146,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{plot_genEffects}},
-#' \code{\link{USNAM_parClu}}
+#' \code{\link{plot_genEffects}}, \code{\link{USNAM_parClu}}
 #' 
 #' @references
 #' 
@@ -195,14 +194,11 @@
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' 
-#' # Cross-specific model
-#' ######################
-#' 
 #' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
 #' est.gen.eff = TRUE)
 #' 
 #' plot_QTLprof(Qprof = SIM)  
-#' plot_genEffects(Qprof = SIM)
+#' plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr")
 #' 
 #' \dontrun{
 #' 
@@ -273,24 +269,25 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   if (parallel) {
     
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelSIM,
-                        mppData = mppData, cross.mat = cross.mat,
-                        par.mat = parent.mat, Q.eff = Q.eff,
-                        par.clu = par.clu, VCOV = VCOV,
-                        est.gen.eff = est.gen.eff)
+                          mppData = mppData, cross.mat = cross.mat,
+                          par.mat = parent.mat, Q.eff = Q.eff,
+                          par.clu = par.clu, VCOV = VCOV,
+                          est.gen.eff = est.gen.eff, ref.all.most = TRUE)
     
   } else {
     
     log.pval <- lapply(X = vect.pos, FUN = QTLModelSIM,
-                     mppData = mppData, cross.mat = cross.mat,
-                     par.mat = parent.mat, Q.eff = Q.eff,
-                     par.clu = par.clu, VCOV = VCOV,
-                     est.gen.eff = est.gen.eff)
+                       mppData = mppData, cross.mat = cross.mat,
+                       par.mat = parent.mat, Q.eff = Q.eff,
+                       par.clu = par.clu, VCOV = VCOV,
+                       est.gen.eff = est.gen.eff, ref.all.most = TRUE)
     
   }
   
   log.pval <- t(data.frame(log.pval))
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value
   log.pval[is.na(log.pval[, 1]), 1] <- 0
+  
   
   # 4. form the results
   #####################
@@ -300,9 +297,20 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   
   if(est.gen.eff){
     
-    if(Q.eff=="cr"){ Qeff_names <- unique(mppData$cross.ind)
+    if(Q.eff == "cr"){ Qeff_names <- unique(mppData$cross.ind)
+    
+    } else if (Q.eff == "par") {
       
-      } else { Qeff_names <- mppData$parents }
+      QTL <- IncMat_QTL(x = 1, mppData = mppData, cross.mat = cross.mat,
+                        par.mat = parent.mat, par.clu = par.clu, Q.eff = Q.eff)
+      
+      QTL <- IncMat_QTL_Qeff(x = 1, QTL = QTL, mppData = mppData,
+                               Q.eff = Q.eff, par.clu = par.clu,
+                               ref.all.most = TRUE)
+    
+      Qeff_names <- colnames(QTL)
+    
+    } else if (Q.eff == "anc") { Qeff_names <- mppData$parents }
     
     colnames(SIM)[5:dim(SIM)[2]] <- c("log10pval", Qeff_names)
     
@@ -323,10 +331,9 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
       
       list.pos <- mppData$map[(SIM$log10pval == 0), 1]
       
-      end.mess <- ". This could be due to singularities or function issue."
-      
-      text <- paste("The computation of the QTL model failed for the following positions: ",
-                    paste(list.pos, collapse = ", "), end.mess)
+      text <- paste("The computation of the QTL model failed for the following",
+                    "positions: ", paste(list.pos, collapse = ", "),
+                    ". This could be due to singularities or function issues.")
       
       message(text)
       

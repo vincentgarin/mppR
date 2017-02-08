@@ -5,7 +5,7 @@
 \title{QTL genetic effects multi-QTL effect model}
 \usage{
 MQE_genEffects(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-  par.clu = NULL, VCOV = "h.err", par.ref = NULL)
+  par.clu = NULL, VCOV = "h.err", ref.all.most = TRUE)
 }
 \arguments{
 \item{mppData}{An IBD object of class \code{mppData}
@@ -41,11 +41,14 @@ covariance structure used: 1) "h.err" for an homogeneous variance residual term
 and 5) "ped_cr.err" for random pedigree and CSRT model.
 For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
-\item{par.ref}{\code{Character} expression indicating the parent or the
-ancestral class containing the specified parent that will be set as reference
-for the computation of the genetic effect. By default
-the function will use the first parent of the \code{mppData$parents} list.
-Default = NULL.}
+\item{ref.all.most}{\code{Logical} value specifying which parental
+(ancestral) allele should be used as reference. If
+\code{ref.all.most = TRUE}, within each connected part of the design,
+the most used allele will be used as reference. Allele usage is first defined
+in term of number of crosses where the allele segregates. Then, if two
+alleles segregate in an equal number of crosses, we look at the total cross
+sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
+reference within each connected part. Default = TRUE.}
 }
 \value{
 Return:
@@ -61,6 +64,8 @@ following information:
 \item{P-value of the test statistics.}
 \item{Significance of the QTL effects.}
 \item{For cross-specific model, parent with the positive additive effects.}
+\item{For parental and ancestral model, indicator of connected part of the
+design and reference.}
 \item{Allele scores of the parents if \code{geno.par} is non NULL
 in the \code{mppData} object.}
 
@@ -82,16 +87,18 @@ effect of an single allele from the parent 2 (or B) with respect to an allele
 coming from the parent 1 or A. All effects are given in absolute value with
 the parent that cary the positive allele.
 
-For the parental or ancestral models (\code{Q.eff = "par"
-or "anc"}), the genetic effects represent the effect of a single parental
-(ancestral) allele with respect to a reference allelele. The reference
-parental (ancestral) allele can be specified in the argument
-\code{par.ref}. For the ancestral model, the ancestral class inferred
-for the specified parent will be used as reference. For the parental and
-ancestral model computed with the homogeneous residual term assumption
-(\code{VCOV = "h.err"}), it is also possible to estimate one effect for
-each parental (ancestral) allele with the constraint that these effects
-sum to zero. This can be done using (\code{const = "sum.0"}).
+For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), one
+parental (ancestral) allele is set as reference per connected part of the
+design. Effects of the other alleles are estimated as deviation with respect
+to the reference. For more details about reference definition see
+\code{\link{QTL_genEffects}} and \code{\link{design_connectedness}} .
+
+The user can specify if the allele effect that should be put as reference
+within connected parts are the most or less used one setting argument
+\code{ref.all.most = TRUE or FALSE}. Allele usage is first defined
+in term of number of crosses where the allele segregates. Then, if two
+alleles segregate in an equal number of crosses, we look at the total cross
+sizes. For example in a NAM design the central parent is the most used allele.
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 represent the effects of a single allele copy of the most frequent allele.
@@ -125,13 +132,12 @@ mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
 par.clu <- par.clu[rownames(par.clu) \%in\% com.mk.list, ]
 
 
-QTL <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
+QTL.res <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
                    Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
 
-
-QTL.effects <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
-                              QTL = QTL[, 1], Q.eff = QTL[, 5],
-                              par.clu = par.clu)
+QTL.eff <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
+                          QTL = QTL.res[, 1], Q.eff = QTL.res[, 5],
+                          par.clu = par.clu)
 
 }
 \author{

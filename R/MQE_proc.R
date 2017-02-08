@@ -11,22 +11,6 @@
 #' the QTL genetic effects per cross or parent and global and partial R squared
 #' of the detected QTLs.
 #' 
-#' \strong{WARNING!(1)} The computation of \code{MQE_proc()} function using mixed
-#' models (all models with \code{VCOV} different than \code{"h.err"})
-#' is technically possible but can be irrealistic
-#' in practice due to a reduced computer power. Since a mixed model is computed at
-#' each single position it can take a lot of time. From our estimation it can take
-#' between 20 to 50 times more time than for linear models. If the number of
-#' detected QTL is supposed to be small (until 5) it could still be feasible.
-#' 
-#' \strong{WARNING! (2)} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
 #' 
 #' The procedure is the following:
 #' 
@@ -48,6 +32,23 @@
 #' }
 #' 
 #' }
+#' 
+#' \strong{WARNING!(1)} The computation of \code{MQE_proc()} function using mixed
+#' models (all models with \code{VCOV} different than \code{"h.err"})
+#' is technically possible but can be irrealistic
+#' in practice due to a reduced computer power. Since a mixed model is computed at
+#' each single position it can take a lot of time. From our estimation it can take
+#' between 20 to 50 times more time than for linear models. If the number of
+#' detected QTL is supposed to be small (until 5) it could still be feasible.
+#' 
+#' \strong{WARNING! (2)} The estimation of the random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
+#' \code{asreml()} function fails to produce a results and returns the following
+#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
+#' So far we were not able to identify the reason of this problem and to
+#' reproduce this error because it seems to happen randomly. From our
+#' experience, trying to re-run the function one or two times should allow
+#' to obtain a result.
 #' 
 #' @param pop.name \code{Character} name of the studied population.
 #' Default = "MPP_MQE".
@@ -102,16 +103,14 @@
 #' the backward elimination. Terms with p-values above this value will
 #' iteratively be removed. Default = 0.05.
 #' 
-#' @param par.ref \code{Character} expression indicating the parent or the
-#' ancestral class containing the specified parent that will be set as reference
-#' for the computation of the genetic effect. By default
-#' the function will use the first parent of the mppData$parents list.
-#' Default = NULL.
-#' 
-#' @param LR.R2 \code{Logical} value. If \code{LR.R2 = TRUE}, the likelihood
-#' ratio R squared
-#' will be used if \code{VCOV = "cr.err"}. In all other situations R squared
-#' from a linear model will be computed. Default = TRUE.
+#' @param ref.all.most \code{Logical} value specifying which parental
+#' (ancestral) allele should be used as reference. If
+#' \code{ref.all.most = TRUE}, within each connected part of the design,
+#' the most used allele will be used as reference. Allele usage is first defined
+#' in term of number of crosses where the allele segregates. Then, if two
+#' alleles segregate in an equal number of crosses, we look at the total cross
+#' sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
+#' reference within each connected part. Default = TRUE.
 #' 
 #' @param plot.MQE \code{Logical} value. If \code{plot.MQE = TRUE},
 #' the function will make a plot of the last run of the MQE model
@@ -236,7 +235,7 @@
 MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                      mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL,
                      VCOV = "h.err", threshold = 3, window = 20, backward = TRUE,
-                     alpha.bk = 0.05, par.ref = NULL, LR.R2 = TRUE,
+                     alpha.bk = 0.05, ref.all.most = TRUE,
                      plot.MQE = FALSE, parallel = FALSE, cluster = NULL,
                      silence.print = FALSE, output.loc = getwd()) {
   
@@ -333,26 +332,12 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
     
   QTL_effect <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
                                QTL = QTL[, 1], Q.eff = QTL[, 5],
-                               par.clu = par.clu, VCOV = VCOV, par.ref = par.ref)
+                               par.clu = par.clu, VCOV = VCOV,
+                               ref.all.most = ref.all.most)
   
   R2 <- MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL[, 1],
-               Q.eff = QTL[, 5], par.clu = par.clu, VCOV = VCOV, LR.R2 = LR.R2,
-               glb.only = FALSE)
+               Q.eff = QTL[, 5], par.clu = par.clu, glb.only = FALSE)
   
-  if(((VCOV == "cr.err") & (LR.R2)) & is.na(R2[[1]][1])){
-    
-    R2 <- MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL[, 1],
-                 Q.eff = QTL[, 5], par.clu = par.clu, VCOV = "h.err",
-                 LR.R2 = LR.R2, glb.only = FALSE)
-    
-    message <- paste("The computation of",
-                     "the likelihood R squared statistics failed probably",
-                     "due to some singularities. The R2 were re-calculated",
-                     "using linear models.")
-    
-    message(message)
-    
-  }
   
   # save R2 results
   

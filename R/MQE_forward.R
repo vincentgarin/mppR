@@ -13,7 +13,7 @@
 #' calculate three profiles. Then it will select in each profile the most
 #' significant position if a position is above the \code{threshold} value.
 #' The position and its QTL effect that increase the most the global adjusted R
-#' squared (\code{MQE_R2]}) will be selected as the new QTL position and included
+#' squared (\code{MQE_R2}) will be selected as the new QTL position and included
 #' in the list of cofactors. The function continue to iterate until no position
 #' is significant anymore.
 #' 
@@ -146,11 +146,10 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
   
   # Sub-function for R squared computation
   
-  R2.sg <-  function(mppData, mppData_bi, QTL, Q.eff, par.clu, VCOV){
+  R2.sg <-  function(mppData, mppData_bi, QTL, Q.eff, par.clu){
     
     MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL,
-           Q.eff = Q.eff, par.clu = par.clu, VCOV = VCOV,
-           LR.R2 = FALSE, glb.only = TRUE)[[2]]
+           Q.eff = Q.eff, par.clu = par.clu, glb.only = TRUE)[[2]]
     
   }
   
@@ -232,7 +231,7 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
     
     R2.pos1 <- mapply(FUN = R2.sg, QTL = cand.pos[, 1], Q.eff = cand.pos[, 2],
                       MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
-                                      par.clu = par.clu, VCOV = VCOV))
+                                      par.clu = par.clu))
     
     # test which position has the highest R squared
     
@@ -349,7 +348,7 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
       
       R2.posi <- mapply(FUN = R2.sg, QTL = QTL.list_i, Q.eff = QTL.eff_i,
                         MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
-                                        par.clu = par.clu, VCOV = VCOV))
+                                        par.clu = par.clu))
       
       # test which position has the highest R squared
       

@@ -6,25 +6,9 @@
 # mpp_CV
 
 
-check.mpp.cv <- function(mppData, her = NULL, Q.eff, VCOV, par.clu = NULL,
+check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
                          parallel = FALSE, cluster, output.loc){
   
-  
-  # 0. Test if a value was provided for heritability.
-  
-  if(is.null(her)){
-    
-    stop("No value has been specified for the argument her.")
-    
-  } else {
-    
-    if(!is.numeric(her)){
-      
-      stop("The heritability value provided (her) is not a numeric value.")
-      
-    }
-    
-  }
   
   # 1. test the validity of the provided path to store the results
   

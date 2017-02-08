@@ -4,12 +4,12 @@
 \alias{mpp_CV}
 \title{MPP cross-validation}
 \usage{
-mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData, her = NULL,
+mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData, her = 1,
   Rep = 10, k = 5, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   thre.cof = 3, win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3,
-  win.QTL = 20, backward = TRUE, alpha.bk = 0.05, LR.R2 = TRUE,
-  within.cross = TRUE, parallel = FALSE, cluster = NULL,
-  silence.print = FALSE, output.loc = getwd())
+  win.QTL = 20, backward = TRUE, alpha.bk = 0.05, within.cross = TRUE,
+  parallel = FALSE, cluster = NULL, silence.print = FALSE,
+  output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -22,7 +22,9 @@ Default = "trait1".}
 \code{\link{mppData_form}} for details.}
 
 \item{her}{\code{Numeric} value between 0 and 1 representing the heritability
-of the trait. Default = NULL.}
+of the trait. \strong{By default, the heritability is set to 1
+(\code{her = 1}). This means that the results represent the proportion of
+phenotypic variance explained (predicted) in the training (validation) sets.}}
 
 \item{Rep}{\code{Numeric} value representing the number of repetition of the
 k-fold procedure. Default = 10.}
@@ -84,11 +86,6 @@ Default = TRUE.}
 the backward elimination. Terms with p-values above this value will
 iteratively be removed. Default = 0.05.}
 
-\item{LR.R2}{\code{Logical} value. If \code{LR.R2 = TRUE}, the likelihood
-ratio R squared will be used if \code{VCOV = "cr.err"}. In all other
-situations R squared from a linear model will be computed. For more details
-see \code{\link{QTL_R2}}. Default = TRUE.}
-
 \item{within.cross}{\code{Logical} value indicating if the predicted
 R squared must be computed within cross. In that case, predicted R squared
 are computed within cross and the average is returned. Default = TRUE.}
@@ -128,24 +125,10 @@ difference R squared (av.pvs.d).}
 \item{Relative bias explained genetic variance difference R squared (bias.d).}
 
 \item{Average  proportion of explained genetic variance in the training set
-difference adjusted R squared (av.pts.adj.d).}
-\item{Average  proportion of predicted genetic variance in the validation set
-difference adjusted R squared (av.pvs.adj.d).}
-\item{Relative bias explained genetic variance difference adjusted R squared
-(bias.adj.d).}
-
-\item{Average  proportion of explained genetic variance in the training set
 single QTL R squared (av.pts.s).}
 \item{Average  proportion of predicted genetic variance in the validation set
 single QTL R squared (av.pvs.s).}
 \item{Relative bias explained genetic variance single QTL R squared (bias.s).}
-
-\item{Average  proportion of explained genetic variance in the training set
-single QTL adjusted R squared (av.pts.adj.s).}
-\item{Average  proportion of predicted genetic variance in the validation set
-single QTL adjusted R squared (av.pvs.adj.s).}
-\item{Relative bias explained genetic variance single QTL adjusted R squared
-(bias.adj.s).}
 
 }
 
@@ -165,12 +148,6 @@ set from unadjusted R squared 1-(p.vs/p.ts).}
 
 \item{p.ts.adj}{Table with the proportion of explained genetic variance from
 adjusted R squared in the training set for each (Rep*k) repetition.}
-
-\item{p.vs.adj}{Table with the proportion of predicted genetic variance from
-adjusted R squared in the validation set for each (Rep*k) repetition.}
-
-\item{bias.adj}{Explained genetic variance bias between training and validation
-set from adjusted R squared 1-(p.vs/p.ts).}
 
 \item{QTL.profiles}{Final QTL profiles of each (Rep*k) repetition.}
 
@@ -203,29 +180,33 @@ tested simultaneously using a backward elimination
 
 \item{Use the list of detected QTLs in the training sets to calculate
 the proportion of genetic variance explained by all detected QTLs in the
-training set (p.ts = R2.ts/heritability). Two types of p.ts are calculated
-from adjusted and unadjusted R squared. All R global and partial R squared
-are adjusted using formula 2 from Utz et al. (2000).
+training set (p.ts = R2.ts/heritability). Global p.ts (all QTLs) are returned
+adjusted and unadjusted.
 
-For each single QTL effect difference and single R squared are also
-calculated. These partial R squared are also returned raw and adjusted.
-For details about R squared computation in the training set look at
-\code{\link{QTL_R2}}.}
+For each single QTL effect, difference and single R squared are also
+calculated. Difference R squared are computed by doing the difference between
+a model with all QTLs and a model without the ith position. Single QTL R
+squared are obtained from a model including only a single QTL position.
+These partial R squared are only returned unadjusted. For details about R
+squared computation and adjustment look at \code{\link{QTL_R2}}. }
 
 \item{Use the estimates of the QTL effects in the training set (B.ts) to
 predict the phenotypic values of the validation set. y.pred.vs = X.vs*B.ts.
 Computes the predicted R squared  in the validation set using the squared
 Pearson correlation coefficient between the real values (y.vs) and the
 predicted values (y.pred.vs). R2.vs = cor(y.ts,y.pred.ts)^2.
+
 The predicted R squared can be computed per cross and then averaged
 (\code{within.cross = TRUE}) or at the population level. The proportion
 of predicted genetic variance in the validation set is obtained dividing
-R2.vs by the heritability.
+R2.vs by the heritability. Predicted R squared are only returned unadjusted
+because we did not find so far any satisfactory solution with respect to this
+question.
 
-Partial QTL predicted adjusted and unadjusted R squared are also
-calculated using difference between a full model and a model minus the ith
-QTL (difference R squared) or single QTL position model (single R squared).
-For details about the predicted R squared see \code{\link{QTL_pred_R2}}.}
+Partial QTL predicted unadjusted R squared difference and single R squared
+are also calculated.
+
+}
 
 }
 

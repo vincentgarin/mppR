@@ -29,7 +29,6 @@
 check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
                              est.gen.eff = FALSE, parallel = FALSE,
                              cluster, cofactors = NULL, QTL = NULL,
-                             par.ref = NULL, const = NULL,
                              mppData.ts = NULL, mppData.vs = NULL, fct = "XXX"){
   
   # 1. check mppData format
@@ -66,16 +65,18 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
   # 3. check the VCOV argument
   ############################
   
-  if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
-    
-    stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
-         "'pedigree' or 'ped_cr.err'."))
-    
-  }
+  
   
   # test if the asreml function is present for the compuation of the mixed models
   
   if (fct != "R2"){
+    
+    if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
+      
+      stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
+                 "'pedigree' or 'ped_cr.err'."))
+      
+    }
     
     if (VCOV != "h.err"){
       
@@ -261,26 +262,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
      
   }
   
-  if (fct == "QTLeffects") {
-    
-    # test if the reference parent is in the list
-    
-    if (!(par.ref %in% mppData$parents)){
-      
-      stop(paste("The specified reference parent (par.ref) is not",
-           "present in mppData$parents"))
-      
-    }
-    
-    if ((VCOV != "h.err") && (const == "sum.0")){
-      
-      stop(paste("The sum to zero constraint is not allowed with this VCOV.",
-                "Please use the default value 'set.0'."))
-        
-      
-    }
-    
-  }
+  
   
   ### test the format of the QTL list introduce for backward elimination, R2 and
   # genetic effects estimation

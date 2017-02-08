@@ -6,7 +6,7 @@
 # parental and ancestral mixed models.
 
 
-QTL_pval_mix <- function(model, Q.eff, QTL.el, x, par.clu, fct) {
+QTL_pval_mix <- function(model, Q.eff, QTL.el, x, par.clu, ref.name, fct) {
   
   if(fct == "SIM"){
     start.ind <- 2; end.ind <- 1
@@ -18,24 +18,18 @@ QTL_pval_mix <- function(model, Q.eff, QTL.el, x, par.clu, fct) {
   pval <- pval * sign
   pval[pval == 0] <- 1
   
-  if (Q.eff == "par") {
+  if (Q.eff == "anc") {
     
-    pval <- c(1, pval) # put a 1 for the parent that was in the intercept.
+    # project into parents
     
+    names(pval) <- ref.name
+    ref.all <- paste0("A.allele", par.clu[x, ])
+    pval <- pval[ref.all]
     
-  } else if (Q.eff == "anc") {
-    
-    pval <- c(1, pval)  
-    
-    # distribute the ancestor p-value
-    
-    A.allele <- as.factor(par.clu[x, ])
-    A <- model.matrix(~ A.allele - 1)
-    pval <- as.vector(A %*% pval)
     
   }
   
   return(pval)
   
   
-} 
+}

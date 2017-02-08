@@ -12,9 +12,6 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
   QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
                     par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff)
   
-  if((Q.eff == "par") || (Q.eff == "anc")){ QTL <- QTL[, -1, drop = FALSE] }
-  
-  
   # 2. model computation
   ######################
   
@@ -33,7 +30,9 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     
   } else if ((VCOV == "h.err.as") || (VCOV == "cr.err")){
     
-    dataset <- data.frame(QTL = QTL, cr.mat = factor(mppData$cross.ind),
+    dataset <- data.frame(QTL = QTL,
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1])
     
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
@@ -56,7 +55,8 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     # compose the dataset for the asreml function
     
     dataset <- data.frame(QTL = QTL, trait = mppData$trait[, 1],
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           genotype = mppData$geno.id)
     
     if(VCOV == "pedigree"){ formula.R <- "~idv(units)"

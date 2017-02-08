@@ -103,7 +103,7 @@ CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
 cofactors = cofactors, window = 20, est.gen.eff = TRUE)
 
 plot_QTLprof(Qprof = CIM)
-plot_genEffects(Qprof = CIM)
+plot_genEffects(mppData = USNAM_mppData, Qprof = CIM, Q.eff = "cr")
 
 \dontrun{
 

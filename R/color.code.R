@@ -12,6 +12,8 @@ color.code <- function(x){
   
   # red colours
   
+  if(is.na(x)){x <- 1}
+  
   if(x<0){
     
     x <- abs(x)

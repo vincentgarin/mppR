@@ -260,9 +260,9 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
       
       if(plot){
         
-        file <- paste0(folder.loc, paste0("/chr_", i, ".jpg"))
+        file <- paste0(folder.loc, paste0("/chr_", i, ".pdf"))
         
-        jpeg(file, height = 600, width = 800)
+        pdf(file)
         
         print(plot(tc.i))
         

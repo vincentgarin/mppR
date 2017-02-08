@@ -19,8 +19,7 @@
 #' Two types or partial R squared are computed. The first one making the
 #' difference between the global R squared and the R squared computed without
 #' the ith position (difference R squared). The second method only uses
-#' the ith QTL for trait values predition (single R squared). All predicted R
-#' squared can be adjusted using formula 2 from Utz et al. (2000) (for details
+#' the ith QTL for trait values predition (single R squared) (for details
 #' see documentation of the function \code{\link{QTL_R2}}).
 #' 
 #' \strong{WARNING!} The estimation of the random pedigree models
@@ -70,35 +69,22 @@
 #' In the later case, predicted R squared are computed within cross and the
 #' average is returned. Default = TRUE.
 #' 
-#'
+#' 
 #' @return Return:
 #' 
 #' \code{List} containing the following objects:
 #'
 #' \item{glb.R2 }{ Global predicted R squared of all QTL terms.}
 #'
-#' \item{glb.adj.R2 }{ Global predicted adjusted R squared of all QTL terms.}
-#'
 #' \item{part.R2.diff }{ Vector of predicted partial R squared doing
 #' the difference between the full model and a model minus the ith QTL.}
-#' 
-#' \item{part.adj.R2.diff }{ Vector of predicted partial adjusted R squared
-#' doing the difference between the full model and a model minus the ith QTL.}
 #' 
 #' \item{part.R2.sg }{ Vector of predicted partial R squared using only the
 #' ith QTL.}
 #' 
-#' \item{part.adj.R2.sg }{ Vector of predicted partial adjusted R squared using
-#' only the ith QTL.}
 #' 
 #' @author Vincent Garin
 #' 
-#' @references
-#' 
-#' Utz, H. F., Melchinger, A. E., & Schon, C. C. (2000). Bias and sampling error
-#' of the estimated proportion of genotypic variance explained by quantitative
-#' trait loci determined from experimental data in maize using cross validation
-#' and validation with independent samples. Genetics, 154(4), 1839-1849.
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
 #' \code{\link{QTL_R2}}, \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
@@ -129,130 +115,113 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
   
   # 1. test data format
   #####################
-
+  
   check.model.comp(Q.eff = Q.eff, VCOV = VCOV, par.clu = par.clu, QTL = QTL,
                    mppData.ts = mppData.ts, mppData.vs = mppData.vs,
                    fct = "R2_pred")
-
-
+  
+  
   if(is.character(QTL)){ n.QTL <- length(QTL) } else { n.QTL <- dim(QTL)[1] }
-
+  
   # 2. obtain the genetic effects (Betas)
   #######################################
-
+  
   if((Q.eff == "biall") || (Q.eff == "cr")){
     if(!is.null(mppData.ts$geno.par)) {mppData.ts$geno.par <- NULL}
-      }
-
+  }
+  
   effects <- QTL_genEffects(mppData = mppData.ts, QTL = QTL, Q.eff = Q.eff,
                             par.clu = par.clu, VCOV = VCOV)
-
+  
+  # need to re-order the row of the effects according to the parent list
+  
+  if(Q.eff == "par"){
+    
+    eff.names <- substr(rownames(effects[[1]]), 3 , nchar(rownames(effects[[1]])))
+    index <- match(eff.names, mppData.vs$parents)
+    
+    effects <- lapply(X = effects, function(x, ind) x[ind, ], ind = index)
+    
+  } else if (Q.eff == "anc"){
+    
+    effects <- lapply(X = effects, function(x, ind) x[ind, ],
+                      ind = mppData.vs$parents)
+    
+  }
+  
+  
   B.ts <- lapply(X = seq_along(effects), FUN = function(x, Qeff) Qeff[[x]][, 1],
-                    Qeff = effects)
-
+                 Qeff = effects)
+  
   # 3. obtain the QTL incidence matrices of the positions (X.vs)
   ##############################################################
-
+  
   if(is.character(QTL)){
-
+    
     Q.pos <- which(mppData.vs$map[, 1] %in% QTL)
-
+    
   } else {
-
+    
     Q.pos <- which(mppData.vs$map[, 1] %in% QTL[, 1])
-
+    
   }
   
   # switch Qeff for parental QTL incidence matrix if ancestral model
-
+  
   if(Q.eff == "anc") Q.eff.part <- "par" else Q.eff.part <- Q.eff
-
+  
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData.vs,
-                     cross.mat = IncMat_cross(mppData.vs$cross.ind),
+                   cross.mat = IncMat_cross(mppData.vs$cross.ind),
                    par.mat = IncMat_parent(mppData.vs), par.clu = par.clu,
                    Q.eff = Q.eff.part)
   
-  # get the number of QTL elements for future adjustment
-  
-  if (Q.eff == "anc"){
-    
-    zi <- apply(X = par.clu[Q.pos, , drop = FALSE], MARGIN = 1,
-                FUN = function(x) length(unique(x)))
-    
-  } else { zi <- vapply(X = Q.list, function(x) dim(x)[2],
-                        FUN.VALUE = numeric(1))
-  }
-
   # 4. Predicted R squared computation cor(y.vs, X.vs * B.ts)^2
   ##############################################################
-
-  # global R squared
-
-  R2.all <- R2_pred(mppData.vs = mppData.vs, B.ts = B.ts, Q.list = Q.list,
-                    zi = zi, within.cross = within.cross)
   
-  R2 <- R2.all[1]
-  R2.adj <- R2.all[2]
-
+  # global R squared
+  
+  R2 <- R2_pred(mppData.vs = mppData.vs, B.ts = B.ts, Q.list = Q.list,
+                within.cross = within.cross)
+  
   # partial R2
   
   if (n.QTL > 1) {
     
-    part.R2.diff <- function(x, mppData.vs, B.ts, Q.list, zi, within.cross) {
+    part.R2.diff <- function(x, mppData.vs, B.ts, Q.list, within.cross) {
       R2_pred(mppData.vs = mppData.vs, B.ts = B.ts[-x], Q.list =  Q.list[-x],
-              zi = zi[-x], within.cross = within.cross)[1]
+              within.cross = within.cross)
     }
     
-    part.R2.sg <- function(x, mppData.vs, B.ts, Q.list, zi, within.cross) {
+    part.R2.sg <- function(x, mppData.vs, B.ts, Q.list, within.cross) {
       R2_pred(mppData.vs = mppData.vs, B.ts = B.ts[x], Q.list =  Q.list[x],
-              zi = zi[x], within.cross = within.cross)[1]
+              within.cross = within.cross)
     }
     
     R2_i.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, mppData.vs = mppData.vs,
-                       B.ts = B.ts, Q.list = Q.list, zi = zi,
+                       B.ts = B.ts, Q.list = Q.list,
                        within.cross = within.cross)
     
     R2_i.dif <- R2 - unlist(R2_i.dif) # difference full model and model minus i
     
     R2_i.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, mppData.vs = mppData.vs,
-                       B.ts = B.ts, Q.list = Q.list, zi = zi,
+                      B.ts = B.ts, Q.list = Q.list,
                       within.cross = within.cross)
     
     R2_i.sg <- unlist(R2_i.sg)
     
-    N <- sum(!is.na(mppData.vs$trait[, 1]))
     
-    # adjust the values
+    names(R2_i.dif) <- paste0("Q", 1:n.QTL)
+    names(R2_i.sg) <- paste0("Q", 1:n.QTL)
     
     
-    R2_i.dif.adj <- R2_i.dif - ((zi/(N - zi - mppData.vs$n.cr)) * (100 - R2_i.dif))
-    
-    R2_i.sg.adj <- R2_i.sg - ((zi/(N-zi-mppData.vs$n.cr)) * (100 - R2_i.sg))
-    
-    names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
-    names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
-    
-    names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
-    names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
-    
-    return(list(glb.R2 = R2,
-                glb.adj.R2 = R2.adj,
-                part.R2.diff = R2_i.dif,
-                part.adj.R2.diff = R2_i.dif.adj,
-                part.R2.sg = R2_i.sg,
-                part.adj.R2.sg = R2_i.sg.adj))
+    return(list(glb.R2 = R2, part.R2.diff = R2_i.dif, part.R2.sg = R2_i.sg))
     
   } else {
     
-    names(R2) <- names(R2.adj) <- "Q1"
+    names(R2) <- "Q1"
     
-    return(list(glb.R2 = R2,
-                glb.adj.R2 = R2.adj,
-                part.R2.diff = R2,
-                part.adj.R2.diff = R2.adj,
-                part.R2.sg = R2,
-                part.adj.R2.sg = R2.adj))
+    return(list(glb.R2 = R2, part.R2.diff = R2, part.R2.sg = R2))
+    
   }
-
   
 }

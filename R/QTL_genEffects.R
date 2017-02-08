@@ -14,16 +14,22 @@
 #' coming from the parent 1 or A. All effects are given in absolute value with
 #' the parent that cary the positive allele.
 #' 
-#' For the parental or ancestral models (\code{Q.eff = "par"
-#' or "anc"}), the genetic effects represent the effect of a single parental
-#' (ancestral) allele with respect to a reference allelele. The reference
-#' parental (ancestral) allele can be specified in the argument
-#' \code{par.ref}. For the ancestral model, the ancestral class inferred
-#' for the specified parent will be used as reference. For the parental and
-#' ancestral model computed with the homogeneous residual term assumption
-#' (\code{VCOV = "h.err"}), it is also possible to estimate one effect for
-#' each parental (ancestral) allele with the constraint that these effects
-#' sum to zero. This can be done using (\code{const = "sum.0"}).
+#' For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), it
+#' is possible to estimate maximum n-1 parental or ancestral alleles per connected
+#' part of the design. Connected parts of the design can be determined using
+#' Weeks and Williams (1964) method (\code{\link{design_connectedness}}).
+#' Connected parts of the design are indicated in the results and parental
+#' (ancestral) allele score getting 0 value are the one that could not be
+#' estimated due to singularities. Estimated effects of the other alleles should
+#' be interpreted within connected part as deviation with respect to the
+#' non-estimable effect(s).
+#' 
+#' The user can specify if the allele effect that should be put as reference
+#' within connected parts are the most or less used one setting argument
+#' \code{ref.all.most = TRUE or FALSE}. Allele usage is first defined
+#' in term of number of crosses where the allele segregates. Then, if two
+#' alleles segregate in an equal number of crosses, we look at the total cross
+#' sizes. For example in a NAM design the central parent is the most used allele.
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 #' represent the effects of a single allele copy of the most frequent allele.
@@ -67,20 +73,15 @@
 #' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
-#' 
-#' @param const \code{Character} expression indicating the type of contstraint
-#' used for the estimation of the genetic effect of the HRT (linear) model
-#' (\code{VCOV = "h.err"}) for the parental or ancestral models
-#' (\code{Q.eff = "par" or "anc"}). If const = "set.0", the value of the
-#' parent or the ancestral class containing the parent specified in argument
-#' (\code{par.ref}) is set to 0. If const = "sum.0", the sum of
-#' the parental (ancestral) effects is constrained to sum to 0.
-#' Default = "set.0".
-#' 
-#' @param par.ref \code{Character} expression indicating the parent or the
-#' ancestral class containing the specified parent that will be set as reference
-#' for the computation of the genetic effect. By default
-#' the function will use the first parent of the \code{mppData$parents} list.
+#'
+#' @param ref.all.most \code{Logical} value specifying which parental
+#' (ancestral) allele should be used as reference. If
+#' \code{ref.all.most = TRUE}, within each connected part of the design,
+#' the most used allele will be used as reference. Allele usage is first defined
+#' in term of number of crosses where the allele segregates. Then, if two
+#' alleles segregate in an equal number of crosses, we look at the total cross
+#' sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
+#' reference within each connected part. Default = TRUE.
 #' 
 #' 
 #' @return Return:
@@ -96,6 +97,8 @@
 #' \item{P-value of the test statistics.}
 #' \item{Significance of the QTL effects.}
 #' \item{For cross-specific model, parent with the positive additive effects.}
+#' \item{For parental and ancestral model, indicator of connected part of the
+#' design and reference.}
 #' \item{Allele scores of the parents if \code{geno.par} is non NULL
 #' in the \code{mppData} object.}
 #' 
@@ -108,6 +111,10 @@
 #' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
 #' \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
 #' 
+#' @references 
+#' 
+#' Weeks, D. L., & Williams, D. R. (1964). A note on the determination of
+#' connectedness in an N-way cross classification. Technometrics, 6(3), 319-324.
 #' 
 #' @examples
 #' 
@@ -128,26 +135,14 @@
 #' 
 #' # parental model
 #' 
-#' # constraint(set one parents as reference - CML322)
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "par",
-#'                               const = "set.0", par.ref = "CML322")
-#' QTL.effects
-#' 
-#' # constraint(sum to zero)
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "par",
-#'                               const = "sum.0")
+#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL,
+#'                                Q.eff = "par")
 #' QTL.effects
 #' 
 #' # ancestral model
 #' 
-#' # constraint(set one ancestral class as reference - M37W)
 #' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "anc",
-#'                               par.clu = par.clu, const = "set.0", par.ref = "M37W")
-#' QTL.effects
-#' 
-#' # constraint(sum to zero)
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "anc",
-#'                               par.clu = par.clu, const = "sum.0")
+#'                               par.clu = par.clu)
 #' QTL.effects
 #' 
 #' # bi-allelic model
@@ -166,212 +161,200 @@
 
 
 QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
-                           VCOV = "h.err",  const = "set.0", par.ref = NULL) {
+                           VCOV = "h.err",  ref.all.most = TRUE) {
   
   # 1. Check data format
   ######################
-
-  if(is.null(par.ref)){ par.ref <- mppData$parents[1]}
-
+  
   check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, par.ref = par.ref, const = const,
-                   QTL = QTL, fct = "QTLeffects")
-
-
+                   par.clu = par.clu, QTL = QTL, fct = "QTLeffects")
+  
+  
   # 2. elements for the model
   ###########################
-
-  ### 2.1 inverse of the pedigree matrix
-
+  
+  ### 2.1 Phenotypic values
+  
+  trait <- mppData$trait[, 1]
+  
+  ### 2.2 inverse of the pedigree matrix
+  
   formPedMatInv(mppData = mppData, VCOV = VCOV)
-
-  ### 2.2 cross matrix (cross intercept)
-
+  
+  ### 2.3 cross matrix (cross intercept)
+  
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
-
-  ### 2.3 parent matrix
-
+  
+  ### 2.4 parent matrix
+  
   parent.mat <- IncMat_parent(mppData)
-
-  ### 2.4 modify the par.clu object order parents columns and replace monomorphic
-
+  
+  ### 2.5 modify the par.clu object order parents columns and replace monomorphic
+  
   if (Q.eff == "anc") {
-
+    
     check <- parent_clusterCheck(par.clu = par.clu)
     par.clu <- check$par.clu[, mppData$parents] # order parents columns
-
+    
   } else {par.clu <- NULL}
-
-
-  ### 2.5 Formation of the list of QTL
-
+  
+  
+  ### 2.6 Formation of the list of QTL
+  
   if(is.character(QTL)){
-
+    
     Q.pos <- which(mppData$map[, 1] %in% QTL)
-
+    
   } else {
-
+    
     Q.pos <- which(mppData$map[, 1] %in% QTL[, 1])
-
+    
   }
-
+  
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
                    cross.mat = cross.mat, par.mat = parent.mat,
                    par.clu = par.clu, Q.eff = Q.eff)
-
+  
   names(Q.list) <- paste0("Q", 1:length(Q.list))
-
-
-  ### 2.6 Set the constraint on the different elements and prepare the
-  # different elements of the model.
-
-
-  if ((Q.eff == "cr") || (Q.eff == "biall")){
-
-    trait <- mppData$trait[, 1]
-
-    # 2.6.1 parental or ancestral model
-
-  } else {
-
-    # situations with sum to 0
-
-    if((VCOV == "h.err") && (const == "sum.0")) {
-
-      n.QTL <- length(Q.list)
-      trait <- c(mppData$trait[, 1], rep(0, n.QTL))
-      cross.mat <- rbind(cross.mat, matrix(0, nrow = n.QTL, ncol = mppData$n.cr))
-
-      add.const <- function(x, Q.mat) {
-
-        Q.mat <- Q.mat[[x]]
-        constraint <- matrix(0, nrow = n.QTL, ncol = dim(Q.mat)[2])
-        constraint[x, ] <- 1
-        Q.mat <- rbind(Q.mat, constraint)
-        rownames(Q.mat) <- as.character(1:dim(Q.mat)[1])
-        Q.mat
-
+  
+  
+  ### 2.7 For the parental and ancestral model organise the matrix to get the
+  # desired constraint.
+  
+  if ((Q.eff == "par") || (Q.eff == "anc")){
+    
+    if(Q.eff == "par"){
+      
+      # 1. determine the connected parts
+      
+      con.part <- design_connectedness(par.per.cross = mppData$par.per.cross,
+                                        plot.des = FALSE)
+      
+      # 2. determine the most (less) used allele within connected part
+      
+      allele_order <- c()
+      allele_ref <- c()
+      
+      for(i in seq_along(con.part)){
+        
+        con.part_i <- con.part[[i]]
+        
+        # subset the par.per.cross object
+        
+        index <- apply(X = mppData$par.per.cross[, c(2,3)], MARGIN = 1,
+                       FUN = function(x, ref) sum(x %in% ref) > 0,
+                       ref = con.part_i)
+        
+        par.per.cross_i <- mppData$par.per.cross[index, , drop = FALSE]
+        
+        # susbet the cross indicator according to the cross retained
+        
+        cross.ind_i <- mppData$cross.ind[mppData$cross.ind %in% par.per.cross_i[, 1]]
+        
+        allele_ord_i <- most.used.allele(par.per.cross_i, cross.ind_i,
+                                         most.used = !ref.all.most)
+        
+        allele_order <- c(allele_order, allele_ord_i)
+        allele_ref <- c(allele_ref, allele_ord_i[length(allele_ord_i)])
+        
       }
-
-      Q.list <- lapply(X = 1:n.QTL, FUN = add.const, Q.mat = Q.list)
-
-      names(Q.list) <- paste0("Q", 1:length(Q.list))
-
-    # all other VCOV except "h.err" -> set.0 constraint
-
-     } else {
-
-       n.QTL <- length(Q.list)
-       trait <- mppData$trait[, 1]
-
-       remove.par <- function(x, QTL, par.ref, par.clu, Q.list){
-         
-         Q.mat <- Q.list[[x]]
-         
-         if(Q.eff == "par"){ # parental model
-           
-           Q.mat[, -which(colnames(Q.mat) == par.ref), drop = FALSE]
-           
-         } else if (Q.eff == "anc") { # ancestral model
-           
-           clu.info <- par.clu[which(rownames(par.clu) == QTL[x, 1]), ]
-           clu.to.remove <- clu.info[names(clu.info) == par.ref]
-           alleles <- as.numeric(substr(colnames(Q.mat), 9,
-                                        nchar(colnames(Q.mat))))
-           
-           Q.mat[, -which(alleles == clu.to.remove), drop = FALSE]
-           
-         }
-         
-       }
-       
-       Q.list <- lapply(X = 1:n.QTL, FUN = remove.par, QTL = QTL,
-                        Q.list = Q.list, par.ref = par.ref, par.clu = par.clu)
-
-       names(Q.list) <- paste0("Q", 1:length(Q.list))
-
-   }
-
-
- }
-
-
-  # 3. model computation
-  ######################
-
-
-  model <- QTLModelQeff(mppData = mppData, trait = trait, cross.mat = cross.mat,
-                        Q.list = Q.list, VCOV = VCOV)
-
-  # 4. data processing
-  ####################
-
-  ### 4.1 sort row model results
-
-  results <- Qeff_res_processing(model = model, mppData = mppData,
-                                 cross.mat =  cross.mat, Q.list = Q.list,
-                                 QTL = QTL, Q.eff = Q.eff, par.clu = par.clu,
-                                 VCOV = VCOV, par.ref = par.ref, const = const)
-
-  ### 4.2 add stars
-
-  stars <- sapply(results[, 4], FUN = sign.star)
-
-  results <- data.frame(results, stars, stringsAsFactors = FALSE)
-
-  colnames(results) <- c("Effect", "Std. Err.", "Test stat.", "p-value", "sign.")
-  
-  if(VCOV == "h.err"){colnames(results)[3] <- "t-test"} else {
-    colnames(results)[3] <- "W-stat"}
-
-  ### 4.3 Complete with parent genotype code
-
-  if(!is.null(mppData$geno.par)){
-
-  results <- add_parents_score(results = results, mppData = mppData,
-                               Q.eff = Q.eff, QTL = QTL, par.ref = par.ref,
-                               VCOV = VCOV)  
-
-  } 
-
-  ### 4.3 Split into a list with one data.frame for each QTL
-  
-  
-  # Only case where only one term per QTL
-  
-  if ((Q.eff == "biall") && (is.null(mppData$geno.par))){
-    
-    partition <- factor(paste0("Q", 1:length(Q.list)),
-                        levels = paste0("Q", 1:length(Q.list)))
-    
-    results <- split(x = results, f = partition)
-    
-  } else {
-    
-    # division per cross or per parents.
-    
-    if(Q.eff == "cr"){
       
-      partition <- factor(rep(paste0("Q", 1:length(Q.list)),
-                              each = mppData$n.cr),
-                          levels = paste0("Q", 1:length(Q.list)))
+      # order the parental alleles in QTL incidence matrices
       
-      results <- split(x = results, f = partition)
+      Q.list <- lapply(X = Q.list, FUN = function(x, ref) x[, ref],
+                       ref = allele_order)
       
-    } else {
       
-      partition <- factor(rep(paste0("Q", 1:length(Q.list)),
-                              each = mppData$n.par),
-                          levels = paste0("Q", 1:length(Q.list)))
+    } else if (Q.eff == "anc"){
       
-      results <- split(x = results, f = partition)
+      con.part <- vector(mode = "list", length(Q.list))
+      allele_ref <- vector(mode = "list", length(Q.list))
+      
+      for(i in 1:length(Q.list)){
+        
+        # 1. Determine the connected parts
+        
+        par.clu_i <- par.clu[QTL[i, 1], ]
+        par.clu_i <- paste0("A.allele", par.clu_i)
+        names(par.clu_i) <- mppData$parents
+        
+        all.p1 <- par.clu_i[mppData$par.per.cross[, 2]]
+        all.p2 <- par.clu_i[mppData$par.per.cross[, 3]]
+        
+        par.per.cross_i <- cbind(mppData$par.per.cross[, 1], all.p1, all.p2)
+        
+        con.part_i <- design_connectedness(par.per.cross = par.per.cross_i,
+                                            plot.des = FALSE)
+        
+        con.part[[i]] <- con.part_i
+        
+        # 2. Within the connected parts determine the most (least) used allele
+        
+        allele_ord_i <- c()
+        allele_ref_i <- c()
+        
+        for(j in seq_along(con.part_i)){
+          
+          con.part_j <- con.part_i[[j]]
+          
+          # subset the par.per.cross object
+          
+          index <- apply(X = par.per.cross_i[, c(2, 3)], MARGIN = 1,
+                         FUN = function(x, ref) sum(x %in% ref) > 0,
+                         ref = con.part_j)
+          
+          par.per.cross_j <- par.per.cross_i[index, , drop = FALSE]
+          
+          # susbet the cross indicator according to the cross retained
+          
+          cross.ind_j <- mppData$cross.ind[mppData$cross.ind %in% par.per.cross_j[, 1]]
+          
+          allele_ord_j <- most.used.allele(par.per.cross_j, cross.ind_j,
+                                           most.used = !ref.all.most)
+          
+          allele_ord_i <- c(allele_ord_i, allele_ord_j)
+          allele_ref_i <- c(allele_ref_i, allele_ord_j[length(allele_ord_j)])
+          
+        }
+        
+        # Store the results
+        
+        allele_ref[[i]] <- allele_ref_i
+        
+        # 3. Order the QTL incidence matrix
+        
+        Q.list[[i]] <- Q.list[[i]][, allele_ord_i]
+        
+      }
       
     }
+    
+    
+  } else {
+    
+    con.part <- allele_ref <- NULL
     
   }
   
   
-  return(results)
+  # 3. model computation
+  ######################
   
+  model <- QTLModelQeff(mppData = mppData, trait = trait, cross.mat = cross.mat,
+                        Q.list = Q.list, VCOV = VCOV)
+  
+  
+  # 4. data processing
+  ####################
+  
+  ### 4.1 sort row model results
+  
+  results <- Qeff_res_processing(model = model, mppData = mppData,
+                                 cross.mat =  cross.mat, Q.list = Q.list,
+                                 QTL = QTL, Q.eff = Q.eff, par.clu = par.clu,
+                                 VCOV = VCOV, allele_ref = allele_ref,
+                                 con.part = con.part)
+  
+  return(results)
   
 }

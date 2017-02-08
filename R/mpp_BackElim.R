@@ -133,12 +133,6 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
                      cross.mat = cross.mat, par.mat = parent.mat,
                      par.clu = par.clu, Q.eff = Q.eff)
   
-  # re-arrange the QTL incidences matrices if parental or ancestral model
-  
-  if((Q.eff == "par") || (Q.eff == "anc")){
-    Q.list <- lapply(X = Q.list, FUN = function(x) x[, -1, drop = FALSE])
-    }
-  
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   
   

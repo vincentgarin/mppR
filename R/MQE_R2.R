@@ -9,8 +9,9 @@
 #' position one is a parental effect, position two a bi-allelic QTL, etc.
 #' The type of effect of the QTL position are specified in \code{Q.eff}.
 #' 
-#' For details about the different types of R squared computation and adjustement
-#' look at function \code{\link{QTL_R2}}.
+#' The R squared computation is done using a linear model
+#' corresponding to \code{VCOV = 'h.err'} For more details about R squared
+#' computation and adjustement look at function \code{\link{QTL_R2}}.
 #'
 #' @param mppData An IBD object of class \code{mppData}
 #' See \code{\link{mppData_form}} for details. Default = NULL.
@@ -36,18 +37,6 @@
 #' position, parents with the same value are assumed to inherit from the same
 #' ancestor. for more details, see \code{\link{USNAM_parClu}} and
 #' \code{\link{parent_cluster}}. Default = NULL.
-#'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
-#'
-#' @param LR.R2 \code{Logical} value. If \code{LR.R2 = TRUE}, the likelihood ratio
-#' R squared will be used if \code{VCOV = "cr.err"}. In all other situations
-#' R squared from a linear model will be computed. Default = TRUE.
 #'
 #' @param glb.only \code{Logical} value. If \code{LR.R2 = TRUE}, only the global
 #' and global adjusted R squared will be returned. Default = FALSE.
@@ -110,33 +99,26 @@
 
 
 MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-                   par.clu = NULL, VCOV = "h.err", LR.R2 = TRUE,
-                   glb.only = FALSE){
+                   par.clu = NULL, glb.only = FALSE){
   
   # 1. check the data format
   ##########################
   
   check.MQE(mppData = mppData, mppData_bi =  mppData_bi, Q.eff = Q.eff,
-            VCOV = VCOV, par.clu = par.clu, QTL = QTL, fct = "R2")
-  
-  if((VCOV == "cr.err") & (!LR.R2)) VCOV <-  "h.err"
+            par.clu = par.clu, QTL = QTL, fct = "R2")
   
   # 2. elements for the model
   ###########################
   
-  ### 2.1 inverse of the pedigree matrix
-  
-  # formPedMatInv(mppData = mppData, VCOV = VCOV)
-  
-  ### 2.2 cross matrix (cross intercept)
+  ### 2.1 cross matrix (cross intercept)
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.3 parent matrix
+  ### 2.2 parent matrix
   
   parent.mat <- IncMat_parent(mppData)
   
-  ### 2.4 modify the par.clu object order parents columns and replace
+  ### 2.3 modify the par.clu object order parents columns and replace
   # monomorphic
   
   if ("anc" %in% Q.eff) {
@@ -147,7 +129,7 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   } else {par.clu <- NULL}
   
   
-  ### 2.5 Formation of the list of QTL incidence matrices
+  ### 2.4 Formation of the list of QTL incidence matrices
   
   # order list of QTL positions
   
@@ -177,14 +159,9 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
       
     } else {
       
-      Q <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
-                      par.clu = par.clu, cross.mat = cross.mat,
-                      par.mat = par.mat)
-      
-      # apply a constraint (remove 1st column) if par or anc Q.eff
-      
-      if((Q.eff == "par") | (Q.eff == "anc")) Q[, -1, drop = FALSE] else Q
-      
+      IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
+                 par.clu = par.clu, cross.mat = cross.mat,
+                 par.mat = par.mat)
       
     }
     
@@ -195,159 +172,80 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
                                    par.clu = par.clu, cross.mat = cross.mat,
                                    par.mat = parent.mat), SIMPLIFY = FALSE)
   
-  # count the number of QTL elements for degree of freedom
-  
-  zi <- vapply(X = Q.list, function(x) dim(x)[2], FUN.VALUE = numeric(1))
-  
   n.QTL <- length(Q.list)
   
   # 3. Compute the R squared
   ##########################
   
-  if(VCOV == "cr.err"){
+  ### 3.1 Global adjusted and unadjusted linear R squared
+  
+  R2.all <- R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list))
+  
+  R2 <- R2.all[[1]]
+  R2.adj <- R2.all[[2]]
+  df.full <- R2.all[[3]]
+  
+  if(glb.only) {
     
-    ### 3.1 Global adjusted and unadjusted linear R squared
-    
-    R2.all <- R2_LR(mppData = mppData, QTL = do.call(cbind, Q.list))
-    R2 <- R2.all[1]
-    R2.adj <- R2.all[2]
-    
-    if(glb.only) {
-      
-      return(list(glb.R2 = R2, glb.adj.R2 = R2.adj))
-      
-    } else {
-      
-      if(n.QTL > 1){
-        
-        ### 3.2 Compute the partial R squared
-        
-        # functions to compute the R squared or all QTL minus 1 or only 1 QTL position
-        
-        part.R2.diff <- function(x, QTL, mppData) {
-          R2_LR(mppData = mppData, QTL = do.call(cbind, Q.list[-x]))[1]
-        }
-        
-        part.R2.sg <- function(x, QTL, mppData) {
-          R2_LR(mppData = mppData, QTL = do.call(cbind, Q.list[x]))[1]
-        }
-        
-        R2_i.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, QTL = Q.list,
-                           mppData = mppData)
-        
-        R2_i.dif <- R2 - unlist(R2_i.dif) # difference full model and model minus i
-        
-        R2_i.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, QTL = Q.list,
-                          mppData = mppData)
-        
-        R2_i.sg <- unlist(R2_i.sg)
-        
-        N <- sum(!is.na(mppData$trait[, 1]))
-        
-        # adjust the values
-        
-        
-        R2_i.dif.adj <- R2_i.dif - ((zi/(N - zi - mppData$n.cr)) * (100 - R2_i.dif))
-        
-        R2_i.sg.adj <- R2_i.sg - ((zi/(N-zi-mppData$n.cr)) * (100 - R2_i.sg))
-        
-        names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
-        names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
-        
-        return(list(glb.R2 = R2,
-                    glb.adj.R2 = R2.adj,
-                    part.R2.diff = R2_i.dif,
-                    part.adj.R2.diff = R2_i.dif.adj,
-                    part.R2.sg = R2_i.sg,
-                    part.adj.R2.sg = R2_i.sg.adj))
-        
-      } else {
-        
-        names(R2) <- names(R2.adj) <- "Q1"
-        
-        return(list(glb.R2 = R2,
-                    glb.adj.R2 = R2.adj,
-                    part.R2.diff = R2,
-                    part.adj.R2.diff = R2.adj,
-                    part.R2.sg = R2,
-                    part.adj.R2.sg = R2.adj))
-      }
-      
-    }
-    
-    
+    return(list(glb.R2 = R2, glb.adj.R2 = R2.adj))
     
   } else {
     
-    # linear model and other VCOV (pedigree, pedigree_cr.err)
-    
-    ### 3.1 Global adjusted and unadjusted linear R squared
-    
-    R2.all <- R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list))
-    R2 <- R2.all[1]
-    R2.adj <- R2.all[2]
-    
-    if(glb.only) {
+    if(n.QTL > 1){
       
-      return(list(glb.R2 = R2, glb.adj.R2 = R2.adj))
+      ### 3.2 Compute the partial R squared
+      
+      # functions to compute the R squared or all QTL minus 1 or only 1 QTL position
+      
+      part.R2.diff <- function(x, QTL, mppData) {
+        R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[-x]))
+      }
+      
+      part.R2.sg <- function(x, QTL, mppData) {
+        R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[x]))
+      }
+      
+      R2.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, QTL = Q.list,
+                       mppData = mppData)
+      
+      R2_i.dif <- lapply(X = R2.dif, FUN = function(x) x[[1]])
+      zi <- lapply(X = R2.dif, FUN = function(x) x[[3]])
+      zi <- df.full - unlist(zi)
+      
+      R2_i.dif <- R2 - unlist(R2_i.dif) # difference full model and model minus i
+      
+      R2.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, QTL = Q.list,
+                      mppData = mppData)
+      
+      R2_i.sg <- unlist(lapply(X = R2.sg, FUN = function(x) x[[1]]))
+      R2_i.sg.adj <- unlist(lapply(X = R2.sg, FUN = function(x) x[[2]]))
+      
+      N <- sum(!is.na(mppData$trait[, 1]))
+      
+      # adjust the values
+      
+      R2_i.dif.adj <- R2_i.dif - ((zi/(N - zi - mppData$n.cr)) * (100 - R2_i.dif))
+      
+      names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
+      names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
+      
+      return(list(glb.R2 = R2,
+                  glb.adj.R2 = R2.adj,
+                  part.R2.diff = R2_i.dif,
+                  part.adj.R2.diff = R2_i.dif.adj,
+                  part.R2.sg = R2_i.sg,
+                  part.adj.R2.sg = R2_i.sg.adj))
       
     } else {
       
-      if(n.QTL > 1){
-        
-        ### 3.2 Compute the partial R squared
-        
-        # functions to compute the R squared or all QTL minus 1 or only 1 QTL position
-        
-        part.R2.diff <- function(x, QTL, mppData) {
-          R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[-x]))[1]
-        }
-        
-        part.R2.sg <- function(x, QTL, mppData) {
-          R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[x]))[1]
-        }
-        
-        R2_i.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, QTL = Q.list,
-                           mppData = mppData)
-        
-        R2_i.dif <- R2 - unlist(R2_i.dif) # difference full model and model minus i
-        
-        R2_i.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, QTL = Q.list,
-                          mppData = mppData)
-        
-        R2_i.sg <- unlist(R2_i.sg)
-        
-        N <- sum(!is.na(mppData$trait[, 1]))
-        
-        # adjust the values
-        
-        
-        R2_i.dif.adj <- R2_i.dif - ((zi/(N - zi - mppData$n.cr)) * (100 - R2_i.dif))
-        
-        R2_i.sg.adj <- R2_i.sg - ((zi/(N-zi-mppData$n.cr)) * (100 - R2_i.sg))
-        
-        names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
-        names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
-        
-        return(list(glb.R2 = R2,
-                    glb.adj.R2 = R2.adj,
-                    part.R2.diff = R2_i.dif,
-                    part.adj.R2.diff = R2_i.dif.adj,
-                    part.R2.sg = R2_i.sg,
-                    part.adj.R2.sg = R2_i.sg.adj))
-        
-      } else {
-        
-        names(R2) <- names(R2.adj) <- "Q1"
-        
-        return(list(glb.R2 = R2,
-                    glb.adj.R2 = R2.adj,
-                    part.R2.diff = R2,
-                    part.adj.R2.diff = R2.adj,
-                    part.R2.sg = R2,
-                    part.adj.R2.sg = R2.adj))
-      }
+      names(R2) <- names(R2.adj) <- "Q1"
       
+      return(list(glb.R2 = R2,
+                  glb.adj.R2 = R2.adj,
+                  part.R2.diff = R2,
+                  part.adj.R2.diff = R2.adj,
+                  part.R2.sg = R2,
+                  part.adj.R2.sg = R2.adj))
     }
     
   }

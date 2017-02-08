@@ -154,14 +154,11 @@ to obtain a result.
 data(USNAM_mppData)
 data(USNAM_mppData_bi)
 
-# Cross-specific model
-######################
-
 SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
 est.gen.eff = TRUE)
 
 plot_QTLprof(Qprof = SIM)  
-plot_genEffects(Qprof = SIM)
+plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr")
 
 \dontrun{
 
@@ -231,7 +228,6 @@ association mapping. Heredity, 108(3), 332-340.
 }
 \seealso{
 \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-\code{\link{plot_genEffects}},
-\code{\link{USNAM_parClu}}
+\code{\link{plot_genEffects}}, \code{\link{USNAM_parClu}}
 }
 

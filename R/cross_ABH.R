@@ -81,11 +81,11 @@
 #' @import nlme
 #' @import parallel
 #' @import qtl
-#' @import stats
 #' @import methods
 #' @import utils
 #' @import grDevices
 #' @import graphics
+#' @import igraph
 #' 
 #' 
 #' @export

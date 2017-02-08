@@ -44,7 +44,8 @@ QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
   } else if ((VCOV == "h.err.as") || (VCOV == "cr.err")) {
     
     dataset <- data.frame(QTL = do.call(cbind, Q.list),
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1])
     
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
@@ -60,7 +61,8 @@ QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
   } else if ((VCOV == "pedigree") || (VCOV == "ped_cr.err")) {
     
     dataset <- data.frame(QTL = do.call(cbind, Q.list),
-                          cr.mat = factor(mppData$cross.ind),
+                          cr.mat = factor(mppData$cross.ind,
+                                          levels = unique(mppData$cross.ind)),
                           trait = mppData$trait[, 1],
                           genotype = mppData$geno.id)
     

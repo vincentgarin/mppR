@@ -168,14 +168,9 @@ MQE_BackElim <- function (mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
       
     } else {
       
-      Q <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
+      IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
                       par.clu = par.clu, cross.mat = cross.mat,
                       par.mat = par.mat)
-      
-      # apply a constraint (remove 1st column) if par or anc Q.eff
-      
-      if((Q.eff == "par") | (Q.eff == "anc")) Q[, -1, drop = FALSE] else Q
-      
       
     }
     

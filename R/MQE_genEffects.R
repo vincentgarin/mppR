@@ -16,16 +16,18 @@
 #' coming from the parent 1 or A. All effects are given in absolute value with
 #' the parent that cary the positive allele.
 #' 
-#' For the parental or ancestral models (\code{Q.eff = "par"
-#' or "anc"}), the genetic effects represent the effect of a single parental
-#' (ancestral) allele with respect to a reference allelele. The reference
-#' parental (ancestral) allele can be specified in the argument
-#' \code{par.ref}. For the ancestral model, the ancestral class inferred
-#' for the specified parent will be used as reference. For the parental and
-#' ancestral model computed with the homogeneous residual term assumption
-#' (\code{VCOV = "h.err"}), it is also possible to estimate one effect for
-#' each parental (ancestral) allele with the constraint that these effects
-#' sum to zero. This can be done using (\code{const = "sum.0"}).
+#' For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), one
+#' parental (ancestral) allele is set as reference per connected part of the
+#' design. Effects of the other alleles are estimated as deviation with respect
+#' to the reference. For more details about reference definition see
+#' \code{\link{QTL_genEffects}} and \code{\link{design_connectedness}} .
+#' 
+#' The user can specify if the allele effect that should be put as reference
+#' within connected parts are the most or less used one setting argument
+#' \code{ref.all.most = TRUE or FALSE}. Allele usage is first defined
+#' in term of number of crosses where the allele segregates. Then, if two
+#' alleles segregate in an equal number of crosses, we look at the total cross
+#' sizes. For example in a NAM design the central parent is the most used allele. 
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 #' represent the effects of a single allele copy of the most frequent allele.
@@ -72,11 +74,14 @@
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #' 
-#' @param par.ref \code{Character} expression indicating the parent or the
-#' ancestral class containing the specified parent that will be set as reference
-#' for the computation of the genetic effect. By default
-#' the function will use the first parent of the \code{mppData$parents} list.
-#' Default = NULL.
+#' @param ref.all.most \code{Logical} value specifying which parental
+#' (ancestral) allele should be used as reference. If
+#' \code{ref.all.most = TRUE}, within each connected part of the design,
+#' the most used allele will be used as reference. Allele usage is first defined
+#' in term of number of crosses where the allele segregates. Then, if two
+#' alleles segregate in an equal number of crosses, we look at the total cross
+#' sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
+#' reference within each connected part. Default = TRUE.
 #'
 #' @return Return:
 #'
@@ -91,6 +96,8 @@
 #' \item{P-value of the test statistics.}
 #' \item{Significance of the QTL effects.}
 #' \item{For cross-specific model, parent with the positive additive effects.}
+#' \item{For parental and ancestral model, indicator of connected part of the
+#' design and reference.}
 #' \item{Allele scores of the parents if \code{geno.par} is non NULL
 #' in the \code{mppData} object.}
 #' 
@@ -124,28 +131,25 @@
 #' par.clu <- par.clu[rownames(par.clu) %in% com.mk.list, ]
 #' 
 #' 
-#' QTL <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
+#' QTL.res <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
 #'                    Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
 #' 
-#' 
-#' QTL.effects <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
-#'                               QTL = QTL[, 1], Q.eff = QTL[, 5],
-#'                               par.clu = par.clu)
+#' QTL.eff <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
+#'                           QTL = QTL.res[, 1], Q.eff = QTL.res[, 5],
+#'                           par.clu = par.clu)
 #'
 #' @export
 #'
 
 
 MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-                           par.clu = NULL, VCOV = "h.err", par.ref = NULL){
+                           par.clu = NULL, VCOV = "h.err", ref.all.most = TRUE){
   
   # 1. check the data format
   ##########################
   
   check.MQE(mppData = mppData, mppData_bi =  mppData_bi, Q.eff = Q.eff,
             VCOV = VCOV, par.clu = par.clu, QTL = QTL, fct = "QTLeffects")
-  
-  if(is.null(par.ref)){ par.ref <- mppData$parents[1]}
   
   
   # 2. elements for the model
@@ -178,12 +182,12 @@ MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   # order list of QTL positions
   
   Q.pos <- vapply(X = QTL,
-                  FUN = function(x, mppData) which(mppData$map[,1] == x),
+                  FUN = function(x, mppData) which(mppData$map[, 1] == x),
                   FUN.VALUE = numeric(1), mppData = mppData)
   
   Q.ord <- data.frame(QTL, Q.eff, Q.pos, stringsAsFactors = FALSE)
   
-  Q.ord <- Q.ord[order(Q.pos),]
+  Q.ord <- Q.ord[order(Q.pos), ]
   
   QTL <- Q.ord[, 1]; Q.eff <- Q.ord[, 2]
   
@@ -191,48 +195,30 @@ MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   
   # form a list of QTL incidence matrices with different type of QTL effect.
   
-  # function to produce different type of QTL incidence matricdes
   
-  IncMat_QTL_MQE <- function(x, mppData, mppData_bi, Q.eff, par.clu,
-                             cross.mat, par.mat, par.ref){
-    
-    if(Q.eff == "biall") {
-      
-      IncMat_QTL(x = x, mppData = mppData_bi, Q.eff = Q.eff, par.clu = par.clu,
-                 cross.mat = cross.mat, par.mat = par.mat)
-      
-    } else {
-      
-      Q <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
-                      par.clu = par.clu, cross.mat = cross.mat,
-                      par.mat = par.mat)
-      
-      # apply a constraint remove the reference parent column
-      
-      if(Q.eff == "par") { Q[, -which(colnames(Q) == par.ref), drop = FALSE] }
-      
-      else if (Q.eff == "anc"){
-        
-        clu.info <- par.clu[x, ]
-        clu.to.remove <- clu.info[names(clu.info) == par.ref]
-        alleles <- as.numeric(substr(colnames(Q), 9, nchar(colnames(Q))))
-        Q[, -which(alleles == clu.to.remove), drop = FALSE]
-        
-      } else { Q }
-      
-    }
-    
-  }
+  QTL.inc <- mapply(FUN = IncMat_QTL_MQE_Qeff, x = Q.pos, Q.eff = Q.eff,
+                    MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
+                                    par.clu = par.clu, cross.mat = cross.mat,
+                                    par.mat = parent.mat,
+                                    ref.all.most = ref.all.most),
+                    SIMPLIFY = FALSE)
   
-  Q.list <- mapply(FUN = IncMat_QTL_MQE, x = Q.pos, Q.eff = Q.eff,
-                   MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
-                                   par.clu = par.clu, cross.mat = cross.mat,
-                                   par.mat = parent.mat, par.ref = par.ref),
-                   SIMPLIFY = FALSE)
+  # Extract individual components from QTL.inc
   
+  Q.list <- lapply(X = QTL.inc, FUN = function(x) x$Q)
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   
   n.QTL <- length(Q.list)
+  
+  con.part <- lapply(X = QTL.inc, FUN = function(x) x$con.part)
+  
+  allele_ref <- lapply(X = QTL.inc, FUN = function(x) x$allele_ref)
+  
+  n.Qallele <- lapply(X = Q.list, FUN = function(x) dim(x)[2])
+  Q.ind <- mapply(FUN = function(x, i) rep(paste0("Q", i), x[1]),
+                  x = n.Qallele, i = 1:n.QTL)
+  Q.ind <- unlist(Q.ind)
+  
   
   # 3. Compute the model
   ######################
@@ -240,70 +226,70 @@ MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   model <- QTLModelQeff(mppData = mppData, trait = mppData$trait[, 1],
                         cross.mat = cross.mat, Q.list = Q.list, VCOV = VCOV)
   
+  
   # 4. Results processing
   #######################
   
+  # 4.1 re-arrange model results
+  
+  
   if(VCOV == "h.err"){
     
-    res.prov <- summary(model)$coefficients
-    index <- (substr(rownames(res.prov), 1, 1) == "Q")
-    res.prov <- subset(x = res.prov, subset = index, drop = FALSE)
+    results <- summary(model)$coefficients
+    index <- (substr(rownames(results), 1, 1) == "Q")
+    results <- subset(x = results, subset = index, drop = FALSE)
     
-    # check singular values
+    ref.names <- names(coef(model))[-c(1:mppData$n.cr)]
     
-    Q.names <- function(x, Q.list){
-      if(dim(Q.list[[x]])[2] == 1) {paste0("Q", x)} else {
-        paste0("Q", x, attr(Q.list[[x]], "dimnames")[[2]])
-      }
-    }
+    ref.mat <- matrix(rep(c(0, 0, 0, 1), length(ref.names)),
+                      nrow = length(ref.names), byrow = TRUE)
     
-    names.QTL <- unlist(lapply(X = 1:n.QTL, FUN = Q.names, Q.list = Q.list))
+    index <- match(rownames(results), ref.names)
+    ref.mat[index, ] <- results
+    rownames(ref.mat) <- ref.names
     
-    results <- matrix(NA, length(names.QTL), 4)
-    results[names.QTL %in% rownames(res.prov), ] <- res.prov
-    rownames(results) <- names.QTL
+    # add sign stars
     
+    Sign <- sapply(ref.mat[, 4], FUN = sign.star)
+    results <- data.frame(ref.mat, Sign, stringsAsFactors = FALSE)
+    
+    # split the results per QTLs
+    
+    Q.res <- split(x = results,
+                   f = factor(Q.ind, levels = paste0("Q", 1:n.QTL)))
     
   } else {
+    
     
     index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
     
     w.table <- wald(model)
     w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
     
-    results <- data.frame(rev(model$coefficients$fixed)[index],
-                          rev(sqrt(model$vcoeff$fixed))[index],
-                          w.stat)
+    results <- cbind(rev(model$coefficients$fixed)[index],
+                     rev(sqrt(model$vcoeff$fixed))[index], w.stat)
+    colnames(results) <- paste0("v", 1:4)
     
-    results[results[, 1] == 0, ] <- NA # replace singular values
+    # add sign stars
+    
+    Sign <- sapply(results[, 4], FUN = sign.star)
+    results <- data.frame(results, Sign, stringsAsFactors = FALSE)
+    
+    # split the results per QTLs
+    
+    Q.res <- split(x = results,
+                   f = factor(Q.ind, levels = paste0("Q", 1:n.QTL)))
     
   }
   
+  # 4.2 results processing
   
-  # add sign. stars
-  
-  stars <- sapply(results[, 4], FUN = sign.star)
-  
-  results <- data.frame(results, stars, stringsAsFactors = FALSE)
-  
-  colnames(results) <- c("Effect", "Std. Err.", "Test stat.", "p-value", "sign.")
-  
-  if(VCOV == "h.err"){colnames(results)[3] <- "t-test"} else {
-    colnames(results)[3] <- "W-stat"}
-  
-  # split the results per QTLs
-  
-  Q.el <- unlist(lapply(X = Q.list, FUN = function(x) dim(x)[2]))
-  index <- factor(paste0("Q", rep(1:n.QTL, Q.el)), levels = paste0("Q", 1:n.QTL))
-  
-  results <- split(x = results, f = index)
-  
-  results <- lapply(X = 1:n.QTL, FUN = MQE_eff_res_processing, mppData = mppData,
-                    mppData_bi = mppData_bi, Q.eff = Q.eff, results = results,
-                    Q.pos = Q.pos, Q.list = Q.list, par.clu = par.clu,
-                    VCOV = VCOV)
+  results <- mapply(Qeff_res_processing_MQE, Q.res = Q.res, Q.eff = Q.eff,
+                    Q.pos = Q.pos, con.part = con.part, allele_ref = allele_ref,
+                    Q.nb = 1:n.QTL, MoreArgs = list(mppData = mppData,
+                    mppData_bi = mppData_bi, par.clu = par.clu, VCOV = VCOV),
+                    SIMPLIFY = FALSE)
   
   return(results)
-  
   
 }

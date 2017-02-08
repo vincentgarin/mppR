@@ -8,43 +8,32 @@
 
 QTL_pval <- function(mppData, model, Q.eff, x, par.clu) {
   
-  index <- which(substr(rownames(summary(model)$coefficients),1,3)=="QTL")
-  coeffs <- summary(model)$coefficients[index, , drop = FALSE]
+  coeffs <- coef(model)
+  index <- which(substr(names(coeffs), 1, 3) == "QTL")
+  coeffs <- coeffs[index]
+  
+  var.comp <- sqrt(diag(vcov(model)))
+  index <- which(substr(names(var.comp), 1, 3) == "QTL")
+  var.comp <- var.comp[index]
+  
+  var.comp.full <- rep(NA, length(coeffs))
+  var.comp.full[match(names(var.comp), names(coeffs))] <- var.comp
+  
+  pval <- 2 * pt(q = abs(coeffs/var.comp.full),
+                 df = df.residual(model), lower.tail = FALSE)
+  pval <- pval * sign(coeffs)
+  
+  names(pval) <- substr(names(pval), 4, nchar(names(pval)))
   
   if (Q.eff == "cr") {
     
-    coeffs2 <- matrix(1, mppData$n.cr, 4)
-    Q.ind <- substr(rownames(coeffs), 6, nchar(rownames(coeffs)))
-    coeffs2[(unique(mppData$cross.ind) %in% Q.ind), ] <- coeffs
+    pval <- pval[paste0("Cr", unique(mppData$cross.ind))]
     
     
-  } else if (Q.eff == "par") {
+  } else if (Q.eff == "anc") {
     
-    coeffs2 <- matrix(1, mppData$n.par, 4)
-    Q.ind <- substr(rownames(coeffs), 4, nchar(rownames(coeffs)))
-    coeffs2[(mppData$parents %in% Q.ind), ] <- coeffs
-    
-    pval <- coeffs2[, 4] * sign(coeffs2[, 1])
-    
-    
-  } else if (Q.eff=="anc") {
-    
-    n.anc <- length(unique(par.clu[x, ]))
-    coeffs2 <- matrix(1, n.anc, 4)
-    Q.ind <- substr(rownames(coeffs), 12, nchar(rownames(coeffs)))
-    coeffs2[(unique(par.clu[x, ]) %in% as.numeric(Q.ind)), ] <- coeffs
-    
-  }
-  
-  pval <- coeffs2[, 4] * sign(coeffs2[, 1])
-  
-  if(Q.eff == "anc") {
-    
-    # distribute the ancestor p-value
-    
-    A.allele <- as.factor(par.clu[x, ])
-    A <- model.matrix(~ A.allele - 1)
-    pval <- as.vector(A %*% pval)
+    ref.all <- paste0("A.allele", par.clu[x, ])
+    pval <- pval[ref.all]
     
   }
   

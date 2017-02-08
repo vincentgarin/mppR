@@ -53,19 +53,11 @@ Return:
 
 \item{glb.R2 }{ Global predicted R squared of all QTL terms.}
 
-\item{glb.adj.R2 }{ Global predicted adjusted R squared of all QTL terms.}
-
 \item{part.R2.diff }{ Vector of predicted partial R squared doing
 the difference between the full model and a model minus the ith QTL.}
 
-\item{part.adj.R2.diff }{ Vector of predicted partial adjusted R squared
-doing the difference between the full model and a model minus the ith QTL.}
-
 \item{part.R2.sg }{ Vector of predicted partial R squared using only the
 ith QTL.}
-
-\item{part.adj.R2.sg }{ Vector of predicted partial adjusted R squared using
-only the ith QTL.}
 }
 \description{
 Computes predicted R squared in a validation set using QTLs detected in a
@@ -84,8 +76,7 @@ Partial R squared statistics are also calculated for each individual position.
 Two types or partial R squared are computed. The first one making the
 difference between the global R squared and the R squared computed without
 the ith position (difference R squared). The second method only uses
-the ith QTL for trait values predition (single R squared). All predicted R
-squared can be adjusted using formula 2 from Utz et al. (2000) (for details
+the ith QTL for trait values predition (single R squared) (for details
 see documentation of the function \code{\link{QTL_R2}}).
 
 \strong{WARNING!} The estimation of the random pedigree models
@@ -117,12 +108,6 @@ QTL_pred_R2(mppData.ts = mppData.ts, mppData.vs = mppData.vs, QTL = QTL)
 }
 \author{
 Vincent Garin
-}
-\references{
-Utz, H. F., Melchinger, A. E., & Schon, C. C. (2000). Bias and sampling error
-of the estimated proportion of genotypic variance explained by quantitative
-trait loci determined from experimental data in maize using cross validation
-and validation with independent samples. Genetics, 154(4), 1839-1849.
 }
 \seealso{
 \code{\link{mppData_form}}, \code{\link{parent_cluster}},

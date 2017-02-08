@@ -22,326 +22,385 @@
 
 # par.clu: parental clustering object
 
-# par.ref: parent reference indicator
+# allele_ref: list of parental (ancestral) alleles used as reference
 
-# const: type of constraint
+# con.part: list of connected parts
 
 Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
-                                Q.eff, par.clu, VCOV, par.ref, const){
+                                Q.eff, par.clu, VCOV, allele_ref, con.part){
   
   n.QTL <- length(Q.list)
   
-  # deal with the two case where 
-  
-  if(const == "sum.0"){
+  if(VCOV == "h.err"){
     
     results <- summary(model)$coefficients
     index <- (substr(rownames(results), 1, 1) == "Q")
     results <- subset(x = results, subset = index, drop = FALSE)
     
-    if(Q.eff == "par"){
-      
-      # fill the reference parent value
-      
-      ref.mat <- matrix(NA, nrow = (mppData$n.par* n.QTL), ncol = 4)
-      
-      # fill the potential singular values
-      
-      parents.ind <- rep(mppData$parents, times = n.QTL)
-      ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
-                          parents.ind)
-      ref.mat[ref.names %in% rownames(results), ] <- results
-      rownames(ref.mat) <- ref.names
-      
-      return(ref.mat)
-      
-    } else if (Q.eff == "anc"){
-      
-      
-      n.anc.al <- unlist(lapply(X = Q.list, FUN = function(x) dim(x)[2]))
-      Q.names <- names(n.anc.al)
-      QTL.ind <- rep(Q.names, time = n.anc.al)
-      n.anc.al <- sum(n.anc.al)
-      
-      ref.mat <- matrix(NA, nrow = n.anc.al, ncol = 4)
-      
-      anc.all.name <- function(x, Q.list) {paste0("Q", x, colnames(Q.list[[x]]))}
-      
-      all.ind <- unlist(lapply(X = 1:n.QTL, FUN = anc.all.name, Q.list = Q.list))
-      
-      
-      ref.mat[(all.ind %in% rownames(results)), ] <- results
-      rownames(ref.mat) <- all.ind
-      
-      # project into the parents
-      
-      Qeff.mat <- c()
-      
-      for(i in 1:n.QTL){
-        
-        Q.mat <- ref.mat[QTL.ind == names(Q.list)[i], ]
-        A.allele <- factor(par.clu[which(rownames(par.clu) == QTL[i, 1]), ])
-        A <- model.matrix(~ A.allele - 1)
-        Q.mat[is.na(Q.mat)] <- 9999 # replace NA before proejction
-        Q.mat <- A %*% Q.mat
-        Q.mat[Q.mat == 9999] <- NA
-        Qeff.mat <- rbind(Qeff.mat, Q.mat)
-        
-      }
-      
-      colnames(Qeff.mat) <- colnames(ref.mat)
-      parents.ind <- rep(mppData$parents, n.QTL)
-      ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
-                          parents.ind)
-      rownames(Qeff.mat) <- ref.names
-      
-      return(Qeff.mat)
-      
-    }
+    # possibility to define here the reference names using names(coef(model))
+    # Then make the filling of the NA values.
+    
+    # Then we will assume that for the mixed model we get automatically
+    # all estimated values...
     
   } else {
     
-    if(VCOV == "h.err"){
+    index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
+    
+    w.table <- wald(model)
+    w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
+    
+    results <- cbind(rev(model$coefficients$fixed)[index],
+                     rev(sqrt(model$vcoeff$fixed))[index], w.stat)
+    results <- as.matrix(results)
+    
+    if(Q.eff == "biall"){ rownames(results) <- paste0("Q", 1:n.QTL) }
+    
+  }
+  
+  # control for singular values and fill missing values
+  
+  if (Q.eff == "cr"){
+    
+    ref.mat <- matrix(rep(c(0, 0, 0, 1), (mppData$n.cr * n.QTL)),
+                      nrow = (mppData$n.cr * n.QTL), byrow = TRUE)
+    ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.cr),
+                        rep(colnames(cross.mat), times = n.QTL))
+    
+    index <- match(rownames(results), ref.names)
+    ref.mat[index, ] <- results
+    rownames(ref.mat) <- ref.names
+    
+    # add sign stars
+    
+    Sign <- sapply(ref.mat[, 4], FUN = sign.star)
+    
+    results <- data.frame(ref.mat, Sign, stringsAsFactors = FALSE)
+    
+    Qeff.mat <- vector(mode = "list", n.QTL)
+    
+    Q.id <- paste0("Q", 1:n.QTL)
+    Q.ind <- rep(Q.id, each = mppData$n.cr)
+    
+    for(i in 1:n.QTL){
       
-      results <- summary(model)$coefficients
-      index <- (substr(rownames(results), 1, 1) == "Q")
-      results <- subset(x = results, subset = index, drop = FALSE)
+      # subset QTL
       
-      # control for singular values and fill missing values
+      Qi <- results[Q.ind == Q.id[i], ]
       
-      if (Q.eff == "cr"){
+      # add additive parent
+      
+      sign.eff <- sign(Qi[, 1])
+      test.sign <- function(x){ if((x == 0)){NA} else if(x < 0){2} else{3}}
+      
+      par.add.id <- unlist(lapply(sign.eff, FUN = test.sign))
+      Add.parent <- diag(mppData$par.per.cross[1:mppData$n.cr, par.add.id])
+      
+      Qi <- data.frame(Qi, Add.parent, stringsAsFactors = FALSE)
+      
+      # add parent genotype (if given)
+      
+      if(!is.null(mppData$geno.par)){
         
-        ref.mat <- matrix(NA, nrow = (mppData$n.cr * n.QTL), ncol = 4)
-        ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.cr),
-                            rep(colnames(cross.mat), times = n.QTL))
-        ref.mat[ref.names %in% rownames(results), ] <- results
-        rownames(ref.mat) <- ref.names
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+                                    5:dim(mppData$geno.par)[2]]
+        Par.all <- unlist(Par.all)[Add.parent]
         
-        return(ref.mat)
-        
-      } else if (Q.eff == "par"){
-        
-        # fill the reference parent value
-        
-        ref.mat <- matrix(NA, nrow = (mppData$n.par* n.QTL), ncol = 4)
-        parents.ind <- rep(mppData$parents, times = n.QTL)
-        ref.mat[parents.ind %in% par.ref, ] <- matrix(rep(c(0, 0, 0, 1), n.QTL),
-                                                      nrow = n.QTL, byrow = TRUE)
-        
-        # fill the potential singular values
-        
-        ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
-                            parents.ind)
-        ref.mat[ref.names %in% rownames(results), ] <- results
-        rownames(ref.mat) <- ref.names
-        
-        return(ref.mat)
-        
-      } else if (Q.eff == "anc") {
-        
-        # fill the reference ancestral allele value
-        
-        n.anc.al <- unlist(lapply(X = Q.list, FUN = function(x) dim(x)[2]))
-        
-        # change the name of the individual ancestral class
-        
-        if(sum(n.anc.al == 1) > 0){
-          
-          QTL.name <- names(n.anc.al[n.anc.al == 1])
-          QTL.nb <- which(n.anc.al == 1)
-          new.names <- lapply(X = QTL.nb,
-                              FUN = function(x, Q.list) colnames(Q.list[[x]]),
-                              Q.list = Q.list)
-          new.names <- paste0(QTL.name, unlist(new.names))
-          
-          row.names <- rownames(results)
-          row.names[row.names %in% QTL.name] <- new.names
-          rownames(results) <- row.names
-          
-        }
-        
-        Q.names <- names(n.anc.al)
-        QTL.ind <- rep(Q.names, time = (n.anc.al + 1))
-        n.anc.al <- sum((n.anc.al + 1))
-        
-        ref.mat <- matrix(NA, nrow = n.anc.al, ncol = 4)
-        
-        anc.allele <- function(x, par.clu, QTL, par.ref){
-          
-          clu.info <- par.clu[which(rownames(par.clu) == QTL[x, 1]), ]
-          clu.to.remove <- clu.info[names(clu.info) == par.ref]
-          allele <- sort(unique(clu.info))
-          
-          ref.all <- paste0("Q", x, "A.allele", clu.to.remove)
-          all.ind <- paste0("Q", x, "A.allele", allele)
-          
-          list(ref.all = ref.all, all.ind = all.ind)
-          
-        }
-        
-        anc.ind <- lapply(X = 1:n.QTL, FUN = anc.allele, par.clu = par.clu,
-                          QTL = QTL, par.ref = par.ref)
-        
-        all.ind <- unlist(lapply(X = anc.ind, FUN = function(x) x$all.ind))
-        ref.all <- unlist(lapply(X = anc.ind, FUN = function(x) x$ref.all))
-        
-        
-        ref.mat[(all.ind %in% ref.all), ] <- matrix(rep(c(0, 0, 0, 1), n.QTL),
-                                                    nrow = n.QTL, byrow = TRUE)
-        
-        # fill the potential singular values
-        
-        ref.mat[(all.ind %in% rownames(results)), ] <- results
-        rownames(ref.mat) <- all.ind
-        
-        # project into the parents
-        
-        Qeff.mat <- c()
-        
-        for(i in 1:n.QTL){
-          
-          Q.mat <- ref.mat[QTL.ind == names(Q.list)[i], ]
-          A.allele <- factor(par.clu[which(rownames(par.clu) == QTL[i, 1]), ])
-          A <- model.matrix(~ A.allele - 1) 
-          Q.mat[is.na(Q.mat)] <- 9999 # replace NA before proejction
-          Q.mat <- A %*% Q.mat
-          Q.mat[Q.mat == 9999] <- NA
-          Qeff.mat <- rbind(Qeff.mat, Q.mat)
-          
-        }
-        
-        colnames(Qeff.mat) <- colnames(ref.mat)
-        parents.ind <- rep(mppData$parents, n.QTL)
-        ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
-                            parents.ind)
-        rownames(Qeff.mat) <- ref.names
-        
-        return(Qeff.mat)
-        
-      } else if (Q.eff == "biall"){
-        
-        ref.mat <- matrix(NA, nrow = n.QTL, ncol = 4)
-        ref.names <- paste0("Q", 1:n.QTL)
-        
-        ref.mat[ref.names %in% rownames(results), ] <- results
-        rownames(ref.mat) <- ref.names
-        
-        return(ref.mat)
+        Qi <- data.frame(Qi, Par.all, stringsAsFactors = FALSE)
         
       }
       
+      # add column names
       
+      if(VCOV == "h.err"){
+        col.names <- c("Effect", "Std.Err", "t-test", "p-value")
+      } else {col.names <- c("Effect", "Std.Err", "W-stat", "p-value")}
       
-    } else {
+      colnames(Qi)[1:4] <- col.names
       
-      # form the table with the results
-      
-      index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
-      
-      w.table <- wald(model)
-      w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
-      
-      results <- data.frame(rev(model$coefficients$fixed)[index],
-                            rev(sqrt(model$vcoeff$fixed))[index],
-                            w.stat)
-      
-      # put as NA the singular values
-      
-      results[results[, 1] == 0, ] <- NA
-      
-      if((Q.eff == "cr") || (Q.eff == "biall")){
-        
-        return(results)
-        
-      } else if (Q.eff == "par"){
-        
-        # put the reference parent
-        
-        ref.mat <- matrix(0, nrow = (mppData$n.par* n.QTL), ncol = 4)
-        ref.mat[, 4] <- 1
-        
-        Q.names <- rep(paste0("Q", 1:n.QTL), each = mppData$n.par)
-        parents.ind <- rep(mppData$parents, times = n.QTL)
-        parents.ind <- paste0(Q.names, parents.ind)
-        
-        ref.mat[parents.ind %in% rownames(results) , ] <- as.matrix(results)
-        
-        rownames(ref.mat) <- parents.ind
-        
-        return(ref.mat)
-        
-      } else if (Q.eff == "anc") {
-        
-        # fill the reference ancestral allele value
-        
-        n.anc.al <- unlist(lapply(X = Q.list, FUN = function(x) dim(x)[2]))
-        
-        Q.names <- names(n.anc.al)
-        
-        QTL.ind <- unlist(mapply(FUN = function(x, names) rep(names, (x+1)),
-                                 x = n.anc.al, names = Q.names), use.names = FALSE)
-        
-        n.anc.al <- sum((n.anc.al + 1))
-        
-        ref.mat <- matrix(NA, nrow = n.anc.al, ncol = 4)
-        
-        anc.allele <- function(x, par.clu, QTL, par.ref){
-          
-          clu.info <- par.clu[which(rownames(par.clu) == QTL[x, 1]), ]
-          clu.to.remove <- clu.info[names(clu.info) == par.ref]
-          allele <- sort(unique(clu.info))
-          
-          ref.all <- paste0("Q", x, "A.allele", clu.to.remove)
-          all.ind <- paste0("Q", x, "A.allele", allele)
-          
-          list(ref.all = ref.all, all.ind = all.ind)
-          
-        }
-        
-        anc.ind <- lapply(X = 1:n.QTL, FUN = anc.allele, par.clu = par.clu,
-                          QTL = QTL, par.ref = par.ref)
-        
-        all.ind <- unlist(lapply(X = anc.ind, FUN = function(x) x$all.ind))
-        ref.all <- unlist(lapply(X = anc.ind, FUN = function(x) x$ref.all))
-        
-        
-        ref.mat[(all.ind %in% ref.all), ] <- matrix(rep(c(0, 0, 0, 1),
-                                                        n.QTL),
-                                                    nrow = n.QTL, byrow = TRUE)
-        
-        # fill the potential singular values
-        
-        ref.mat[(all.ind %in% rownames(results)), ] <- as.matrix(results)
-        rownames(ref.mat) <- all.ind
-        
-        # project into the parents
-        
-        Qeff.mat <- c()
-        
-        for(i in 1:n.QTL){
-          
-          Q.mat <- ref.mat[QTL.ind == names(Q.list)[i], ]
-          A.allele <- factor(par.clu[which(rownames(par.clu) == QTL[i, 1]), ])
-          A <- model.matrix(~ A.allele - 1) 
-          Q.mat[is.na(Q.mat)] <- 9999 # replace NA before proejction
-          Q.mat <- A %*% Q.mat
-          Q.mat[Q.mat == 9999] <- NA
-          Qeff.mat <- rbind(Qeff.mat, Q.mat)
-          
-        }
-        
-        parents.ind <- rep(mppData$parents, n.QTL)
-        ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
-                            parents.ind)
-        rownames(Qeff.mat) <- ref.names
-        
-        return(Qeff.mat)
-        
-      } 
-      
+      Qeff.mat[[i]] <- Qi
       
     }
     
+    return(Qeff.mat)
+    
+  } else if (Q.eff == "par"){
+    
+    # fill the reference parent value
+    
+    ref.mat <- matrix(rep(c(0, 0, 0, 1), (mppData$n.par*n.QTL)),
+                      nrow = (mppData$n.par*n.QTL), byrow = TRUE)
+    
+    # reference parent name organised per connected part with the reference
+    # parent at the top
+    
+    
+    par.list <- unlist(mapply(FUN = function(x, ref) c(ref, x[-which(x == ref)]),
+                              x = con.part, ref = allele_ref))
+    parents.ind <- rep(par.list, times = n.QTL)
+    ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
+                        parents.ind)
+    
+    index <- match(rownames(results), ref.names)
+    ref.mat[index, ] <- results
+    rownames(ref.mat) <- ref.names
+    
+    # add sign stars
+    
+    Sign <- sapply(ref.mat[, 4], FUN = sign.star)
+    
+    results <- data.frame(ref.mat, Sign, stringsAsFactors = FALSE)
+    
+    # add connected parts indicator
+    
+    nb.all.con <- lapply(con.part, function(x) length(x))
+    
+    con.part.name <- function(x, nb.all.con) {
+      
+      c(paste0("ref.c", x), rep(paste0("c", x), (nb.all.con[[x]][1] - 1)))
+      
+    } 
+    
+    ref.con <- lapply(X = 1:length(con.part), FUN = con.part.name,
+                      nb.all.con = nb.all.con)
+    ref.con <- rep(unlist(ref.con), times = n.QTL)
+    
+    results <- data.frame(results, Con.part = ref.con,
+                          stringsAsFactors = FALSE)
+    
+    Qeff.mat <- vector(mode = "list", n.QTL)
+    
+    Q.id <- paste0("Q", 1:n.QTL)
+    Q.ind <- rep(Q.id, each = mppData$n.par)
+    
+    par.list <- substr(rownames(results), 3, nchar(rownames(results)))
+    par.list <- par.list[1:mppData$n.par]
+    
+    for(i in 1:n.QTL){
+      
+      # subset QTL
+      
+      Qi <- results[Q.ind == Q.id[i], ]
+      
+      # add parent genotype (if given)
+      
+      if(!is.null(mppData$geno.par)){
+        
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+                                    5:dim(mppData$geno.par)[2]]
+        
+        Par.all <- unlist(Par.all)[par.list]
+        
+        Qi <- data.frame(Qi, Par.all, stringsAsFactors = FALSE)
+        
+      }
+      
+      # add column names
+      
+      if(VCOV == "h.err"){
+        col.names <- c("Effect", "Std.Err", "t-test", "p-value")
+      } else {col.names <- c("Effect", "Std.Err", "W-stat", "p-value")}
+      
+      colnames(Qi)[1:4] <- col.names
+      
+      Qeff.mat[[i]] <- Qi
+      
+    }
+    
+    return(Qeff.mat)
+    
+  } else if (Q.eff == "anc") {
+    
+    # form reference matrix
+    
+    n.allele <- lapply(X = Q.list, function(x) dim(x)[2])
+    n.allele <- sum(unlist(n.allele))
+    
+    ref.mat <- matrix(rep(c(0, 0, 0, 1), n.allele), nrow = n.allele,
+                      byrow = TRUE)
+    
+    # define the reference labels and connected parts
+    
+    order.con.part <- function(x, ref) c(ref, x[-which(x == ref)])
+    con.part.name <- function(x, nb.all.con) {
+      
+      c(paste0("ref.c", x), rep(paste0("c", x), (nb.all.con[[x]][1] - 1)))
+      
+    }
+    
+    ref.names <- c()
+    ref.con <- c()
+    Q.ind <- c()
+    
+    for(i in 1:n.QTL){
+      
+      all.Qi <- unlist(mapply(FUN = order.con.part, x = con.part[[i]],
+                              ref = allele_ref[[i]]))
+      
+      all.Qi <- paste0("Q", i, all.Qi)
+      ref.names <- c(ref.names, all.Qi)
+      Q.ind <- c(Q.ind, rep(paste0("Q", i), length(all.Qi)))
+      
+      nb.all.con <- lapply(con.part[[i]], function(x) length(x))
+      ref.con_i <- lapply(X = 1:length(con.part[[i]]), FUN = con.part.name,
+                          nb.all.con = nb.all.con)
+      ref.con <- c(ref.con, unlist(ref.con_i))
+      
+    }
+    
+    # and fill the ref matrix and add the con part delimitation information
+    
+    index <- match(rownames(results), ref.names)
+    ref.mat[index, ] <- results
+    rownames(ref.mat) <- ref.names
+    
+    # add sign stars
+    
+    Sign <- sapply(ref.mat[, 4], FUN = sign.star)
+    
+    results <- data.frame(ref.mat, Sign, stringsAsFactors = FALSE)
+    
+    # add connected part references
+    
+    results <- data.frame(results, Con.part = ref.con,
+                          stringsAsFactors = FALSE)
+    
+    # project into parents
+    
+    Qeff.mat <- vector(mode = "list", n.QTL)
+    ref.Q <- unique(Q.ind)
+    
+    for(i in 1:n.QTL){
+      
+      Q.mat <- results[Q.ind == ref.Q[i], ]
+      A.allele <- factor(par.clu[QTL[i, 1], ])
+      A <- model.matrix(~ A.allele - 1)
+      
+      # modify column order of A
+      
+      x <- unlist(lapply(X = gregexpr(pattern = "A", rownames(Q.mat)),
+                         FUN = function(x) x[1]))
+      all.ord <- substr(rownames(Q.mat), x, nchar(rownames(Q.mat)))
+      A <- A[, all.ord]
+      
+      # separate numeric results from con part information
+      
+      num.res <- as.matrix(Q.mat[, 1:4])
+      num.res <- cbind(num.res, 1:dim(num.res)[1])
+      
+      proj.num.res <- A %*% num.res
+      rownames(proj.num.res) <- mppData$parents
+      
+      # add the connected part information
+      
+      con.part.vec <- Q.mat[proj.num.res[, 5], c(5, 6), drop = FALSE]
+      
+      res <- data.frame(proj.num.res, con.part.vec, stringsAsFactors = FALSE)
+      res <- res[order(res[, 5]), ]
+      res <- res[, -5]
+      
+      # add parental score if provided
+      
+      if(!is.null(mppData$geno.par)){
+        
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+                                    5:dim(mppData$geno.par)[2]]
+        
+        Par.all <- unlist(Par.all)[rownames(res)]
+        
+        res <- data.frame(res, Par.all, stringsAsFactors = FALSE)
+        
+      }
+      
+      # add columns names
+      
+      if(VCOV == "h.err"){
+        col.names <- c("Effect", "Std.Err", "t-test", "p-value")
+      } else {col.names <- c("Effect", "Std.Err", "W-stat", "p-value")}
+      
+      colnames(res)[1:4] <- col.names
+      
+      Qeff.mat[[i]] <- res 
+      
+    }
+    
+    return(Qeff.mat)
+    
+    
+    
+  } else if (Q.eff == "biall"){
+    
+    ref.mat <- matrix(rep(c(0, 0, 0, 1), n.QTL), nrow = n.QTL, byrow = TRUE)
+    ref.names <- paste0("Q", 1:n.QTL)
+    index <- match(rownames(results), ref.names)
+    ref.mat[index, ] <- results
+    rownames(ref.mat) <- ref.names
+    
+    Qeff.mat <- vector(mode = "list", n.QTL)
+    
+    for(i in 1:n.QTL){
+      
+      # subset QTL
+      
+      Qi <- ref.mat[i, , drop = FALSE]
+      
+      # project into parents and add genotype score if possible
+      
+      if(!is.null(mppData$geno.par)){
+        
+        ref.mat2 <- matrix(rep(c(0, 0, 0, 1), mppData$n.par),
+                           nrow = mppData$n.par, byrow = TRUE)
+        
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+                                    5:dim(mppData$geno.par)[2]]
+        Par.all <- unlist(Par.all)
+        
+        index <- which(mppData$geno.par[, 1] == QTL[i, 1])
+        ref.all <- c(mppData$allele.ref[1, index, drop = FALSE])
+        het.sc <- mppData$allele.ref[c(3, 4), index]
+        
+        ind.na <- which(is.na(Par.all))
+        ind.ref <- which(Par.all == ref.all)
+        ind.het <- which(((Par.all == het.sc[1])|(Par.all == het.sc[2])))
+        
+        ref.mat2[ind.ref, ] <- matrix(rep(Qi, length(ind.ref)),
+                                      nrow = length(ind.ref), byrow = TRUE)
+        ref.mat2[ind.na, ] <- NA
+        ref.mat2[ind.het, 1] <- Qi[1, 1]/2
+        
+        # add the sign stars
+        
+        Sign <- sapply(ref.mat2[, 4], FUN = sign.star)
+        ref.mat2 <- data.frame(ref.mat2, Sign, stringsAsFactors = FALSE)
+        
+        # add parents scores
+        
+        Qi <- data.frame(ref.mat2, Par.all, stringsAsFactors = FALSE)
+        
+        
+      } else {
+        
+        # add Sign scores (stars)
+        
+        Sign <- sapply(Qi[, 4], FUN = sign.star)
+        Qi <- data.frame(Qi, Sign, stringsAsFactors = FALSE)
+        
+      }
+      
+      # add columns names
+      
+      if(VCOV == "h.err"){
+        col.names <- c("Effect", "Std.Err", "t-test", "p-value")
+      } else {col.names <- c("Effect", "Std.Err", "W-stat", "p-value")}
+      
+      colnames(Qi)[1:4] <- col.names
+      
+      Qeff.mat[[i]] <- Qi
+      
+    }
+    
+    return(Qeff.mat)
+    
   }
-
+  
 }

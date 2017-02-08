@@ -23,11 +23,13 @@
 #' The second type of mppData object for identical by state (IBS) genetic
 #' predictors for bi-allelic model. In such case
 #' genotype marker score as simply translated into 0, 1, 2 format representing
-#' the copy number of the most frequent allele.
+#' the copy number of the less frequent allele. An homozygous marker score
+#' with two alleles having the highest frequency is therefore set as reference
+#' (0).
 #' \code{\link{USNAM_mppData_bi}} is an example of an IBS \code{mppData} object.
 #' 
-#' @param geno \code{Character matrix} representing genotype marker scores with
-#' genotypes as row and markers as column. For cross-specific, parental and
+#' @param geno.off \code{Character matrix} representing genotype marker scores
+#' with genotypes as row and markers as column. For cross-specific, parental and
 #' ancestral models (\code{biall = FALSE}) marker matrix in ABH format.
 #' \strong{The ABH assignement must be done per cross. "A"("B") score means that
 #' at the considered position the genotype received its allele from parent 1 (2)
@@ -39,13 +41,13 @@
 #' AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG. Missing values must be coded NA.}
 #' 
 #' For both type of mppData object (bi-allelic or not), \strong{the row names
-#' (rownames(geno)) must be the genotypes identifiers similars to the one of
-#' trait argument. The column names (colnames(geno)) must be the marker
+#' (rownames(geno.off)) must be the genotypes identifiers similars to the one of
+#' trait argument. The column names (colnames(geno.off)) must be the marker
 #' identifiers similar to the first column of the map.}
 #' 
 #' @param geno.par \code{Character matrix} representing marker scores of the
 #' parents with genotypes as row and markers as column.\strong{ The column
-#' names must be the as the marker list in map and geno arguments.
+#' names must be the as the marker list in map and geno.off arguments.
 #' The rownames must represent the parents identifiers and be identical to
 #' the parent list
 #' given in par.per.cross argument}. This argument is optional and is only
@@ -62,7 +64,7 @@
 #' of selfing or back-crossing. Type = "dh" for double haploids and type = "RIL"
 #' for recombinant inbred lines. For RIL type specify if the population was
 #' obtain using selfing or sibling mating using type.mating argument.
-#' If type = "RIL" or "dh" heterozygous marker score of the geno argument must
+#' If type = "RIL" or "dh" heterozygous marker score of the geno.off argument must
 #' be set as missing ("-" or NA).
 #' 
 #' @param nb.gen \code{Numeric} integer representing the number of generations
@@ -76,12 +78,12 @@
 #' @param map Three columns \code{data.frame} with: 1) marker or in between
 #' position identifiers; 2) chromosome; 3) positions in centi-Morgan.
 #' The marker identifiers must be identical to the column names of the maker
-#' matrix (argument geno).
+#' matrix (argument geno.off).
 #' 
 #' @param trait two columns \code{data.frame} with : 1) \code{character}
 #' genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
 #' identifiers must be identical to the rownames of the  marker matrix
-#' (argument \code{geno}).}
+#' (argument \code{geno.off}).}
 #' 
 #' @param cross.ind \code{Character} vector with the same length as the number of
 #' genotypes which specifies to which cross each genotype belong.
@@ -91,7 +93,7 @@
 #' \code{cross.ind}}); 2) the parents 1 identifiers of the crosses;
 #' 3) the parents 2 identifiers of the crosses. \strong{The alleles coming from
 #' parent 1 (2) within each cross correspond to the scores A (B) in argument
-#' \code{geno} for a non bi-allelic model. The cross indicators must be 
+#' \code{geno.off} for a non bi-allelic model. The cross indicators must be 
 #' similar to the one used in the cross.ind argument. The list of parent
 #' identifiers must be the same to the rownames of par.sc argument.}
 #' 
@@ -226,10 +228,11 @@
 #' my.dir <- "C:/.../"
 #' 
 #' # IBD mppData for cross, parental or ancestral model
-#' data <- mppData_form(geno = USNAM_genoABH, geno.par = geno.par, biall = FALSE,
-#'                      type = "F", nb.gen = 6, map = map, trait = trait,
-#'                      cross.ind = cross.ind, par.per.cross = par.per.cross,
-#'                      step = 5, map.function = "haldane",  stepwidth = "max",
+#' data <- mppData_form(geno.off = USNAM_genoABH, geno.par = geno.par,
+#'                      biall = FALSE, type = "F", nb.gen = 6, map = map,
+#'                      trait = trait, cross.ind = cross.ind,
+#'                      par.per.cross = par.per.cross, step = 5,
+#'                      map.function = "haldane",  stepwidth = "max",
 #'                      dir = my.dir)
 #' }
 #'
@@ -266,7 +269,7 @@
 #' my.dir <- "C:/.../"
 #' 
 #' # IBS mppData for bi-allelic model
-#' data_biall <- mppData_form(geno = geno[7:506,], geno.par = geno.par,
+#' data_biall <- mppData_form(geno.off = geno[7:506,], geno.par = geno.par,
 #'                            type = "F", nb.gen = 6, biall = TRUE, map = map,
 #'                            trait = trait, cross.ind = cross.ind,
 #'                            par.per.cross = par.per.cross, dir = my.dir)
@@ -277,7 +280,7 @@
 #'
 
 
-mppData_form <- function(geno, geno.par = NULL, biall = FALSE, type,
+mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
                          nb.gen = NULL, type.mating = NULL, map, trait,
                          cross.ind, par.per.cross, step = 10000,
                          error.prob = 1e-04, map.function = "haldane",
@@ -287,7 +290,7 @@ mppData_form <- function(geno, geno.par = NULL, biall = FALSE, type,
   # 1. chech of the data format
   #############################
   
-  check.mppData(geno = geno, geno.par = geno.par, biall = biall, type = type,
+  check.mppData(geno = geno.off, geno.par = geno.par, biall = biall, type = type,
                 type.mating = type.mating, nb.gen = nb.gen, trait = trait,
                 map = map, cross.ind = cross.ind, par.per.cross = par.per.cross,
                 dir = dir)
@@ -298,7 +301,7 @@ mppData_form <- function(geno, geno.par = NULL, biall = FALSE, type,
   
   ### 2.1 keep the geno names
   
-  geno.names <- rownames(geno)
+  geno.names <- rownames(geno.off)
   
   ### 2.2 phenotypic values
   
@@ -382,7 +385,7 @@ mppData_form <- function(geno, geno.par = NULL, biall = FALSE, type,
     chr.info <- t(map[, 2:3])
     colnames(chr.info) <- map[, 1]
     
-    geno.aug <- rbind(chr.info, geno)
+    geno.aug <- rbind(chr.info, geno.off)
     
     trait.aug <- c(c("", ""), trait[, 2])
     
@@ -552,7 +555,7 @@ mppData_form <- function(geno, geno.par = NULL, biall = FALSE, type,
     
   # 3.2.1 Transform marker score at 0, 1, 2 format (0 = AA, 1 = AT, 2 = TT)
 
-    geno.trans <- geno_012(mk.mat = geno)
+    geno.trans <- geno_012(mk.mat = geno.off)
     
     geno012 <- geno.trans[[1]]
     
