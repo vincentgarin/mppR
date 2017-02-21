@@ -52,7 +52,7 @@
 #' mppData_sub <- mppData_subset(mppData = USNAM_mppData, gen.list = gen.list)
 #' 
 #' @export
-#'  
+#' 
 
 
 mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
@@ -182,14 +182,16 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       
       if (!is.null(mppData$geno.par)) {
         
-        mppData$geno.par <- mppData$geno.par[(mppData$geno.par[, 1] %in% mk.list), ]
+        mppData$geno.par <- mppData$geno.par[(mppData$geno.par[, 1] %in% mk.list), ,
+                                             drop = FALSE]
         
         
       }
       
       # modify the map
       
-      mppData$map <- mppData$map[(mppData$map[, 1] %in% mk.list), ]
+      mppData$map <- mppData$map[(mppData$map[, 1] %in% mk.list), ,
+                                 drop = FALSE]
       
       # recalculate the position indicators
       
@@ -229,9 +231,9 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       
       ped.temp <- as.matrix(mppData$ped.mat)
       
-      ped.mat.found <- ped.temp[ped.temp[, 1] == "founder", ]
-      ped.mat.off <- ped.temp[ped.temp[, 1] == "offspring", ]
-      ped.mat.off <- ped.mat.off[geno.ind, ]
+      ped.mat.found <- ped.temp[ped.temp[, 1] == "founder", , drop = FALSE]
+      ped.mat.off <- ped.temp[ped.temp[, 1] == "offspring", , drop = FALSE]
+      ped.mat.off <- ped.mat.off[geno.ind, , drop = FALSE]
       
       found.sub <- unique(c(ped.mat.off[, 3], ped.mat.off[, 4]))
       ped.mat.found <- ped.mat.found[ped.mat.found[, 2] %in% found.sub, ,
@@ -246,7 +248,7 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       list.cr <- unique(mppData$cross.ind)
       
       ppc <- mppData$par.per.cross
-      ppc <- ppc[ppc[, 1] %in% list.cr, ]
+      ppc <- ppc[ppc[, 1] %in% list.cr, , drop = FALSE]
       mppData$parents <- union(ppc[, 2], ppc[, 3])
       mppData$n.cr <- length(list.cr)
       mppData$n.par <- length(mppData$parents)
@@ -271,25 +273,28 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
 
       # modify the genotype marker matrix
 
-      mppData$geno <- mppData$geno[, mppData$map[, 1] %in% mk.list]
+      mppData$geno <- mppData$geno[, mppData$map[, 1] %in% mk.list,
+                                   drop = FALSE]
       
       # modify the reference alleles scores
       
-      mppData$allele.ref <- mppData$allele.ref[, mppData$map[, 1] %in% mk.list]
+      mppData$allele.ref <- mppData$allele.ref[, mppData$map[, 1] %in% mk.list,
+                                               drop = FALSE]
       
       # modify the marker geno.par argument (if present)
 
 
       if (!is.null(mppData$geno.par)) {
 
-      mppData$geno.par <- mppData$geno.par[(mppData$geno.par[, 1] %in% mk.list), ]
+      mppData$geno.par <- mppData$geno.par[(mppData$geno.par[, 1] %in% mk.list), ,
+                                           drop = FALSE]
 
 
       }
 
       # modify the map
 
-      mppData$map <- mppData$map[(mppData$map[, 1] %in% mk.list), ]
+      mppData$map <- mppData$map[(mppData$map[, 1] %in% mk.list), , drop = FALSE]
 
       # recalculate the position indicators
 
@@ -321,9 +326,11 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
 
       # subset ped.mat
 
-      ped.mat.found <- mppData$ped.mat[mppData$ped.mat[, 1] == "founder", ]
-      ped.mat.off <- mppData$ped.mat[mppData$ped.mat[, 1] == "offspring", ]
-      ped.mat.off <- ped.mat.off[geno.ind, ]
+      ped.mat.found <- mppData$ped.mat[mppData$ped.mat[, 1] == "founder", ,
+                                       drop = FALSE]
+      ped.mat.off <- mppData$ped.mat[mppData$ped.mat[, 1] == "offspring", ,
+                                     drop = FALSE]
+      ped.mat.off <- ped.mat.off[geno.ind, , drop = FALSE]
       mppData$ped.mat <- rbind(ped.mat.found, ped.mat.off)
       
       # review the par.per.cross, parents, n.cr and n.par objects
@@ -331,7 +338,7 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       list.cr <- unique(mppData$cross.ind)
       
       ppc <- mppData$par.per.cross
-      ppc <- ppc[ppc[, 1] %in% list.cr, ]
+      ppc <- ppc[ppc[, 1] %in% list.cr, , drop = FALSE]
       mppData$parents <- union(ppc[, 2], ppc[, 3])
       mppData$n.cr <- length(list.cr)
       mppData$n.par <- length(mppData$parents)
