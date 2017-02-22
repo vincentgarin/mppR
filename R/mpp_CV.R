@@ -238,7 +238,6 @@
 #' \code{\link{mpp_SIM}},
 #' \code{\link{parent_cluster}},
 #' \code{\link{plot_CV}},
-#' \code{\link{QTL_CI}},
 #' \code{\link{QTL_R2}},
 #' \code{\link{QTL_pred_R2}},
 #' \code{\link{USNAM_parClu}}
