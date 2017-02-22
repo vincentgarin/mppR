@@ -214,7 +214,7 @@
 #' 
 #' \item{QTL.profiles}{Final QTL profiles of each (Rep*k) repetition.}
 #' 
-#' The above mentioned elements return as R object are also saved  as text
+#' The above mentioned elements return as R object are also saved as text
 #' files at the specified output location (\code{output.loc}). A transparency
 #' plot of the CV results (plot.pdf) obtained with the function
 #' \code{\link{plot_CV}} is also saved.
