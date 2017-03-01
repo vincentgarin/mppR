@@ -183,7 +183,6 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   
   R2 <- R2.all[[1]]
   R2.adj <- R2.all[[2]]
-  df.full <- R2.all[[3]]
   
   if(glb.only) {
     
@@ -209,10 +208,10 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
                        mppData = mppData)
       
       R2_i.dif <- lapply(X = R2.dif, FUN = function(x) x[[1]])
-      zi <- lapply(X = R2.dif, FUN = function(x) x[[3]])
-      zi <- df.full - unlist(zi)
+      R2_i.dif.adj <- lapply(X = R2.dif, FUN = function(x) x[[2]])
       
       R2_i.dif <- R2 - unlist(R2_i.dif) # difference full model and model minus i
+      R2_i.dif.adj <- R2.adj - unlist(R2_i.dif.adj)
       
       R2.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, QTL = Q.list,
                       mppData = mppData)
@@ -220,11 +219,6 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
       R2_i.sg <- unlist(lapply(X = R2.sg, FUN = function(x) x[[1]]))
       R2_i.sg.adj <- unlist(lapply(X = R2.sg, FUN = function(x) x[[2]]))
       
-      N <- sum(!is.na(mppData$trait[, 1]))
-      
-      # adjust the values
-      
-      R2_i.dif.adj <- R2_i.dif - ((zi/(N - zi - mppData$n.cr)) * (100 - R2_i.dif))
       
       names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
       names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
