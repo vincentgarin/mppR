@@ -6,7 +6,8 @@
 
 
 check.mppData <- function(geno, geno.par = NULL, type, type.mating, nb.gen,
-                          biall, trait, map, cross.ind, par.per.cross, dir){
+                          biall, IBS.format, trait, map, cross.ind,
+                          par.per.cross, dir){
   
   
   # 1. control format of genotype matrix
@@ -18,11 +19,25 @@ check.mppData <- function(geno, geno.par = NULL, type, type.mating, nb.gen,
     
   }
   
-  if(!is.character(geno)) {
+  if((biall) & (IBS.format == "012")){
     
-    stop("The marker matrix (geno) is not a character matrix.")
+    if(!is.numeric(geno)) {
+      
+      stop("The marker matrix (geno) is not a numeric matrix.")
+      
+    }
+    
+  } else {
+    
+    if(!is.character(geno)) {
+      
+      stop("The marker matrix (geno) is not a character matrix.")
+      
+    }
     
   }
+  
+  
   
   mk.scores <- attr(table(geno), "dimnames")[[1]]
   

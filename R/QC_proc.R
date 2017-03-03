@@ -34,10 +34,11 @@
 #' \code{\link{QC_missing}}.}
 #' 
 #' \item{Determine markers having a problematic MAF within cross
-#' \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical value
-#' for MAF within cross is defined by the following function of the cross-size
-#' (n.cr): MAF(n.cr) = (5/n.cr) + 0.05. This means that for small cross sizes
-#' (n.cr = \code{n.lim} = 15),
+#' \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical within
+#' cross MAF can be specified by the user via the argument \code{MAF.cr.lim}.
+#' By default, the critical within cross MAF are defined by the following
+#' function of the cross-size (n.cr): MAF(n.cr) = (5/n.cr) + 0.05.
+#' This means that for small cross sizes (n.cr = \code{n.lim} = 15),
 #' the crosses must have at least a bit more than five genotypes that segreate.
 #' When the number of genotypes per cross increases, then the within cross MAF
 #' tend to 0.05. If the within cross MAF is below the limit in at least one
@@ -52,7 +53,6 @@
 #' (\code{\link{cross_ABH}}).
 #' If parents have heterozygous marker scores, user must specify it
 #' using \code{het.par = TRUE} (\code{\link{cross_ABH_het}}).}
-#' 
 #' 
 #' }
 #' 
@@ -77,7 +77,6 @@
 #' position identifiers; 2) chromosome; 3) positions in centi-Morgan.\strong{
 #' The marker identifiers must be identical to the column names of the maker
 #' matrices (\code{geno.off} and \code{geno.par}).}
-#' 
 #' 
 #' @param trait two columns \code{data.frame} with : 1) \code{character}
 #' genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
@@ -115,6 +114,12 @@
 #' 
 #' @param MAF.pop.lim \code{Numeric} value specifying the minimum minor allele
 #' frequency for a marker at the population level. Default = 0.05.
+#' 
+#' @param MAF.cr.lim \code{Numeric vector} specifying the critical within cross
+#' MAF. Default = NULL. Marker with a problematic segregation rate in at least
+#' one cross is either set as missing within the problematic cross
+#' (\code{MAF.cr.miss = TRUE}), or remove from the marker matrix
+#' (\code{MAF.cr.miss = FALSE}). Default = NULL.
 #' 
 #' @param MAF.cr.miss Logical value specifying if maker with a too low
 #' segregation rate within cross should be put as missing or discarded. If
@@ -254,9 +259,10 @@
 
 QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                     subcross.ind = NULL, par.per.subcross = NULL,
-                    n.lim = 15, MAF.pop.lim = 0.05, MAF.cr.miss = TRUE,
-                    rem.NA.cr = FALSE, mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE,
-                    het.par = FALSE, parallel = FALSE, cluster = NULL){
+                    n.lim = 15, MAF.pop.lim = 0.05, MAF.cr.lim = NULL,
+                    MAF.cr.miss = TRUE, rem.NA.cr = FALSE, mk.miss = 0.1,
+                    gen.miss = 0.25, ABH = TRUE, het.par = FALSE,
+                    parallel = FALSE, cluster = NULL){
   
   
   # 1. check the format of the data
@@ -265,8 +271,8 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   check_QC(geno.off = geno.off, geno.par = geno.par, map = map, trait = trait,
            cross.ind = cross.ind, par.per.cross = par.per.cross,
            subcross.ind = subcross.ind, par.per.subcross = par.per.subcross,
-           n.lim = n.lim, ABH = ABH, het.par = het.par, parallel = parallel,
-           cluster = cluster)
+           n.lim = n.lim, MAF.cr.lim = MAF.cr.lim, ABH = ABH, het.par = het.par,
+           parallel = parallel, cluster = cluster)
   
   
   # 2. Remove markers with genotyping error
@@ -503,18 +509,26 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   
   # functions to determine the MAF limit within crosses
   
-  MAF.lim <- function(floor, n.cr){
+  if(is.null(MAF.cr.lim)){
     
-    (5/n.cr) + floor
+    MAF.lim <- function(floor, n.cr){
+      
+      (5/n.cr) + floor
+      
+    }
+    
+    # determine the number of observation per cross. First transform into
+    # factor with specified order
+    
+    n.cr <- table(factor(cross.ind, levels = unique(cross.ind)))
+    
+    lim <- MAF.lim(floor = 0.05, n.cr = n.cr)
+    
+  } else {
+    
+    lim <- MAF.cr.lim
     
   }
-  
-  # determine the number of observation per cross. First transform into
-  # factor with specified order
-  
-  n.cr <- table(factor(cross.ind, levels = unique(cross.ind)))
-  
-  lim <- MAF.lim(floor = 0.05, n.cr = n.cr)
   
   MAF.cr.ind <- QC_tagMAFCr(MAF = MAF.pop, MAF.lim = lim, tag.mono = FALSE,
                             parallel = parallel, cluster = cluster)

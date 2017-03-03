@@ -8,10 +8,10 @@
 #' QTL anlyses.
 #' 
 #' \code{mppData_form} is a function that gather into a single data object the
-#' necessary data for QTL analyses. Two type of mppData object can be produced.
-#' The first one, for cross-specific, parental and ancestral models
-#' (for details see \code{\link{mpp_SIM}}), calculates identical by descent
-#' (IBD) probabilities using
+#' necessary data for QTL analyses. Two type of \code{mppData} object can be produced.
+#' The first one (\code{IBS = FALSE}), for cross-specific, parental and
+#' ancestral models (for details see \code{\link{mpp_SIM}}), calculates
+#' identical by descent (IBD) probabilities using
 #' \code{read.cross} and \code{calc.genoprob} functions from the R/qtl package
 #' (Broman et al. 2009). The results are saved in a cross object. Several types
 #' of populations are allowed: F-type (F), back-cross (bc), double
@@ -20,43 +20,59 @@
 #' no heterozygosity is allowed. It must be converted into missing.
 #' \code{\link{USNAM_mppData}} is an example of an IBD \code{mppData} object.
 #' 
-#' The second type of mppData object for identical by state (IBS) genetic
-#' predictors for bi-allelic model. In such case
-#' genotype marker score as simply translated into 0, 1, 2 format representing
-#' the copy number of the less frequent allele. An homozygous marker score
-#' with two alleles having the highest frequency is therefore set as reference
-#' (0).
-#' \code{\link{USNAM_mppData_bi}} is an example of an IBS \code{mppData} object.
+#' The second type of \code{mppData} object (\code{IBS = TRUE}) use identical
+#' by state (IBS) genetic predictors for bi-allelic model. In such case
+#' genotype marker score are simply translated into 0, 1, 2 format representing
+#' the copy number of the less frequent allele. For IBS \code{mppData} object,
+#' the user can provide imputed data for the argument \code{geno.off}. Such an
+#' imputation can be done using the software Beagle (Browning and Browning,
+#' 2016) within the R package synbreed (Wimmer et al., 2012). For the IBS
+#' \code{mppData} object,
+#' the user can provide marker scores in \code{geno.off} using letters
+#' (1 letter per allele) setting (\code{IBS.format = "ATCG"}) or already in 0,
+#' 1, 2 format (\code{IBS.format = "012"}). \code{\link{USNAM_mppData_bi}} is
+#' an example of an IBS \code{mppData} object.
 #' 
-#' @param geno.off \code{Character matrix} representing genotype marker scores
+#' @param geno.off \code{Character} or \code{Numeric matrix} representing
+#' genotype marker scores
 #' with genotypes as row and markers as column. For cross-specific, parental and
-#' ancestral models (\code{biall = FALSE}) marker matrix in ABH format.
+#' ancestral models (\code{IBS = FALSE}) marker matrix in ABH format.
 #' \strong{The ABH assignement must be done per cross. "A"("B") score means that
 #' at the considered position the genotype received its allele from parent 1 (2)
 #' of the cross. "H" means that the marker is heterozygous and NA or "-" that it
 #' is missing or undertermined. This can be done using \code{\link{cross_ABH}}.}
 #' 
-#' For bi-allelic models (\code{biall = TRUE}) \strong{marker scores must be
-#' coded using one letter for each allele. For example, AA, CC, GG, TT, AC,
-#' AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG. Missing values must be coded NA.}
+#' For bi-allelic models (\code{IBS = TRUE}), the user can provide imputed data.
+#' The marker scores in \code{geno.off} can be coded using letters using one
+#' letter for each allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
+#' GA, GC, GT, TA, TC, TG (\code{IBS.format = "ATCG"}). \code{geno.off} marker
+#' score can also be already coded in 0, 1, 2 format (\code{IBS.format = "012"}).
+#' Missing value must be coded \code{NA}.
 #' 
 #' For both type of mppData object (bi-allelic or not), \strong{the row names
 #' (rownames(geno.off)) must be the genotypes identifiers similars to the one of
 #' trait argument. The column names (colnames(geno.off)) must be the marker
 #' identifiers similar to the first column of the map.}
 #' 
-#' @param geno.par \code{Character matrix} representing marker scores of the
-#' parents with genotypes as row and markers as column.\strong{ The column
-#' names must be the as the marker list in map and geno.off arguments.
-#' The rownames must represent the parents identifiers and be identical to
-#' the parent list
-#' given in par.per.cross argument}. This argument is optional and is only
-#' use as complementary information for the results. It is however
-#' strongly recommanded to include it. Default = NULL.
+#' @param geno.par Optional argument used for complementary information in the
+#' results for the QTL genetic effects.\code{geno.par} is a
+#' \code{character matrix} representing marker
+#' scores of the parents with genotypes as row and markers as column. 
+#' \strong{The column names must be the as the marker list in map and geno.off
+#' arguments. The rownames must represent the parents identifiers and be
+#' identical to the parent list given in par.per.cross argument}.
+#' If \code{IBS.format = "012"}, \code{geno.par} is set to NULL. Default = NULL.
 #' 
-#' @param biall \code{Logical} value. Put \code{biall = TRUE} if you want to
+#' @param IBS \code{Logical} value. Put \code{IBS = TRUE} if you want to
 #' obtain an IBS \code{mppData} object for the bi-allelic model.
 #' Default = FALSE.
+#' 
+#' @param IBS.format \code{Character} indicator for the format of \code{geno.off}
+#' marker score for an IBS \code{mppData} object. \code{IBS.format = "ATCG"}, if
+#' marker scores are coded with one letter per allele.
+#' \code{IBS.format = "012"}, if marker scores are coded in 0, 1, 2 format
+#' corresponding to the number of copy of the less frequent allele.
+#' Default = "ATCG". 
 #' 
 #' @param type \code{Character} indicator for the type of population analysed.
 #' type = "F" for Fn (F cross n gernerations), type = "bc" for BCn (backcross
@@ -130,12 +146,12 @@
 #' Return: a {list} of class \code{mppData} containing the following items :
 #' 
 #' \item{geno}{For a cross-specific, parental and ancestral model
-#' (\code{biall = FALSE}), cross object obtained with R/qtl functions
+#' (\code{IBS = FALSE}), cross object obtained with R/qtl functions
 #' The main elements of the cross object are the IBD probabilities. For a
-#' bi-allelic model (\code{biall = TRUE}), marker score matrix recoded
+#' bi-allelic model (\code{IBS = TRUE}), marker score matrix recoded
 #' as 0, 1, 2 according to the copies number of the most frequent allele.}
 #' 
-#' \item{allele.ref}{If \code{biall = TRUE}, \code{character matrix} with
+#' \item{allele.ref}{If \code{IBS = TRUE}, \code{character matrix} with
 #' reference allele scores. The first row represent the allele with the highest
 #' MAF, the second, the one with the lowest and the two other lines represent
 #' the heterozygous scores.}
@@ -193,6 +209,13 @@
 #' 
 #' Broman, K. W., & Sen, S. (2009). A Guide to QTL Mapping with R/qtl (Vol. 46).
 #' New York: Springer.
+#' 
+#' S R Browning and B L Browning (2016) Genotype imputation with millions of
+#' reference samples. Am J Hum Genet 98:116-126
+#' 
+#' Wimmer, V., Albrecht, T., Auinger, H. J., & Schön, C. C. (2012). synbreed: a
+#' framework for the analysis of genomic prediction data using R. Bioinformatics,
+#' 28(15), 2086-2087.
 #'  
 #' @examples
 #'  
@@ -229,7 +252,7 @@
 #' 
 #' # IBD mppData for cross, parental or ancestral model
 #' data <- mppData_form(geno.off = USNAM_genoABH, geno.par = geno.par,
-#'                      biall = FALSE, type = "F", nb.gen = 6, map = map,
+#'                      IBS = FALSE, type = "F", nb.gen = 6, map = map,
 #'                      trait = trait, cross.ind = cross.ind,
 #'                      par.per.cross = par.per.cross, step = 5,
 #'                      map.function = "haldane",  stepwidth = "max",
@@ -269,8 +292,9 @@
 #' my.dir <- "C:/.../"
 #' 
 #' # IBS mppData for bi-allelic model
-#' data_biall <- mppData_form(geno.off = geno[7:506,], geno.par = geno.par,
-#'                            type = "F", nb.gen = 6, biall = TRUE, map = map,
+#' data_IBS <- mppData_form(geno.off = geno[7:506,], geno.par = geno.par,
+#'                            type = "F", nb.gen = 6, IBS = TRUE,
+#'                            IBS.format = "ATCG", map = map,
 #'                            trait = trait, cross.ind = cross.ind,
 #'                            par.per.cross = par.per.cross, dir = my.dir)
 #' 
@@ -280,17 +304,19 @@
 #'
 
 
-mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
-                         nb.gen = NULL, type.mating = NULL, map, trait,
-                         cross.ind, par.per.cross, step = 10000,
-                         error.prob = 1e-04, map.function = "haldane",
-                         stepwidth = "max", dir = getwd()) {
+mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
+                         IBS.format = "ATCG",type, nb.gen = NULL,
+                         type.mating = NULL, map, trait, cross.ind,
+                         par.per.cross, step = 10000, error.prob = 1e-04,
+                         map.function = "haldane", stepwidth = "max",
+                         dir = getwd()) {
   
   
   # 1. chech of the data format
   #############################
   
-  check.mppData(geno = geno.off, geno.par = geno.par, biall = biall, type = type,
+  check.mppData(geno = geno.off, geno.par = geno.par, biall = IBS,
+                IBS.format = IBS.format,  type = type,
                 type.mating = type.mating, nb.gen = nb.gen, trait = trait,
                 map = map, cross.ind = cross.ind, par.per.cross = par.per.cross,
                 dir = dir)
@@ -376,7 +402,7 @@ mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
   
   ### 3.1 mppData object for cross, parental and ancestral model
   
-  if(!biall){
+  if(!IBS){
     
   # 3.1.1 Compute IBD probabilities
     
@@ -529,7 +555,7 @@ mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
                       cross.ind = cross.ind, ped.mat = ped.mat,
                       par.per.cross = par.per.cross, parents = parents,
                       n.cr = n.cr, n.par = n.par, type = type.pop, n.zigo =
-                      n.zigo, biall = biall)
+                      n.zigo, biall = IBS)
       
     class(mppData) <- c("mppData", "list")
   
@@ -537,11 +563,12 @@ mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
     
   } else {
     
-    mppData <- list(geno = cross.object, geno.id = geno.names, map = new.map,
+    mppData <- list(geno = cross.object, geno.id = geno.names, geno.par = NULL,
+                    map = new.map,
                     trait = trait.val, cross.ind = cross.ind, ped.mat = ped.mat,
                     par.per.cross = par.per.cross, parents = parents,
                     n.cr = n.cr, n.par = n.par, type = type.pop, n.zigo = n.zigo,
-                    biall = biall)
+                    biall = IBS)
     
     class(mppData) <- c("mppData", "list")
     
@@ -554,12 +581,26 @@ mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
   } else {
     
   # 3.2.1 Transform marker score at 0, 1, 2 format (0 = AA, 1 = AT, 2 = TT)
-
-    geno.trans <- geno_012(mk.mat = geno.off)
     
-    geno012 <- geno.trans[[1]]
     
-    allele.ref <- geno.trans[[2]]
+    if(IBS.format == "ATCG"){
+      
+      geno.trans <- geno_012(mk.mat = geno.off)
+      
+      geno012 <- geno.trans[[1]]
+      
+      allele.ref <- geno.trans[[2]]
+      
+    } else if (IBS.format == "012") {
+      
+      geno012 <- geno.off
+      
+      allele.ref <- NULL
+      
+      geno.par <- NULL
+      
+    }
+    
     
   # 3.2.2 map
     
@@ -583,7 +624,7 @@ mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
                       map = new.map, trait = trait.val, cross.ind = cross.ind,
                       ped.mat = ped.mat, par.per.cross = par.per.cross,
                       parents = parents, n.cr = n.cr, n.par = n.par,
-                      type = type.pop, n.zigo = n.zigo, biall = biall)
+                      type = type.pop, n.zigo = n.zigo, biall = IBS)
       
       class(mppData) <- c("mppData", "list")
       
@@ -592,11 +633,11 @@ mppData_form <- function(geno.off, geno.par = NULL, biall = FALSE, type,
     } else {
       
       mppData <- list(geno = geno012, allele.ref = allele.ref,
-                      geno.id = geno.names, map = new.map,
+                      geno.id = geno.names, geno.par = NULL, map = new.map,
                       trait = trait.val, cross.ind = cross.ind, ped.mat = ped.mat,
                       par.per.cross = par.per.cross, parents = parents,
                       n.cr = n.cr, n.par = n.par, type = type.pop,
-                      n.zigo = n.zigo, biall = biall)
+                      n.zigo = n.zigo, biall = IBS)
       
       class(mppData) <- c("mppData", "list")
       

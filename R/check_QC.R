@@ -7,8 +7,8 @@
 
 
 check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
-                     subcross.ind, par.per.subcross, n.lim, ABH, het.par,
-                     parallel, cluster){
+                     subcross.ind, par.per.subcross, n.lim, MAF.cr.lim, ABH,
+                     het.par, parallel, cluster){
   
   # test the value of minimum cross size
   
@@ -183,6 +183,18 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
       
     }
     
+    
+  }
+  
+  # test if there are as many within cross MAF as cross in the MAF.cr.lim argument
+  
+  if(!is.null(MAF.cr.lim)){
+    
+    if(length(MAF.cr.lim) != length(unique(cross.ind))){
+      
+      stop("MAF.cr.lim must contain one value per cross.")
+      
+    }
     
   }
   
