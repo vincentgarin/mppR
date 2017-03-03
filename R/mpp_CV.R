@@ -26,31 +26,30 @@
 #' 
 #' \item{Use the list of detected QTLs in the training sets to calculate
 #' the proportion of genetic variance explained by all detected QTLs in the
-#' training set (p.ts = R2.ts/heritability). Global p.ts (all QTLs) are returned
-#' adjusted and unadjusted.
+#' training set (p.ts = R2.ts/h2). Where R2.ts is the adjusted
+#' R squared and h2 is the average within cross heritability (\code{her}).
 #' 
-#' For each single QTL effect, difference and single R squared are also
+#' For each single QTL effect, difference partial R squared are also
 #' calculated. Difference R squared are computed by doing the difference between
-#' a model with all QTLs and a model without the ith position. Single QTL R
-#' squared are obtained from a model including only a single QTL position.
-#' These partial R squared are only returned unadjusted. For details about R
-#' squared computation and adjustment look at \code{\link{QTL_R2}}. }
+#' a model with all QTLs and a model without the ith position. For details about R
+#' squared computation and adjustment look at \code{\link{QTL_R2}}.}
 #' 
 #' \item{Use the estimates of the QTL effects in the training set (B.ts) to
 #' predict the phenotypic values of the validation set. y.pred.vs = X.vs*B.ts.
 #' Computes the predicted R squared  in the validation set using the squared
 #' Pearson correlation coefficient between the real values (y.vs) and the
-#' predicted values (y.pred.vs). R2.vs = cor(y.ts,y.pred.ts)^2.
+#' predicted values (y.pred.vs). R2.vs = cor(y.ts,y.pred.ts)^2. Then
+#' the predicted genetic variance in the validation set (p.vs) is equal to
+#' p.vs = R2.vs/h2. For heritability correction, the user can provide a single
+#' value for the average within cross heritability or a vector specifying each
+#' within cross heritability.
 #' 
-#' The predicted R squared can be computed per cross and then averaged
-#' (\code{within.cross = TRUE}) or at the population level. The proportion
-#' of predicted genetic variance in the validation set is obtained dividing
-#' R2.vs by the heritability. Predicted R squared are only returned unadjusted
-#' because we did not find so far any satisfactory solution with respect to this
-#' question. 
+#' The predicted R squared is computed per cross and then averaged
+#' at the population level (p.ts). Both results are returned. Partial QTL
+#' predicted R squared are also calculated using the difference between the
+#' predicted R squared using all QTL and the predicted R squared without QTL i.
 #' 
-#' Partial QTL predicted unadjusted R squared difference and single R squared
-#' are also calculated.
+#' The bias between p.ts and p.vs is calculated as bias = 1 - (p.vs/p.ts).
 #' 
 #'   }
 #' 
@@ -83,7 +82,8 @@
 #' \code{\link{mppData_form}} for details.
 #' 
 #' @param her \code{Numeric} value between 0 and 1 representing the heritability
-#' of the trait. \strong{By default, the heritability is set to 1
+#' of the trait. \code{her} can be a single value or a vector specifying each
+#' within cross heritability. \strong{By default, the heritability is set to 1
 #' (\code{her = 1}). This means that the results represent the proportion of
 #' phenotypic variance explained (predicted) in the training (validation) sets.}
 #' 
@@ -147,10 +147,6 @@
 #' the backward elimination. Terms with p-values above this value will
 #' iteratively be removed. Default = 0.05.
 #' 
-#' @param within.cross \code{Logical} value indicating if the predicted
-#' R squared must be computed within cross. In that case, predicted R squared
-#' are computed within cross and the average is returned. Default = TRUE.
-#' 
 #' @param parallel \code{Logical} value specifying if the function should be
 #' executed in parallel on multiple cores. To run function in parallel user must
 #' provide cluster in the \code{cluster} argument. \strong{Parallelization is
@@ -173,48 +169,25 @@
 #' 
 #' \code{List} containing the following results items:
 #' 
-#' \item{QTL}{\code{Data.frame} with as row the QTL position detected at least
-#' 1 time during the entire CV process and as column:
+#' \item{CV_res}{\code{Data.frame} containing for each CV run: 1) the number
+#' of detected QTL; 2) the proportion of explained genetic variance in the TS;
+#' 3) the proportion of predicted genetic variance in the VS p.vs at the
+#' population level (average of within cross prediction); the bias between
+#' p.ts and p.vs (bias = 1-(p.vs/p.ts))}
 #' 
-#' \enumerate{
+#' \item{p.vs.cr}{\code{Matrix} containing the within cross p.vs for each CV run}
 #' 
-#' \item{QTL position information (chromosome, position [cM], etc.).}
-#' \item{Number of time the position has been detected (N).}
+#' \item{QTL}{\code{Data.frame} containing: 1) the list of QTL position detected
+#' at least one time during the entire CV process; 2) The number of times
+#' the position has been detected; 3) the average p.ts of the QTL position;
+#' 4) the average p.vs of the QTL position; 5) the average bias of the QTL
+#' position}
 #' 
-#' \item{Average  proportion of explained genetic variance in the training set
-#' difference R squared (av.pts.d).}
-#' \item{Average  proportion of predicted genetic variance in the validation set
-#' difference R squared (av.pvs.d).}
-#' \item{Relative bias explained genetic variance difference R squared (bias.d).}
+#' \item{QTL.profiles}{\code{Data.frame} -log10(p-value) QTL profiles of the
+#' different CV runs.}
 #' 
-#' \item{Average  proportion of explained genetic variance in the training set
-#' single QTL R squared (av.pts.s).}
-#' \item{Average  proportion of predicted genetic variance in the validation set
-#' single QTL R squared (av.pvs.s).}
-#' \item{Relative bias explained genetic variance single QTL R squared (bias.s).}
-#'
-#' }
 #' 
-#' } 
-#' 
-#' \item{N.QTL}{Table with the number of QTL detected for each (Rep*k)
-#' repetition.}
-#' 
-#' \item{p.ts}{Table with the proportion of explained genetic variance from
-#' unadjusted R squared in the training set for each (Rep*k) repetition.}
-#' 
-#' \item{p.vs}{Table with the proportion of predicted genetic variance from
-#' unadjusted R squared in the validation set for each (Rep*k) repetition.}
-#' 
-#' \item{bias}{Explained genetic variance bias between training and validation
-#' set from unadjusted R squared 1-(p.vs/p.ts).}
-#' 
-#' \item{p.ts.adj}{Table with the proportion of explained genetic variance from
-#' adjusted R squared in the training set for each (Rep*k) repetition.}
-#' 
-#' \item{QTL.profiles}{Final QTL profiles of each (Rep*k) repetition.}
-#' 
-#' The above mentioned elements return as R object are also saved as text
+#' The results elements return as R object are also saved as text
 #' files at the specified output location (\code{output.loc}). A transparency
 #' plot of the CV results (plot.pdf) obtained with the function
 #' \code{\link{plot_CV}} is also saved.
@@ -276,16 +249,16 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
                    mppData, her = 1, Rep = 10, k = 5, Q.eff = "cr",
                    par.clu = NULL, VCOV = "h.err", thre.cof = 3, win.cof = 20,
                    N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-                   backward = TRUE, alpha.bk = 0.05, within.cross = TRUE,
-                   parallel = FALSE, cluster = NULL, silence.print = FALSE,
-                   output.loc = getwd()) {
+                   backward = TRUE, alpha.bk = 0.05, parallel = FALSE,
+                   cluster = NULL, silence.print = FALSE, output.loc = getwd())
+{
   
   # 1. Check the validity of the parameters that have been introduced
   ###################################################################
   
   check.mpp.cv(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
                par.clu = par.clu, parallel = parallel, cluster = cluster,
-               output.loc = output.loc)
+               output.loc = output.loc, her = her)
   
   # 2. Create a directory to store the results
   ############################################
@@ -311,13 +284,21 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
   # 3. Create space to store the results
   ######################################
   
-  N.QTL <- p.ts <- p.ts.adj <- p.vs <- bias <- matrix(0, k, Rep)
+  # global results
+  
+  N.QTL <- p.ts <- p.vs <- bias <- rep(0, (k*Rep))
+  
+  # within cross pVS
+  
+  p.vs.cr <- matrix(0, mppData$n.cr, (k*Rep))
+  
+  ind.res <- 1 # index to feed the results later
+  
+  # individual QTL position results
   
   QTL.positions <- rep(0, dim(mppData$map)[1])
   N.Qeff.est.ts <- rep(0, dim(mppData$map)[1])
   N.Qeff.est.vs <- rep(0, dim(mppData$map)[1])
-  
-  QTL.pts.s <- QTL.pvs.s <- rep(0, dim(mppData$map)[1])
   
   QTL.pts.d <- QTL.pvs.d <- rep(0, dim(mppData$map)[1])
   
@@ -456,7 +437,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           
           # a) N.QTL
           
-          N.QTL[j, i] <- dim(QTL)[1]
+          N.QTL[ind.res] <- dim(QTL)[1]
           
           # b) QTL positions
           
@@ -483,7 +464,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           
           R2.vs <- QTL_pred_R2(mppData.ts = mppData.ts, mppData.vs = mppData.vs,
                                Q.eff = Q.eff, par.clu = par.clu, VCOV = VCOV,
-                               QTL = QTL, within.cross = within.cross)
+                               QTL = QTL, her = her)
           
           
           # global results
@@ -491,14 +472,14 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           
           # non adjusted
           
-          p.ts[j, i] <- R2.ts$glb.R2/her
-          p.vs[j, i] <- R2.vs$glb.R2/her
-          bias[j, i] <- round(1 - (p.vs[j, i]/p.ts[j, i]), 2)
+          p.ts[ind.res] <- R2.ts$glb.R2/mean(her)
+          p.vs[ind.res] <- R2.vs$glb.R2
+          bias[ind.res] <- round(1 - (p.vs[ind.res]/p.ts[ind.res]), 2)
           
           
-          # adjusted
+          # within cross results
           
-          p.ts.adj[j, i] <- R2.ts$glb.adj.R2/her
+          p.vs.cr[, ind.res] <- R2.vs$R2.cr
           
           
           # store partial R squared
@@ -529,23 +510,14 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
             
           }
           
-          # single QTL R2 values
-          
-          QTL.pts.s <- update.res(input = R2.ts$part.R2.sg/her,
-                                  output = QTL.pts.s, Q.names = QTL.names,
-                                  mk.list = mk.list)
-          
-          QTL.pvs.s <- update.res(input = R2.vs$part.R2.sg/her,
-                                  output = QTL.pvs.s, Q.names = QTL.names,
-                                  mk.list = mk.list)
           
           # difference QTL R2 values
           
-          QTL.pts.d <- update.res(input = R2.ts$part.R2.diff/her,
+          QTL.pts.d <- update.res(input = R2.ts$part.R2.diff/mean(her),
                                   output = QTL.pts.d, Q.names = QTL.names,
                                   mk.list = mk.list)
           
-          QTL.pvs.d <- update.res(input = R2.vs$part.R2.diff/her,
+          QTL.pvs.d <- update.res(input = R2.vs$part.R2.diff/mean(her),
                                   output = QTL.pvs.d, Q.names = QTL.names,
                                   mk.list = mk.list)
           
@@ -554,15 +526,15 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           
           if(prob.prog){
             
-            N.QTL[j, i] <- p.ts[j, i] <- p.vs[j, i] <- bias[j, i] <- NA
-            p.ts.adj[j, i] <- NA
+            N.QTL[ind.res] <- p.ts[ind.res] <- p.vs[ind.res] <- NA
+            bias[ind.res] <- NA
             
           } else { # only no QTL significant enough.
             
             # N.QTL p.ts and p.vs stay at 0 as in the initialisation. Only need to
             # put the bias at NA.
             
-            bias[j, i] <- NA
+            bias[ind.res] <- NA
             
             profiles <- cbind(profiles, CIM$log10pval)
             
@@ -575,15 +547,15 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
         
         if(prob.prog){
           
-          N.QTL[j, i] <- p.ts[j, i] <- p.vs[j, i] <- bias[j, i] <- NA
-          p.ts.adj[j, i] <- NA
+          N.QTL[ind.res] <- p.ts[ind.res] <- p.vs[ind.res] <- NA
+          bias[ind.res] <- NA
           
         } else { # Only no QTL significant enough.
           
           # N.QTL p.ts and p.vs stay at 0 as in the initialisation. Only need to
           # put the bias at NA.
           
-          bias[j, i] <- NA
+          bias[ind.res] <- NA
           
           profiles <- cbind(profiles, SIM$log10pval)
           
@@ -591,65 +563,49 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
         
       }
       
+      ind.res <- ind.res + 1
+      
     }  # end jth fold loop
     
     
   }  # end ith repetition loop
   
   
-  # 5. save the results in the specified folder
-  #############################################
+  # 5. format the results of the CV process
+  #########################################
   
+  ### 5.1 global results
   
-  save.CV.res <- function(res, col, row, out, name){
-    colnames(res) <- col; rownames(res) <- row
-    write.table(res, paste0(out, "/", name, ".txt"), quote = FALSE, sep = "\t")
-    
-  }
+  CV_res <- data.frame(N.QTL, p.ts, p.vs, bias)
+  CV_res <- round(CV_res, 2)
   
+  write.table(CV_res, paste0(folder.loc, "/", "CV_res.txt"), quote = FALSE,
+              sep = "\t", row.names = FALSE)
   
-  row.n <- paste0("k_", 1:k)
-  col.n <- paste0("Rep_", 1:Rep)
+  p.vs.cr <- round(p.vs.cr, 2)
+  rownames(p.vs.cr) <- unique(mppData$cross.ind)
+  colnames(p.vs.cr) <- paste0("CV.run", 1:(Rep*k))
   
-  save.CV.res(res = N.QTL, col = col.n, row = row.n, out = folder.loc,
-              name = "N_QTL")
+  write.table(p.vs.cr, paste0(folder.loc, "/", "p_vs_cr.txt"), quote = FALSE,
+              sep = "\t")
   
-  save.CV.res(res = p.ts, col = col.n, row = row.n, out = folder.loc,
-              name = "p_ts")
-  
-  save.CV.res(res = p.ts.adj, col = col.n, row = row.n, out = folder.loc,
-              name = "p_ts_adj")
-  
-  save.CV.res(res = p.vs, col = col.n, row = row.n, out = folder.loc,
-              name = "p_vs")
-  
-  save.CV.res(res = bias, col = col.n, row = row.n, out = folder.loc,
-              name = "bias")
-  
-  
-  # QTL.positions
-  
-  av.pts.s <- round(QTL.pts.s/N.Qeff.est.ts, 1)
-  av.pvs.s <- round(QTL.pvs.s/N.Qeff.est.vs, 1)
-  bias.s <- round(1 - (av.pvs.s/av.pts.s), 1)
+  ### 5.2 ind QTL position res
   
   av.pts.d <- round(QTL.pts.d/N.Qeff.est.ts, 1)
   av.pvs.d <- round(QTL.pvs.d/N.Qeff.est.vs, 1)
   bias.d <- round(1 - (av.pvs.d/av.pts.d), 1)
   
-  
   QTL.sum <- data.frame(mppData$map, QTL.positions, av.pts.d, av.pvs.d,
-                        bias.d, av.pts.s, av.pvs.s, bias.s,
-                        stringsAsFactors = FALSE)
+                        bias.d, stringsAsFactors = FALSE)
   
   QTL.sum <- QTL.sum[QTL.positions > 0, ]
   
-  colnames(QTL.sum)[5] <- "N"
+  colnames(QTL.sum)[5:8] <- c("N", "p.ts", "p.vs", "bias")
   
   write.table(QTL.sum, paste0(folder.loc, "/", "QTL.txt"), quote = FALSE,
               sep = "\t", row.names = FALSE)
   
-  # profiles
+  ### 5.3 profiles
   
   file <- paste0(folder.loc, "/", "QTL_profiles.txt")
   
@@ -674,8 +630,8 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
   
   # return R object
   
-  return(list(QTL = QTL.sum, N.QTL = N.QTL, p.ts = p.ts, p.vs = p.vs,
-              bias = bias, p.ts.adj = p.ts.adj, QTL.profiles = profiles2))
+  return(list(CV_res = CV_res, p.vs.cr = p.vs.cr, QTL = QTL.sum,
+              QTL.profiles = profiles2))
   
   
 } 

@@ -63,24 +63,24 @@
 #' selected position obtained with the function \code{\link{QTL_select}} or
 #' vector of \code{character} marker or in between marker positions names.
 #' Default = NULL.
-#' 
-#' @param within.cross \code{Logical} value indicating if the predicted
-#' R squared must be computed at the whole population level or within cross.
-#' In the later case, predicted R squared are computed within cross and the
-#' average is returned. Default = TRUE.
-#' 
+#'
+#' @param her \code{Numeric} value between 0 and 1 representing the heritability
+#' of the trait. \code{her} can be a single value or a vector specifying each
+#' within cross heritability. \strong{By default, the heritability is set to 1
+#' (\code{her = 1}). This means that the results represent the proportion of
+#' phenotypic variance explained (predicted) in the training (validation) sets.}
 #' 
 #' @return Return:
 #' 
 #' \code{List} containing the following objects:
 #'
-#' \item{glb.R2 }{ Global predicted R squared of all QTL terms.}
+#' \item{glb.R2 }{Global predicted R squared of all QTL terms. Doing the
+#' average of the within cross predicted R squared (R2.cr)}
+#' 
+#' \item{R2.cr}{Within cross predicted R squared}
 #'
 #' \item{part.R2.diff }{ Vector of predicted partial R squared doing
 #' the difference between the full model and a model minus the ith QTL.}
-#' 
-#' \item{part.R2.sg }{ Vector of predicted partial R squared using only the
-#' ith QTL.}
 #' 
 #' 
 #' @author Vincent Garin
@@ -111,7 +111,7 @@
 
 
 QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
-                        VCOV = "h.err", QTL = NULL, within.cross = TRUE) {
+                        VCOV = "h.err", QTL = NULL, her = 1) {
   
   # 1. test data format
   #####################
@@ -181,46 +181,37 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
   # global R squared
   
   R2 <- R2_pred(mppData.vs = mppData.vs, B.ts = B.ts, Q.list = Q.list,
-                within.cross = within.cross)
+                her = her)
   
   # partial R2
   
   if (n.QTL > 1) {
     
-    part.R2.diff <- function(x, mppData.vs, B.ts, Q.list, within.cross) {
-      R2_pred(mppData.vs = mppData.vs, B.ts = B.ts[-x], Q.list =  Q.list[-x],
-              within.cross = within.cross)
+    part.R2.diff <- function(x, mppData.vs, B.ts, Q.list, her) {
+      R2_pred(mppData.vs = mppData.vs, B.ts = B.ts[-x],
+              Q.list =  Q.list[-x], her = her)[[1]]
     }
     
-    part.R2.sg <- function(x, mppData.vs, B.ts, Q.list, within.cross) {
-      R2_pred(mppData.vs = mppData.vs, B.ts = B.ts[x], Q.list =  Q.list[x],
-              within.cross = within.cross)
-    }
     
     R2_i.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, mppData.vs = mppData.vs,
-                       B.ts = B.ts, Q.list = Q.list,
-                       within.cross = within.cross)
+                       B.ts = B.ts, Q.list = Q.list, her = her)
     
-    R2_i.dif <- R2 - unlist(R2_i.dif) # difference full model and model minus i
-    
-    R2_i.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, mppData.vs = mppData.vs,
-                      B.ts = B.ts, Q.list = Q.list,
-                      within.cross = within.cross)
-    
-    R2_i.sg <- unlist(R2_i.sg)
+    R2_i.dif <- R2[[1]] - unlist(R2_i.dif) # difference full model and model minus i
     
     
     names(R2_i.dif) <- paste0("Q", 1:n.QTL)
-    names(R2_i.sg) <- paste0("Q", 1:n.QTL)
     
     
-    return(list(glb.R2 = R2, part.R2.diff = R2_i.dif, part.R2.sg = R2_i.sg))
+    return(list(glb.R2 = R2[[1]], R2.cr = R2[[2]],
+                part.R2.diff = R2_i.dif))
     
   } else {
     
-    names(R2) <- "Q1"
+    R2.Q1 <- R2[[1]]
+    names(R2.Q1) <- "Q1"
     
-    return(list(glb.R2 = R2, part.R2.diff = R2, part.R2.sg = R2))
+    return(list(glb.R2 = R2[[1]], R2.cr = R2[[2]],
+                part.R2.diff = R2.Q1))
     
   }
   

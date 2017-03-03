@@ -7,7 +7,7 @@
 
 
 check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
-                         parallel = FALSE, cluster, output.loc){
+                         parallel = FALSE, cluster, output.loc, her){
   
   
   # 1. test the validity of the provided path to store the results
@@ -142,6 +142,16 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
                  "object is not the same as the one in the mppData object map."))
       
     }
+    
+  }
+  
+  # 9 check the format of her argument
+  
+  if((length(her) != 1) & (length(her) != mppData$n.cr)){
+    
+    stop(paste("the her argument must either be of lenght one representing the",
+                "average heritability over cross or of length n.cr representing",
+                "the within cross heritabilities"))
     
   }
   

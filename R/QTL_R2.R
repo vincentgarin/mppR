@@ -156,7 +156,7 @@ QTL_R2 <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   ### 3.1 Global adjusted and unadjusted linear R squared
   
-  R2.all <- R2_lin2(mppData = mppData, QTL = do.call(cbind, Q.list))
+  R2.all <- R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list))
   
   R2 <- R2.all[[1]]
   R2.adj <- R2.all[[2]]

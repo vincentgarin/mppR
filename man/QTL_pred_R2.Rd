@@ -5,7 +5,7 @@
 \title{Predicted QTL global and partial R squared}
 \usage{
 QTL_pred_R2(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
-  VCOV = "h.err", QTL = NULL, within.cross = TRUE)
+  VCOV = "h.err", QTL = NULL, her = 1)
 }
 \arguments{
 \item{mppData.ts}{An object of class \code{mppData} for the training set. See
@@ -41,23 +41,24 @@ selected position obtained with the function \code{\link{QTL_select}} or
 vector of \code{character} marker or in between marker positions names.
 Default = NULL.}
 
-\item{within.cross}{\code{Logical} value indicating if the predicted
-R squared must be computed at the whole population level or within cross.
-In the later case, predicted R squared are computed within cross and the
-average is returned. Default = TRUE.}
+\item{her}{\code{Numeric} value between 0 and 1 representing the heritability
+of the trait. \code{her} can be a single value or a vector specifying each
+within cross heritability. \strong{By default, the heritability is set to 1
+(\code{her = 1}). This means that the results represent the proportion of
+phenotypic variance explained (predicted) in the training (validation) sets.}}
 }
 \value{
 Return:
 
 \code{List} containing the following objects:
 
-\item{glb.R2 }{ Global predicted R squared of all QTL terms.}
+\item{glb.R2 }{Global predicted R squared of all QTL terms. Doing the
+average of the within cross predicted R squared (R2.cr)}
+
+\item{R2.cr}{Within cross predicted R squared}
 
 \item{part.R2.diff }{ Vector of predicted partial R squared doing
 the difference between the full model and a model minus the ith QTL.}
-
-\item{part.R2.sg }{ Vector of predicted partial R squared using only the
-ith QTL.}
 }
 \description{
 Computes predicted R squared in a validation set using QTLs detected in a
