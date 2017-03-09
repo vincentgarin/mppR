@@ -30,7 +30,7 @@
 #' 
 #' my.loc <- "C:/..."
 #' 
-#' CV <- mpp_CV(mppData = USNAM_mppData, her = .5, output.loc = my.loc)
+#' CV <- mpp_CV(mppData = USNAM_mppData, her = .5, output.loc = my.loc, Rep = 3)
 #' 
 #' plot_CV(CV.res = CV)
 #' 
@@ -105,12 +105,22 @@ plot_CV <- function(CV.res, main = "CV QTL profiles") {
     
   }
   
+  # determine an extra-space above to add the chromosome number on the plot
+  
+  max.y2 <- 1.05*max.y
+  y.pos.chr.lab <- max.y + ((max.y2 - max.y)/1.2)
+  x.pos.chr.lab <- diff(chr.border)/2 + chr.border[-length(chr.border)]
   
   plot(0, xaxt = "n", xlim = c(min(vect.cum.l), max(vect.cum.l)),
-       ylim = c(0, max.y), type = "n", xlab = "position [cM]",
-       ylab = "-log10(p-value)", main = main)
+       ylim = c(0, max.y2), type = "n", xlab = "position [cM]",
+       ylab = "-log10(p-value)", main = main, cex.main = 1.8,
+       cex.axis = 1.5, cex.lab = 1.5)
   
-  axis(side = 1, at = pos.cum, labels = as.character(pos.label))
+  abline(h = max.y)
+  text(x = x.pos.chr.lab, y = y.pos.chr.lab, labels = 1:length(chr.l),
+       cex = 1.5)
+  
+  axis(side = 1, at = pos.cum, labels = as.character(pos.label), cex.axis = 1.5)
   
   fill <- rgb(1, 0, 0, 0.15)
   

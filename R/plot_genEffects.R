@@ -146,6 +146,8 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
   
   pos.cM <- Qprof$pos.cM
   
+  y_lab <- "parents"
+  
   ### 2.5 legend for the y-axis (cross or parents)
   
   if(Q.eff == "cr") {
@@ -155,6 +157,8 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
                               "x", mppData$par.per.cross[, 3], ")")
     
     y.names <- paste(cross.names, par.cross.names, sep = "\n")
+    
+    y_lab <- "crosses"
     
   } else if (Q.eff == "par"){
     
@@ -215,8 +219,16 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
       facet_wrap(nrow = 1, ~ chr, scales = "free_x") +
       scale_fill_gradient2(limits = c(-5, 5), low = "red", mid = "white",
                            high = "blue") +
-      theme_bw() + xlab("position [cM]") +
-      scale_y_discrete(labels = y.names) + ggtitle(main)
+      theme_bw() + xlab("position [cM]") + ylab(y_lab) + 
+      scale_y_discrete(labels = y.names) + ggtitle(main) +
+      theme(axis.title.x = element_text(size=18),
+            axis.title.y = element_text(size=18),
+            axis.text.x  = element_text(size=18),
+            axis.text.y = element_text(size = 18),
+            plot.title = element_text(size=22),
+            strip.text.x =  element_text(size=18),
+            legend.title = element_text(size=16),
+            legend.text = element_text(size=16))
     
   } else { # QTL position given
     
@@ -226,8 +238,16 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
       scale_fill_gradient2(limits = c(-5, 5), low = "red", mid = "white",
                            high = "blue") +
       geom_vline(aes(xintercept = pos.cM), pos.Q, linetype = "longdash") +
-      theme_bw() + xlab("position [cM]") +
-      scale_y_discrete(labels = y.names) + ggtitle(main)
+      theme_bw() + xlab("position [cM]") + ylab(y_lab) +
+      scale_y_discrete(labels = y.names) + ggtitle(main) +
+      theme(axis.title.x = element_text(size=18),
+            axis.title.y = element_text(size=18),
+            axis.text.x  = element_text(size=18),
+            axis.text.y = element_text(size = 18),
+            plot.title = element_text(size=22),
+            strip.text.x =  element_text(size=18),
+            legend.title = element_text(size=16),
+            legend.text = element_text(size=16))
     
   }
   

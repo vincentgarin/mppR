@@ -66,6 +66,7 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
   log10pval <- Qprof$log10pval
   Qprof <- data.frame(chr, pos.cM, log10pval)
   
+  
   if(is.null(QTL)){ # no QTL info given
     
     if (type == "l") {
@@ -74,9 +75,15 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
         facet_wrap(nrow = 1, ~ chr, scales = "free_x") +
         geom_hline(yintercept = threshold, colour = "red") + theme_bw() +
         xlab("position [cM]") + ylab("-log10(p.val)") + 
-        ggtitle(main)
-      
-      
+        ggtitle(main) +
+        theme(axis.title.x = element_text(size=18),
+              axis.title.y = element_text(size=18),
+              axis.text.x  = element_text(size=18),
+              axis.text.y = element_text(size = 18),
+              plot.title = element_text(size=22),
+              strip.text.x =  element_text(size=18))
+              
+              
     } else if (type == "h") {
       
       ggplot(Qprof, aes(x = pos.cM, xend = pos.cM, y = 0, yend = log10pval,
@@ -84,8 +91,14 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
         facet_wrap(nrow = 1, ~ chr, scales = "free_x") +
         geom_hline(yintercept = threshold, colour = "red") + 
         theme_bw() + xlab("position [cM]") + ylab("-log10(p.val)") + 
-        ggtitle(main)
-      
+        ggtitle(main) +
+        theme(axis.title.x = element_text(size=18),
+              axis.title.y = element_text(size=18),
+              axis.text.x  = element_text(size=18),
+              axis.text.y = element_text(size = 18),
+              plot.title = element_text(size=22),
+              strip.text.x =  element_text(size=18))
+              
     }
     
   } else { # QTL info given
@@ -94,11 +107,17 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
       
       ggplot(Qprof, aes(x = pos.cM, y = log10pval, group = chr)) + geom_line() + 
         facet_wrap(nrow = 1, ~ chr, scales = "free_x") +
-        geom_vline(aes(xintercept = pos.cM), pos.Q, linetype = 3,
-                   colour = "grey") +
+        geom_vline(aes(xintercept = pos.cM), pos.Q, linetype = "longdash",
+                   colour = "black") +
         geom_hline(yintercept = threshold, colour = "red") + theme_bw() +
         xlab("position [cM]") + ylab("-log10(p.val)") + 
-        ggtitle(main)
+        ggtitle(main) + 
+        theme(axis.title.x = element_text(size=18),
+              axis.title.y = element_text(size=18),
+              axis.text.x  = element_text(size=18),
+              axis.text.y = element_text(size = 18),
+              plot.title = element_text(size=22),
+              strip.text.x =  element_text(size=18))
       
       
     } else if (type == "h") {
@@ -106,12 +125,18 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
       ggplot(Qprof, aes(x = pos.cM, xend = pos.cM, y = 0, yend = log10pval,
                         group = chr)) + geom_segment() +
         facet_wrap(nrow = 1, ~ chr, scales = "free_x") +
-        geom_vline(aes(xintercept = pos.cM), pos.Q, linetype = 3,
-                   colour = "grey") +
+        geom_vline(aes(xintercept = pos.cM), pos.Q, linetype = "longdash",
+                   colour = "black") +
         geom_hline(yintercept = threshold, colour = "red") + 
         theme_bw() + xlab("position [cM]") + ylab("-log10(p.val)") + 
-        ggtitle(main)
-      
+        ggtitle(main) +
+        theme(axis.title.x = element_text(size=18),
+              axis.title.y = element_text(size=18),
+              axis.text.x  = element_text(size=18),
+              axis.text.y = element_text(size = 18),
+              plot.title = element_text(size=22),
+              strip.text.x =  element_text(size=18))
+              
     }
     
   }

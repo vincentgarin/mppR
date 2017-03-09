@@ -138,6 +138,12 @@ MQE_plot <- function(mppData, Qprof, QTL, window = 30, threshold = 3,
     facet_wrap(nrow = 1, ~chr, scales = "free_x") +
     geom_hline(yintercept = threshold, colour = "red") +
     labs(title = main) + theme_bw() + xlab("position [cM]") + 
-    ylab("-log10(p.val)")
+    ylab("-log10(p.val)") +
+    theme(axis.title.x = element_text(size=18),
+          axis.title.y = element_text(size=18),
+          axis.text.x  = element_text(size=18),
+          axis.text.y = element_text(size = 18),
+          plot.title = element_text(size=22),
+          strip.text.x =  element_text(size=18))
   
 }
