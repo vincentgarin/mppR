@@ -267,6 +267,8 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
       
     } else if (Q.eff == "anc"){
       
+      if(is.character(QTL)){ QTL.list <- QTL} else {QTL.list <- QTL[, 1]}
+      
       con.part <- vector(mode = "list", length(Q.list))
       allele_ref <- vector(mode = "list", length(Q.list))
       
@@ -274,7 +276,7 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
         
         # 1. Determine the connected parts
         
-        par.clu_i <- par.clu[QTL[i, 1], ]
+        par.clu_i <- par.clu[QTL.list[i], ]
         par.clu_i <- paste0("A.allele", par.clu_i)
         names(par.clu_i) <- mppData$parents
         

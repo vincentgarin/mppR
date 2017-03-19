@@ -31,6 +31,8 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
   
   n.QTL <- length(Q.list)
   
+  if(is.character(QTL)){ QTL.list <- QTL} else {QTL.list <- QTL[, 1]}
+  
   if(VCOV == "h.err"){
     
     results <- summary(model)$coefficients
@@ -102,7 +104,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
       
       if(!is.null(mppData$geno.par)){
         
-        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL.list[i],
                                     5:dim(mppData$geno.par)[2]]
         Par.all <- unlist(Par.all)[Add.parent]
         
@@ -186,7 +188,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
       
       if(!is.null(mppData$geno.par)){
         
-        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL.list[i],
                                     5:dim(mppData$geno.par)[2]]
         
         Par.all <- unlist(Par.all)[par.list]
@@ -273,7 +275,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     for(i in 1:n.QTL){
       
       Q.mat <- results[Q.ind == ref.Q[i], ]
-      A.allele <- factor(par.clu[QTL[i, 1], ])
+      A.allele <- factor(par.clu[QTL.list[i], ])
       A <- model.matrix(~ A.allele - 1)
       
       # modify column order of A
@@ -303,7 +305,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
       
       if(!is.null(mppData$geno.par)){
         
-        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL.list[i],
                                     5:dim(mppData$geno.par)[2]]
         
         Par.all <- unlist(Par.all)[rownames(res)]
@@ -351,11 +353,11 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
         ref.mat2 <- matrix(rep(c(0, 0, 0, 1), mppData$n.par),
                            nrow = mppData$n.par, byrow = TRUE)
         
-        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL[i, 1],
+        Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL.list[i],
                                     5:dim(mppData$geno.par)[2]]
         Par.all <- unlist(Par.all)
         
-        index <- which(mppData$geno.par[, 1] == QTL[i, 1])
+        index <- which(mppData$geno.par[, 1] == QTL.list[i])
         ref.all <- c(mppData$allele.ref[1, index, drop = FALSE])
         het.sc <- mppData$allele.ref[c(3, 4), index]
         
