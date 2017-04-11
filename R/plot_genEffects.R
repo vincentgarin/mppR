@@ -111,6 +111,51 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
     
   }
   
+  # 2. order columns within connected parts
+  #########################################
+  
+  if((Q.eff == "par") || (Q.eff == "anc")){
+    
+    # determine the connected parts
+    
+    con.part <- design_connectedness(par.per.cross = mppData$par.per.cross,
+                                     plot.des = FALSE)
+    
+    allele_order <- c()
+    pval <- data.frame(row.names = 1:dim(Qprof)[1])
+    
+    for(i in seq_along(con.part)){
+      
+      con.part_i <- con.part[[i]]
+      
+      # subset results of the connected part
+      
+      pval_i <- Qprof[, con.part_i]
+      
+      # order according to number of reference values
+      
+      all.ref <- apply(X = pval_i, MARGIN = 2,
+                       FUN = function(x) sum(x == 1))
+      
+      pval <- cbind.data.frame(pval, pval_i[, names(sort(all.ref))])
+      
+      allele_ord_i <- names(sort(all.ref))
+      
+      allele_ord_i <- c(paste(allele_ord_i, paste0("(c", i,")"), sep = "\n"))
+      
+      allele_order <- c(allele_order, allele_ord_i)
+      
+    }
+    
+    # Rename Qprof
+    
+    Qprof <- cbind(Qprof[, 1:5], pval)
+    
+    
+    y.names <- allele_order
+    
+  }
+  
   # 2. elements for the plot
   ##########################
   
@@ -160,49 +205,7 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
     
     y_lab <- "crosses"
     
-  } else if (Q.eff == "par"){
-    
-    con.part <- design_connectedness(par.per.cross = mppData$par.per.cross,
-                                     plot.des = FALSE)
-    
-    allele_order <- c()
-    
-    for(i in seq_along(con.part)){
-      
-      con.part_i <- con.part[[i]]
-      
-      # subset the par.per.cross object
-      
-      index <- apply(X = mppData$par.per.cross[, c(2,3)], MARGIN = 1,
-                     FUN = function(x, ref) sum(x %in% ref) > 0,
-                     ref = con.part_i)
-      
-      par.per.cross_i <- mppData$par.per.cross[index, , drop = FALSE]
-      
-      # susbet the cross indicator according to the cross retained
-      
-      cross.ind_i <- mppData$cross.ind[mppData$cross.ind %in% par.per.cross_i[, 1]]
-      
-      allele_ord_i <- most.used.allele(par.per.cross_i, cross.ind_i,
-                                       most.used = FALSE)
-      
-      allele_ord_i <- c(paste(allele_ord_i[-length(allele_ord_i)],
-                              paste0("(c", i,")"), sep = "\n"),
-                        paste(allele_ord_i[length(allele_ord_i)],
-                              paste0("(Ref.c", i,")"), sep = "\n"))
-      
-      allele_order <- c(allele_order, allele_ord_i)
-      
-    }
-    
-    y.names <- allele_order
-    
-    
-  } else if (Q.eff == "anc"){
-    
-    y.names <- mppData$parents
-    
-  }
+  } 
   
   ### 2.6 gather data for the plot
   

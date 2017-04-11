@@ -17,12 +17,16 @@ QTL_pval_mix <- function(model, Q.eff, QTL.el, x, par.clu, ref.name, fct) {
   pval <- wald(model)[start.ind:(QTL.el + end.ind), 4]
   pval <- pval * sign
   pval[pval == 0] <- 1
+  names(pval) <- ref.name
   
-  if (Q.eff == "anc") {
+  if(Q.eff == "par"){
+    
+    pval <- pval[mppData$parents]
+    
+  } else if (Q.eff == "anc") {
     
     # project into parents
     
-    names(pval) <- ref.name
     ref.all <- paste0("A.allele", par.clu[x, ])
     pval <- pval[ref.all]
     

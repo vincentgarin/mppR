@@ -226,8 +226,7 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                           mppData = mppData, cross.mat = cross.mat,
                           par.mat = parent.mat, Q.eff = Q.eff,
                           par.clu = par.clu, VCOV = VCOV, cof.list = cof.list,
-                          cof.part = cof.part, est.gen.eff = est.gen.eff,
-                          ref.all.most = TRUE)
+                          cof.part = cof.part, est.gen.eff = est.gen.eff)
     
   } else {
     
@@ -235,13 +234,13 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                        mppData = mppData, cross.mat = cross.mat,
                        par.mat = parent.mat, Q.eff = Q.eff,
                        par.clu = par.clu, VCOV = VCOV, cof.list = cof.list,
-                       cof.part = cof.part, est.gen.eff = est.gen.eff,
-                       ref.all.most = TRUE)
+                       cof.part = cof.part, est.gen.eff = est.gen.eff)
     
   }
   
   
   log.pval <- t(data.frame(log.pval))
+  if(est.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value
   log.pval[is.na(log.pval[, 1]), 1] <- 0
   
@@ -255,20 +254,9 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
     
     if(Q.eff == "cr"){ Qeff_names <- unique(mppData$cross.ind)
     
-    } else if (Q.eff == "par") {
-      
-      QTL <- IncMat_QTL(x = 1, mppData = mppData, cross.mat = cross.mat,
-                        par.mat = parent.mat, par.clu = par.clu, Q.eff = Q.eff)
-      
-      QTL <- IncMat_QTL_Qeff(x = 1, QTL = QTL, mppData = mppData,
-                             Q.eff = Q.eff, par.clu = par.clu,
-                             ref.all.most = TRUE)
-      
-      Qeff_names <- colnames(QTL)
-      
-    } else if (Q.eff == "anc") { Qeff_names <- mppData$parents }
+    } else { Qeff_names <- mppData$parents }
     
-    colnames(CIM)[5:dim(CIM)[2]] <- c("log10pval", Qeff_names)
+    colnames(CIM)[5:dim(SIM)[2]] <- c("log10pval", Qeff_names)
     
   } else {colnames(CIM)[5] <- "log10pval"}
   

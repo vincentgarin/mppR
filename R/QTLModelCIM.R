@@ -6,7 +6,7 @@
 
 
 QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
-                        cof.list, cof.part, est.gen.eff, ref.all.most){
+                        cof.list, cof.part, est.gen.eff){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
@@ -19,15 +19,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   
-  if(est.gen.eff){
-    
-    QTL <- IncMat_QTL_Qeff(x = x, QTL = QTL, mppData = mppData,
-                           Q.eff = Q.eff, par.clu = par.clu,
-                           ref.all.most = ref.all.most)
-    
-    ref.name <- colnames(QTL)
-    
-  }
+  ref.name <- colnames(QTL)
   
   ### 2.1 cofactors
   

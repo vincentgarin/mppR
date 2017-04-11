@@ -5,7 +5,7 @@
 # function to compute a single position QTL model
 
 QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
-                        est.gen.eff, ref.all.most){
+                        est.gen.eff){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
@@ -16,18 +16,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   
-  
-  ########## modification of the QTL indence matrix if est.gen.eff = TRUE
-  
-  if(est.gen.eff){
-    
-    QTL <- IncMat_QTL_Qeff(x = x, QTL = QTL, mppData = mppData,
-                           Q.eff = Q.eff, par.clu = par.clu,
-                           ref.all.most = ref.all.most)
-    
-    ref.name <- colnames(QTL)
-    
-  }
+  ref.name <- colnames(QTL)
   
   # 2. model computation
   ######################

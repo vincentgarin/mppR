@@ -30,6 +30,10 @@ QTL_pval <- function(mppData, model, Q.eff, x, par.clu) {
     pval <- pval[paste0("Cr", unique(mppData$cross.ind))]
     
     
+  } else if (Q.eff == "par") {
+    
+    pval <- pval[mppData$parents]
+    
   } else if (Q.eff == "anc") {
     
     ref.all <- paste0("A.allele", par.clu[x, ])
