@@ -14,7 +14,8 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   ### 2.2 QTL position
   
   QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
-                    par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff)
+                    par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff,
+                    order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   
@@ -181,7 +182,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         
       } else {
         
-        df <- sum(wald(model)[3:(QTL.el+2), 3] != 0)
+        df <- sum(wald(model)[3:(QTL.el+2), 1])
         
         pval <- pchisq(W.stat, df, lower.tail = FALSE)
         

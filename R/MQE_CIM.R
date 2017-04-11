@@ -171,35 +171,11 @@ MQE_CIM <- function(mppData = NULL, mppData_bi = NULL, Q.eff = "cr",
   
   cof.pos <- which(mppData$map[, 1] %in% cofactors)
   
-  # function to produce different type of QTL incidence matricdes
-  
-  IncMat_QTL_MQE <- function(x, mppData, mppData_bi, Q.eff, par.clu,
-                             cross.mat, par.mat){
-    
-    if(Q.eff == "biall") {
-      
-      IncMat_QTL(x = x, mppData = mppData_bi, Q.eff = Q.eff, par.clu = par.clu,
-                 cross.mat = cross.mat, par.mat = par.mat)
-      
-    } else {
-      
-      Q <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
-                      par.clu = par.clu, cross.mat = cross.mat,
-                      par.mat = par.mat)
-      
-      # apply a constraint (remove 1st column) if par or anc Q.eff
-      
-      if((Q.eff == "par") | (Q.eff == "anc")) Q[, -1, drop = FALSE] else Q
-      
-      
-    }
-    
-  }
-  
   cof.list <- mapply(FUN = IncMat_QTL_MQE, x = cof.pos, Q.eff = cof.Qeff,
                      MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
                                      par.clu = par.clu, cross.mat = cross.mat,
-                                     par.mat = parent.mat), SIMPLIFY = FALSE)
+                                     par.mat = parent.mat, order.MAF = TRUE),
+                     SIMPLIFY = FALSE)
   
   
   ### 2.6 Formation of the genome-wide and cofactors partition

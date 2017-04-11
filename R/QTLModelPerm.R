@@ -10,7 +10,8 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
   ###########################################
   
   QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
-                    par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff)
+                    par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff,
+                    order.MAF = TRUE)
   
   # 2. model computation
   ######################

@@ -4,7 +4,7 @@
 \alias{IncMat_QTL}
 \title{QTL incidence matrix}
 \usage{
-IncMat_QTL(x, mppData, Q.eff, par.clu, cross.mat, par.mat)
+IncMat_QTL(x, mppData, Q.eff, par.clu, cross.mat, par.mat, order.MAF = FALSE)
 }
 \arguments{
 \item{x}{\code{Integer} value indicating the genetic position on the map
@@ -33,6 +33,11 @@ ancestor. for more details, see \code{\link{USNAM_parClu}} and
 
 \item{par.mat}{Parents incidence matrix that can be obtained with
 \code{\link{IncMat_parent}}.}
+
+\item{order.MAF}{\code{Logical} value specifying if the QTL incidence matrix
+should be ordered by allele frequency for a parental and ancestral QTL
+incidence matrix. The colum will be ordred from the least to most frequent
+allele. Default = FALSE.}
 }
 \value{
 Return:
@@ -67,6 +72,7 @@ QTLmatAnc <- IncMat_QTL(x = 2, mppData = USNAM_mppData, par.mat = par.mat,
                         par.clu = par.clu, Q.eff = "anc")
 
 QTLmatBi <- IncMat_QTL(x = 2, mppData = USNAM_mppData_bi, Q.eff = "biall")
+
 
 }
 \author{

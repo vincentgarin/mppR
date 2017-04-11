@@ -131,7 +131,7 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
                      cross.mat = cross.mat, par.mat = parent.mat,
-                     par.clu = par.clu, Q.eff = Q.eff)
+                     par.clu = par.clu, Q.eff = Q.eff, order.MAF = TRUE)
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   

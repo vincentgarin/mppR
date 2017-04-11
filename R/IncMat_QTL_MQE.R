@@ -1,0 +1,22 @@
+##################
+# IncMat_QTL_MQE #
+##################
+
+# function to produce different type of QTL incidence matrices
+
+IncMat_QTL_MQE <- function(x, mppData, mppData_bi, Q.eff, par.clu,
+                           cross.mat, par.mat, order.MAF){
+  
+  if(Q.eff == "biall") {
+    
+    IncMat_QTL(x = x, mppData = mppData_bi, Q.eff = Q.eff, par.clu = par.clu,
+               cross.mat = cross.mat, par.mat = par.mat)
+    
+  } else {
+    
+    IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+               cross.mat = cross.mat, par.mat = par.mat, order.MAF = order.MAF)
+    
+  }
+  
+}

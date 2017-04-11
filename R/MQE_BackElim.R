@@ -156,30 +156,11 @@ MQE_BackElim <- function (mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   Q.pos <- which(mppData$map[, 1] %in% QTL)
   
   
-  # function to produce different type of QTL incidence matricdes
-  
-  IncMat_QTL_MQE <- function(x, mppData, mppData_bi, Q.eff, par.clu,
-                             cross.mat, par.mat){
-    
-    if(Q.eff == "biall") {
-      
-      IncMat_QTL(x = x, mppData = mppData_bi, Q.eff = Q.eff, par.clu = par.clu,
-                 cross.mat = cross.mat, par.mat = par.mat)
-      
-    } else {
-      
-      IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff,
-                      par.clu = par.clu, cross.mat = cross.mat,
-                      par.mat = par.mat)
-      
-    }
-    
-  }
-  
   Q.list <- mapply(FUN = IncMat_QTL_MQE, x = Q.pos, Q.eff = Q.eff,
                    MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
                                    par.clu = par.clu, cross.mat = cross.mat,
-                                   par.mat = parent.mat), SIMPLIFY = FALSE)
+                                   par.mat = parent.mat, order.MAF = TRUE),
+                   SIMPLIFY = FALSE)
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   

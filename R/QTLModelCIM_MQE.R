@@ -8,22 +8,10 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
   # 1. formation of the QTL incidence matrix
   ###########################################
   
-  ### 2.2 QTL position
-  
-  if(Qeff.part[x] == "biall"){
-    
-    QTL <- IncMat_QTL(x = x, mppData = mppData_bi, cross.mat = cross.mat,
-                      par.mat = par.mat, par.clu = par.clu, Q.eff = Qeff.part[x])
-    
-  } else {
-    
-    QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
-                      par.mat = par.mat, par.clu = par.clu, Q.eff = Qeff.part[x])
-    
-    if((Qeff.part[x] == "par") || (Qeff.part[x] == "anc")){
-      QTL <- QTL[, -1, drop = FALSE] }
-    
-  }
+  QTL <- IncMat_QTL_MQE(x = x, mppData = mppData, mppData_bi = mppData_bi,
+                        Q.eff = Qeff.part[x], par.clu = par.clu,
+                        cross.mat = cross.mat, par.mat = par.mat,
+                        order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   
@@ -146,7 +134,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
         
       } else {
         
-        df <- sum(wald(model)[3:(QTL.el+2), 3] != 0)
+        df <- sum(wald(model)[3:(QTL.el+2), 1])
         
         pval <- pchisq(W.stat, df, lower.tail = FALSE)
         

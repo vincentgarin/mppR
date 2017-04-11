@@ -33,6 +33,11 @@
 #' @param par.mat Parents incidence matrix that can be obtained with
 #' \code{\link{IncMat_parent}}.
 #' 
+#' @param order.MAF \code{Logical} value specifying if the QTL incidence matrix
+#' should be ordered by allele frequency for a parental and ancestral QTL
+#' incidence matrix. The colum will be ordred from the least to most frequent
+#' allele. Default = FALSE.
+#' 
 #' 
 #' @return Return:
 #' 
@@ -70,11 +75,13 @@
 #' 
 #' QTLmatBi <- IncMat_QTL(x = 2, mppData = USNAM_mppData_bi, Q.eff = "biall")
 #' 
+#' 
 #' @export
 #' 
 
 
-IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat) {
+IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
+                       order.MAF = FALSE) {
   
   pos <- unlist(mppData$map[x, c(2,3)])
   
@@ -85,8 +92,6 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat) {
     
     alpha.pred <- t(rep(1, dim(cross.mat)[2])) %x% alpha.pred
     QTL.mat <- cross.mat * alpha.pred
-      
-      return(QTL.mat)
     
   } else if(Q.eff == "par") {
     
@@ -106,15 +111,14 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat) {
       alleleB <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2])
       
     }
-      
-      # form parental QTL matrix
-      
-      PA_pos <- (t(rep(1, dim(par.mat$PA)[2])) %x% alleleA) * par.mat$PA
-      PB_pos <- (t(rep(1, dim(par.mat$PA)[2])) %x% alleleB) * par.mat$PB
-      
-      QTL.mat <- PA_pos + PB_pos
     
-    return(QTL.mat)
+    # form parental QTL matrix
+    
+    PA_pos <- (t(rep(1, dim(par.mat$PA)[2])) %x% alleleA) * par.mat$PA
+    PB_pos <- (t(rep(1, dim(par.mat$PA)[2])) %x% alleleB) * par.mat$PB
+    
+    QTL.mat <- PA_pos + PB_pos
+    
     
   } else if (Q.eff == "anc") {
     
@@ -143,20 +147,35 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat) {
     # modify parental matrix according to ancestral matrix (par. clustering)
     
     A.allele <- as.factor(par.clu[x, ])
-                         
+    
     A <- model.matrix(~ A.allele - 1)
     
     QTL.mat <- QTL.mat %*% A
-    
-    return(QTL.mat)
     
     
   } else if (Q.eff == "biall"){
     
     QTL.mat <- subset(x = mppData$geno, select = x, drop = FALSE)
     
-    return(QTL.mat)
-    
   }
+  
+  if(order.MAF){
+    
+    # this part can be later extended to each interconnected part.
+    
+    if((Q.eff == "par") || (Q.eff == "anc")){
+      
+      # determine the most used allele
+      
+      all.freq <- apply(X = QTL.mat, MARGIN = 2,
+                        FUN = function(x) sum(round(x, 3) != 0))
+      
+      QTL.mat <- QTL.mat[, names(sort(all.freq))]
+      
+    }
+    
+  } 
+  
+  return(QTL.mat)
   
 }
