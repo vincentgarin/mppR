@@ -121,8 +121,13 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
     con.part <- design_connectedness(par.per.cross = mppData$par.per.cross,
                                      plot.des = FALSE)
     
+    len.con <- unlist(lapply(X = con.part, FUN = function(x) length(x)))
+    con.part <- con.part[names(sort(len.con, decreasing = FALSE))]
+    
+    
     allele_order <- c()
     pval <- data.frame(row.names = 1:dim(Qprof)[1])
+    ref.ind <- length(con.part) + 1 
     
     for(i in seq_along(con.part)){
       
@@ -141,7 +146,8 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
       
       allele_ord_i <- names(sort(all.ref))
       
-      allele_ord_i <- c(paste(allele_ord_i, paste0("(c", i,")"), sep = "\n"))
+      allele_ord_i <- c(paste(allele_ord_i, paste0("(c", (ref.ind-i),")"),
+                              sep = "\n"))
       
       allele_order <- c(allele_order, allele_ord_i)
       
@@ -150,7 +156,6 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
     # Rename Qprof
     
     Qprof <- cbind(Qprof[, 1:5], pval)
-    
     
     y.names <- allele_order
     

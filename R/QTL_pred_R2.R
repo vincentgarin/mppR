@@ -135,14 +135,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
   
   # need to re-order the row of the effects according to the parent list
   
-  if(Q.eff == "par"){
-    
-    eff.names <- substr(rownames(effects[[1]]), 3 , nchar(rownames(effects[[1]])))
-    index <- match(eff.names, mppData.vs$parents)
-    
-    effects <- lapply(X = effects, function(x, ind) x[ind, ], ind = index)
-    
-  } else if (Q.eff == "anc"){
+  if((Q.eff == "par") || (Q.eff == "anc")){
     
     effects <- lapply(X = effects, function(x, ind) x[ind, ],
                       ind = mppData.vs$parents)

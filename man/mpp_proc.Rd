@@ -7,8 +7,8 @@
 mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
   par.clu = NULL, VCOV = "h.err", est.gen.eff = FALSE, thre.cof = 3,
   win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-  backward = TRUE, alpha.bk = 0.05, ref.all.most = TRUE, CI = FALSE,
-  drop = 1.5, parallel = FALSE, cluster = NULL, silence.print = FALSE,
+  backward = TRUE, alpha.bk = 0.05, CI = FALSE, drop = 1.5,
+  parallel = FALSE, cluster = NULL, silence.print = FALSE,
   output.loc = getwd())
 }
 \arguments{
@@ -82,16 +82,6 @@ Default = TRUE.}
 \item{alpha.bk}{\code{Numeric} value indicating the significance level for
 the backward elimination. Terms with p-values above this value will
 iteratively be removed. Default = 0.05.}
-
-\item{ref.all.most}{\code{Logical} value specifying which parental
-(ancestral) allele should be used as reference. If
-\code{ref.all.most = TRUE}, within each connected part of the design,
-the most used allele will be used as reference. Allele usage is first defined
-in term of number of crosses where the allele segregates. Then, if two
-alleles segregate in an equal number of crosses, we look at the total cross
-sizes. If \code{ref.all.most = FALSE},
-the less used allele will be used as reference within each connected part.
-Default = TRUE.}
 
 \item{CI}{\code{Logical} value. If \code{CI = TRUE}, the function will
 compute a -log10(pval) drop confidence interval for each QTL after

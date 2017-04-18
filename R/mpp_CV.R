@@ -290,7 +290,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
   
   # within cross pVS
   
-  p.vs.cr <- matrix(0, mppData$n.cr, (k*Rep))
+  p.vs.cr <- matrix(NA, mppData$n.cr, (k*Rep))
   
   ind.res <- 1 # index to feed the results later
   
@@ -479,7 +479,8 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           
           # within cross results
           
-          p.vs.cr[, ind.res] <- R2.vs$R2.cr
+          p.vs.cr[unique(mppData$cross.ind) %in%
+                    names(R2.vs$R2.cr), ind.res] <- R2.vs$R2.cr
           
           
           # store partial R squared
@@ -517,7 +518,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
                                   output = QTL.pts.d, Q.names = QTL.names,
                                   mk.list = mk.list)
           
-          QTL.pvs.d <- update.res(input = R2.vs$part.R2.diff/mean(her),
+          QTL.pvs.d <- update.res(input = R2.vs$part.R2.diff,
                                   output = QTL.pvs.d, Q.names = QTL.names,
                                   mk.list = mk.list)
           

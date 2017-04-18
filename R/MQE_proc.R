@@ -103,15 +103,6 @@
 #' the backward elimination. Terms with p-values above this value will
 #' iteratively be removed. Default = 0.05.
 #' 
-#' @param ref.all.most \code{Logical} value specifying which parental
-#' (ancestral) allele should be used as reference. If
-#' \code{ref.all.most = TRUE}, within each connected part of the design,
-#' the most used allele will be used as reference. Allele usage is first defined
-#' in term of number of crosses where the allele segregates. Then, if two
-#' alleles segregate in an equal number of crosses, we look at the total cross
-#' sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
-#' reference within each connected part. Default = TRUE.
-#' 
 #' @param plot.MQE \code{Logical} value. If \code{plot.MQE = TRUE},
 #' the function will make a plot of the last run of the MQE model
 #' determination using function \code{\link{MQE_plot}}. Default = FALSE.
@@ -235,9 +226,9 @@
 MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                      mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL,
                      VCOV = "h.err", threshold = 3, window = 20, backward = TRUE,
-                     alpha.bk = 0.05, ref.all.most = TRUE,
-                     plot.MQE = FALSE, parallel = FALSE, cluster = NULL,
-                     silence.print = FALSE, output.loc = getwd()) {
+                     alpha.bk = 0.05, plot.MQE = FALSE, parallel = FALSE,
+                     cluster = NULL, silence.print = FALSE,
+                     output.loc = getwd()) {
   
   # 1. check the format of the data
   #################################
@@ -332,8 +323,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
     
   QTL_effect <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
                                QTL = QTL[, 1], Q.eff = QTL[, 5],
-                               par.clu = par.clu, VCOV = VCOV,
-                               ref.all.most = ref.all.most)
+                               par.clu = par.clu, VCOV = VCOV)
   
   R2 <- MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL[, 1],
                Q.eff = QTL[, 5], par.clu = par.clu, glb.only = FALSE)

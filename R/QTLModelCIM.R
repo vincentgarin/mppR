@@ -184,7 +184,8 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
           
           gen.eff  <- QTL_pval_mix(model = model, Q.eff = Q.eff, QTL.el = QTL.el,
                                    x = x, par.clu = par.clu,
-                                   ref.name = ref.name, fct = "CIM")
+                                   ref.name = ref.name,
+                                   par.names = mppData$parents, fct = "CIM")
           
           results  <- c(results, gen.eff)
           

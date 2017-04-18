@@ -543,6 +543,7 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     for(i in 1:dim(geno.off)[2]){
       
       test <- (within.cr.MAF[, i] < lim) & (within.cr.MAF[, i] != 0)
+      test[is.na(test)] <- FALSE
       
       if(sum(test) > 0){ # at least one cross has a problematic MAF
         

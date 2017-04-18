@@ -201,9 +201,9 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   
   if (is.character(cofactors)){
     
-    cofactors2 <- mppData$map[mppData$map[,1] %in% cofactors, c(2,4)]
+    cofactors2 <- mppData$map[mppData$map[, 1] %in% cofactors, c(2, 4)]
     
-  } else { cofactors2 <- cofactors[, c(2,4)] }
+  } else { cofactors2 <- cofactors[, c(2, 4)] }
   
   test.cof <- function(x, map, window) {
     
@@ -256,7 +256,7 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
     
     } else { Qeff_names <- mppData$parents }
     
-    colnames(CIM)[5:dim(SIM)[2]] <- c("log10pval", Qeff_names)
+    colnames(CIM)[5:dim(CIM)[2]] <- c("log10pval", Qeff_names)
     
   } else {colnames(CIM)[5] <- "log10pval"}
   

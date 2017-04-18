@@ -142,7 +142,7 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
   
   check.MQE(mppData = mppData, mppData_bi = mppData_bi, Q.eff = Q.eff,
             VCOV = VCOV, par.clu = par.clu, parallel = parallel,
-            cluster = cluster)
+            cluster = cluster, fct = "forward")
   
   # Sub-function for R squared computation
   

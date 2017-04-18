@@ -36,7 +36,7 @@ ancestor. for more details, see \code{\link{USNAM_parClu}} and
 
 \item{order.MAF}{\code{Logical} value specifying if the QTL incidence matrix
 should be ordered by allele frequency for a parental and ancestral QTL
-incidence matrix. The colum will be ordred from the least to most frequent
+incidence matrix. The colum will be ordred from the least to the most frequent
 allele. Default = FALSE.}
 }
 \value{

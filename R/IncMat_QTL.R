@@ -35,7 +35,7 @@
 #' 
 #' @param order.MAF \code{Logical} value specifying if the QTL incidence matrix
 #' should be ordered by allele frequency for a parental and ancestral QTL
-#' incidence matrix. The colum will be ordred from the least to most frequent
+#' incidence matrix. The colum will be ordred from the least to the most frequent
 #' allele. Default = FALSE.
 #' 
 #' 
@@ -165,7 +165,7 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
     
     if((Q.eff == "par") || (Q.eff == "anc")){
       
-      # determine the most used allele
+      # determine the most frequent allele
       
       all.freq <- apply(X = QTL.mat, MARGIN = 2,
                         FUN = function(x) sum(round(x, 3) != 0))

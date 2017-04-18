@@ -10,7 +10,8 @@
 
 # Q.list: list of QTL incidence matrices
 
-# within.cross: indicate if the prediction must be computed within cross
+# her: single value representing the average cross heritability or vector of
+# within cross heritability.
 
 
 R2_pred <- function(mppData.vs, B.ts, Q.list, her) {
@@ -27,6 +28,7 @@ R2_pred <- function(mppData.vs, B.ts, Q.list, her) {
   y.vs <- dataset[index, 1, drop = FALSE]
   X.vs <- dataset[index, 2:dim(dataset)[2], drop = FALSE]
   cross.ind <- cross.ind[index]
+  n.cr <- table(factor(cross.ind, levels = unique(cross.ind)))
   
   B.ts <- unlist(B.ts)
   B.ts[is.na(B.ts)] <- 0
@@ -48,9 +50,15 @@ R2_pred <- function(mppData.vs, B.ts, Q.list, her) {
   
   R2.cr <- unlist(lapply(X = dataset.cr, FUN =  with.cross.cor))
   
+  if(length(her) > 1){ her <- her[unique(mppData.vs$cross.ind)
+                                  %in% unique(cross.ind)] }
+  
   R2.cr <- R2.cr/her
   
-  R2.av <- mean(R2.cr, na.rm = TRUE)
+  data.pvs <- cbind(R2.cr, n.cr)
+  data.pvs <- data.pvs[complete.cases(data.pvs), ]
+  
+  R2.av <- sum(data.pvs[, 1] * data.pvs[, 2])/sum(data.pvs[, 2])
   
   return(list(R2.av, R2.cr))
   

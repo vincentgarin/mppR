@@ -44,6 +44,7 @@ QTLModelQeff <- function(mppData, trait, cross.mat, Q.list, VCOV){
     }
     
     names.QTL <- unlist(lapply(X = 1:n.QTL, FUN = Q.names, Q.list = Q.list))
+    names.QTL <- make.names(names.QTL)
     
     colnames(dataset)[1:length(names.QTL)] <- names.QTL
     
@@ -74,6 +75,7 @@ QTLModelQeff <- function(mppData, trait, cross.mat, Q.list, VCOV){
     }
     
     names.QTL <- unlist(lapply(X = 1:n.QTL, FUN = Q.names, Q.list = Q.list))
+    names.QTL <- make.names(names.QTL)
     
     colnames(dataset)[1:length(names.QTL)] <- names.QTL
     

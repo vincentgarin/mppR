@@ -27,7 +27,7 @@
 # con.part: list of connected parts
 
 Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
-                                Q.eff, par.clu, VCOV, allele_ref, con.part){
+                                Q.eff, par.clu, VCOV, allele_order, con.ind){
   
   n.QTL <- length(Q.list)
   
@@ -99,6 +99,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
       Add.parent <- diag(mppData$par.per.cross[1:mppData$n.cr, par.add.id])
       
       Qi <- data.frame(Qi, Add.parent, stringsAsFactors = FALSE)
+      Qi[, 1] <- abs(Qi[, 1])
       
       # add parent genotype (if given)
       
@@ -133,19 +134,18 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     ref.mat <- matrix(rep(c(0, 0, 0, 1), (mppData$n.par*n.QTL)),
                       nrow = (mppData$n.par*n.QTL), byrow = TRUE)
     
-    # reference parent name organised per connected part with the reference
-    # parent at the top
+    # ref names
     
+    ref.names <- c()
     
-    par.list <- unlist(mapply(FUN = function(x, ref) c(ref, x[-which(x == ref)]),
-                              x = con.part, ref = allele_ref))
-    parents.ind <- rep(par.list, times = n.QTL)
-    ref.names <- paste0(rep(paste0("Q", 1:n.QTL), each = mppData$n.par),
-                        parents.ind)
+    for(i in 1:length(allele_order)) {
+      
+      ref.names <- c(ref.names, paste0("Q", i , allele_order[[i]]))
+      
+    }
     
     index <- match(rownames(results), ref.names)
     ref.mat[index, ] <- results
-    rownames(ref.mat) <- ref.names
     
     # add sign stars
     
@@ -153,36 +153,21 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     
     results <- data.frame(ref.mat, Sign, stringsAsFactors = FALSE)
     
-    # add connected parts indicator
+    # add connected part references
     
-    nb.all.con <- lapply(con.part, function(x) length(x))
-    
-    con.part.name <- function(x, nb.all.con) {
-      
-      c(paste0("ref.c", x), rep(paste0("c", x), (nb.all.con[[x]][1] - 1)))
-      
-    } 
-    
-    ref.con <- lapply(X = 1:length(con.part), FUN = con.part.name,
-                      nb.all.con = nb.all.con)
-    ref.con <- rep(unlist(ref.con), times = n.QTL)
-    
-    results <- data.frame(results, Con.part = ref.con,
+    results <- data.frame(results, Con.part = unlist(con.ind),
                           stringsAsFactors = FALSE)
     
+    Q.ind <- rep(paste0("Q", 1:n.QTL), each = mppData$n.par)
+    Q.id <- unique(Q.ind)
     Qeff.mat <- vector(mode = "list", n.QTL)
-    
-    Q.id <- paste0("Q", 1:n.QTL)
-    Q.ind <- rep(Q.id, each = mppData$n.par)
-    
-    par.list <- substr(rownames(results), 3, nchar(rownames(results)))
-    par.list <- par.list[1:mppData$n.par]
     
     for(i in 1:n.QTL){
       
       # subset QTL
       
       Qi <- results[Q.ind == Q.id[i], ]
+      rownames(Qi) <- allele_order[[i]]
       
       # add parent genotype (if given)
       
@@ -191,7 +176,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
         Par.all <- mppData$geno.par[mppData$geno.par[, 1] == QTL.list[i],
                                     5:dim(mppData$geno.par)[2]]
         
-        Par.all <- unlist(Par.all)[par.list]
+        Par.all <- unlist(Par.all)[allele_order[[i]]]
         
         Qi <- data.frame(Qi, Par.all, stringsAsFactors = FALSE)
         
@@ -211,46 +196,27 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     
     return(Qeff.mat)
     
+    
   } else if (Q.eff == "anc") {
     
     # form reference matrix
     
     n.allele <- lapply(X = Q.list, function(x) dim(x)[2])
+    Q.ind <- rep(paste0("Q", 1:n.QTL), n.allele)
     n.allele <- sum(unlist(n.allele))
     
     ref.mat <- matrix(rep(c(0, 0, 0, 1), n.allele), nrow = n.allele,
                       byrow = TRUE)
     
-    # define the reference labels and connected parts
-    
-    order.con.part <- function(x, ref) c(ref, x[-which(x == ref)])
-    con.part.name <- function(x, nb.all.con) {
-      
-      c(paste0("ref.c", x), rep(paste0("c", x), (nb.all.con[[x]][1] - 1)))
-      
-    }
+    # make reference names
     
     ref.names <- c()
-    ref.con <- c()
-    Q.ind <- c()
     
-    for(i in 1:n.QTL){
+    for(i in 1:length(allele_order)) {
       
-      all.Qi <- unlist(mapply(FUN = order.con.part, x = con.part[[i]],
-                              ref = allele_ref[[i]]))
-      
-      all.Qi <- paste0("Q", i, all.Qi)
-      ref.names <- c(ref.names, all.Qi)
-      Q.ind <- c(Q.ind, rep(paste0("Q", i), length(all.Qi)))
-      
-      nb.all.con <- lapply(con.part[[i]], function(x) length(x))
-      ref.con_i <- lapply(X = 1:length(con.part[[i]]), FUN = con.part.name,
-                          nb.all.con = nb.all.con)
-      ref.con <- c(ref.con, unlist(ref.con_i))
+      ref.names <- c(ref.names, paste0("Q", i , allele_order[[i]]))
       
     }
-    
-    # and fill the ref matrix and add the con part delimitation information
     
     index <- match(rownames(results), ref.names)
     ref.mat[index, ] <- results
@@ -264,7 +230,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     
     # add connected part references
     
-    results <- data.frame(results, Con.part = ref.con,
+    results <- data.frame(results, Con.part = unlist(con.ind),
                           stringsAsFactors = FALSE)
     
     # project into parents
@@ -290,7 +256,9 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
       num.res <- as.matrix(Q.mat[, 1:4])
       num.res <- cbind(num.res, 1:dim(num.res)[1])
       
+      num.res[is.na(num.res)] <- 9999
       proj.num.res <- A %*% num.res
+      proj.num.res[proj.num.res == 9999] <- NA
       rownames(proj.num.res) <- mppData$parents
       
       # add the connected part information
@@ -327,7 +295,6 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     }
     
     return(Qeff.mat)
-    
     
     
   } else if (Q.eff == "biall"){

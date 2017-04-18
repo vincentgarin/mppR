@@ -134,12 +134,12 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   # order list of QTL positions
   
   Q.pos <- vapply(X = QTL,
-                  FUN = function(x, mppData) which(mppData$map[,1] == x),
+                  FUN = function(x, mppData) which(mppData$map[, 1] == x),
                   FUN.VALUE = numeric(1), mppData = mppData)
   
   Q.ord <- data.frame(QTL, Q.eff, Q.pos, stringsAsFactors = FALSE)
   
-  Q.ord <- Q.ord[order(Q.pos),]
+  Q.ord <- Q.ord[order(Q.pos), ]
   
   QTL <- Q.ord[, 1]; Q.eff <- Q.ord[, 2]
   

@@ -112,16 +112,6 @@
 #' the backward elimination. Terms with p-values above this value will
 #' iteratively be removed. Default = 0.05.
 #' 
-#' @param ref.all.most \code{Logical} value specifying which parental
-#' (ancestral) allele should be used as reference. If
-#' \code{ref.all.most = TRUE}, within each connected part of the design,
-#' the most used allele will be used as reference. Allele usage is first defined
-#' in term of number of crosses where the allele segregates. Then, if two
-#' alleles segregate in an equal number of crosses, we look at the total cross
-#' sizes. If \code{ref.all.most = FALSE},
-#' the less used allele will be used as reference within each connected part.
-#' Default = TRUE.
-#' 
 #' @param CI \code{Logical} value. If \code{CI = TRUE}, the function will
 #' compute a -log10(pval) drop confidence interval for each QTL after
 #' calculating a CIM- profile (without cofactors on the scanned chromosome).
@@ -257,9 +247,9 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                      est.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-                     backward = TRUE, alpha.bk = 0.05, ref.all.most = TRUE,
-                     CI = FALSE, drop = 1.5, parallel = FALSE, cluster = NULL,
-                     silence.print = FALSE, output.loc = getwd()) {
+                     backward = TRUE, alpha.bk = 0.05, CI = FALSE, drop = 1.5,
+                     parallel = FALSE, cluster = NULL, silence.print = FALSE,
+                     output.loc = getwd()) {
   
   
   # 1. Check the validity of the parameters that have been introduced
@@ -479,8 +469,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   }
   
   QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
-                                par.clu = par.clu, VCOV = VCOV,
-                                ref.all.most = ref.all.most)
+                                par.clu = par.clu, VCOV = VCOV)
   
   # 8. CIM- and confidence interval computation
   #############################################

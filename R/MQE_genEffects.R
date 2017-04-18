@@ -17,17 +17,17 @@
 #' the parent that cary the positive allele.
 #' 
 #' For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), one
-#' parental (ancestral) allele is set as reference per connected part of the
+#' parental (ancestral) allele is set as reference per interconnected part of the
 #' design. Effects of the other alleles are estimated as deviation with respect
 #' to the reference. For more details about reference definition see
-#' \code{\link{QTL_genEffects}} and \code{\link{design_connectedness}} .
+#' \code{\link{QTL_genEffects}} and \code{\link{design_connectedness}}.
 #' 
-#' The user can specify if the allele effect that should be put as reference
-#' within connected parts are the most or less used one setting argument
-#' \code{ref.all.most = TRUE or FALSE}. Allele usage is first defined
-#' in term of number of crosses where the allele segregates. Then, if two
-#' alleles segregate in an equal number of crosses, we look at the total cross
-#' sizes. For example in a NAM design the central parent is the most used allele. 
+#' For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), the
+#' reference allele is defined per interconneted part. The most frequent
+#' parental (ancestral) allele is set as reference. Effects of the other alleles
+#' are estimated as deviation with respect to the reference. For more details
+#' about reference definition see \code{\link{QTL_genEffects}} and
+#' \code{\link{design_connectedness}}.
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 #' represent the effects of a single allele copy of the most frequent allele.
@@ -73,15 +73,6 @@
 #' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
-#' 
-#' @param ref.all.most \code{Logical} value specifying which parental
-#' (ancestral) allele should be used as reference. If
-#' \code{ref.all.most = TRUE}, within each connected part of the design,
-#' the most used allele will be used as reference. Allele usage is first defined
-#' in term of number of crosses where the allele segregates. Then, if two
-#' alleles segregate in an equal number of crosses, we look at the total cross
-#' sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
-#' reference within each connected part. Default = TRUE.
 #'
 #' @return Return:
 #'
@@ -143,7 +134,7 @@
 
 
 MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-                           par.clu = NULL, VCOV = "h.err", ref.all.most = TRUE){
+                           par.clu = NULL, VCOV = "h.err"){
   
   # 1. check the data format
   ##########################
@@ -195,29 +186,27 @@ MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   
   # form a list of QTL incidence matrices with different type of QTL effect.
   
+  Q.list <- mapply(FUN = IncMat_QTL_MQE, x = Q.pos, Q.eff = Q.eff,
+                   MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
+                                   par.clu = par.clu, cross.mat = cross.mat,
+                                   par.mat = parent.mat, order.MAF = TRUE),
+                   SIMPLIFY = FALSE)
   
-  QTL.inc <- mapply(FUN = IncMat_QTL_MQE_Qeff, x = Q.pos, Q.eff = Q.eff,
-                    MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
-                                    par.clu = par.clu, cross.mat = cross.mat,
-                                    par.mat = parent.mat,
-                                    ref.all.most = ref.all.most),
-                    SIMPLIFY = FALSE)
+  # order the QTL incidence matrices
   
-  # Extract individual components from QTL.inc
+  order.Qmat <- mapply(FUN = IncMat_QTL_MAF, QTL = Q.list,
+                       Q.eff_i = Q.eff, Q.pos_i = Q.pos,
+                       MoreArgs = list(mppData = mppData, par.clu = par.clu),
+                       SIMPLIFY = FALSE)
   
-  Q.list <- lapply(X = QTL.inc, FUN = function(x) x$Q)
-  names(Q.list) <- paste0("Q", 1:length(Q.list))
-  
+  Q.list <- lapply(X = order.Qmat, FUN = function(x) x$QTL)
   n.QTL <- length(Q.list)
+  names(Q.list) <- paste0("Q", 1:n.QTL)
+  allele_order <- lapply(X = order.Qmat, FUN = function(x) x$allele_order)
+  con.ind <- lapply(X = order.Qmat, FUN = function(x) x$con.ind)
   
-  con.part <- lapply(X = QTL.inc, FUN = function(x) x$con.part)
-  
-  allele_ref <- lapply(X = QTL.inc, FUN = function(x) x$allele_ref)
-  
-  n.Qallele <- lapply(X = Q.list, FUN = function(x) dim(x)[2])
-  Q.ind <- mapply(FUN = function(x, i) rep(paste0("Q", i), x[1]),
-                  x = n.Qallele, i = 1:n.QTL)
-  Q.ind <- unlist(Q.ind)
+  n.allele <- lapply(X = Q.list, function(x) dim(x)[2])
+  Q.ind <- rep(paste0("Q", 1:n.QTL), n.allele)
   
   
   # 3. Compute the model
@@ -229,8 +218,6 @@ MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   
   # 4. Results processing
   #######################
-  
-  # 4.1 re-arrange model results
   
   
   if(VCOV == "h.err"){
@@ -285,10 +272,13 @@ MQE_genEffects <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   # 4.2 results processing
   
   results <- mapply(Qeff_res_processing_MQE, Q.res = Q.res, Q.eff = Q.eff,
-                    Q.pos = Q.pos, con.part = con.part, allele_ref = allele_ref,
-                    Q.nb = 1:n.QTL, MoreArgs = list(mppData = mppData,
-                    mppData_bi = mppData_bi, par.clu = par.clu, VCOV = VCOV),
+                    Q.pos = Q.pos, con.ind = con.ind, allele_order = allele_order,
+                    Q.nb = 1:n.QTL,
+                    MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
+                                    par.clu = par.clu, VCOV = VCOV),
                     SIMPLIFY = FALSE)
+  
+  names(results) <- paste0("Q", 1:length(results))
   
   return(results)
   

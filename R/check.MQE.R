@@ -117,7 +117,7 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
   # 2. check Q.eff argument
   #########################
   
-  if((fct != "R2") && (fct != "CIM")){
+  if((fct == "proc") | (fct == "forward")){
     
     if (length(Q.eff) <= 1) {
       stop("You must provide at least 2 type of QTL effect for the argument Q.eff.")
@@ -144,7 +144,7 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
   # 3. if ancestral model, check the format of the par.clu object
   ##############################################################
   
-  if (fct == "CIM") {
+  if ((fct == "proc") | (fct == "forward") | (fct == "CIM")) {
     
     test.anc <-(("anc" %in% Q.eff) || ("anc" %in% cof.Qeff))} else {
       
@@ -227,7 +227,7 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
   
   # Warning if the user want to use mixed model for
   
-  if((fct=="proc") && (VCOV!="h.err")){
+  if((fct == "forward") && (VCOV!="h.err")){
     
     message(paste("MESSAGE: The determination of a MQE model",
                   "using mixed models is technically possible but can take",

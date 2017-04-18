@@ -159,13 +159,13 @@ MQE_CIM <- function(mppData = NULL, mppData_bi = NULL, Q.eff = "cr",
   # order the list of cofactors and the corresponding Q.eff
   
   cof.pos <- vapply(X = cofactors,
-                    FUN = function(x, mppData) which(mppData$map[,1] == x),
+                    FUN = function(x, mppData) which(mppData$map[, 1] == x),
                     FUN.VALUE = numeric(1), mppData = mppData)
   
   cof.ord <- data.frame(cofactors, cof.Qeff, cof.pos,
                         stringsAsFactors = FALSE)
   
-  cof.ord <- cof.ord[order(cof.pos),]
+  cof.ord <- cof.ord[order(cof.pos), ]
   
   cofactors <- cof.ord[, 1]; cof.Qeff <- cof.ord[, 2]
   

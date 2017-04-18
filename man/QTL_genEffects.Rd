@@ -5,7 +5,7 @@
 \title{QTL genetic effects}
 \usage{
 QTL_genEffects(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
-  VCOV = "h.err", ref.all.most = TRUE)
+  VCOV = "h.err")
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.
@@ -38,15 +38,6 @@ covariance structure used: 1) "h.err" for an homogeneous variance residual term
 (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
 and 5) "ped_cr.err" for random pedigree and CSRT model.
 For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
-
-\item{ref.all.most}{\code{Logical} value specifying which parental
-(ancestral) allele should be used as reference. If
-\code{ref.all.most = TRUE}, within each connected part of the design,
-the most used allele will be used as reference. Allele usage is first defined
-in term of number of crosses where the allele segregates. Then, if two
-alleles segregate in an equal number of crosses, we look at the total cross
-sizes. If \code{ref.all.most = FALSE}, the less used allele will be used as
-reference within each connected part. Default = TRUE.}
 }
 \value{
 Return:
@@ -84,21 +75,13 @@ coming from the parent 1 or A. All effects are given in absolute value with
 the parent that cary the positive allele.
 
 For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), it
-is possible to estimate maximum n-1 parental or ancestral alleles per connected
-part of the design. Connected parts of the design can be determined using
-Weeks and Williams (1964) method (\code{\link{design_connectedness}}).
-Connected parts of the design are indicated in the results and parental
-(ancestral) allele score getting 0 value are the one that could not be
-estimated due to singularities. Estimated effects of the other alleles should
-be interpreted within connected part as deviation with respect to the
-non-estimable effect(s).
-
-The user can specify if the allele effect that should be put as reference
-within connected parts are the most or less used one setting argument
-\code{ref.all.most = TRUE or FALSE}. Allele usage is first defined
-in term of number of crosses where the allele segregates. Then, if two
-alleles segregate in an equal number of crosses, we look at the total cross
-sizes. For example in a NAM design the central parent is the most used allele.
+is possible to estimate maximum n-1 parental or ancestral alleles per
+interconnected part of the design. For these two models, one
+parental (ancestral) allele is set as reference per interconnected part of the
+design. The reference allele is the most frequent one. Effects of the other
+alleles are estimated as deviation with respect to the reference.
+Interconnected parts of the design can be determined using Weeks and Williams
+(1964) method (\code{\link{design_connectedness}}).
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 represent the effects of a single allele copy of the most frequent allele.
