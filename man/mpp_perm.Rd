@@ -121,9 +121,6 @@ stopCluster(cl = cluster)
 
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Churchill, G. A., & Doerge, R. W. (1994). Empirical threshold values for
 quantitative trait mapping. Genetics, 138(3), 963-971.
@@ -133,4 +130,6 @@ quantitative trait mapping. Genetics, 138(3), 963-971.
 \code{\link{parent_cluster}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

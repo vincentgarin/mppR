@@ -213,7 +213,7 @@
 #' S R Browning and B L Browning (2016) Genotype imputation with millions of
 #' reference samples. Am J Hum Genet 98:116-126
 #' 
-#' Wimmer, V., Albrecht, T., Auinger, H. J., & Schön, C. C. (2012). synbreed: a
+#' Wimmer, V., Albrecht, T., Auinger, H. J., & Schon, C. C. (2012). synbreed: a
 #' framework for the analysis of genomic prediction data using R. Bioinformatics,
 #' 28(15), 2086-2087.
 #'  
@@ -232,7 +232,7 @@
 #' # Phenotypes
 #' data(USNAM_pheno)
 #' 
-#' trait <- USNAM_pheno[, 1:2]
+#' trait <- USNAM_pheno
 #' colnames(trait) <- c("genotype", "ULA")
 #' 
 #' # Map
@@ -241,7 +241,7 @@
 #' # Same list of markers as in the genotype matrix
 #' map <- USNAM_map[USNAM_map[, 1] %in% colnames(USNAM_genoABH),]
 #' 
-#' cross.ind <- USNAM_pheno[, 3]
+#' cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
 #' 
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5), rownames(geno.par)[-1])
 #' 
@@ -272,7 +272,7 @@
 #' # Phenotypes
 #' data(USNAM_pheno)
 #' 
-#' trait <- USNAM_pheno[, 1:2]
+#' trait <- USNAM_pheno
 #' colnames(trait) <- c("genotype", "ULA")
 #' 
 #' # Map
@@ -281,7 +281,7 @@
 #' # Same list of markers as in the genotype matrix
 #' map <- USNAM_map[USNAM_map[, 1] %in% colnames(geno),]
 #' 
-#' cross.ind <- USNAM_pheno[, 3]
+#' cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
 #' 
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5), rownames(geno.par)[-1])
 #' 

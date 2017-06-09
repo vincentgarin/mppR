@@ -41,10 +41,9 @@ parent_clusterCheck(par.clu = par.clu)
 
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{parent_cluster}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

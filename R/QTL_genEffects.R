@@ -21,7 +21,7 @@
 #' design. The reference allele is the most frequent one. Effects of the other
 #' alleles are estimated as deviation with respect to the reference.
 #' Interconnected parts of the design can be determined using Weeks and Williams
-#' (1964) method (\code{\link{design_connectedness}}).
+#' (1964) method (\code{\link{design_connectivity}}).
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 #' represent the effects of a single allele copy of the most frequent allele.

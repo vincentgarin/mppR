@@ -226,9 +226,6 @@ plot_CV(CV.res = CV)
 }
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Utz, H. F., Melchinger, A. E., & Schon, C. C. (2000). Bias and sampling error
 of the estimated proportion of genotypic variance explained by quantitative
@@ -247,4 +244,6 @@ and validation with independent samples. Genetics, 154(4), 1839-1849.
 \code{\link{QTL_pred_R2}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

@@ -38,4 +38,3 @@ hetero <- QC_hetero(mk.mat = USNAM_geno[7:dim(USNAM_geno)[1], ])
 \author{
 Vincent Garin
 }
-

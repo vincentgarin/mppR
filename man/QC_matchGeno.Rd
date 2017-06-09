@@ -48,10 +48,9 @@ new.pheno <- match$new.pheno
 rm(match)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{QC_matchMarker}}
 }
-
+\author{
+Vincent Garin
+}

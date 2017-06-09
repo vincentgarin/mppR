@@ -81,10 +81,9 @@ plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr",
 QTL = QTL) 
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mpp_CIM}}, \code{\link{mpp_SIM}}, \code{\link{QTL_select}}
 }
-
+\author{
+Vincent Garin
+}

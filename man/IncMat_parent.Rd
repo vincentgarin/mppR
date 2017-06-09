@@ -32,10 +32,9 @@ data(USNAM_mppData)
 par.mat <- IncMat_parent(USNAM_mppData)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{IncMat_cross}}, \code{\link{IncMat_QTL}}
 }
-
+\author{
+Vincent Garin
+}

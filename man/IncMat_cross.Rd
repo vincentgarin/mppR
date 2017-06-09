@@ -26,10 +26,9 @@ data(USNAM_mppData)
 cross.mat <- IncMat_cross(cross.ind = USNAM_mppData$cross.ind)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{IncMat_parent}}, \code{\link{IncMat_QTL}}
 }
-
+\author{
+Vincent Garin
+}

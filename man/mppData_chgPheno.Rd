@@ -27,16 +27,15 @@ Replaces the phenotypic values of a \code{mppData} object by new trait values.
 data(USNAM_mppData)
 data(USNAM_pheno)
 
-trait <- USNAM_pheno[, 1:2]
+trait <- USNAM_pheno
 
 mppData <- mppData_chgPheno(mppData = USNAM_mppData, trait = trait)
 
-}
-\author{
-Vincent Garin
 }
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mppData_subset}},
 \code{\link{mppData_chgPedigree}}
 }
-
+\author{
+Vincent Garin
+}

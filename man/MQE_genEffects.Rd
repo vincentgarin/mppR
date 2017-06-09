@@ -82,14 +82,14 @@ For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), one
 parental (ancestral) allele is set as reference per interconnected part of the
 design. Effects of the other alleles are estimated as deviation with respect
 to the reference. For more details about reference definition see
-\code{\link{QTL_genEffects}} and \code{\link{design_connectedness}}.
+\code{\link{QTL_genEffects}} and \code{\link{design_connectivity}}.
 
 For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), the
 reference allele is defined per interconneted part. The most frequent
 parental (ancestral) allele is set as reference. Effects of the other alleles
 are estimated as deviation with respect to the reference. For more details
 about reference definition see \code{\link{QTL_genEffects}} and
-\code{\link{design_connectedness}}.
+\code{\link{design_connectivity}}.
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 represent the effects of a single allele copy of the most frequent allele.
@@ -131,11 +131,10 @@ QTL.eff <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
                           par.clu = par.clu)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
 \code{\link{parent_cluster}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

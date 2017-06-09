@@ -37,10 +37,9 @@ mk.mat[1, 10] <- "TC"
 QC_GenotypingError(mk.mat)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{QC_MAF}}, \code{\link{QC_missing}}
 }
-
+\author{
+Vincent Garin
+}

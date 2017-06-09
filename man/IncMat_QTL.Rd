@@ -75,12 +75,11 @@ QTLmatBi <- IncMat_QTL(x = 2, mppData = USNAM_mppData_bi, Q.eff = "biall")
 
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{IncMat_cross}}, \code{\link{IncMat_parent}}, 
 \code{\link{mpp_SIM}}, \code{\link{parent_cluster}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

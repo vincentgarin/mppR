@@ -82,11 +82,10 @@ QTL <- QTL_select(SIM)
 QTL.sel <- mpp_BackElim(mppData = USNAM_mppData, QTL = QTL)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
 \code{\link{parent_cluster}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

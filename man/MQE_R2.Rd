@@ -94,12 +94,11 @@ MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL,
        Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
 \code{\link{parent_cluster}},
 \code{\link{QTL_R2}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

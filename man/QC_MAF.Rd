@@ -53,10 +53,9 @@ MAF <- QC_MAF(mk.mat = USNAM_geno[7:dim(USNAM_geno)[1], ],
              cross.ind = cross.ind)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{QC_tagMAFCr}}
 }
-
+\author{
+Vincent Garin
+}

@@ -56,10 +56,9 @@ new.map <- match$new.map
 rm(match)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{QC_matchGeno}}
 }
-
+\author{
+Vincent Garin
+}

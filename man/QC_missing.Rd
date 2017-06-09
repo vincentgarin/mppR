@@ -45,4 +45,3 @@ QC_missing(mk.mat = USNAM_geno, threshold = 0.2, MARGIN = 1)
 \author{
 Vincent Garin
 }
-

@@ -112,11 +112,10 @@ CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, Q.eff = "cr",
 plot_QTLprof(CIM)
                                
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
 \code{\link{parent_cluster}}, \code{\link{QTL_select}}
 }
-
+\author{
+Vincent Garin
+}

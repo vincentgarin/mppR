@@ -199,12 +199,12 @@ data(USNAM_geno)
 data(USNAM_pheno)
 data(USNAM_map)
 
-cross.ind <- USNAM_pheno$cross.ind
+cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
 geno.off <- USNAM_geno[7:506, ]
 geno.par <- USNAM_geno[1:6, ]
 
-map = USNAM_map
-trait = USNAM_pheno[, 1:2]
+map <- USNAM_map
+trait <- USNAM_pheno
 par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
                        rownames(geno.par)[2:6])
 
@@ -252,13 +252,12 @@ QTL <- mpp_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 }
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{cross_ABH}}, \code{\link{cross_ABH_het}}
 \code{\link{QC_GenotypingError}}, \code{\link{QC_MAF}},
 \code{\link{QC_minCrSize}}, \code{\link{QC_missing}},
 \code{\link{QC_tagMAFCr}}, \code{\link{parent_cluster}}
 }
-
+\author{
+Vincent Garin
+}

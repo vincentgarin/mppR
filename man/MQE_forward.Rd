@@ -127,13 +127,12 @@ R2 <- MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = QTL[, 5],
 par.clu = par.clu)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_perm}},
 \code{\link{mpp_SIM}},
 \code{\link{MQE_R2}}, \code{\link{parent_cluster}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

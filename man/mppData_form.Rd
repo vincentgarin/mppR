@@ -216,7 +216,7 @@ geno.par <- USNAM_geno[1:6, colnames(USNAM_genoABH)]
 # Phenotypes
 data(USNAM_pheno)
 
-trait <- USNAM_pheno[, 1:2]
+trait <- USNAM_pheno
 colnames(trait) <- c("genotype", "ULA")
 
 # Map
@@ -225,7 +225,7 @@ data(USNAM_map)
 # Same list of markers as in the genotype matrix
 map <- USNAM_map[USNAM_map[, 1] \%in\% colnames(USNAM_genoABH),]
 
-cross.ind <- USNAM_pheno[, 3]
+cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
 
 par.per.cross <- cbind(unique(cross.ind), rep("B73", 5), rownames(geno.par)[-1])
 
@@ -256,7 +256,7 @@ geno.par <- geno[1:6, ]
 # Phenotypes
 data(USNAM_pheno)
 
-trait <- USNAM_pheno[, 1:2]
+trait <- USNAM_pheno
 colnames(trait) <- c("genotype", "ULA")
 
 # Map
@@ -265,7 +265,7 @@ data(USNAM_map)
 # Same list of markers as in the genotype matrix
 map <- USNAM_map[USNAM_map[, 1] \%in\% colnames(geno),]
 
-cross.ind <- USNAM_pheno[, 3]
+cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
 
 par.per.cross <- cbind(unique(cross.ind), rep("B73", 5), rownames(geno.par)[-1])
 
@@ -285,9 +285,6 @@ data_IBS <- mppData_form(geno.off = geno[7:506,], geno.par = geno.par,
 }
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Broman KW, Wu H, Sen S, Churchill GA (2003) R/qtl: QTL mapping
 in experimental crosses. Bioinformatics 19:889-890.
@@ -298,7 +295,7 @@ New York: Springer.
 S R Browning and B L Browning (2016) Genotype imputation with millions of
 reference samples. Am J Hum Genet 98:116-126
 
-Wimmer, V., Albrecht, T., Auinger, H. J., & Schön, C. C. (2012). synbreed: a
+Wimmer, V., Albrecht, T., Auinger, H. J., & Schon, C. C. (2012). synbreed: a
 framework for the analysis of genomic prediction data using R. Bioinformatics,
 28(15), 2086-2087.
 }
@@ -308,4 +305,6 @@ framework for the analysis of genomic prediction data using R. Bioinformatics,
 \code{\link{mpp_SIM}},
 \code{\link{USNAM_mppData}}, \code{\link{USNAM_mppData_bi}}
 }
-
+\author{
+Vincent Garin
+}

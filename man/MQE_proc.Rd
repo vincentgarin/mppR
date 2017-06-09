@@ -219,9 +219,6 @@ MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_perm}},
 \code{\link{mpp_SIM}},
@@ -230,4 +227,6 @@ Vincent Garin
 \code{\link{parent_cluster}}, \code{\link{QTL_R2}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

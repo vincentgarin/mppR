@@ -27,7 +27,7 @@
 #' data(USNAM_mppData)
 #' data(USNAM_pheno)
 #' 
-#' trait <- USNAM_pheno[, 1:2]
+#' trait <- USNAM_pheno
 #' 
 #' mppData <- mppData_chgPheno(mppData = USNAM_mppData, trait = trait)
 #' 

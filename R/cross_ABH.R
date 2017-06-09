@@ -86,6 +86,8 @@
 #' @import grDevices
 #' @import graphics
 #' @import igraph
+#' @importFrom stats anova as.formula coef complete.cases cor df.residual lm
+#' @importFrom stats model.matrix pchisq pt quantile runif vcov
 #' 
 #' 
 #' @export

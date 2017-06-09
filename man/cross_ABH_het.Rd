@@ -88,4 +88,3 @@ geno.ABH <- cross_ABH_het(par.sc = par.sc, off.sc = off.sc,
 \author{
 Vincent Garin
 }
-

@@ -65,4 +65,3 @@ Agronomia, UDELAR, Uruguay
 \seealso{
 \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}}, \code{\link{mpp_perm}}
 }
-

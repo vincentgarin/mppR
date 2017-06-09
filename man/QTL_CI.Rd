@@ -44,11 +44,10 @@ QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 QTL_CI(QTL = QTL, Qprof = SIM, drop = 1.5)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}},
 \code{\link{QTL_select}}
 }
-
+\author{
+Vincent Garin
+}

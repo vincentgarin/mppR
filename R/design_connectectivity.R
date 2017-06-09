@@ -1,5 +1,5 @@
 ########################
-# design_connectedness #
+# design_connectivity #
 ########################
 
 #'
@@ -36,12 +36,12 @@
 #' 
 #' par.per.cross <- USNAM_mppData$par.per.cross
 #' 
-#' con.part <- design_connectedness(par.per.cross)
+#' con.part <- design_connectivity(par.per.cross)
 #' 
 #' @export
 #' 
 
-design_connectedness <- function(par.per.cross, plot.des = TRUE,
+design_connectivity <- function(par.per.cross, plot.des = TRUE,
                               output.loc = NULL){
   
   # 1. Test format of the arguments

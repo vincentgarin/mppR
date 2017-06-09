@@ -201,12 +201,12 @@
 #' data(USNAM_pheno)
 #' data(USNAM_map)
 #' 
-#' cross.ind <- USNAM_pheno$cross.ind
+#' cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
 #' geno.off <- USNAM_geno[7:506, ]
 #' geno.par <- USNAM_geno[1:6, ]
 #' 
-#' map = USNAM_map
-#' trait = USNAM_pheno[, 1:2]
+#' map <- USNAM_map
+#' trait <- USNAM_pheno
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
 #'                        rownames(geno.par)[2:6])
 #' 

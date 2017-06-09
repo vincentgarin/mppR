@@ -77,10 +77,9 @@ geno.ABH <- cross_ABH(par.sc = par.sc, off.sc = off.sc, cross.ind = cross.ind,
                       par.per.cross = par.per.cross)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{USNAM_genoABH}}
 }
-
+\author{
+Vincent Garin
+}

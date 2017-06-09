@@ -183,9 +183,6 @@ SIM <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err")
 plot_QTLprof(Qprof = SIM, type = "h")
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Butler D. G., Cullis B. R., Gilmour A. R., Gogel B. J. (2009) ASReml-R
 reference manual.
@@ -230,4 +227,6 @@ association mapping. Heredity, 108(3), 332-340.
 \code{\link{mppData_form}}, \code{\link{parent_cluster}},
 \code{\link{plot_genEffects}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

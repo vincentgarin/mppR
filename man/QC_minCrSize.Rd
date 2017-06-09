@@ -38,4 +38,3 @@ mk.mat.red <- QC_minCrSize(mk.mat = USNAM_geno.red, cross.ind = cross.ind)
 \author{
 Vincent Garin
 }
-

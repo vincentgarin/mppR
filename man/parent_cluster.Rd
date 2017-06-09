@@ -143,9 +143,6 @@ plot_QTLprof(SIM)
 
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Leroux, D., Rahmani, A., Jasson, S., Ventelon, M., Louis, F., Moreau, L.,
 & Mangin, B. (2014). Clusthaplo: a plug-in for MCQTL to enhance QTL detection
@@ -155,4 +152,6 @@ Genetics, 127(4), 921-933.
 \seealso{
 \code{\link{parent_clusterCheck}}
 }
-
+\author{
+Vincent Garin
+}

@@ -63,10 +63,9 @@ sum(MAF.cr.ind) # 72 marker are tagged because they are monomorphic in at least
 # being monomorphic in any cross.
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{QC_MAF}}
 }
-
+\author{
+Vincent Garin
+}

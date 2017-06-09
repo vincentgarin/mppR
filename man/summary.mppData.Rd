@@ -27,4 +27,3 @@ summary(USNAM_mppData)
 \code{\link{mppData_form}}, \code{\link{USNAM_mppData}},
 \code{\link{USNAM_mppData_bi}}
 }
-

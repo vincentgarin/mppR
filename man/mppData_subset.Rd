@@ -53,10 +53,9 @@ gen.list <-  USNAM_mppData$geno.id[USNAM_mppData$cross.ind \%in\% crosses[c(2, 5
 mppData_sub <- mppData_subset(mppData = USNAM_mppData, gen.list = gen.list)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mppData_chgPheno}}
 }
-
+\author{
+Vincent Garin
+}

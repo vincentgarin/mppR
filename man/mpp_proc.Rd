@@ -231,9 +231,6 @@ USNAM_biall <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
 
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}},
 \code{\link{mpp_BackElim}},
@@ -248,4 +245,6 @@ Vincent Garin
 \code{\link{QTL_R2}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

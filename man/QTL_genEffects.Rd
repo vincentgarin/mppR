@@ -81,7 +81,7 @@ parental (ancestral) allele is set as reference per interconnected part of the
 design. The reference allele is the most frequent one. Effects of the other
 alleles are estimated as deviation with respect to the reference.
 Interconnected parts of the design can be determined using Weeks and Williams
-(1964) method (\code{\link{design_connectedness}}).
+(1964) method (\code{\link{design_connectivity}}).
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 represent the effects of a single allele copy of the most frequent allele.
@@ -136,9 +136,6 @@ Q.eff = "biall")
 QTL.effects
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Weeks, D. L., & Williams, D. R. (1964). A note on the determination of
 connectedness in an N-way cross classification. Technometrics, 6(3), 319-324.
@@ -147,4 +144,6 @@ connectedness in an N-way cross classification. Technometrics, 6(3), 319-324.
 \code{\link{mppData_form}}, \code{\link{parent_cluster}},
 \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

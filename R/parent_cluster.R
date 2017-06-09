@@ -16,7 +16,7 @@
 #' in \code{plot.loc}. In order to cluster parental lines using hidden Markov
 #' models (\code{clustering.method = "hmm"}), the user needs to use an R version
 #' where package \code{clusthaplo} and \code{RHmm} can be used simultaneously.
-#' R 2.14 is a possibility.
+#' R 2.14.0 is a possibility.
 #' 
 #' @param haplo.map Three columns \code{data.frame} with: 1)
 #' marker identifiers; 2) chromosomes; and 3) \code{numeric} position in

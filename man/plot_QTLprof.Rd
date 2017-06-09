@@ -41,10 +41,9 @@ SIM_biall <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall")
 plot_QTLprof(Qprof = SIM_biall, type = "h")
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}}, \code{\link{QTL_select}}
 }
-
+\author{
+Vincent Garin
+}

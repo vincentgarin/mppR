@@ -35,4 +35,3 @@ map_MapMaker <- toMapMaker(USNAM_map)
 \author{
 Vincent Garin
 }
-

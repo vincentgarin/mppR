@@ -54,11 +54,10 @@ pedigree = pedigree.new)
 
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mppData_subset}},
 \code{\link{mppData_chgPheno}}
 }
-
+\author{
+Vincent Garin
+}

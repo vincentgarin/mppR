@@ -38,10 +38,9 @@ part.cv[[1]]$train.set
 part.cv[[1]]$val.set
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mpp_CV}}
 }
-
+\author{
+Vincent Garin
+}

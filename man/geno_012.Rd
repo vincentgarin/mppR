@@ -37,10 +37,9 @@ data <- geno_012(mk.mat = USNAM_geno)
 data_012 <- data[[1]]
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}
 }
-
+\author{
+Vincent Garin
+}

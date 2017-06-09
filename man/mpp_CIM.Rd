@@ -134,12 +134,11 @@ cofactors = cofactors, window = 20)
 plot_QTLprof(Qprof = CIM, type = "h")
                                
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
 \code{\link{parent_cluster}}, \code{\link{QTL_select}},
 \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

@@ -21,4 +21,3 @@ sum.mppData <- summary(USNAM_mppData)
 print(sum.mppData)
 
 }
-

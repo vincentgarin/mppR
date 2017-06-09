@@ -109,4 +109,3 @@ QTL <-  MQE_BackElim(mppData = mppData, mppData_bi = mppData_bi,
 \author{
 Vincent Garin
 }
-

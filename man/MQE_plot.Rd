@@ -74,10 +74,9 @@ CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, Q.eff = "cr",
 MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL)
 
 }
-\author{
-Vincent Garin
-}
 \seealso{
 \code{\link{MQE_CIM}}, \code{\link{MQE_forward}}
 }
-
+\author{
+Vincent Garin
+}

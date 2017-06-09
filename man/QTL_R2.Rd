@@ -92,9 +92,6 @@ QTL_R2(mppData = USNAM_mppData, QTL = QTL, Q.eff = "cr")
 
 
 }
-\author{
-Vincent Garin
-}
 \references{
 Utz, H. F., Melchinger, A. E., & Schon, C. C. (2000). Bias and sampling error
 of the estimated proportion of genotypic variance explained by quantitative
@@ -105,4 +102,6 @@ and validation with independent samples. Genetics, 154(4), 1839-1849.
 \code{\link{mppData_form}}, \code{\link{parent_cluster}},
 \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
 }
-
+\author{
+Vincent Garin
+}

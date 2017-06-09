@@ -33,13 +33,12 @@ plot_CV(CV.res = CV)
 
 
 }
-\author{
-Vincent Garin
-}
 \references{
 https://github.com/pieterjongsma/RProfilePlot
 }
 \seealso{
 \code{\link{mpp_CV}}
 }
-
+\author{
+Vincent Garin
+}
