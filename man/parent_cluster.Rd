@@ -103,7 +103,7 @@ visualisation of ancestral haplotype blocks can be obtained setting
 in \code{plot.loc}. In order to cluster parental lines using hidden Markov
 models (\code{clustering.method = "hmm"}), the user needs to use an R version
 where package \code{clusthaplo} and \code{RHmm} can be used simultaneously.
-R 2.14 is a possibility.
+R 2.14.0 is a possibility.
 }
 \examples{
 

@@ -571,7 +571,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
              main = paste(pop.name, trait.name, Q.eff, VCOV), QTL.info = QTL.info,
-             QTL.effects = QTL.effects, R2 = R2)
+             QTL.effects = QTL.effects[[1]], R2 = R2)
   
   
   ### 9.4: Return R object

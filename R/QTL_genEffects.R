@@ -69,7 +69,7 @@
 #' 
 #' @return Return:
 #'
-#' \item{results}{\code{List} of \code{data.frame} (one per QTL) containing the
+#' \item{Qeff}{\code{List} of \code{data.frame} (one per QTL) containing the
 #' following information:
 #' 
 #' \enumerate{
@@ -88,6 +88,12 @@
 #' }
 #' 
 #' }
+#' 
+#' \item{tab.Qeff}{\code{data.frame} with one column per QTL giving the
+#' QTL genetic effect per cross or per parent with its significance. The
+#' first two rows indicate the chromosome and the position in cM of each
+#' QTL.}
+#' 
 #' 
 #' @author Vincent Garin
 #' 
@@ -235,6 +241,55 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   names(results) <- paste0("Q", 1:length(results))
   
-  return(results)
+  # table with all QTL effect per cross or per parents.
+  
+  if (Q.eff == "cr"){
+    
+    Qeff_sign <- lapply(results, `[`, c(1, 5))
+    Qeff_sign <- lapply(Qeff_sign, function(x) paste(round(x[, 1], 3), x[, 2]))
+    table.QTL <- data.frame(Qeff_sign)
+    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
+    colnames(pos.info) <- paste0("Q", 1:length(results))
+    table.QTL <- rbind.data.frame(pos.info, table.QTL)
+    rownames(table.QTL) <- c("chr", "pos.cM", unique(mppData$cross.ind))
+    
+  } else if (Q.eff == "biall"){
+    
+    Qeff_sign <- lapply(results, `[`, c(1, 5))
+    Qeff_sign <- lapply(Qeff_sign, function(x) paste(round(x[, 1], 3), x[, 2]))
+    table.QTL <- data.frame(Qeff_sign)
+    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
+    colnames(pos.info) <- paste0("Q", 1:length(results))
+    table.QTL <- rbind.data.frame(pos.info, table.QTL)
+    
+    if (is.null(mppData$geno.par)){
+      
+      rownames(table.QTL) <- c("chr", "pos.cM", "Q.eff")
+      
+    } else {
+      
+      rownames(table.QTL) <- c("chr", "pos.cM", mppData$parents)
+      
+    }
+    
+  } else { # parental or ancestral
+    
+    Qeff_sign <- lapply(results, `[`, c(1, 5))
+    
+    # order according to parents
+    
+    Qeff_sign <- lapply(X = Qeff_sign, function(x, ind) x[ind, ],
+                        ind = mppData$parents)
+    
+    Qeff_sign <- lapply(Qeff_sign, function(x) paste(round(x[, 1], 3), x[, 2]))
+    table.QTL <- data.frame(Qeff_sign)
+    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
+    colnames(pos.info) <- paste0("Q", 1:length(results))
+    table.QTL <- rbind.data.frame(pos.info, table.QTL)
+    rownames(table.QTL) <- c("chr", "pos.cM", mppData$parents)
+    
+  }
+  
+  return(list(Qeff = results, tab.Qeff = table.QTL))
   
 }

@@ -131,7 +131,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
   }
   
   effects <- QTL_genEffects(mppData = mppData.ts, QTL = QTL, Q.eff = Q.eff,
-                            par.clu = par.clu, VCOV = VCOV)
+                            par.clu = par.clu, VCOV = VCOV)[[1]]
   
   # need to re-order the row of the effects according to the parent list
   

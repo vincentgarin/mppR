@@ -42,7 +42,7 @@ For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 \value{
 Return:
 
-\item{results}{\code{List} of \code{data.frame} (one per QTL) containing the
+\item{Qeff}{\code{List} of \code{data.frame} (one per QTL) containing the
 following information:
 
 \enumerate{
@@ -61,6 +61,11 @@ in the \code{mppData} object.}
 }
 
 }
+
+\item{tab.Qeff}{\code{data.frame} with one column per QTL giving the
+QTL genetic effect per cross or per parent with its significance. The
+first two rows indicate the chromosome and the position in cM of each
+QTL.}
 }
 \description{
 Computes a multi-QTL model with a list QTL candidates(\code{QTL}) and return
