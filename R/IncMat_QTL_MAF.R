@@ -5,7 +5,8 @@
 # function to order the QTL incidence matrix parental and ancestral according
 # to MAF per interconnected part. From left to right the MAF increase.
 
-IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu){
+IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu,
+                           ref.par = NULL){
   
   if ((Q.eff_i == "par") || (Q.eff_i == "anc")){
     
@@ -14,7 +15,7 @@ IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu){
       # 1. determine the interconnected parts
       
       con.part <- design_connectivity(par.per.cross = mppData$par.per.cross,
-                                       plot.des = FALSE)
+                                      plot.des = FALSE)
       
     } else if (Q.eff_i == "anc"){
       
@@ -23,13 +24,25 @@ IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu){
       par.clu_i <- paste0("A.allele", par.clu_i)
       names(par.clu_i) <- mppData$parents
       
+      # change the ref.par into reference allele of the connected part.
+      
+      if(!is.null(ref.par)){
+        
+        ref.par <- par.clu_i[ref.par]
+        
+      }
+      
       all.p1 <- par.clu_i[mppData$par.per.cross[, 2]]
       all.p2 <- par.clu_i[mppData$par.per.cross[, 3]]
       
       par.per.cross_i <- cbind(mppData$par.per.cross[, 1], all.p1, all.p2)
       
       con.part <- design_connectivity(par.per.cross = par.per.cross_i,
-                                       plot.des = FALSE)
+                                      plot.des = FALSE)
+      
+      
+      
+      
       
     }
     
@@ -55,9 +68,26 @@ IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu){
       all.freq <- apply(X = QTL_i, MARGIN = 2,
                         FUN = function(x) sum(round(x, 3) != 0))
       
-      Q.mat <- cbind(Q.mat, QTL_i[, names(sort(all.freq))])
       
-      allele_ord_i <- names(sort(all.freq, decreasing = TRUE))
+      if(!is.null(ref.par)){
+        
+        name.Qmat <- names(sort(all.freq))
+        name.Qmat <- name.Qmat[name.Qmat != ref.par]
+        name.order <- rev(name.Qmat)
+        name.Qmat <- c(name.Qmat, ref.par)
+        name.order <- c(ref.par, name.order)
+        
+        Q.mat <- cbind(Q.mat, QTL_i[, name.Qmat])
+        allele_ord_i <- name.order
+        
+      } else {
+        
+        Q.mat <- cbind(Q.mat, QTL_i[, names(sort(all.freq))])
+        allele_ord_i <- names(sort(all.freq, decreasing = TRUE))
+        
+      }
+      
+      
       
       # 3. keep reference and allele order
       

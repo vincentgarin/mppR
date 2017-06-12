@@ -6,8 +6,8 @@
 # mpp.proc
 
 check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
-                             est.gen.eff = FALSE, parallel = FALSE,
-                             cluster, output.loc){
+                           est.gen.eff = FALSE, ref.par = NULL,
+                           parallel = FALSE, cluster, output.loc){
   
   # 1. test the validity of the provided path to store the results
   
@@ -146,5 +146,41 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
            per cross or parents can not be performed for the bi-allelic model")
       
     }
+  
+  # 10. Check the argument ref.par
+  
+  if(!is.null(ref.par)){
+    
+    # test that there is only one reference parent and one connected part.
+    
+    if(length(ref.par) !=1){
+      
+      stop(paste("You can only specify one reference parent (ref.par) for",
+                 "the estimation of the QTL effects."))
+      
+    }
+    
+    nb.con.part <- length(design_connectivity(mppData$par.per.cross,
+                                              plot.des = FALSE))
+    
+    if(nb.con.part > 1){
+      
+      stop(paste("You can only use the ref.par argument if your MPP design",
+                 "is composed of a single connected part",
+                 "(check with design_connectivity(mppData$par.per.cross))."))
+      
+    }
+    
+    # test that reference parent is present in the list of parents.
+    
+    if(!(ref.par %in% mppData$parents)){
+      
+      stop(paste("The reference parent you specified in ref.par is not",
+                 "contained in the list of parents. Please use one of:",
+                 paste(mppData$parents, collapse = ", ")))
+      
+    }
+    
+  }
     
 }

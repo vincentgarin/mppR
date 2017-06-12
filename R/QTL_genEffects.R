@@ -18,10 +18,13 @@
 #' is possible to estimate maximum n-1 parental or ancestral alleles per
 #' interconnected part of the design. For these two models, one
 #' parental (ancestral) allele is set as reference per interconnected part of the
-#' design. The reference allele is the most frequent one. Effects of the other
-#' alleles are estimated as deviation with respect to the reference.
-#' Interconnected parts of the design can be determined using Weeks and Williams
-#' (1964) method (\code{\link{design_connectivity}}).
+#' design. Effects of the other alleles are estimated as deviation with respect
+#' to the reference. Connected parts of the design can be determined using Weeks
+#' and Williams (1964) method (\code{\link{design_connectivity}}). By default,
+#' the reference allele is the most frequent one. The user can also specify a
+#' parental allele that will be used as reference using the argument
+#' \code{ref.par}. This option is only available if the MPP design is composed
+#' of a unique connected part.
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 #' represent the effects of a single allele copy of the most frequent allele.
@@ -65,6 +68,12 @@
 #' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
+#' 
+#' @param ref.par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. For the
+#' ancestral model, the ancestral class containing the reference parent will be
+#' set as reference. \strong{This option can only be used if the MPP design is
+#' composed of a unique connected part}. Default = NULL.
 #' 
 #' 
 #' @return Return:
@@ -150,14 +159,14 @@
 
 
 QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
-                           VCOV = "h.err") {
+                           VCOV = "h.err", ref.par = NULL) {
   
   # 1. Check data format
   ######################
   
   check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, QTL = QTL, fct = "QTLeffects")
-  
+                   par.clu = par.clu, QTL = QTL, ref.par = ref.par,
+                   fct = "QTLeffects")
   
   # 2. elements for the model
   ###########################
@@ -214,8 +223,10 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   order.Qmat <- mapply(FUN = IncMat_QTL_MAF, QTL = Q.list,
                        Q.eff_i = Q.eff_temp, Q.pos_i = Q.pos,
-                       MoreArgs = list(mppData = mppData, par.clu = par.clu),
+                       MoreArgs = list(mppData = mppData, par.clu = par.clu,
+                                       ref.par = ref.par),
                        SIMPLIFY = FALSE)
+  
   
   Q.list <- lapply(X = order.Qmat, FUN = function(x) x$QTL)
   allele_order <- lapply(X = order.Qmat, FUN = function(x) x$allele_order)
@@ -238,6 +249,7 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
                                  QTL = QTL, Q.eff = Q.eff, par.clu = par.clu,
                                  VCOV = VCOV, allele_order = allele_order,
                                  con.ind = con.ind)
+  
   
   names(results) <- paste0("Q", 1:length(results))
   

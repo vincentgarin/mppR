@@ -18,18 +18,28 @@
 # est.gen.eff Logical value specifying if p-value of the single QTL effect
 # must be stored.
 
-# fct specify which type of function to allow specific tests.
-
 # parallel logical indicating if fct must be run in parallel
 
 # cluster cluster to run the function in parallel
 
 # cofactors list of cofactors
 
+# QTL list of QTLs
+
+# ref.par character expression indicating a reference parent.
+
+# mppData.ts mppData object of the training set
+
+# mppData.vs mppData object of the validation set
+
+# fct specify which type of function to allow specific tests.
+
+
 check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
                              est.gen.eff = FALSE, parallel = FALSE,
                              cluster, cofactors = NULL, QTL = NULL,
-                             mppData.ts = NULL, mppData.vs = NULL, fct = "XXX"){
+                             ref.par = NULL, mppData.ts = NULL,
+                             mppData.vs = NULL, fct = "XXX"){
   
   # 1. check mppData format
   #########################
@@ -82,15 +92,15 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
       
       if(!((exists("asreml")) && (is.function(asreml)))){
         
-       stop(paste("To use this type of VCOV, you must have access to the asreml",
-           "function from the asreml-R package."))
+        stop(paste("To use this type of VCOV, you must have access to the asreml",
+                   "function from the asreml-R package."))
         
       }
       
     }
     
   } 
-   
+  
   # Warning if the user want to use mixed model for permutation
   
   if((fct=="perm") && (VCOV!="h.err")){
@@ -119,7 +129,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
         (Q.eff=="anc" && mppData$biall)){
       
       stop(paste("The mppData object is made for bi-allelic models and not for",
-         "cross, parental or ancestral models."))
+                 "cross, parental or ancestral models."))
       
     }
     
@@ -145,7 +155,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     if((Q.eff=="biall" & !mppData.ts$biall)){
       
       stop(paste("The mppData.ts object is made for cross, parental or ancestral",
-             "models and not for bi-allelic models."))
+                 "models and not for bi-allelic models."))
       
     }
     
@@ -155,7 +165,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
         (Q.eff=="anc" && mppData.vs$biall)){
       
       stop(paste("the mppData.vs object is made for bi-allelic models and not",
-                  "for cross, parental or ancestral models."))
+                 "for cross, parental or ancestral models."))
       
     }
     
@@ -178,14 +188,14 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     
     if(parallel & (!(VCOV == "h.err"))) {
       
-     stop("Parallelization is only allowed for VCOV = 'h.err'.") 
+      stop("Parallelization is only allowed for VCOV = 'h.err'.") 
       
     }
     
     if(!inherits(cluster, "cluster")){
       
       stop(paste("You must provide cluster objects to compute this function",
-           "in parallel. Use function makeCluster() from parallel pakage."))
+                 "in parallel. Use function makeCluster() from parallel pakage."))
       
     }
     
@@ -201,7 +211,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     if(is.null(par.clu)){
       
       stop(paste("You need to provide a parent clustering object",
-           "(argument par.clu) for the computation of an ancestral model."))
+                 "(argument par.clu) for the computation of an ancestral model."))
       
     }
     
@@ -216,7 +226,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
       if(!identical(mppData$map[, 1], rownames(par.clu))){
         
         stop(paste("The list of marker and inbetween position of the par.clu",
-             "object is not the same as the one in the mppData object map."))
+                   "object is not the same as the one in the mppData object map."))
         
       }
       
@@ -226,7 +236,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
       if(!identical(mppData.ts$map[, 1], rownames(par.clu))){
         
         stop(paste("The list of marker and inbetween position of the par.clu",
-           "object is not the same as the one in the mppData object map."))
+                   "object is not the same as the one in the mppData object map."))
         
       }
       
@@ -245,11 +255,11 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     if((Q.eff == "biall") && est.gen.eff) {
       
       stop(paste("The estimation of the decomposed QTL effect",
-           "(est.gen.eff = TRUE) per cross or parents can not be performed for",
+                 "(est.gen.eff = TRUE) per cross or parents can not be performed for",
                  "the bi-allelic model"))
       
     }
-   
+    
     if(fct == "CIM"){
       
       if(is.null(cofactors)) {
@@ -259,7 +269,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
       }
       
     }
-     
+    
   }
   
   
@@ -296,6 +306,46 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
                    "Use either a object obtained from the function QTL_select",
                    "or a character vector of markers or in between marker",
                    "positions indicator."))
+        
+      }
+      
+    }
+    
+    ### Test the compatibility of the reference parents
+    
+    if (fct == "QTLeffects"){
+      
+      if(!is.null(ref.par)){
+        
+        # test that there is only one reference parent and one connected part.
+        
+        if(length(ref.par) !=1){
+          
+          stop(paste("You can only specify one reference parent (ref.par) for",
+                     "the estimation of the QTL effects."))
+               
+        }
+        
+        nb.con.part <- length(design_connectivity(mppData$par.per.cross,
+                                                  plot.des = FALSE))
+        
+        if(nb.con.part > 1){
+          
+          stop(paste("You can only use the ref.par argument if your MPP design",
+                     "is composed of a single connected part",
+                     "(check with design_connectivity(mppData$par.per.cross))."))
+          
+        }
+        
+        # test that reference parent is present in the list of parents.
+        
+        if(!(ref.par %in% mppData$parents)){
+          
+          stop(paste("The reference parent you specified in ref.par is not",
+                     "contained in the list of parents. Please use one of:",
+                     paste(mppData$parents, collapse = ", ")))
+          
+        }
         
       }
       

@@ -7,8 +7,8 @@
 mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
   par.clu = NULL, VCOV = "h.err", est.gen.eff = FALSE, thre.cof = 3,
   win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-  backward = TRUE, alpha.bk = 0.05, CI = FALSE, drop = 1.5,
-  parallel = FALSE, cluster = NULL, silence.print = FALSE,
+  backward = TRUE, alpha.bk = 0.05, ref.par = NULL, CI = FALSE,
+  drop = 1.5, parallel = FALSE, cluster = NULL, silence.print = FALSE,
   output.loc = getwd())
 }
 \arguments{
@@ -82,6 +82,12 @@ Default = TRUE.}
 \item{alpha.bk}{\code{Numeric} value indicating the significance level for
 the backward elimination. Terms with p-values above this value will
 iteratively be removed. Default = 0.05.}
+
+\item{ref.par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. For the
+ancestral model, the ancestral class containing the reference parent will be
+set as reference. \strong{This option can only be used if the MPP design is
+composed of a unique connected part}. Default = NULL.}
 
 \item{CI}{\code{Logical} value. If \code{CI = TRUE}, the function will
 compute a -log10(pval) drop confidence interval for each QTL after
