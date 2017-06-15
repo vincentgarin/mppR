@@ -54,6 +54,11 @@
 #' If parents have heterozygous marker scores, user must specify it
 #' using \code{het.par = TRUE} (\code{\link{cross_ABH_het}}).}
 #' 
+#' \item{If \code{impute = TRUE}, imputation of the missing values for the IBS
+#' bi-allelic model using the \code{codeGeno()} function from synbreed.
+#' The imputation can only be done if data are not converted into ABH format
+#' (\code{ABH = FALSE}).}
+#' 
 #' }
 #' 
 #' 
@@ -150,6 +155,24 @@
 #' transmitted by the heterozygous parent at a particular locus in order to
 #' make the ABH conversion. Default = FALSE.
 #' 
+#' @param impute \code{Logical} value. if \code{impute = TRUE}, the function
+#' will impute missing values using the \code{codeGeno()} function from the
+#' synbreed package. Default = FALSE.
+#' 
+#' @param impute.type \code{character} with one out of \code{"fix"},
+#' \code{"random"}, \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"},
+#' \code{"beagleAfterFamilyNoRand"}. For details see synbreed package
+#' documentation. \strong{To be able to use Beagle for imputation, Please load
+#' the synbreed package using \code{library(synbreed)}} Default = "random".
+#' 
+#' @param map_bp \code{data.frame} with three columns specifying for each marker
+#' position the marker identifier, the \code{numeric} or \code{character}
+#' chromosome the and physical bp position. This argument is necessary for
+#' imputation using Beagle. Default = NULL.
+#' 
+#' @param replace.value \code{numeric} scalar to replace missing value in case
+#' \code{impute.type = fix}. Only 0, 1, 2. Should be chosen. Default = NULL.
+#' 
 #' @param parallel \code{Logical} value specifying if the function should be
 #' executed in parallel on multiple cores. To run function in parallel user must
 #' provide cluster in the \code{cluster} argument. Default = FALSE.
@@ -195,6 +218,12 @@
 #' \code{\link{QC_minCrSize}}, \code{\link{QC_missing}},
 #' \code{\link{QC_tagMAFCr}}, \code{\link{parent_cluster}}
 #' 
+#' @references
+#' 
+#' Wimmer, V., Albrecht, T., Auinger, H. J., & Schon, C. C. (2012). synbreed: a
+#' framework for the analysis of genomic prediction data using R.
+#' Bioinformatics, 28(15), 2086-2087.
+#' 
 #' @examples
 #' 
 #' data(USNAM_geno)
@@ -210,7 +239,8 @@
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
 #'                        rownames(geno.par)[2:6])
 #' 
-#' # Quality control procedure
+#' # QC IBD model and analysis
+#' ###########################
 #' 
 #' data <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
 #'                 trait = trait, cross.ind = cross.ind,
@@ -252,6 +282,38 @@
 #'                 Q.eff = "anc", par.clu = par.clu, output.loc = getwd())
 #' 
 #' }
+#' 
+#' # QC IBS model with imputation
+#' ##############################
+#' 
+#' data(USNAM_geno)
+#' data(USNAM_pheno)
+#' data(USNAM_map)
+#' 
+#' cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
+#' geno.off <- USNAM_geno[7:506, ]
+#' 
+#' # It is a RIL population. So set the heterozygous score to missing.
+#' 
+#' geno.off[geno.off == "AC"] <- NA
+#' geno.off[geno.off == "AG"] <- NA
+#' geno.off[geno.off == "AT"] <- NA
+#' geno.off[geno.off == "CG"] <- NA
+#' geno.off[geno.off == "CT"] <- NA
+#' geno.off[geno.off == "GT"] <- NA
+#' 
+#' geno.par <- USNAM_geno[1:6, ]
+#' 
+#' map <- USNAM_map
+#' trait <- USNAM_pheno
+#' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
+#'                        rownames(geno.par)[2:6])
+#' 
+#' 
+#' data <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
+#'                 trait = trait, cross.ind = cross.ind,
+#'                 par.per.cross = par.per.cross, ABH = FALSE, impute = TRUE,
+#'                 impute.type = "family")
 #'
 #' @export
 #' 
@@ -262,8 +324,10 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                     n.lim = 15, MAF.pop.lim = 0.05, MAF.cr.lim = NULL,
                     MAF.cr.miss = TRUE, rem.NA.cr = FALSE, mk.miss = 0.1,
                     gen.miss = 0.25, ABH = TRUE, het.par = FALSE,
-                    parallel = FALSE, cluster = NULL){
+                    impute = FALSE, impute.type = "random", map_bp = NULL,
+                    replace.value = NULL, parallel = FALSE, cluster = NULL){
   
+  message("The quality control procedure can take few minutes!")
   
   # 1. check the format of the data
   #################################
@@ -272,7 +336,8 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
            cross.ind = cross.ind, par.per.cross = par.per.cross,
            subcross.ind = subcross.ind, par.per.subcross = par.per.subcross,
            n.lim = n.lim, MAF.cr.lim = MAF.cr.lim, ABH = ABH, het.par = het.par,
-           parallel = parallel, cluster = cluster)
+           impute = impute, impute.type = impute.type, map_bp = map_bp,
+           replace.value = replace.value, parallel = parallel, cluster = cluster)
   
   
   # 2. Remove markers with genotyping error
@@ -619,8 +684,6 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   map <- match$new.map
   
   
-  
-  
   ### 10.2 genotypes (equalize also cross.ind and subcross.ind)
   
   if(!is.null(subcross.ind)){
@@ -703,8 +766,57 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     
   }
   
+  # 12. Optional marker imputation
+  ################################
   
-  # 12. Results
+  if(impute){
+    
+    family <- data.frame(cross.ind)
+    rownames(family) <- rownames(geno.off)
+    
+    if(impute.type %in% c("random","family", "fix")) {
+      
+      map_gp <- map[, 2:3]
+      map.unit <- "cM"
+      n.cores <- 1
+      
+    } else { # Cases with Beagle
+      
+      message("The imputation using Beagle can take several minutes!")
+      
+      map_gp <- map_bp[map_bp[, 1] %in% map[, 1], 2:3]
+      map.unit <- "bp"
+      if(!is.null(cluster)){n.cores <- length(cluster)} else {n.cores <- 1}
+      
+    }
+    
+    colnames(map_gp) <- c("chr", "pos")
+    rownames(map_gp) <- map[, 1]
+    
+    
+    gp <- create.gpData(geno = geno.off, map = map_gp, family = family,
+                        map.unit = map.unit)
+    
+    gp.imp <- tryCatch(expr = codeGeno(gpData = gp, impute = TRUE,
+                                       impute.type = impute.type,
+                                       replace.value = replace.value, maf = 0,
+                                       nmiss = 1, verbose = FALSE,
+                                       cores = n.cores),
+             error = function(e) NULL)
+    
+    if(is.null(gp.imp)){
+      
+      if(map.unit == "cM"){ warning("The imputation failed!")
+        
+      } else{ warning("The imputation using Beagle failed!") }
+      
+    } else {geno.off <- gp.imp$geno }
+    
+    
+    
+  }
+  
+  # 13. Results
   #############
   
   results <- list(geno.off = geno.off, geno.par = geno.par,

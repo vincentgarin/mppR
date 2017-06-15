@@ -8,7 +8,7 @@ Maintainer: Vincent Garin <vincent.garin@wur.nl>
 Description: R package to sort data from multi-parent populations (MPP), perform
     QTL detection and visualize the results.
 License: GPL (>=2)
-Imports: ggplot2, graphics, grDevices, methods, nlme, parallel, qtl, stats, utils, igraph
+Imports: ggplot2, graphics, grDevices, methods, nlme, parallel, qtl, stats, synbreed, utils, igraph
 Depends: R(>= 2.10.0)
 Suggests: asreml, clusthaplo
 RoxygenNote: 6.0.1

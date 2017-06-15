@@ -8,7 +8,8 @@
 
 check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                      subcross.ind, par.per.subcross, n.lim, MAF.cr.lim, ABH,
-                     het.par, parallel, cluster){
+                     het.par, impute, impute.type, map_bp, replace.value,
+                     parallel, cluster){
   
   # test the value of minimum cross size
   
@@ -228,6 +229,92 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   # test the argument necessary for the ABH assignement par.per.cross and
   # cross.ind.ABH.
   
+  # test if the user want to perform both ABH assignement and imputation. Not
+  # possible.
+  
+  if((ABH & impute)){
+    
+    stop(paste("It is not possible to select both ABH assignement and",
+               "imputation. Imputation option is made for IBS data that will",
+               "be used for the bi-allelic model. For the other (IBD) models,",
+               "some imputation of the missing value will be performed during",
+               "the IBD value computation in function mppData_form().",
+               "Therefore, if you want to get data for IBD models",
+               "(cross-specific, parental or ancestral), keep ABH = TRUE,",
+               "and set impute = FALSE.", "If you want, to get imputed IBS data",
+               "for a bi-allelic, set ABH = FALSE and keep impute = TRUE."))
+    
+  }
+  
+  # Test the validity of the arguments introduced if the user want to perform
+  # some imputation
+  
+  if(impute){
+    
+    if(!(impute.type %in% c("random","family","beagle","beagleAfterFamily",
+                            "beagleNoRand", "beagleAfterFamilyNoRand","fix"))){
+      
+      stop(paste("The impute.type is not correct. Please use one of:",
+                 "'random', 'family', 'beagle', 'beagleAfterFamily',",
+                 "'beagleNoRand', 'beagleAfterFamilyNoRand', 'fix'."))
+      
+    }
+    
+    # check if impute is beagle the right format of the map_bp
+    
+    if (impute.type %in% c("beagle","beagleAfterFamily",
+                           "beagleNoRand", "beagleAfterFamilyNoRand","fix")){
+      
+      if(!("package:synbreed" %in% search())){
+        
+        stop(paste("To be able to use Beagle for imputation, please load the",
+                   "package synbreed using library(synbreed)."))
+        
+      }
+      
+      if(!identical(map_bp[, 1], colnames(geno.off))){
+        
+        stop(paste("The marker indicators of map_bp should be identical to the",
+                   "the marker indicators of geno.off (colnames(geno.off))."))
+        
+      }
+      
+      if(!(is.character(map_bp[, 2]) || is.numeric(map_bp[, 2]))){
+        
+        stop(paste("The chromosome indicator of map_bp (2nd col) should be",
+                   "character or numeric."))
+        
+      }
+      
+    }
+    
+    
+    # if impute.type is fix. Chekc that a value was provided for replace.value
+    
+    if((impute.type == "fix") & (is.null(replace.value))){
+      
+      stop(paste("To use the impute.type = 'fix', you must also provide a value",
+                 "the replace.value argument."))
+           
+    }
+    
+    if((impute.type == "fix")){
+      
+      if(!is.numeric(replace.value)){
+        
+        stop("replace.value must be a numerical value 0, 1 or 2.")
+        
+      }
+      
+      if (!(replace.value %in% c(0, 1, 2))){
+        
+        stop("replace.value must be 0, 1 or 2.")
+        
+      }
+      
+    }
+    
+  }
   
   # test if cluster have been correctly build by the user for parallelization
   
