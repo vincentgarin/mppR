@@ -125,7 +125,10 @@
 #' 
 #' @param drop \code{Numeric} -log10(p-value) drop value at the limits of the
 #' interval. Default = 1.5.
-#'
+#' 
+#' @param text.size \code{Numeric} value specifying the size of graph axis text
+#' elements. Default = 18.
+#' 
 #' @param parallel \code{Logical} value specifying if the function should be
 #' executed in parallel on multiple cores. To run function in parallel user must
 #' provide cluster in the \code{cluster} argument. \strong{Parallelization is
@@ -254,8 +257,9 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      est.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
                      backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
-                     CI = FALSE, drop = 1.5, parallel = FALSE, cluster = NULL,
-                     silence.print = FALSE, output.loc = getwd()) {
+                     CI = FALSE, drop = 1.5, text.size = 18, parallel = FALSE,
+                     cluster = NULL, silence.print = FALSE,
+                     output.loc = getwd()) {
   
   
   # 1. Check the validity of the parameters that have been introduced
@@ -538,7 +542,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
     
     print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "h", main = main.cim,
-                       threshold = thre.QTL))
+                       threshold = thre.QTL, text.size = text.size))
     
     dev.off()
     
@@ -550,7 +554,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
     
     print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "l", main = main.cim,
-                       threshold = thre.QTL))
+                       threshold = thre.QTL, text.size = text.size))
     
     dev.off()
     
@@ -561,7 +565,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
       pdf(paste0(folder.loc, "/", "gen_eff.pdf"), height = 10, width = 16)
       
       print(plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = Q.eff,
-                            QTL = QTL, main = main.Qeff))
+                            QTL = QTL, main = main.Qeff, text.size = text.size))
       
       dev.off()
       

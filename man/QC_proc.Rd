@@ -64,8 +64,7 @@ same order. The list of parent identifiers must be the same to the rownames of
 the argument \code{geno.par}}. Default = NULL.}
 
 \item{n.lim}{\code{Numeric} value specifying the minimum cross size.
-Default = 15. \strong{it is not allowed to use cross with less than 15
-observation (\code{n.lim < 15}).}}
+Default = 15.}
 
 \item{MAF.pop.lim}{\code{Numeric} value specifying the minimum minor allele
 frequency for a marker at the population level. Default = 0.05.}
@@ -183,8 +182,7 @@ population level \code{\link{QC_missing}}.}
 \item{If the map contains some markers at the same position, the function
 keep only the most polymorphic position.}
 
-\item{Remove crosses with less than \code{n.lim} observations
-\code{\link{QC_minCrSize}}. \code{n.lim} can not take a value below 15.}
+\item{Remove crosses with less than \code{n.lim} observations.}
 
 \item{Remove genotypes with a missing rate higher than \code{gen.miss}
 \code{\link{QC_missing}}.}
@@ -193,11 +191,11 @@ keep only the most polymorphic position.}
 \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical within
 cross MAF can be specified by the user via the argument \code{MAF.cr.lim}.
 By default, the critical within cross MAF are defined by the following
-function of the cross-size (n.cr): MAF(n.cr) = (5/n.cr) + 0.05.
-This means that for small cross sizes (n.cr = \code{n.lim} = 15),
-the crosses must have at least a bit more than five genotypes that segreate.
-When the number of genotypes per cross increases, then the within cross MAF
-tend to 0.05. If the within cross MAF is below the limit in at least one
+function of the cross-size (n.cr): MAF(n.cr) = 0.5 if n.cr c [0,10] and
+MAF(n.cr) = (4.5/n.cr) + 0.05 if  n.cr > 10. This means that up to 10
+genotypes, the critical within cross MAF is set to 50\%. Then it decreases
+when the number of genotype increases until 5\% set as a lower bound.
+If the within cross MAF is below the limit in at least one
 cross, then marker scores of the problematic cross are either put as missing
 (\code{MAF.cr.miss = TRUE} default) or the whole marker is discared
 (\code{MAF.cr.miss = FALSE}).}
@@ -313,6 +311,10 @@ data <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
 Wimmer, V., Albrecht, T., Auinger, H. J., & Schon, C. C. (2012). synbreed: a
 framework for the analysis of genomic prediction data using R.
 Bioinformatics, 28(15), 2086-2087.
+
+Browning, B. L., & Browning, S. R. (2013). Improving the accuracy and
+efficiency of identity-by-descent detection in population data. Genetics,
+194(2), 459-471.
 }
 \seealso{
 \code{\link{cross_ABH}}, \code{\link{cross_ABH_het}}

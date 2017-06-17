@@ -46,7 +46,7 @@
 #' See \code{\link{mppData_form}} for details.
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function
-#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} with argument
+#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} calculated with argument
 #' \code{est.gen.eff = TRUE}.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
@@ -59,6 +59,9 @@
 #' These positions will be plotted on the graph. Default = NULL.
 #' 
 #' @param main Title of the graph. Default =  "QTL genetic effects plot".
+#' 
+#' @param text.size \code{Numeric} value specifying the size of graph axis text
+#' elements. Default = 18.
 #' 
 #' 
 #' @author Vincent Garin
@@ -87,7 +90,8 @@
 
 
 plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
-                            main = "QTL genetic effects plot")
+                            main = "QTL genetic effects plot",
+                            text.size = 18)
 {
   
   # 1. check data format
@@ -229,14 +233,14 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
                            high = "blue") +
       theme_bw() + xlab("position [cM]") + ylab(y_lab) + 
       scale_y_discrete(labels = y.names) + ggtitle(main) +
-      theme(axis.title.x = element_text(size=18),
-            axis.title.y = element_text(size=18),
-            axis.text.x  = element_text(size=18),
-            axis.text.y = element_text(size = 18),
-            plot.title = element_text(size=22),
-            strip.text.x =  element_text(size=18),
-            legend.title = element_text(size=16),
-            legend.text = element_text(size=16))
+      theme(axis.title.x = element_text(size=text.size),
+            axis.title.y = element_text(size=text.size),
+            axis.text.x  = element_text(size=text.size),
+            axis.text.y = element_text(size = text.size),
+            plot.title = element_text(size=(text.size+4)),
+            strip.text.x =  element_text(size=text.size),
+            legend.title = element_text(size=(text.size-2)),
+            legend.text = element_text(size=(text.size-2)))
     
   } else { # QTL position given
     
@@ -248,14 +252,14 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
       geom_vline(aes(xintercept = pos.cM), pos.Q, linetype = "longdash") +
       theme_bw() + xlab("position [cM]") + ylab(y_lab) +
       scale_y_discrete(labels = y.names) + ggtitle(main) +
-      theme(axis.title.x = element_text(size=18),
-            axis.title.y = element_text(size=18),
-            axis.text.x  = element_text(size=18),
-            axis.text.y = element_text(size = 18),
-            plot.title = element_text(size=22),
-            strip.text.x =  element_text(size=18),
-            legend.title = element_text(size=16),
-            legend.text = element_text(size=16))
+      theme(axis.title.x = element_text(size=text.size),
+            axis.title.y = element_text(size=text.size),
+            axis.text.x  = element_text(size=text.size),
+            axis.text.y = element_text(size = text.size),
+            plot.title = element_text(size=(text.size+4)),
+            strip.text.x =  element_text(size=text.size),
+            legend.title = element_text(size=(text.size-2)),
+            legend.text = element_text(size=(text.size-2)))
     
   }
   

@@ -5,15 +5,18 @@
 \title{plot QTL profile}
 \usage{
 plot_QTLprof(Qprof, QTL = NULL, type = "l", main = "QTL profile",
-  threshold = 3)
+  threshold = 3, text.size = 18)
 }
 \arguments{
 \item{Qprof}{Object of class \code{QTLprof} returned by the function
-\code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}.}
+\code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}, or three columns
+\code{numeric matrix} with chromosome, marker position and -log10(p-value).}
 
-\item{QTL}{Optional argument. Object of class \code{QTLlist} representing a
-list of selected position obtained with the function \code{\link{QTL_select}}.
-These positions will be indicated on the graph. Default = NULL.}
+\item{QTL}{Optional argument. List of QTL positions. Object of class
+\code{QTLlist} representing a list of selected position obtained with the
+function \code{\link{QTL_select}} or two columns numeric matrix with the
+chromosome and the position in cM. These positions will be indicated on the
+graph. Default = NULL.}
 
 \item{type}{\code{Character} expression indicating the type of plot should be
 drawn: "l" for lines , "h" for vertical bar. Default = "l".}
@@ -22,6 +25,9 @@ drawn: "l" for lines , "h" for vertical bar. Default = "l".}
 
 \item{threshold}{\code{Numeric} QTL significance threshold value draw on
 the plot. Default = 3.}
+
+\item{text.size}{\code{Numeric} value specifying the size of graph axis text
+elements. Default = 18.}
 }
 \description{
 Plots the -log10(p-val) profile of a QTL analysis using the package ggplot2.

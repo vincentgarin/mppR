@@ -27,8 +27,7 @@
 #' \item{If the map contains some markers at the same position, the function
 #' keep only the most polymorphic position.}
 #' 
-#' \item{Remove crosses with less than \code{n.lim} observations
-#' \code{\link{QC_minCrSize}}. \code{n.lim} can not take a value below 15.}
+#' \item{Remove crosses with less than \code{n.lim} observations.}
 #' 
 #' \item{Remove genotypes with a missing rate higher than \code{gen.miss}
 #' \code{\link{QC_missing}}.}
@@ -37,11 +36,11 @@
 #' \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical within
 #' cross MAF can be specified by the user via the argument \code{MAF.cr.lim}.
 #' By default, the critical within cross MAF are defined by the following
-#' function of the cross-size (n.cr): MAF(n.cr) = (5/n.cr) + 0.05.
-#' This means that for small cross sizes (n.cr = \code{n.lim} = 15),
-#' the crosses must have at least a bit more than five genotypes that segreate.
-#' When the number of genotypes per cross increases, then the within cross MAF
-#' tend to 0.05. If the within cross MAF is below the limit in at least one
+#' function of the cross-size (n.cr): MAF(n.cr) = 0.5 if n.cr c [0,10] and
+#' MAF(n.cr) = (4.5/n.cr) + 0.05 if  n.cr > 10. This means that up to 10
+#' genotypes, the critical within cross MAF is set to 50\%. Then it decreases
+#' when the number of genotype increases until 5\% set as a lower bound.
+#' If the within cross MAF is below the limit in at least one
 #' cross, then marker scores of the problematic cross are either put as missing
 #' (\code{MAF.cr.miss = TRUE} default) or the whole marker is discared
 #' (\code{MAF.cr.miss = FALSE}).}
@@ -114,8 +113,7 @@
 #' the argument \code{geno.par}}. Default = NULL.
 #' 
 #' @param n.lim \code{Numeric} value specifying the minimum cross size.
-#' Default = 15. \strong{it is not allowed to use cross with less than 15
-#' observation (\code{n.lim < 15}).}
+#' Default = 15.
 #' 
 #' @param MAF.pop.lim \code{Numeric} value specifying the minimum minor allele
 #' frequency for a marker at the population level. Default = 0.05.
@@ -223,6 +221,10 @@
 #' Wimmer, V., Albrecht, T., Auinger, H. J., & Schon, C. C. (2012). synbreed: a
 #' framework for the analysis of genomic prediction data using R.
 #' Bioinformatics, 28(15), 2086-2087.
+#' 
+#' Browning, B. L., & Browning, S. R. (2013). Improving the accuracy and
+#' efficiency of identity-by-descent detection in population data. Genetics,
+#' 194(2), 459-471.
 #' 
 #' @examples
 #' 
@@ -576,9 +578,9 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   
   if(is.null(MAF.cr.lim)){
     
-    MAF.lim <- function(floor, n.cr){
+    MAF.lim <- function(x, floor){
       
-      (5/n.cr) + floor
+      if(x <= 10){ 0.5 } else { (4.5/x) + floor }
       
     }
     
@@ -587,7 +589,7 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     
     n.cr <- table(factor(cross.ind, levels = unique(cross.ind)))
     
-    lim <- MAF.lim(floor = 0.05, n.cr = n.cr)
+    lim <- unlist(lapply(X = n.cr, FUN = MAF.lim, floor = 0.05))
     
   } else {
     
@@ -712,7 +714,20 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     
   }
   
-  ### 10.3 modify the par.per.cross argument and geno.par
+  ### 10.3 verify that there are no cross with too few data
+  
+  freq <- table(cross.ind)
+  
+  if(sum(freq < 15)){
+    
+    warning(paste("It is still possible to perform a MPP QTL analysis with",
+                  "crosses containing less that 15 genotypes. However, we",
+                  "advice to use minimum 15 individuals per cross to have",
+                  "enough information to estimate within crosses QTL effects."))
+            
+  }
+  
+  ### 10.4 modify the par.per.cross argument and geno.par
   
   cr.list <- unique(cross.ind)
   par.per.cross <- par.per.cross[par.per.cross[, 1] %in% cr.list, ]

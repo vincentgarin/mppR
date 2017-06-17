@@ -5,14 +5,14 @@
 \title{plot of QTL genetic effects}
 \usage{
 plot_genEffects(mppData, Qprof, Q.eff, QTL = NULL,
-  main = "QTL genetic effects plot")
+  main = "QTL genetic effects plot", text.size = 18)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.
 See \code{\link{mppData_form}} for details.}
 
 \item{Qprof}{Object of class \code{QTLprof} returned by the function
-\code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} with argument
+\code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} calculated with argument
 \code{est.gen.eff = TRUE}.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
@@ -25,6 +25,9 @@ or vector of \code{character} marker or inbetween marker positions names.
 These positions will be plotted on the graph. Default = NULL.}
 
 \item{main}{Title of the graph. Default =  "QTL genetic effects plot".}
+
+\item{text.size}{\code{Numeric} value specifying the size of graph axis text
+elements. Default = 18.}
 }
 \description{
 Visualisation of the genome-wide significance of the QTL effect per cross or

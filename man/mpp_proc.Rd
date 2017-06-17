@@ -8,8 +8,8 @@ mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
   par.clu = NULL, VCOV = "h.err", est.gen.eff = FALSE, thre.cof = 3,
   win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
   backward = TRUE, alpha.bk = 0.05, ref.par = NULL, CI = FALSE,
-  drop = 1.5, parallel = FALSE, cluster = NULL, silence.print = FALSE,
-  output.loc = getwd())
+  drop = 1.5, text.size = 18, parallel = FALSE, cluster = NULL,
+  silence.print = FALSE, output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -96,6 +96,9 @@ Default = FALSE.}
 
 \item{drop}{\code{Numeric} -log10(p-value) drop value at the limits of the
 interval. Default = 1.5.}
+
+\item{text.size}{\code{Numeric} value specifying the size of graph axis text
+elements. Default = 18.}
 
 \item{parallel}{\code{Logical} value specifying if the function should be
 executed in parallel on multiple cores. To run function in parallel user must

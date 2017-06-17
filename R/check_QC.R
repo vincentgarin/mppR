@@ -11,13 +11,6 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                      het.par, impute, impute.type, map_bp, replace.value,
                      parallel, cluster){
   
-  # test the value of minimum cross size
-  
-  if(n.lim < 15){
-    
-    stop("It is not allowed/adviced to use cross with less than 15 observations.")
-    
-  }
   
   # test format of the marker matrices
   

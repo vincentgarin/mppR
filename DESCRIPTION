@@ -3,14 +3,29 @@ Type: Package
 Title: Multi-parent population QTL analysis
 Version: 1.0.1
 Date: 2015-07-15
-Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb, dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
+Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb,
+    dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
 Maintainer: Vincent Garin <vincent.garin@wur.nl>
 Description: R package to sort data from multi-parent populations (MPP), perform
     QTL detection and visualize the results.
 License: GPL (>=2)
-Imports: ggplot2, graphics, grDevices, methods, nlme, parallel, qtl, stats, synbreed, utils, igraph
-Depends: R(>= 2.10.0)
-Suggests: asreml, clusthaplo
+Imports:
+    ggplot2,
+    graphics,
+    grDevices,
+    methods,
+    nlme,
+    parallel,
+    qtl,
+    stats,
+    synbreed,
+    utils,
+    igraph
+Depends:
+    R(>= 2.10.0)
+Suggests:
+    asreml,
+    clusthaplo
 RoxygenNote: 6.0.1
 URL: https://github.com/vincentgarin/mppR
 BugReports: https://github.com/vincentgarin/mppR/issues

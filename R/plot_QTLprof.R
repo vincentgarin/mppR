@@ -9,11 +9,14 @@
 #' \code{QTL}. These positions will be drawn on the graph using dotted lines.
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function
-#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}.
+#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}, or three columns
+#' \code{numeric matrix} with chromosome, marker position and -log10(p-value).
 #' 
-#' @param QTL Optional argument. Object of class \code{QTLlist} representing a
-#' list of selected position obtained with the function \code{\link{QTL_select}}.
-#' These positions will be indicated on the graph. Default = NULL.
+#' @param QTL Optional argument. List of QTL positions. Object of class
+#' \code{QTLlist} representing a list of selected position obtained with the
+#' function \code{\link{QTL_select}} or two columns numeric matrix with the
+#' chromosome and the position in cM. These positions will be indicated on the
+#' graph. Default = NULL.
 #' 
 #' @param type \code{Character} expression indicating the type of plot should be
 #' drawn: "l" for lines , "h" for vertical bar. Default = "l".
@@ -22,6 +25,9 @@
 #' 
 #' @param threshold \code{Numeric} QTL significance threshold value draw on
 #' the plot. Default = 3.
+#' 
+#' @param text.size \code{Numeric} value specifying the size of graph axis text
+#' elements. Default = 18.
 #' 
 #' @author Vincent Garin
 #' 
@@ -46,25 +52,57 @@
 
 
 plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
-                         threshold = 3)
+                         threshold = 3, text.size = 18)
 {
-  stopifnot(inherits(Qprof, "QTLprof"))
+  
+  if(inherits(Qprof, "QTLprof")){
+    
+    chr <- Qprof$chr
+    pos.cM <- Qprof$pos.cM
+    log10pval <- Qprof$log10pval
+    Qprof <- data.frame(chr, pos.cM, log10pval)
+    
+  } else {
+    
+    if(!((is.matrix(Qprof)) & (dim(Qprof)[2] == 3) & (is.numeric(Qprof)))){
+      
+      stop(paste("The Qprof argument must be a three column numeric matrix with",
+                 "chromosome, marker position and -log10(p-value)."))
+      
+    }
+    
+    Qprof <- data.frame(Qprof)
+    colnames(Qprof) <- c("chr", "pos.cM", "log10pval")
+    
+  }
   
   # QTL positions
   
   if(!is.null(QTL)){
     
-    stopifnot(inherits(QTL, "QTLlist"))
-    pos.Q <- QTL[, c(2, 4)]
+    if(inherits(QTL, "QTLlist")){
+      
+      pos.Q <- QTL[, c(2, 4)]
+      
+    } else{
+      
+      if(!((is.matrix(QTL)) & (dim(QTL)[2] == 2) & (is.numeric(QTL)))){
+        
+        stop(paste("The QTL argument must be a two column numeric matrix with",
+                   "chromosome, and marker position."))
+        
+      }
+      
+      pos.Q <- data.frame(QTL)
+      colnames(pos.Q) <- c("chr", "pos.cM")
+      
+    }
     
   }
   
   # redefine data within the function to suppress R CMD check notation
   
-  chr <- Qprof$chr
-  pos.cM <- Qprof$pos.cM
-  log10pval <- Qprof$log10pval
-  Qprof <- data.frame(chr, pos.cM, log10pval)
+  
   
   
   if(is.null(QTL)){ # no QTL info given
@@ -76,14 +114,14 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
         geom_hline(yintercept = threshold, colour = "red") + theme_bw() +
         xlab("position [cM]") + ylab("-log10(p.val)") + 
         ggtitle(main) +
-        theme(axis.title.x = element_text(size=18),
-              axis.title.y = element_text(size=18),
-              axis.text.x  = element_text(size=18),
-              axis.text.y = element_text(size = 18),
-              plot.title = element_text(size=22),
-              strip.text.x =  element_text(size=18))
-              
-              
+        theme(axis.title.x = element_text(size=text.size),
+              axis.title.y = element_text(size=text.size),
+              axis.text.x  = element_text(size=text.size),
+              axis.text.y = element_text(size = text.size),
+              plot.title = element_text(size=(text.size + 4)),
+              strip.text.x =  element_text(size=text.size))
+      
+      
     } else if (type == "h") {
       
       ggplot(Qprof, aes(x = pos.cM, xend = pos.cM, y = 0, yend = log10pval,
@@ -92,13 +130,13 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
         geom_hline(yintercept = threshold, colour = "red") + 
         theme_bw() + xlab("position [cM]") + ylab("-log10(p.val)") + 
         ggtitle(main) +
-        theme(axis.title.x = element_text(size=18),
-              axis.title.y = element_text(size=18),
-              axis.text.x  = element_text(size=18),
-              axis.text.y = element_text(size = 18),
-              plot.title = element_text(size=22),
-              strip.text.x =  element_text(size=18))
-              
+        theme(axis.title.x = element_text(size=text.size),
+              axis.title.y = element_text(size=text.size),
+              axis.text.x  = element_text(size=text.size),
+              axis.text.y = element_text(size = text.size),
+              plot.title = element_text(size=(text.size + 4)),
+              strip.text.x =  element_text(size=text.size))
+      
     }
     
   } else { # QTL info given
@@ -112,12 +150,12 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
         geom_hline(yintercept = threshold, colour = "red") + theme_bw() +
         xlab("position [cM]") + ylab("-log10(p.val)") + 
         ggtitle(main) + 
-        theme(axis.title.x = element_text(size=18),
-              axis.title.y = element_text(size=18),
-              axis.text.x  = element_text(size=18),
-              axis.text.y = element_text(size = 18),
-              plot.title = element_text(size=22),
-              strip.text.x =  element_text(size=18))
+        theme(axis.title.x = element_text(size=text.size),
+              axis.title.y = element_text(size=text.size),
+              axis.text.x  = element_text(size=text.size),
+              axis.text.y = element_text(size = text.size),
+              plot.title = element_text(size=(text.size + 4)),
+              strip.text.x =  element_text(size=text.size))
       
       
     } else if (type == "h") {
@@ -130,13 +168,13 @@ plot_QTLprof <- function(Qprof, QTL = NULL, type = "l", main = "QTL profile",
         geom_hline(yintercept = threshold, colour = "red") + 
         theme_bw() + xlab("position [cM]") + ylab("-log10(p.val)") + 
         ggtitle(main) +
-        theme(axis.title.x = element_text(size=18),
-              axis.title.y = element_text(size=18),
-              axis.text.x  = element_text(size=18),
-              axis.text.y = element_text(size = 18),
-              plot.title = element_text(size=22),
-              strip.text.x =  element_text(size=18))
-              
+        theme(axis.title.x = element_text(size=text.size),
+              axis.title.y = element_text(size=text.size),
+              axis.text.x  = element_text(size=text.size),
+              axis.text.y = element_text(size = text.size),
+              plot.title = element_text(size=(text.size + 4)),
+              strip.text.x =  element_text(size=text.size))
+      
     }
     
   }
