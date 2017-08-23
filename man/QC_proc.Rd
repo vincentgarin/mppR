@@ -8,7 +8,7 @@ QC_proc(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   subcross.ind = NULL, par.per.subcross = NULL, n.lim = 15,
   MAF.pop.lim = 0.05, MAF.cr.lim = NULL, MAF.cr.miss = TRUE,
   rem.NA.cr = FALSE, mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE,
-  het.par = FALSE, impute = FALSE, impute.type = "random",
+  het_miss_par = FALSE, impute = FALSE, impute.type = "random",
   map_bp = NULL, replace.value = NULL, parallel = FALSE, cluster = NULL)
 }
 \arguments{
@@ -70,7 +70,7 @@ Default = 15.}
 frequency for a marker at the population level. Default = 0.05.}
 
 \item{MAF.cr.lim}{\code{Numeric vector} specifying the critical within cross
-MAF. Default = NULL. Marker with a problematic segregation rate in at least
+MAF. Marker with a problematic segregation rate in at least
 one cross is either set as missing within the problematic cross
 (\code{MAF.cr.miss = TRUE}), or remove from the marker matrix
 (\code{MAF.cr.miss = FALSE}). Default = NULL.}
@@ -94,15 +94,15 @@ the missingness rate above which a genotype will be removed. Default = 0.25.}
 
 \item{ABH}{\code{Logical} value specifying if the marker matrix data should
 be converted into ABH format within cross. \strong{If user wants to convert
-the markers to the ABH format and parent have heterozygous marker score.
-Then the argument \code{het.par} must be set to TRUE}.
+the markers to the ABH format and parent have heterozygous or missing marker
+scores, the argument \code{het_miss_par} must be set to TRUE}.
 If (\code{ABH = FALSE}), the marker data will be let in the same format as
 the one used in \code{geno.off}. Default = TRUE.}
 
-\item{het.par}{\code{Logical} value. if \code{het.par = TRUE}, the function
-will use the offspring segregation to try to infer the allele that was
-transmitted by the heterozygous parent at a particular locus in order to
-make the ABH conversion. Default = FALSE.}
+\item{het_miss_par}{\code{Logical} value. if \code{het_miss_par = TRUE},
+the function will use the offspring segregation to try to infer the allele
+that was transmitted by the heterozygous or missing parent at a particular
+locus in order to make the ABH conversion. Default = FALSE.}
 
 \item{impute}{\code{Logical} value. if \code{impute = TRUE}, the function
 will impute missing values using the \code{codeGeno()} function from the
@@ -205,8 +205,8 @@ completely missing in at least one cross. Default = FALSE}
 
 \item{If \code{ABH = TRUE}, convert offspring genotype data into ABH format
 (\code{\link{cross_ABH}}).
-If parents have heterozygous marker scores, user must specify it
-using \code{het.par = TRUE} (\code{\link{cross_ABH_het}}).}
+If parents have heterozygous or missing marker scores, user must specify it
+using \code{het_miss_par = TRUE} (\code{\link{cross_ABH_het}}).}
 
 \item{If \code{impute = TRUE}, imputation of the missing values for the IBS
 bi-allelic model using the \code{codeGeno()} function from synbreed.
@@ -237,7 +237,7 @@ data <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
                 trait = trait, cross.ind = cross.ind,
                 par.per.cross = par.per.cross, n.lim = 15,
                 MAF.pop.lim = 0.05, mk.miss = 0.1,
-                gen.miss = 0.25, ABH = TRUE, het.par = TRUE,
+                gen.miss = 0.25, ABH = TRUE, het_miss_par = TRUE,
                 parallel = FALSE)
 
 # QC_proc() outputs can be directly used to form the mppData object

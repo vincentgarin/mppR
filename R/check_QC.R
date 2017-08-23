@@ -7,9 +7,9 @@
 
 
 check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
-                     subcross.ind, par.per.subcross, n.lim, MAF.cr.lim, ABH,
-                     het.par, impute, impute.type, map_bp, replace.value,
-                     parallel, cluster){
+                     subcross.ind, par.per.subcross, n.lim, MAF.pop.lim,
+                     mk.miss, gen.miss, MAF.cr.lim, ABH, het_miss_par, impute,
+                     impute.type, map_bp, replace.value, parallel, cluster){
   
   
   # test format of the marker matrices
@@ -181,6 +181,7 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   }
   
   # test if there are as many within cross MAF as cross in the MAF.cr.lim argument
+  # test if the values are between 0 and 1.
   
   if(!is.null(MAF.cr.lim)){
     
@@ -190,12 +191,48 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
       
     }
     
+    test <- !((MAF.cr.lim > 0) & (MAF.cr.lim < 1))
+    
+    if(sum(test) != 0){
+      
+      stop("MAF.cr.lim can only contain value higher than 0 and lower than 1.")
+      
+    }
+    
   }
   
-  # Test if there are some heterozygous parents and the user want to make the
-  # ABH assignement without specifying het.par = TRUE
+  # test that the values of MAF.pop.lim, mk.miss and gen.miss are
+  # between 0 and 1.
   
-  if(ABH && !het.par){
+  t1 <- ((MAF.pop.lim > 0) & (MAF.pop.lim < 1))
+  
+  if(!t1){
+    
+    stop("MAF.pop.lim can only take value higher than 0 and lower than 1.")
+    
+  }
+  
+  t2 <- ((mk.miss >= 0) & (mk.miss <= 1))
+  
+  if(!t2){
+    
+    stop("mk.miss can only take value between 0 and 1. 0 and 1 comprised.")
+    
+  }
+  
+  t3 <- ((gen.miss >= 0) & (gen.miss <= 1))
+  
+  if(!t3){
+    
+    stop("gen.miss can only take value between 0 and 1. 0 and 1 comprised.")
+    
+  }
+  
+  
+  # Test if there are some heterozygous parents and the user want to make the
+  # ABH assignement without specifying het_miss_par = TRUE
+  
+  if(ABH && !het_miss_par){
     
     # test if there are some heterozygous parents
     
@@ -211,7 +248,7 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                        paste(colnames(geno.par)[het.mk], collapse = ", "),
                        "are heterozygous for at least one parent. In order",
                        "to proceed to the ABH assignement either remove them",
-                       "or use option het.par = TRUE.")
+                       "or use option het_miss_par = TRUE.")
       
       stop(message)
       

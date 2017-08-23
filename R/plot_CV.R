@@ -116,7 +116,10 @@ plot_CV <- function(CV.res, main = "CV QTL profiles") {
        ylab = "-log10(p-value)", main = main, cex.main = 1.8,
        cex.axis = 1.5, cex.lab = 1.5)
   
-  abline(h = max.y)
+  # abline(h = max.y)
+  segments(x0=0, y0=max.y, x1=max(vect.cum.l), y1=max.y)
+  
+  
   text(x = x.pos.chr.lab, y = y.pos.chr.lab, labels = 1:length(chr.l),
        cex = 1.5)
   
@@ -143,7 +146,9 @@ plot_CV <- function(CV.res, main = "CV QTL profiles") {
   
   # plot the delimitation of the crhomosomes
   
-  abline(v = chr.border, col = 1, lwd = 2)
+  # abline(v = chr.border, col = 1, lwd = 2)
+  segments(x0=chr.border, y0=0, x1=chr.border, y1=max.y, lwd = 2)
+  
   
   # add the number of QTL detected infos
   

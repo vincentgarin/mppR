@@ -3,7 +3,7 @@
 #################
 
 
-#' ABH assignment per cross with heterozygous parents
+#' ABH assignment per cross with heterozygous or missing parents
 #' 
 #' Attributes ABH or NA (missing) code to the offspring according to the scores
 #' of parents 1 and 2 of each cross when parents have markers with heterozygous
@@ -17,11 +17,11 @@
 #' score is missing; 2) the two parents have the same score; or
 #' 3) when at least one parental score is missing.
 #' 
-#' If a parent score is heterozygous, the assignment rules are the following.
-#' If the two parents are heterozygous or one parent is heterozygous and the
-#' other missing, the offspring get NA since the parental origin can not be
-#' inferred with certainty. If the on parent is heterozygous or missing and the
-#' second parent is homozygous, the function looks at offspring segregating
+#' If a parent score is heterozygous or missing, the assignment rules are the
+#' following. If the two parents are heterozygous or one parent is heterozygous
+#' and the other missing, the offspring get NA since the parental origin can not
+#' be inferred with certainty. If the on parent is heterozygous or missing and
+#' the second parent is homozygous, the function looks at offspring segregating
 #' pattern to try to infer which allele was transmitted by the heterozygous
 #' parent. If this is possible we consider the heteroxzygous parent as
 #' homozygous for the transmitted allele and use this allele score for ABH
@@ -55,6 +55,10 @@
 #' genotypes of the population}
 #' 
 #' @author Vincent Garin
+#' 
+#' @seealso
+#' 
+#' \code{\link{cross_ABH}}
 #' 
 #' @examples
 #' 

@@ -78,7 +78,8 @@ geno.ABH <- cross_ABH(par.sc = par.sc, off.sc = off.sc, cross.ind = cross.ind,
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{USNAM_genoABH}}
+\code{\link{cross_ABH_het}}, \code{\link{mppData_form}},
+\code{\link{USNAM_genoABH}}
 }
 \author{
 Vincent Garin

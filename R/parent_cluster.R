@@ -227,11 +227,11 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
     
     if(end.char == "/"){
       
-      folder.loc <- paste0(plot.loc, "par_clu_plots")
+      folder.loc <- paste(plot.loc, "par_clu_plots", sep = "")
       
     } else {
       
-      folder.loc <- paste0(plot.loc, "/par_clu_plots")
+      folder.loc <- paste(plot.loc, "/par_clu_plots", sep = "")
       
     }
     
@@ -260,7 +260,8 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
       
       if(plot){
         
-        file <- paste0(folder.loc, paste0("/chr_", i, ".pdf"))
+        file <- paste(folder.loc, paste(c("/chr_", i, ".pdf"), sep = ""),
+                       sep = "")
         
         pdf(file)
         

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cross_ABH_het.R
 \name{cross_ABH_het}
 \alias{cross_ABH_het}
-\title{ABH assignment per cross with heterozygous parents}
+\title{ABH assignment per cross with heterozygous or missing parents}
 \usage{
 cross_ABH_het(par.sc, off.sc, cross.ind, par.per.cross)
 }
@@ -49,11 +49,11 @@ heterozygous. The function attributes NA for missing when: 1) the offspring
 score is missing; 2) the two parents have the same score; or
 3) when at least one parental score is missing.
 
-If a parent score is heterozygous, the assignment rules are the following.
-If the two parents are heterozygous or one parent is heterozygous and the
-other missing, the offspring get NA since the parental origin can not be
-inferred with certainty. If the on parent is heterozygous or missing and the
-second parent is homozygous, the function looks at offspring segregating
+If a parent score is heterozygous or missing, the assignment rules are the
+following. If the two parents are heterozygous or one parent is heterozygous
+and the other missing, the offspring get NA since the parental origin can not
+be inferred with certainty. If the on parent is heterozygous or missing and
+the second parent is homozygous, the function looks at offspring segregating
 pattern to try to infer which allele was transmitted by the heterozygous
 parent. If this is possible we consider the heteroxzygous parent as
 homozygous for the transmitted allele and use this allele score for ABH
@@ -84,6 +84,9 @@ geno.ABH <- cross_ABH_het(par.sc = par.sc, off.sc = off.sc,
                           cross.ind = cross.ind,
                           par.per.cross = par.per.cross)
 
+}
+\seealso{
+\code{\link{cross_ABH}}
 }
 \author{
 Vincent Garin
