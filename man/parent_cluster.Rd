@@ -6,9 +6,9 @@
 \usage{
 parent_cluster(haplo.map, consensus.map, marker.data, na.strings = NA,
   w1 = "kernel.exp", w2 = "kernel.unif", step.size = 10000, window,
-  K = 10, clustering.method = "threshold", simulation.type = "equi",
-  simulation.Ng = 50, simulation.Nrep = 3, threshold.quantile = 95,
-  plot = TRUE, plot.loc = getwd())
+  K = 10, simulation.type = "equi", simulation.Ng = 50,
+  simulation.Nrep = 3, threshold.quantile = 95, plot = TRUE,
+  plot.loc = getwd())
 }
 \arguments{
 \item{haplo.map}{Three columns \code{data.frame} with: 1)
@@ -49,9 +49,6 @@ into consideration.}
 
 \item{K}{A positive integer representing the number of markers in a window
 below which the kinship data will be used. Default = 10.}
-
-\item{clustering.method}{One of "threshold", "hmm". default value =
-"threshold".}
 
 \item{simulation.type}{The type of simulation used for the training.
 One of "equi" or "mosaic". Default = "equi".}
@@ -100,10 +97,10 @@ It can be found there:
 \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
 visualisation of ancestral haplotype blocks can be obtained setting
 \code{plot = TRUE}. The plots will be saved at the location specified
-in \code{plot.loc}. In order to cluster parental lines using hidden Markov
-models (\code{clustering.method = "hmm"}), the user needs to use an R version
-where package \code{clusthaplo} and \code{RHmm} can be used simultaneously.
-R 2.14.0 is a possibility.
+in \code{plot.loc}. For the moment, due to the difficulty to have the
+package \code{mppR}, \code{clusthaplo} and \code{RHmm} functioning
+simultaneously, the clutering based on hidden Markov model is unavailable.
+Therefore the default method for clustering is threshold (Leroux et al. 2014).
 }
 \examples{
 
@@ -126,8 +123,8 @@ map <- USNAM_mppData$map[, -3]
 
 
 par.clu <- parent_cluster(haplo.map = map.par, consensus.map = map,
-marker.data = geno.par, clustering.method = "threshold",
-step.size = 1000, window = 25, plot = TRUE, plot.loc = getwd())
+marker.data = geno.par, step.size = 1000, window = 25, plot = TRUE,
+plot.loc = getwd())
 
 
 par.clu$av.cl # Average number of inferred ancestral cluster along the genome

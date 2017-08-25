@@ -302,6 +302,13 @@ check_QC <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
         
       }
       
+      if(is.null(map_bp)){
+        
+        stop(paste("to use imputation with Beagle you must provide marker bp",
+             "position via the argument map_pb."))
+        
+      }
+      
       if(!identical(map_bp[, 1], colnames(geno.off))){
         
         stop(paste("The marker indicators of map_bp should be identical to the",

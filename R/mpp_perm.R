@@ -74,11 +74,10 @@
 #' @param cluster Cluster object obtained with the function \code{makeCluster()}
 #' from the parallel package. Default = NULL.
 #' 
-#' @param silence.print \code{Logical} value specifying if the printing of the
-#' \code{mpp_perm()} function must be silenced. These printing indicate the
-#' progression of the function every 10 percent. It will not
-#' affect the printing of the other functions called by \code{mpp_perm()},
-#' especially the printing of \code{asreml()}. Default = FALSE.
+#' @param verbose \code{Logical} value indicating if progression of the function
+#' should be printed. It will not affect the printing of the other functions
+#' called by \code{mpp_perm()}, especially the printing of \code{asreml()}.
+#' Default = TRUE.
 #'
 #' @return Return:
 #'
@@ -132,7 +131,7 @@
 
 mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000, 
                      q.val = 0.95, parallel = FALSE, cluster = NULL,
-                     silence.print = FALSE) {
+                     verbose = TRUE) {
   
   # 1. Check data format and arguments
   ####################################
@@ -216,7 +215,7 @@ mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
     
     # flag the progresses of the process
     
-    if(!silence.print){
+    if(verbose){
       
       if (N >= 100) {
         
@@ -242,7 +241,7 @@ mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
   
   q.val <- quantile(max.pval, q.val)
   
-  if(!silence.print){
+  if(verbose){
     
     hist(max.pval, nclass = 20, main = "histogram of the maxium -log10(pvalue)")
     

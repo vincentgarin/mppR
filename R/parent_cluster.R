@@ -13,10 +13,10 @@
 #' \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
 #' visualisation of ancestral haplotype blocks can be obtained setting
 #' \code{plot = TRUE}. The plots will be saved at the location specified
-#' in \code{plot.loc}. In order to cluster parental lines using hidden Markov
-#' models (\code{clustering.method = "hmm"}), the user needs to use an R version
-#' where package \code{clusthaplo} and \code{RHmm} can be used simultaneously.
-#' R 2.14.0 is a possibility.
+#' in \code{plot.loc}. For the moment, due to the difficulty to have the
+#' package \code{mppR}, \code{clusthaplo} and \code{RHmm} functioning
+#' simultaneously, the clutering based on hidden Markov model is unavailable.
+#' Therefore the default method for clustering is threshold (Leroux et al. 2014).
 #' 
 #' @param haplo.map Three columns \code{data.frame} with: 1)
 #' marker identifiers; 2) chromosomes; and 3) \code{numeric} position in
@@ -53,9 +53,6 @@
 #' clustering in centi-Morgan. The clustering procedure is done for the position
 #' that is in the centre of the window taking marker scores within the window
 #' into consideration.
-#' 
-#' @param clustering.method One of "threshold", "hmm". default value =
-#' "threshold".
 #' 
 #' @param K A positive integer representing the number of markers in a window
 #' below which the kinship data will be used. Default = 10.
@@ -127,8 +124,8 @@
 #' 
 #' 
 #' par.clu <- parent_cluster(haplo.map = map.par, consensus.map = map,
-#' marker.data = geno.par, clustering.method = "threshold",
-#' step.size = 1000, window = 25, plot = TRUE, plot.loc = getwd())
+#' marker.data = geno.par, step.size = 1000, window = 25, plot = TRUE,
+#' plot.loc = getwd())
 #' 
 #' 
 #' par.clu$av.cl # Average number of inferred ancestral cluster along the genome
@@ -150,8 +147,8 @@
 parent_cluster <- function(haplo.map, consensus.map, marker.data,
                            na.strings = NA, w1 = "kernel.exp",
                            w2 = "kernel.unif", step.size = 10000,
-                           window, K = 10, clustering.method = "threshold",
-                           simulation.type = "equi", simulation.Ng = 50, 
+                           window, K = 10, simulation.type = "equi",
+                           simulation.Ng = 50, 
                            simulation.Nrep = 3, threshold.quantile = 95,
                            plot = TRUE, plot.loc = getwd()) {
   
@@ -193,7 +190,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   # chromosome for after checks.
   
   n.chr <- length(haplo.map)
-  chr.ind <- paste("chr", 1:n.chr, sep = "")
+  chr.ind <- paste0("chr", 1:n.chr)
   
   nb.pos <- unlist(lapply(X = consensus.map, FUN = function(x) dim(x)[1]))
   
@@ -212,7 +209,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   clust$config(w1 = w1, w2 = w2, step.size = step.size, window.length = window, 
                na.replace = NA, scoring.method = "kinship",
-               clustering.method = clustering.method, 
+               clustering.method = "threshold", 
                kinship.threshold = K, simulation.type = simulation.type,
                simulation.Ng = simulation.Ng,
                simulation.Np = dim(marker.data)[2],
@@ -227,11 +224,11 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
     
     if(end.char == "/"){
       
-      folder.loc <- paste(plot.loc, "par_clu_plots", sep = "")
+      folder.loc <- paste0(plot.loc, "par_clu_plots")
       
     } else {
       
-      folder.loc <- paste(plot.loc, "/par_clu_plots", sep = "")
+      folder.loc <- paste0(plot.loc, "/par_clu_plots")
       
     }
     
@@ -260,8 +257,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
       
       if(plot){
         
-        file <- paste(folder.loc, paste(c("/chr_", i, ".pdf"), sep = ""),
-                       sep = "")
+        file <- paste0(folder.loc, paste0("/chr_", i, ".pdf"))
         
         pdf(file)
         

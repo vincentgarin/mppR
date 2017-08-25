@@ -81,10 +81,10 @@
 #' @param cluster Cluster object obtained with the function \code{makeCluster()}
 #' from the parallel package. Default = NULL.
 #' 
-#' @param silence.print \code{logical} value specifying if the printing of the
-#' \code{mpp_proc()} function must be silenced. It will not
-#' affect the printing of the other functions called by \code{mpp_proc()},
-#' especially the printing of \code{asreml()}. Default = FALSE.
+#' @param verbose \code{Logical} value indicating if the steps of the
+#' MQE_forward should be printed.. It will not affect the printing of the other
+#' functions called by \code{mpp_proc()}, especially the printing of
+#' \code{asreml()}. Default = TRUE.
 #' 
 #' 
 #' @return
@@ -135,7 +135,7 @@
 MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL,
                         VCOV = "h.err", threshold = 3, window = 20,
                         parallel = FALSE, cluster = NULL,
-                        silence.print = FALSE) {
+                        verbose = TRUE) {
   
   # 1. test data format
   #####################
@@ -221,7 +221,7 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
   
   if (!is.null(cand.pos)) {
     
-    if(!silence.print){
+    if(verbose){
       
       cat("\n")
       cat(paste("position", pos.ind))
@@ -328,7 +328,7 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
     
     if (!is.null(cand.pos)) {
       
-      if(!silence.print){
+      if(verbose){
         
         cat("\n")
         cat(paste("position", pos.ind))

@@ -24,8 +24,8 @@
 #' @param window \code{Numeric} value in centi-Morgan representing the minimum
 #' distance between two selected positions. Default = 20.
 #' 
-#' @param silence.print \code{Logical} value specifying if the potential
-#' printings of the function must be silenced. Default = FALSE.
+#' @param verbose \code{Logical} value specifying if the detection of no QTL
+#' should be printed. Default = TRUE.
 #' 
 #' @return Return:
 #' 
@@ -62,8 +62,7 @@
 #' 
 
 
-QTL_select <- function(Qprof, threshold = 3, window = 20,
-                       silence.print = FALSE) {
+QTL_select <- function(Qprof, threshold = 3, window = 20, verbose = TRUE) {
   
   # 1. verify the format of the data
   ##################################
@@ -120,7 +119,7 @@ QTL_select <- function(Qprof, threshold = 3, window = 20,
   
   if(is.null(QTL)){
     
-    if(silence.print){
+    if(verbose){
     message("No position has been selected as QTL candidate.")
     }
     

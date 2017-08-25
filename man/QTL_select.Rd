@@ -4,7 +4,7 @@
 \alias{QTL_select}
 \title{QTL candidates selection}
 \usage{
-QTL_select(Qprof, threshold = 3, window = 20, silence.print = FALSE)
+QTL_select(Qprof, threshold = 3, window = 20, verbose = TRUE)
 }
 \arguments{
 \item{Qprof}{Object of class \code{QTLprof} returned by the function
@@ -18,8 +18,8 @@ function. Default = 3.}
 \item{window}{\code{Numeric} value in centi-Morgan representing the minimum
 distance between two selected positions. Default = 20.}
 
-\item{silence.print}{\code{Logical} value specifying if the potential
-printings of the function must be silenced. Default = FALSE.}
+\item{verbose}{\code{Logical} value specifying if the detection of no QTL
+should be printed. Default = TRUE.}
 }
 \value{
 Return:

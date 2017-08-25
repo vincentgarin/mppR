@@ -116,10 +116,10 @@
 #' @param cluster Cluster object obtained with the function \code{makeCluster()}
 #' from the \code{parallel} package. Default = NULL.
 #' 
-#' @param silence.print \code{logical} value specifying if the printing of the
-#' \code{MQE_proc()} function must be silenced. It will not
-#' affect the printing of the other functions called by \code{MQE_proc()},
-#' especially the printing of \code{asreml()}. Default = FALSE.
+#' @param verbose \code{Logical} value indicating if the steps of MQE_proc should
+#' be printed. It will not affect the printing of the other functions called by
+#' \code{MQE_proc()}, especially the printing of \code{asreml()}.
+#' Default = TRUE.
 #' 
 #' @param output.loc Path where a folder will be created to save the results.
 #' By default the function uses the current working directory.
@@ -227,7 +227,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                      mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL,
                      VCOV = "h.err", threshold = 3, window = 20, backward = TRUE,
                      alpha.bk = 0.05, plot.MQE = FALSE, parallel = FALSE,
-                     cluster = NULL, silence.print = FALSE,
+                     cluster = NULL, verbose = TRUE,
                      output.loc = getwd()) {
   
   # 1. check the format of the data
@@ -262,7 +262,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   # 3. forward QTL detection
   ##########################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("QTL detection")
@@ -275,11 +275,11 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                        Q.eff = Q.eff, par.clu = par.clu, VCOV = VCOV,
                        threshold = threshold, window = window,
                        parallel = parallel, cluster = cluster,
-                       silence.print = silence.print)
+                       verbose = verbose)
     
     if(backward){
       
-      if(!silence.print){
+      if(verbose){
         
         cat("\n")
         cat("Backward elimination")
@@ -312,7 +312,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   # 4. QTL effects and R2
   #######################
     
-    if(!silence.print){
+    if(verbose){
       
       cat("\n")
       cat("Computation QTL genetic effects and R2")
@@ -345,7 +345,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   
   if(plot.MQE){
     
-    if(!silence.print){
+    if(verbose){
       
       cat("\n")
       cat("Plot MQE last run profile")
@@ -373,7 +373,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   # 6. results processing
   #######################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("Results processing")

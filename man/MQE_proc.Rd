@@ -7,8 +7,8 @@
 MQE_proc(pop.name = "MPP_MQE", trait.name = "trait1", mppData = NULL,
   mppData_bi = NULL, Q.eff, par.clu = NULL, VCOV = "h.err",
   threshold = 3, window = 20, backward = TRUE, alpha.bk = 0.05,
-  plot.MQE = FALSE, parallel = FALSE, cluster = NULL,
-  silence.print = FALSE, output.loc = getwd())
+  plot.MQE = FALSE, parallel = FALSE, cluster = NULL, verbose = TRUE,
+  output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -77,10 +77,10 @@ Default = FALSE.}
 \item{cluster}{Cluster object obtained with the function \code{makeCluster()}
 from the \code{parallel} package. Default = NULL.}
 
-\item{silence.print}{\code{logical} value specifying if the printing of the
-\code{MQE_proc()} function must be silenced. It will not
-affect the printing of the other functions called by \code{MQE_proc()},
-especially the printing of \code{asreml()}. Default = FALSE.}
+\item{verbose}{\code{Logical} value indicating if the steps of MQE_proc should
+be printed. It will not affect the printing of the other functions called by
+\code{MQE_proc()}, especially the printing of \code{asreml()}.
+Default = TRUE.}
 
 \item{output.loc}{Path where a folder will be created to save the results.
 By default the function uses the current working directory.}

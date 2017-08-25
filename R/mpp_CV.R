@@ -156,10 +156,10 @@
 #' @param cluster Cluster object obtained with the function \code{makeCluster()}
 #' from the parallel package. Default = NULL.
 #'
-#' @param silence.print \code{Logical} value specifying if the printing of the
-#' \code{mpp_CV()} function must be silenced. It will not
-#' affect the printing of the other functions called by \code{mpp_CV()},
-#' especially the printing of \code{asreml()}. Default = FALSE.
+#' @param verbose \code{Logical} value indicating if the progressiong of the CV
+#' should be printed. It will not affect the printing of the other functions
+#' called by \code{mpp_CV()}, especially the printing of \code{asreml()}.
+#' Default = TRUE.
 #'
 #' @param output.loc Path where a folder will be created to save the results.
 #' By default the function uses the current working directory.
@@ -250,7 +250,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
                    par.clu = NULL, VCOV = "h.err", thre.cof = 3, win.cof = 20,
                    N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
                    backward = TRUE, alpha.bk = 0.05, parallel = FALSE,
-                   cluster = NULL, silence.print = FALSE, output.loc = getwd())
+                   cluster = NULL, verbose = TRUE, output.loc = getwd())
 {
   
   # 1. Check the validity of the parameters that have been introduced
@@ -314,7 +314,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
   
   for (i in 1:Rep) {
     
-    if(!silence.print){
+    if(verbose){
       
       cat(paste("CV repetition", i))
       cat("\n")
@@ -330,7 +330,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
     
     for (j in 1:k) {
       
-      if(!silence.print){
+      if(verbose){
         
         cat(paste("fold", j))
         cat("\n")
@@ -357,7 +357,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
       if(sum(SIM$log10pval) == 0){prob.prog <- TRUE }
       
       cofactors <- QTL_select(Qprof = SIM, threshold = thre.cof,
-                              window = win.cof, silence.print = TRUE)
+                              window = win.cof, verbose = FALSE)
       
       
       # 4.2.2 multi-QTL model search
@@ -381,7 +381,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
             # take the cofactors of the previous analysis
             
             cofactors <- QTL_select(Qprof = CIM, threshold = thre.cof,
-                                    window = win.cof, silence.print = TRUE)
+                                    window = win.cof, verbose = FALSE)
             
             # test if some cofactors there before running next CIM
             
@@ -410,7 +410,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
         # 4.2.3 QTL selection
         
         QTL <- QTL_select(Qprof = CIM, threshold = thre.QTL, window = win.QTL,
-                          silence.print = TRUE)
+                          verbose = FALSE)
         
         # 4.2.4 Optional backward elimination
         

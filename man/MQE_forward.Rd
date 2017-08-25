@@ -6,7 +6,7 @@
 \usage{
 MQE_forward(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL,
   VCOV = "h.err", threshold = 3, window = 20, parallel = FALSE,
-  cluster = NULL, silence.print = FALSE)
+  cluster = NULL, verbose = TRUE)
 }
 \arguments{
 \item{mppData}{An IBD object of class \code{mppData}
@@ -56,10 +56,10 @@ Default = FALSE.}
 \item{cluster}{Cluster object obtained with the function \code{makeCluster()}
 from the parallel package. Default = NULL.}
 
-\item{silence.print}{\code{logical} value specifying if the printing of the
-\code{mpp_proc()} function must be silenced. It will not
-affect the printing of the other functions called by \code{mpp_proc()},
-especially the printing of \code{asreml()}. Default = FALSE.}
+\item{verbose}{\code{Logical} value indicating if the steps of the
+MQE_forward should be printed.. It will not affect the printing of the other
+functions called by \code{mpp_proc()}, especially the printing of
+\code{asreml()}. Default = TRUE.}
 }
 \value{
 \item{QTL.list }{\code{Data.frame} with six columns :

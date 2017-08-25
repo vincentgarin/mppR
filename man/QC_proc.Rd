@@ -7,9 +7,10 @@
 QC_proc(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   subcross.ind = NULL, par.per.subcross = NULL, n.lim = 15,
   MAF.pop.lim = 0.05, MAF.cr.lim = NULL, MAF.cr.miss = TRUE,
-  rem.NA.cr = FALSE, mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE,
-  het_miss_par = FALSE, impute = FALSE, impute.type = "random",
-  map_bp = NULL, replace.value = NULL, parallel = FALSE, cluster = NULL)
+  mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE, het_miss_par = FALSE,
+  verbose = TRUE, impute = FALSE, impute.type = "random", map_bp = NULL,
+  replace.value = NULL, label.heter = "alleleCoding", parallel = FALSE,
+  cluster = NULL)
 }
 \arguments{
 \item{geno.off}{\code{Character} marker score \code{matrix} of the offspring
@@ -82,9 +83,6 @@ in at least one cross will be put as missing in the problematic cross(es).
 If \code{MAF.cr.miss = FALSE}, the whole marker will be discarded.
 Default = TRUE.}
 
-\item{rem.NA.cr}{\code{Logical} value specifying if the marker that are
-completely missing in at least one cross should be remored. Default = FALSE.}
-
 \item{mk.miss}{\code{Numerical} value comprised between 0 and 1 indicating
 the missingness rate at the population level above which a marker will be
 removed. Default = 0.1.}
@@ -104,6 +102,9 @@ the function will use the offspring segregation to try to infer the allele
 that was transmitted by the heterozygous or missing parent at a particular
 locus in order to make the ABH conversion. Default = FALSE.}
 
+\item{verbose}{\code{Logical} value indicating if the steps of the QC should
+be printed. Default = TRUE.}
+
 \item{impute}{\code{Logical} value. if \code{impute = TRUE}, the function
 will impute missing values using the \code{codeGeno()} function from the
 synbreed package. Default = FALSE.}
@@ -121,6 +122,18 @@ imputation using Beagle. Default = NULL.}
 
 \item{replace.value}{\code{numeric} scalar to replace missing value in case
 \code{impute.type = fix}. Only 0, 1, 2. Should be chosen. Default = NULL.}
+
+\item{label.heter}{This is either a scalar or vector of characters to identify
+heterozygous genotypes or a function returning TRUE if an element of the
+marker matrix is the heterozygous genotype. Defining a function is useful,
+if number of unique heterozygous genotypes is large, i.e. if genotypes are
+coded by alleles. If the heterozygous genotype is coded like
+"A/T","G/C", ..., "AG", "CG", ..., "T:C", "G:A", ... or "G|T", "A|C", ...
+then label.heter="alleleCoding" can be used. Note that
+heterozygous values must be identified unambiguously by label.heter. Use
+label.heter=NULL if there are only homozygous genotypes, i.e. in DH lines,
+to speed up computation and restrict imputation to values 0 and 2.
+Default = "alleleCoding".}
 
 \item{parallel}{\code{Logical} value specifying if the function should be
 executed in parallel on multiple cores. To run function in parallel user must
@@ -156,6 +169,8 @@ parent 1 of the cross and the parent 2.}
 \item{map}{Corresponding genotypic map.}
 
 \item{rem.mk}{Vector of markers that have been removed.}
+
+\item{rem.geno}{Vector of genotypes that have been removed.}
 }
 \description{
 Perform different operation of quality control on the marker matrix and
@@ -170,22 +185,22 @@ The different operation of the quality control arethe following:
 \item{Remove markers with genotyping error (more than 2 possible alleles)
 \code{\link{QC_GenotypingError}}.}
 
-\item{Remove markers that are completely monomorphic or missing
+\item{Remove markers that are monomorphic or completely missing in the parents
 \code{\link{QC_MAF}}.}
-
-\item{Remove marker with a population minor allele frequency (MAF) below the
-value provided in \code{MAF.pop.lim}.}
 
 \item{Remove marker with a missing rate higher than \code{mk.miss} at the
 population level \code{\link{QC_missing}}.}
 
-\item{If the map contains some markers at the same position, the function
-keep only the most polymorphic position.}
+\item{Remove genotypes with a missing rate higher than \code{gen.miss}
+\code{\link{QC_missing}}.}
 
 \item{Remove crosses with less than \code{n.lim} observations.}
 
-\item{Remove genotypes with a missing rate higher than \code{gen.miss}
-\code{\link{QC_missing}}.}
+\item{If the map contains some markers at the same position, the function
+keep only the most polymorphic position.}
+
+\item{Remove marker with a population minor allele frequency (MAF) below the
+value provided in \code{MAF.pop.lim}.}
 
 \item{Determine markers having a problematic MAF within cross
 \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical within
@@ -199,9 +214,6 @@ If the within cross MAF is below the limit in at least one
 cross, then marker scores of the problematic cross are either put as missing
 (\code{MAF.cr.miss = TRUE} default) or the whole marker is discared
 (\code{MAF.cr.miss = FALSE}).}
-
-\item{If \code{rem.NA.cr = TRUE}, remove the markers that are
-completely missing in at least one cross. Default = FALSE}
 
 \item{If \code{ABH = TRUE}, convert offspring genotype data into ABH format
 (\code{\link{cross_ABH}}).
@@ -249,7 +261,7 @@ data <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
 \dontrun{
 
 mppData <- mppData_form(geno = data$geno.off, geno.par = data$geno.par,
-                        biall = FALSE, type = "F", nb.gen = 6,
+                        IBS = FALSE, type = "F", nb.gen = 6,
                         type.mating = "selfing", map = data$map,
                         trait = data$trait, cross.ind = data$cross.ind,
                         par.per.cross = data$par.per.cross,

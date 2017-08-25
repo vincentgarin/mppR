@@ -9,7 +9,7 @@ mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
   win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
   backward = TRUE, alpha.bk = 0.05, ref.par = NULL, CI = FALSE,
   drop = 1.5, text.size = 18, parallel = FALSE, cluster = NULL,
-  silence.print = FALSE, output.loc = getwd())
+  verbose = TRUE, output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -109,10 +109,9 @@ Default = FALSE.}
 \item{cluster}{Cluster object obtained with the function \code{makeCluster()}
 from the parallel package. Default = NULL.}
 
-\item{silence.print}{\code{Logical} value specifying if the printing of the
-\code{mpp_proc()} function must be silenced. It will not
-affect the printing of the other functions called by \code{mpp_proc()},
-especially the printing of \code{asreml()}. Default = FALSE.}
+\item{verbose}{\code{Logical} value indicating if the steps of mpp_proc should
+be printed. It will not affect the printing of the other functions called by
+\code{mpp_proc()}, especially the printing of \code{asreml()}. Default = TRUE.}
 
 \item{output.loc}{Path where a folder will be created to save the results.
 By default the function uses the current working directory.}

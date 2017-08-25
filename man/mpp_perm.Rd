@@ -5,7 +5,7 @@
 \title{QTL significance threshold by permutation}
 \usage{
 mpp_perm(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
-  q.val = 0.95, parallel = FALSE, cluster = NULL, silence.print = FALSE)
+  q.val = 0.95, parallel = FALSE, cluster = NULL, verbose = TRUE)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.
@@ -48,11 +48,10 @@ Default = FALSE.}
 \item{cluster}{Cluster object obtained with the function \code{makeCluster()}
 from the parallel package. Default = NULL.}
 
-\item{silence.print}{\code{Logical} value specifying if the printing of the
-\code{mpp_perm()} function must be silenced. These printing indicate the
-progression of the function every 10 percent. It will not
-affect the printing of the other functions called by \code{mpp_perm()},
-especially the printing of \code{asreml()}. Default = FALSE.}
+\item{verbose}{\code{Logical} value indicating if progression of the function
+should be printed. It will not affect the printing of the other functions
+called by \code{mpp_perm()}, especially the printing of \code{asreml()}.
+Default = TRUE.}
 }
 \value{
 Return:

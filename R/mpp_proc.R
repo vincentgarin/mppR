@@ -138,10 +138,9 @@
 #' @param cluster Cluster object obtained with the function \code{makeCluster()}
 #' from the parallel package. Default = NULL.
 #' 
-#' @param silence.print \code{Logical} value specifying if the printing of the
-#' \code{mpp_proc()} function must be silenced. It will not
-#' affect the printing of the other functions called by \code{mpp_proc()},
-#' especially the printing of \code{asreml()}. Default = FALSE.
+#' @param verbose \code{Logical} value indicating if the steps of mpp_proc should
+#' be printed. It will not affect the printing of the other functions called by
+#' \code{mpp_proc()}, especially the printing of \code{asreml()}. Default = TRUE.
 #'
 #' @param output.loc Path where a folder will be created to save the results.
 #' By default the function uses the current working directory.
@@ -258,7 +257,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
                      backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
                      CI = FALSE, drop = 1.5, text.size = 18, parallel = FALSE,
-                     cluster = NULL, silence.print = FALSE,
+                     cluster = NULL, verbose = TRUE,
                      output.loc = getwd()) {
   
   
@@ -296,7 +295,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   # 3. Cofactors selection - SIM
   ##############################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("Cofactors selection - SIM")
@@ -332,7 +331,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   # 4. Multi-QTL model search - CIM
   #################################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("Multi-QTL model search - CIM")
@@ -365,7 +364,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
         
       } else {
         
-        if(!silence.print){
+        if(verbose){
           
           cat("\n")
           cat(paste("CIM scan", (i+1)))
@@ -412,7 +411,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   if (backward){
     
-    if(!silence.print){
+    if(verbose){
       
       cat("\n")
       cat("Backward elimination")
@@ -443,7 +442,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   # 6. R squared computation
   ##########################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("R squared computation")
@@ -469,7 +468,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   # 7. QTL effects estimation
   ###########################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("QTL effects estimation")
@@ -487,7 +486,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   if(CI){
     
-    if(!silence.print){
+    if(verbose){
       
       cat("\n")
       cat("CIM- and confidence intervals computation")
@@ -513,7 +512,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   # 9. Results processing
   #######################
   
-  if(!silence.print){
+  if(verbose){
     
     cat("\n")
     cat("Results processing")

@@ -15,22 +15,22 @@
 #' \item{Remove markers with genotyping error (more than 2 possible alleles)
 #' \code{\link{QC_GenotypingError}}.}
 #' 
-#' \item{Remove markers that are completely monomorphic or missing
+#' \item{Remove markers that are monomorphic or completely missing in the parents
 #' \code{\link{QC_MAF}}.}
-#' 
-#' \item{Remove marker with a population minor allele frequency (MAF) below the
-#' value provided in \code{MAF.pop.lim}.}
 #' 
 #' \item{Remove marker with a missing rate higher than \code{mk.miss} at the
 #' population level \code{\link{QC_missing}}.}
 #' 
-#' \item{If the map contains some markers at the same position, the function
-#' keep only the most polymorphic position.}
+#' \item{Remove genotypes with a missing rate higher than \code{gen.miss}
+#' \code{\link{QC_missing}}.}
 #' 
 #' \item{Remove crosses with less than \code{n.lim} observations.}
 #' 
-#' \item{Remove genotypes with a missing rate higher than \code{gen.miss}
-#' \code{\link{QC_missing}}.}
+#' \item{If the map contains some markers at the same position, the function
+#' keep only the most polymorphic position.}      
+#' 
+#' \item{Remove marker with a population minor allele frequency (MAF) below the
+#' value provided in \code{MAF.pop.lim}.}
 #' 
 #' \item{Determine markers having a problematic MAF within cross
 #' \code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical within
@@ -44,9 +44,6 @@
 #' cross, then marker scores of the problematic cross are either put as missing
 #' (\code{MAF.cr.miss = TRUE} default) or the whole marker is discared
 #' (\code{MAF.cr.miss = FALSE}).}
-#' 
-#' \item{If \code{rem.NA.cr = TRUE}, remove the markers that are
-#' completely missing in at least one cross. Default = FALSE}
 #' 
 #' \item{If \code{ABH = TRUE}, convert offspring genotype data into ABH format
 #' (\code{\link{cross_ABH}}).
@@ -131,9 +128,6 @@
 #' If \code{MAF.cr.miss = FALSE}, the whole marker will be discarded.
 #' Default = TRUE.
 #' 
-#' @param rem.NA.cr \code{Logical} value specifying if the marker that are
-#' completely missing in at least one cross should be remored. Default = FALSE.
-#' 
 #' @param mk.miss \code{Numerical} value comprised between 0 and 1 indicating
 #' the missingness rate at the population level above which a marker will be
 #' removed. Default = 0.1.
@@ -153,6 +147,9 @@
 #' that was transmitted by the heterozygous or missing parent at a particular
 #' locus in order to make the ABH conversion. Default = FALSE.
 #' 
+#' @param verbose \code{Logical} value indicating if the steps of the QC should
+#' be printed. Default = TRUE.
+#' 
 #' @param impute \code{Logical} value. if \code{impute = TRUE}, the function
 #' will impute missing values using the \code{codeGeno()} function from the
 #' synbreed package. Default = FALSE.
@@ -170,6 +167,18 @@
 #' 
 #' @param replace.value \code{numeric} scalar to replace missing value in case
 #' \code{impute.type = fix}. Only 0, 1, 2. Should be chosen. Default = NULL.
+#' 
+#' @param label.heter This is either a scalar or vector of characters to identify
+#' heterozygous genotypes or a function returning TRUE if an element of the
+#' marker matrix is the heterozygous genotype. Defining a function is useful,
+#' if number of unique heterozygous genotypes is large, i.e. if genotypes are
+#' coded by alleles. If the heterozygous genotype is coded like
+#' "A/T","G/C", ..., "AG", "CG", ..., "T:C", "G:A", ... or "G|T", "A|C", ...
+#' then label.heter="alleleCoding" can be used. Note that
+#' heterozygous values must be identified unambiguously by label.heter. Use
+#' label.heter=NULL if there are only homozygous genotypes, i.e. in DH lines,
+#' to speed up computation and restrict imputation to values 0 and 2.
+#' Default = "alleleCoding".
 #' 
 #' @param parallel \code{Logical} value specifying if the function should be
 #' executed in parallel on multiple cores. To run function in parallel user must
@@ -206,6 +215,8 @@
 #' \item{map}{Corresponding genotypic map.}
 #' 
 #' \item{rem.mk}{Vector of markers that have been removed.}
+#' 
+#' \item{rem.geno}{Vector of genotypes that have been removed.}
 #' 
 #' @author Vincent Garin
 #' 
@@ -260,7 +271,7 @@
 #' \dontrun{
 #' 
 #' mppData <- mppData_form(geno = data$geno.off, geno.par = data$geno.par,
-#'                         biall = FALSE, type = "F", nb.gen = 6,
+#'                         IBS = FALSE, type = "F", nb.gen = 6,
 #'                         type.mating = "selfing", map = data$map,
 #'                         trait = data$trait, cross.ind = data$cross.ind,
 #'                         par.per.cross = data$par.per.cross,
@@ -324,10 +335,12 @@
 QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                     subcross.ind = NULL, par.per.subcross = NULL,
                     n.lim = 15, MAF.pop.lim = 0.05, MAF.cr.lim = NULL,
-                    MAF.cr.miss = TRUE, rem.NA.cr = FALSE, mk.miss = 0.1,
+                    MAF.cr.miss = TRUE, mk.miss = 0.1,
                     gen.miss = 0.25, ABH = TRUE, het_miss_par = FALSE,
-                    impute = FALSE, impute.type = "random", map_bp = NULL,
-                    replace.value = NULL, parallel = FALSE, cluster = NULL){
+                    verbose = TRUE, impute = FALSE, impute.type = "random",
+                    map_bp = NULL, replace.value = NULL,
+                    label.heter = "alleleCoding", parallel = FALSE,
+                    cluster = NULL){
   
   # 1. check the format of the data
   #################################
@@ -335,10 +348,12 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   check_QC(geno.off = geno.off, geno.par = geno.par, map = map, trait = trait,
            cross.ind = cross.ind, par.per.cross = par.per.cross,
            subcross.ind = subcross.ind, par.per.subcross = par.per.subcross,
-           n.lim = n.lim, MAF.cr.lim = MAF.cr.lim, ABH = ABH,
+           n.lim = n.lim, MAF.pop.lim = MAF.pop.lim, mk.miss = mk.miss,
+           gen.miss = gen.miss, MAF.cr.lim = MAF.cr.lim, ABH = ABH,
            het_miss_par = het_miss_par, impute = impute,
            impute.type = impute.type, map_bp = map_bp,
-           replace.value = replace.value, parallel = parallel, cluster = cluster)
+           replace.value = replace.value, parallel = parallel,
+           cluster = cluster)
   
   
   # 2. Remove markers with genotyping error
@@ -346,10 +361,18 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   
   message("The quality control procedure can take few minutes!")
   
+  init.nb.mk <- dim(geno.off)[2]
+  nb.mk.rem <- c()
+  init.nb.gen <- dim(geno.off)[1]
+  nb.gen.rem <- c()
+  
   prob.mk.list <- c()
+  prob.gen.list <- c()
   
   prob.mk <- QC_GenotypingError(mk.mat = rbind(geno.par, geno.off),
                                 parallel = parallel, cluster = cluster)
+  
+  if(is.null(prob.mk)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk)}
   
   if(!is.null(prob.mk)){
     
@@ -358,13 +381,22 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     ind.prob <- which(colnames(geno.off) %in% prob.mk)
     geno.par <- geno.par[, -ind.prob]
     geno.off <- geno.off[, -ind.prob]
+    nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
     
   }
   
-  # 3. remove completely monomorphic or missing markers
-  ######################################################
+  if(verbose){
+    
+    cat("\n")
+    cat(paste("Check genotyping error                        :",
+              rem.mk_i, "markers removed", "\n"))
+    
+  }
   
-  ### 3.1 monomorphic or missing in the parents
+  
+  
+  # 3. remove monomorphic markers in the parents
+  ##############################################
   
   parent.MAF <- QC_MAF(mk.mat = geno.par, parallel = parallel,
                        cluster = cluster)
@@ -374,16 +406,26 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   
   prob.mk.id <- c(mono, miss)
   
+  if(is.null(prob.mk.id)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk.id)}
+  
   if(length(prob.mk.id) > 0){
     
     prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
     
     geno.par <- geno.par[, -prob.mk.id]
     geno.off <- geno.off[, -prob.mk.id]
+    nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
     
   }
   
-  ### 3.2 keep parent genotype and corresponding map to be used for
+  if(verbose){
+    
+    cat(paste("Remove monomorphic/missing marker in parents  :",
+              rem.mk_i, "markers removed", "\n"))
+    
+  }
+  
+  ### keep parent genotype and corresponding map to be used for
   # clustering. later
   
   geno.par.clu <- geno.par
@@ -391,46 +433,13 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   map.par.clu <- QC_matchMarker(mk.mat = geno.par.clu, map = map)[[2]]
   
   
-  ### 3.3 monomorphic or missing in the offsprings
-  
-  off.MAF <- QC_MAF(mk.mat = geno.off, parallel = parallel,
-                    cluster = cluster)
-  
-  mono <- which(off.MAF == 0)
-  miss <- which(is.na(off.MAF))
-  
-  prob.mk.id <- c(mono, miss)
-  
-  if(length(prob.mk.id) > 0){
-    
-    prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
-    
-    geno.par <- geno.par[, -prob.mk.id]
-    geno.off <- geno.off[, -prob.mk.id]
-    
-  }
-  
-  # 4. Remove marker with problematic MAF at the population level
-  ###############################################################
-  
-  MAF.pop <- QC_MAF(mk.mat = rbind(geno.par, geno.off), parallel = parallel,
-                    cluster = cluster)
-  
-  prob.mk.id <- which(MAF.pop < MAF.pop.lim)
-  
-  if(length(prob.mk.id) > 0){
-    
-    prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
-    
-    geno.par <- geno.par[, -prob.mk.id]
-    geno.off <- geno.off[, -prob.mk.id]
-    
-  }
-  
-  # 5. Remove markers with too high missing rate at the population level
+  # 4. Remove markers with too high missing rate at the population level
   ######################################################################
   
   miss.ind.mk <- QC_missing(mk.mat = geno.off, threshold = mk.miss)
+  
+  if(dim(miss.ind.mk)[1] > 0) {rem.mk_i <- dim(miss.ind.mk)[1]
+  } else {rem.mk_i <- 0}
   
   if(dim(miss.ind.mk)[1] > 0){
     
@@ -438,10 +447,95 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     
     geno.par <- geno.par[, -miss.ind.mk[, 2]]
     geno.off <- geno.off[, -miss.ind.mk[, 2]]
+    nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
     
   }
   
-  # 6. Remove less polymorphic marker(s) if some markers are at the same position
+  if(verbose){
+    
+    cat(paste("Remove marker with missing rate <", mk.miss, "        :",
+              rem.mk_i, "markers removed", "\n"))
+    
+  }
+  
+  # 5. Remove genotypes with too high missing rate at the population level
+  ########################################################################
+  
+  geno.ref <- rownames(geno.off) # make a reference list of genotypes
+  
+  miss.ind.gen <- QC_missing(mk.mat = geno.off, MARGIN = 1,
+                             threshold = gen.miss)
+  
+  if(dim(miss.ind.gen)[1] > 0) {rem.gen_i <- dim(miss.ind.gen)[1]
+  } else {rem.gen_i <- 0}
+  
+  if(dim(miss.ind.gen)[1] > 0){
+    
+    geno.off <- geno.off[-miss.ind.gen[, 2], ]
+    nb.gen.rem <- c(nb.gen.rem, rem.gen_i)
+    prob.gen.list <- c(prob.gen.list, as.character(miss.ind.gen[, 1]))
+    
+    # adapt the other arguments which depend on the genotype list
+    
+    ind.geno <- geno.ref %in% rownames(geno.off)
+    cross.ind <- cross.ind[ind.geno]
+    trait <- trait[ind.geno, ]
+    
+    if(!is.null(subcross.ind)) {
+      
+      subcross.ind <- subcross.ind[ind.geno]
+      
+    }
+    
+  }
+  
+  if(verbose){
+    
+    cat(paste("Remove genotype with missing rate <", gen.miss, "     :",
+              rem.gen_i, "genotypes removed", "\n"))
+    
+  }
+  
+  
+  # 6. Remove cross with a too small size
+  #######################################
+  
+  geno.ref <- rownames(geno.off) # make a reference list of genotypes
+  
+  geno.off <- QC_minCrSize(mk.mat = geno.off, cross.ind = cross.ind,
+                           n.lim = n.lim)
+  
+  rem.gen_i <- length(geno.ref) - dim(geno.off)[1]
+  
+  if(rem.gen_i > 0){
+    
+    nb.gen.rem <- c(nb.gen.rem, rem.gen_i)
+    gen.removed <- geno.ref[!(geno.ref %in% rownames(geno.off))]
+    prob.gen.list <- c(prob.gen.list, gen.removed)
+    
+    # adapt the other arguments which depend on the genotype list
+    
+    ind.geno <- geno.ref %in% rownames(geno.off)  
+    cross.ind <- cross.ind[ind.geno]
+    trait <- trait[ind.geno, ]
+    
+    if(!is.null(subcross.ind)) {
+      
+      subcross.ind <- subcross.ind[ind.geno]
+      
+    }
+    
+  }
+  
+  if(verbose){
+    
+    cat(paste("Remove crosses with less than", n.lim, "observations :",
+              rem.gen_i, "markers removed", "\n"))
+    
+  }
+  
+  
+  # 7. Remove less polymorphic marker(s) if some markers are at the same position
   ###############################################################################
   
   # select maximum 1 marker per position
@@ -451,7 +545,12 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   difference <- diff(map[, 3])
   difference <- c(1, difference) # add 1 for the first position.
   
-  if(sum(difference == 0) > 0){
+  rem.mk_j <- sum(difference == 0)
+  
+  if(rem.mk_j > 0){
+    
+    MAF.pop <- QC_MAF(mk.mat = geno.off, parallel = parallel, 
+                      cluster = cluster) 
     
     # Identify blocks of marker that are at the same position.
     
@@ -518,62 +617,57 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
     geno.off <- geno.off[, -prob.mk.id]
     map <- map[-prob.mk.id, ]
     
-  }
-  
-  
-  # 7. Remove genotypes with too high missing rate at the population level
-  ########################################################################
-  
-  geno.ref <- rownames(geno.off) # make a reference list of genotypes
-  
-  miss.ind.gen <- QC_missing(mk.mat = geno.off, MARGIN = 1,
-                             threshold = gen.miss)
-  
-  if(dim(miss.ind.gen)[1] > 0){
-    
-    geno.off <- geno.off[-miss.ind.gen[, 2], ]
-    
-    # adapt the other arguments which depend on the genotype list
-    
-    ind.geno <- geno.ref %in% rownames(geno.off)
-    cross.ind <- cross.ind[ind.geno]
-    trait <- trait[ind.geno, ]
-    
-    if(!is.null(subcross.ind)) {
-      
-      subcross.ind <- subcross.ind[ind.geno]
-      
-    }
+    nb.mk.rem <- c(nb.mk.rem, rem.mk_j)
     
   }
   
-  # 8. Remove cross with a too small size
-  #######################################
-  
-  geno.ref <- rownames(geno.off) # make a reference list of genotypes
-  
-  geno.off <- QC_minCrSize(mk.mat = geno.off, cross.ind = cross.ind,
-                           n.lim = n.lim)
-  
-  # adapt the other arguments which depend on the genotype list
-  
-  ind.geno <- geno.ref %in% rownames(geno.off)  
-  cross.ind <- cross.ind[ind.geno]
-  trait <- trait[ind.geno, ]
-  
-  if(!is.null(subcross.ind)) {
+  if(verbose){
     
-    subcross.ind <- subcross.ind[ind.geno]
+    cat(paste("Remove markers at the same position           :",
+              rem.mk_j, "markers removed", "\n"))
     
   }
   
-  # 9. Remove marker with problematic MAF at the cross level
-  ##########################################################
+  # 8. Remove markers with too low MAF at the population level
+  ############################################################
   
-  MAF.pop <- QC_MAF(mk.mat = geno.off, cross.ind = cross.ind,
+  off.MAF <- QC_MAF(mk.mat = geno.off, cross.ind = cross.ind,
                     parallel = parallel, cluster = cluster)
   
-  within.cr.MAF <- MAF.pop[[2]]
+  
+  MAF.pop <- off.MAF[[1]]
+  MAF.cr <- off.MAF[[2]]
+  
+  prob.mk.id <- which(MAF.pop < MAF.pop.lim)
+  
+  if(is.null(prob.mk.id)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk.id)}
+  
+  
+  if(length(prob.mk.id) > 0){
+    
+    prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
+    
+    geno.par <- geno.par[, -prob.mk.id]
+    geno.off <- geno.off[, -prob.mk.id]
+    MAF.cr <- MAF.cr[, -prob.mk.id]
+    MAF.pop <- MAF.pop[-prob.mk.id]
+    nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
+    
+  }
+  
+  if(verbose){
+    
+    cat(paste("Remove markers with MAF <", MAF.pop.lim,"               :",
+              rem.mk_i, "markers removed", "\n"))
+    
+  }
+  
+  # 9. Remove marker with problematic within cross MAF
+  ####################################################
+  
+  
+  MAF.pop <-  list(MAF.pop = MAF.pop, MAF.cr = MAF.cr)
+  class(MAF.pop) <- c("list", "mafRes")
   
   # functions to determine the MAF limit within crosses
   
@@ -604,13 +698,16 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   # two options to manage the marker with problementic MAF within cross.
   # 1.: Put these markers as missing within the cross; 2.: remove the marker 
   
+  prob.mk.id <- which(MAF.cr.ind)
+  rem.mk_i <- length(prob.mk.id)
+  
   if(MAF.cr.miss){ # put NA markers with prob. within cross MAF in at least 1 cross
     
     cr.id <- unique(cross.ind)
     
     for(i in 1:dim(geno.off)[2]){
       
-      test <- (within.cr.MAF[, i] < lim) & (within.cr.MAF[, i] != 0)
+      test <- (MAF.cr[, i] < lim) & (MAF.cr[, i] != 0)
       test[is.na(test)] <- FALSE
       
       if(sum(test) > 0){ # at least one cross has a problematic MAF
@@ -621,52 +718,24 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
       
     }
     
-    if (rem.NA.cr){
-      
-      prob.mk.id <- which(is.na(MAF.cr.ind))
-      
-      if(length(prob.mk.id) > 0){
-        
-        prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
-        
-        geno.par <- geno.par[, -prob.mk.id]
-        geno.off <- geno.off[, -prob.mk.id]
-        
-      }
-      
-    } 
     
   } else { # remove markers with problematic within cross MAF in at least 1 cross
     
     
-    if (rem.NA.cr){
+    if(rem.mk_i > 0){
       
-      miss.cr <- which(is.na(MAF.cr.ind))
-      prob.mk <- which(MAF.cr.ind)
+      prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
       
-      prob.mk.id <- c(miss.cr, prob.mk)
+      geno.par <- geno.par[, -prob.mk.id]
+      geno.off <- geno.off[, -prob.mk.id]
+      nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
       
-      if(length(prob.mk.id) > 0){
-        
-        prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
-        
-        geno.par <- geno.par[, -prob.mk.id]
-        geno.off <- geno.off[, -prob.mk.id]
-        
-      }
+    }
+    
+    if(verbose){
       
-    } else {
-      
-      prob.mk.id <- which(MAF.cr.ind)
-      
-      if(length(prob.mk.id) > 0){
-        
-        prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
-        
-        geno.par <- geno.par[, -prob.mk.id]
-        geno.off <- geno.off[, -prob.mk.id]
-        
-      } 
+      cat(paste("Remove markers critical witin cross MAF            :",
+                rem.mk_i, "markers removed", "\n"))
       
     }
     
@@ -725,7 +794,7 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
                   "crosses containing less that 15 genotypes. However, we",
                   "advice to use minimum 15 individuals per cross to have",
                   "enough information to estimate within crosses QTL effects."))
-            
+    
   }
   
   ### 10.4 modify the par.per.cross argument and geno.par
@@ -739,6 +808,7 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   # Modify also the geno.par.clu by removing unused parents
   
   geno.par.clu <- geno.par.clu[rownames(geno.par.clu) %in% par.list,]
+  
   
   # 11. optional ABH assignement
   #############################
@@ -787,46 +857,66 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   
   if(impute){
     
-    family <- data.frame(cross.ind)
-    rownames(family) <- rownames(geno.off)
-    
-    if(impute.type %in% c("random","family", "fix")) {
+    if(verbose){
       
-      map_gp <- map[, 2:3]
-      map.unit <- "cM"
-      n.cores <- 1
-      
-    } else { # Cases with Beagle
-      
-      message("The imputation using Beagle can take several minutes!")
-      
-      map_gp <- map_bp[map_bp[, 1] %in% map[, 1], 2:3]
-      map.unit <- "bp"
-      if(!is.null(cluster)){n.cores <- length(cluster)} else {n.cores <- 1}
+      cat("\n")
+      cat("Missing values imputation \n")
       
     }
     
-    colnames(map_gp) <- c("chr", "pos")
-    rownames(map_gp) <- map[, 1]
+    # separate imputation for fixed value
     
-    
-    gp <- create.gpData(geno = geno.off, map = map_gp, family = family,
-                        map.unit = map.unit)
-    
-    gp.imp <- tryCatch(expr = codeGeno(gpData = gp, impute = TRUE,
-                                       impute.type = impute.type,
-                                       replace.value = replace.value, maf = 0,
-                                       nmiss = 1, verbose = FALSE,
-                                       cores = n.cores),
-             error = function(e) NULL)
-    
-    if(is.null(gp.imp)){
+    if(impute.type == "fix"){
       
-      if(map.unit == "cM"){ warning("The imputation failed!")
+      geno012 <- geno_012(mk.mat = geno.off)[[1]]
+      geno012[is.na(geno012)] <- replace.value
+      geno.off <- geno012
+      
+    } else {
+      
+      family <- data.frame(cross.ind)
+      rownames(family) <- rownames(geno.off)
+      
+      if(impute.type %in% c("random", "family", "fix")) {
         
-      } else{ warning("The imputation using Beagle failed!") }
+        map_gp <- map[, 2:3]
+        map.unit <- "cM"
+        n.cores <- 1
+        
+      } else { # Cases with Beagle
+        
+        message("The imputation using Beagle can take several minutes!")
+        
+        map_gp <- map_bp[map_bp[, 1] %in% map[, 1], 2:3]
+        map.unit <- "bp"
+        if(!is.null(cluster)){n.cores <- length(cluster)} else {n.cores <- 1}
+        
+      }
       
-    } else {geno.off <- gp.imp$geno }
+      colnames(map_gp) <- c("chr", "pos")
+      rownames(map_gp) <- map[, 1]
+      
+      
+      gp <- create.gpData(geno = geno.off, map = map_gp, family = family,
+                          map.unit = map.unit)
+      
+      gp.imp <- tryCatch(expr = codeGeno(gpData = gp, impute = TRUE,
+                                         impute.type = impute.type,
+                                         replace.value = replace.value, maf = 0,
+                                         nmiss = 1, label.heter = label.heter,
+                                         verbose = FALSE, cores = n.cores),
+                         error = function(e) NULL)
+      
+      
+      if(is.null(gp.imp)){
+        
+        if(map.unit == "cM"){ warning("The missing values imputation failed!")
+          
+        } else{ warning("The missing values imputation using Beagle failed!") }
+        
+      } else {geno.off <- gp.imp$geno }
+      
+    }
     
     
     
@@ -838,7 +928,24 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   results <- list(geno.off = geno.off, geno.par = geno.par,
                   geno.par.clu = geno.par.clu, map.par.clu = map.par.clu,
                   cross.ind = cross.ind, par.per.cross = par.per.cross,
-                  trait = trait, map = map,  rem.mk = prob.mk.list)
+                  trait = trait, map = map,  rem.mk = prob.mk.list,
+                  rem.geno = prob.gen.list)
+  
+  ###### final message
+  
+  if(verbose){
+    
+    tot.rem.mk <- init.nb.mk - sum(nb.mk.rem)
+    tot.rem.gen <- init.nb.gen - sum(nb.gen.rem)
+    
+    cat("\n")
+    cat("   End             :", tot.rem.mk ,
+        "marker(s) remain after the check\n")
+    cat("                    ",
+        tot.rem.gen , "genotypes(s) remain after the check\n")
+    
+    
+  }
   
   return(results)
   
