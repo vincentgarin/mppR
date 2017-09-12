@@ -23,6 +23,9 @@
 #' Return a list with each element representing one connected part of the design
 #' and the list of parents contained in this part.
 #' 
+#' If \code{plot.des = TRUE} and \code{output.loc} has been specified. A plot
+#' of the graph (con_plot.pdf) will be saved at the specified location. 
+#' 
 #' @author Vincent Garin
 #' 
 #' @references 
@@ -42,7 +45,7 @@
 #' 
 
 design_connectivity <- function(par.per.cross, plot.des = TRUE,
-                              output.loc = NULL){
+                                output.loc = NULL){
   
   # 1. Test format of the arguments
   #################################
@@ -79,7 +82,23 @@ design_connectivity <- function(par.per.cross, plot.des = TRUE,
   
   g <- graph(vertices)
   
-  if(plot.des) {plot(g)}
+  if(plot.des) {
+    
+    plot(g)
+    
+    if(!is.null(output.loc)){
+      
+      pdf(file.path(output.loc, "con_plot.pdf"), height = 10, width = 16)
+      
+      print(plot(g))
+      
+      dev.off()
+      
+    }
+    
+  }
+  
+  
   
   clu <- components(g)
   

@@ -20,6 +20,9 @@ argument is given. Default = NULL.}
 \value{
 Return a list with each element representing one connected part of the design
 and the list of parents contained in this part.
+
+If \code{plot.des = TRUE} and \code{output.loc} has been specified. A plot
+of the graph (con_plot.pdf) will be saved at the specified location.
 }
 \description{
 Uses the metod of Weeks and Williams (1964) and the package igraph to
