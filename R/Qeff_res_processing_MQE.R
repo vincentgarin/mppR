@@ -141,7 +141,7 @@ Qeff_res_processing_MQE <- function(Q.res, Q.eff, Q.pos, con.ind, allele_order,
     
     # project into parents and add genotype score if possible
     
-    if(!is.null(mppData$geno.par)){
+    if(!is.null(mppData_bi$geno.par)){
       
       ref.mat2 <- matrix(rep(c(0, 0, 0, 1), mppData$n.par),
                          nrow = mppData$n.par, byrow = TRUE)
