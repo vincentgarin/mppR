@@ -5,7 +5,7 @@
   IBD mppData object for MPP QTL analysis
 }
 \description{
-  Identical by descent (IBD) mppData object of a sample of the Maize US nested
+  Identical by descent (IBD) mppData object of a sample of the maize US nested
   association mapping (NAM) population for cross-specific, parental or
   ancestral models.
 }

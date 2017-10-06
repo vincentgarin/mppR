@@ -26,7 +26,7 @@ Return:
 for each marker.}
 }
 \description{
-Calculates marker heterozigosity rate.
+Compute marker heterozigosity rate.
 }
 \examples{
 

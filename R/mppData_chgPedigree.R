@@ -1,17 +1,17 @@
 #######################
-# mppData_chgPedigree #
+# mppData_mdfPedigree #
 #######################
 
-#' Change pedigree information in a mppData object
+#' Modify pedigree information in a mppData object
 #'
-#' Replaces the pedigree information of a \code{mppData} object.
+#' Modify the pedigree information of a \code{mppData} object.
 #' 
-#' In the formation of the \code{mppData} object\code{mppData_from()} only
+#' In the formation of the \code{mppData} object, \code{mppData_from()} only
 #' uses the parental relationships specified in the \code{par.per.cross}
 #' argument. However, if pedigree relationship among parents are know by the
 #' user a more complete pedigree information can be provided to the
 #' \code{mppData} object. This pedigree information can be given via the
-#' \code{pedigree} argument of the \code{mppData_chgPedigree()} function. 
+#' \code{pedigree} argument of the \code{mppData_mdfPedigree()} function. 
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
@@ -26,7 +26,7 @@
 #' 
 #' @return Return:
 #' 
-#' \item{mppData}{New \code{mppData} object with replaced pedigree information}
+#' \item{mppData}{New \code{mppData} object with completed pedigree information.}
 #' 
 #' @author Vincent Garin
 #' 
@@ -40,7 +40,7 @@
 #' 
 #' # Let us assume for example that parent CML103 and CML322 share a
 #' # common parent (A1). Then we can write a new pedigree adding this
-#' # information on the top.
+#' # information.
 #' 
 #' founder.info <- data.frame(rep("founder", 2), c("CML103", "CML322"),
 #'                            rep("A1", 2), c("A2", "A3"))
@@ -48,7 +48,7 @@
 #' 
 #' pedigree.new <- rbind(founder.info, pedigree)
 #' 
-#' mppData <- mppData_chgPedigree(mppData = USNAM_mppData,
+#' mppData <- mppData_mdfPedigree(mppData = USNAM_mppData,
 #' pedigree = pedigree.new)
 #' 
 #' 
@@ -56,7 +56,7 @@
 #' 
 
 
-mppData_chgPedigree <- function(mppData, pedigree){
+mppData_mdfPedigree <- function(mppData, pedigree){
   
   
   stopifnot(inherits(mppData, "mppData"))

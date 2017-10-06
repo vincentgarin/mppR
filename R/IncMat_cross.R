@@ -4,7 +4,7 @@
 
 #' Cross effect incidence matrix
 #' 
-#' Forms a cross effect incidence matrix.
+#' Form a cross effect incidence matrix.
 #' 
 #' 
 #' @param cross.ind \code{Character} or \code{factor} vector specifying to
@@ -13,7 +13,7 @@
 #' @return Return:
 #' 
 #' \item{cross.mat}{Cross effect incidence matrix composed of 0 and 1 value
-#' indicating to which cross each genotype belong}
+#' indicating to which cross each genotype belongs.}
 #' 
 #' @author Vincent Garin
 #' 

@@ -5,8 +5,8 @@
   IBS mppData object for MPP QTL analysis
 }
 \description{
-  Identical by state (IBS) mppData object of a sample of the Maize US nested association mapping
-  (NAM) population for bi-allelic models.
+  Identical by state (IBS) mppData object of a sample of the maize US nested
+  association mapping (NAM) population for bi-allelic models.
 }
 \usage{data(USNAM_mppData_bi)}
 \format{

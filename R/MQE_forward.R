@@ -4,8 +4,9 @@
 
 #' Forward regression with different type of QTL effects
 #' 
-#' Determines a multi-QTL effect (MQE) model by using a forward regression. The
-#' included QTL position can have different type of QTL effects at different
+#' Determines a multi-QTL effect (MQE) model using a forward regression.
+#' 
+#' The included QTL position can have different type of QTL effects at different
 #' loci. At each step (new added position), the function compute QTL profiles
 #' using one type of QTL effect specified in \code{Q.eff} for the tested
 #' position. Let us assume that the user want to allow the QTL to have a
@@ -14,25 +15,24 @@
 #' significant position if a position is above the \code{threshold} value.
 #' The position and its QTL effect that increase the most the global adjusted R
 #' squared (\code{MQE_R2}) will be selected as the new QTL position and included
-#' in the list of cofactors. The function continue to iterate until no position
+#' in the list of cofactors. The function continues to iterate until no position
 #' is significant anymore.
 #' 
 #' \strong{WARNING!(1)} The computation of \code{MQE_forward()} function using
 #' mixed models (all models with \code{VCOV} different than \code{"h.err"})
-#' is technically possible but can be irrealistic
-#' in practice due to a reduced computer power. Since a mixed model is computed at
-#' each single position it can take a lot of time. From our estimation it can take
-#' between 20 to 50 times more time than for linear models. If the number of
-#' detected QTL is supposed to be small (until 5) it could still be feasible.
+#' is technically possible but can be irrealistic in practice due to a reduced
+#' computer power. Since a mixed model is computed at each single position it
+#' can take a lot of time. From our estimation it can take between 20 to 50
+#' times more time than for the linear model (HRT). If the number of detected
+#' QTL is supposed to be small (until 5) it could still be feasible.
 #' 
-#' \strong{WARNING!(2)} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!(2)} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #'
 #' @param mppData An IBD object of class \code{mppData}
 #' See \code{\link{mppData_form}} for details. Default = NULL.
@@ -46,7 +46,7 @@
 #' look at \code{\link{mpp_SIM}}.
 #' 
 #' @param par.clu Required argument if the user wants to allow QTLs with an
-#' ancestral effect. \code{interger matrix} representing the results of a parents genotypes
+#' ancestral effect. \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be
@@ -64,13 +64,10 @@
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #' 
 #' @param threshold \code{Numeric} value representing the -log10(p-value) threshold
-#' above which a position can be considered as significant.Significance threshold
-#' values can be obtained by permutation using \code{\link{mpp_perm}} function.
-#' Default = 3.
+#' above which a position can be considered as significant. Default = 3.
 #' 
-#' @param window \code{Numeric} value in centi-Morgan representing the distance
-#' on the left an right of a cofactor position where it is not included in the
-#' model. Default = 20.
+#' @param window \code{Numeric} distance (cM) on the left and the right of a
+#' cofactor position where it is not included in the model. Default = 20.
 #' 
 #' @param parallel \code{Logical} value specifying if the function should be
 #' executed in parallel on multiple cores. To run function in parallel user must
@@ -91,7 +88,7 @@
 #' 
 #' \item{QTL.list }{\code{Data.frame} with six columns :
 #' 1) QTL marker or in between position names; 2) chromosomes;
-#' 3) Interger position indicators on the chromosome;
+#' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; 5) -log10(p-values); and 6) type of
 #' QTL incidence matrix of the selected positions}
 #' 

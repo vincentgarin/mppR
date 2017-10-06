@@ -19,10 +19,10 @@ Default = 15.}
 \value{
 Return:
 
-\item{mk.mat.red}{Reduced marker matrix with too small crosses removed.}
+\item{mk.mat.red}{Reduced marker \code{matrix} with too small crosses removed.}
 }
 \description{
-Removes the cross that do not have the minimum critical size.
+Remove the crosses that do not have the minimum critical size.
 }
 \examples{
 

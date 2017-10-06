@@ -9,7 +9,7 @@
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #' 
-#' @param trait two columns \code{data.frame} with : 1) \code{character}
+#' @param trait Two columns \code{data.frame} with : 1) \code{character}
 #' genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
 #' identifiers must be identical to \code{mppData$geno.id}.}
 #' 
@@ -20,7 +20,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{mppData_subset}},
-#' \code{\link{mppData_chgPedigree}}
+#' \code{\link{mppData_mdfPedigree}}
 #' 
 #' @examples
 #' 

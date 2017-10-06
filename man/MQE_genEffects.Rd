@@ -15,7 +15,7 @@ See \code{\link{mppData_form}} for details. Default = NULL.}
 wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
 be strictly the same as the one of \code{mppData}.} Default = NULL.}
 
-\item{QTL}{Vector of \code{character} markers or inbetween marker positions
+\item{QTL}{Vector of \code{character} markers or in between marker positions
 names. Default = NULL.}
 
 \item{Q.eff}{\code{Character} vector indicating for each QTL position the
@@ -23,7 +23,7 @@ type of QTL effect among: "cr", "par", "anc" and "biall". For details look at
 \code{\link{mpp_SIM}}.}
 
 \item{par.clu}{Required argument if the user wants to allow QTLs with an
-ancestral effect. \code{interger matrix} representing the results of a parents
+ancestral effect. \code{Interger matrix} representing the results of a parents
 genotypes
 clustering. The columns represent the parental lines and the rows
 the different markers or in between positions. \strong{The columns names must
@@ -65,7 +65,7 @@ in the \code{mppData} object.}
 }
 }
 \description{
-Computes a multi-QTL model with a list QTL candidates (\code{QTL}) and return
+Compute a multi-QTL model with a list of QTL candidates (\code{QTL}) and return
 the decomposed QTL genetic effects per cross or per parents. The list of QTL
 can be of different types (cross-specific, parental, ancestral or bi-allelic).
 The type of QTL effects are specified in the vector \code{Q.eff}.
@@ -78,12 +78,6 @@ effect of an single allele from the parent 2 (or B) with respect to an allele
 coming from the parent 1 or A. All effects are given in absolute value with
 the parent that cary the positive allele.
 
-For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), one
-parental (ancestral) allele is set as reference per interconnected part of the
-design. Effects of the other alleles are estimated as deviation with respect
-to the reference. For more details about reference definition see
-\code{\link{QTL_genEffects}} and \code{\link{design_connectivity}}.
-
 For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), the
 reference allele is defined per interconneted part. The most frequent
 parental (ancestral) allele is set as reference. Effects of the other alleles
@@ -92,16 +86,15 @@ about reference definition see \code{\link{QTL_genEffects}} and
 \code{\link{design_connectivity}}.
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
-represent the effects of a single allele copy of the most frequent allele.
+represent the effects of a single allele copy of the least frequent allele.
 
-\strong{WARNING!} The estimation of the random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-\code{asreml()} function fails to produce a results and returns the following
-message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-So far we were not able to identify the reason of this problem and to
-reproduce this error because it seems to happen randomly. From our
-experience, trying to re-run the function one or two times should allow
-to obtain a result.
+\strong{WARNING!} The computation of random pedigree models
+(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+due to singularities due to a strong correlation between the QTL term(s) and 
+the polygenic term. This situation can appear in the parental model.
+the error can also sometimes come from the \code{asreml()} function. From
+our experience, in that case, trying to re-run the function one or two times
+allow to obtain a result.
 }
 \examples{
 

@@ -4,21 +4,21 @@
 
 #' QTL incidence matrix
 #'
-#' Builds a single position QTL incidences matrix
+#' Build a single position QTL incidences matrix.
 #' 
 #' @param x \code{Integer} value indicating the genetic position on the map
-#' \code{mppData$map} for which the QTL incidence matrix should be returned.
+#' (\code{mppData$map}) of the QTL incidence matrix.
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. for more details see \code{\link{mpp_SIM}}. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be
@@ -41,12 +41,12 @@
 #' 
 #' @return Return:
 #' 
-#' \item{QTL.mat}{QTL incidence matrix or vector (for bi-allelic model). For the
-#' cross-specific model, it represent the difference between the
+#' \item{QTL.mat}{QTL incidence matrix. For the
+#' cross-specific model, it represents the difference between the
 #' number of allele from parent 2 or B and parent 1 or A divided by two. For
-#' parental (ancestral) model it represent the expected number of parent
-#' (ancestor) allele copies. For the bi-allelic model, it represent the number
-#' of copies of the allele with the highest frequency.}
+#' parental (ancestral) model it represents the expected number of parental
+#' (ancestral) allele copies. For the bi-allelic model, it represents the number
+#' of copies of the least frequent allele.}
 #' 
 #' @author Vincent Garin
 #' 

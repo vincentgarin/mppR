@@ -4,7 +4,7 @@
 
 #' Match markers in the genotype matrix and the map
 #' 
-#' Determines which marker are common between the genotypes marker matrix and
+#' Determine which markers are common between the genotypes marker matrix and
 #' makers present in the map. Return the marker matrix and the map that
 #' correspond to these markers.
 #' 
@@ -20,7 +20,7 @@
 #' 
 #' \code{List} containing the following objects:
 #' 
-#' \item{new.mk.mat}{Marker matrix with only the common list of
+#' \item{new.mk.mat}{Marker \code{matrix} with only the common list of
 #' marker between the marker matrix and the map in the same order as in the map.}
 #' 
 #' \item{new.map}{Map with only the common markers list.}
@@ -38,7 +38,7 @@
 #' data(USNAM_map)
 #' data(USNAM_geno)
 #' 
-#' # remove one marker from the map
+#' # Remove one marker from the map
 #' map.red <- USNAM_map[-1,]
 #' 
 #' match <- QC_matchMarker(mk.mat = USNAM_geno, map = map.red)

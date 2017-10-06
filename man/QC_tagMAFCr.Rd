@@ -32,11 +32,12 @@ the MAF is bellow \code{MAF.lim} (without beeing monomorphic if
 \code{tag.mono = FALSE}).}
 }
 \description{
-Detects markers with problematic minor allele frequency (MAF)
-within crosses. The function returns a logical vector specifying if for
-the considered marker at least one within cross MAF is bellow the
-\code{MAF.lim} values. If \code{tag.mono = FALSE}, the within cross
-monomorphic marker are not considered as problematic.
+Detect markers with problematic minor allele frequency (MAF)
+within crosses.
+}
+\details{
+If \code{tag.mono = FALSE}, the within cross monomorphic markers are not
+considered as problematic.
 }
 \examples{
 

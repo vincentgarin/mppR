@@ -2,10 +2,10 @@
 \alias{USNAM_map}
 \docType{data}
 \title{
-  Reduced map Maize US-NAM population
+  Reduced map maize US-NAM population
 }
 \description{
-  Reduced map of the Maize US nested association mapping (NAM) population
+  Reduced map of the maize US nested association mapping (NAM) population
   (McMullen et al., 2009).
 }
 \usage{data(USNAM_map)}

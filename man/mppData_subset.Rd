@@ -10,12 +10,13 @@ mppData_subset(mppData, mk.list = NULL, gen.list = NULL)
 \item{mppData}{An object of class \code{mppData}.
 See \code{\link{mppData_form}} for details.}
 
-\item{mk.list}{\code{Character} vector of marker or in betwee position names,
-\code{numeric} vector of marker or inbetween positions indicator,
-or \code{logical} vector. Default = NULL.}
+\item{mk.list}{\code{Character} vector, \code{numeric} position vector or
+\code{logical} vector representing marker or in between positions that must
+be subseted. Default = NULL.}
 
-\item{gen.list}{\code{Character} vector of genotypes names, \code{numeric}
-vector of genotypes, or \code{logical} vector. Default = NULL.}
+\item{gen.list}{\code{Character} vector, \code{numeric} position vector or
+\code{logical} vector representing genotypes that must be subseted.
+Default = NULL.}
 }
 \value{
 Return:
@@ -24,12 +25,12 @@ Return:
 or selected genotypes.}
 }
 \description{
-Subsets \code{mppData} objects by markers (\code{mk.list}) or by genotypes
+Subset \code{mppData} objects by markers (\code{mk.list}) or by genotypes
 (\code{gen.list}).
 }
 \examples{
 
-### marker subset
+### Marker subset
 
 data(USNAM_mppData)
 
@@ -37,11 +38,11 @@ data(USNAM_mppData)
 mk.list <-  sample(USNAM_mppData$map[, 1], 50)
 mppData_sub <- mppData_subset(mppData = USNAM_mppData, mk.list = mk.list)
 
-# Selection marker of chromosome 1
+# Selection of chromosome 1 marker
 mk.list <-  (USNAM_mppData$map[, 2] == 1)
 mppData_sub <- mppData_subset(mppData = USNAM_mppData, mk.list = mk.list)
 
-### genotype subset
+### Genotype subset
 
 # Random selection of genotypes
 gen.list <-  sample(USNAM_mppData$geno.id, 200)

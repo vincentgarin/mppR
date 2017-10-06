@@ -5,7 +5,7 @@
 #'
 #' MQE model QTL profile
 #' 
-#' Plots the QTL profile of a multi-QTL effect (MQE) model determined by forward
+#' Plot the QTL profile of a multi-QTL effect (MQE) model determined by forward
 #' regression (\code{\link{MQE_forward}}).
 #' 
 #' This function can be used to plot the final results of a MQE model. Once the
@@ -16,7 +16,7 @@
 #' as cofactor and change the type of QTL effect of the tested position
 #' for the one of the detected QTL when it enter their region. Then the profile
 #' obtained and the QTL list can be introduced in \code{MQE_plot}. This function
-#' will draw the QTL profile and colour the QTL region according to the type of
+#' will draw the QTL profile and colour the QTL regions according to the type of
 #' QTL effect at the QTL position (cross-specific: black, parental: red,
 #' ancestral: green and bi-allelic: blue).
 #'
@@ -29,9 +29,9 @@
 #' @param QTL list of QTL positions with the corresponding QTL incidence
 #' matrix returned by the function \code{\link{MQE_forward}}.
 #' 
-#' @param window numeric value representing the distance in centi-Morgan on the
-#' rigth and left side of a QTL position that will be coloured according
-#' to the type of QTL effect. Default = 20.
+#' @param window \code{Numeric} distance (cM) on the left and the right of a
+#' QTL position that will be coloured according to the type of QTL effect.
+#' Default = 20.
 #' 
 #' @param threshold \code{Numeric} QTL significance threshold value draw on
 #' the plots. Default = 3.

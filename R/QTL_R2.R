@@ -34,16 +34,16 @@
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or inbetween marker positions names.
+#' vector of \code{character} marker or in between marker positions names.
 #' Default = NULL.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be

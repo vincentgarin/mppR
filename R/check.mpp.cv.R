@@ -131,14 +131,14 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
     if(!identical(mppData$map[, 1], rownames(par.clu))){
       
-      stop(paste("The list of marker and inbetween position of the par.clu",
+      stop(paste("The list of markers and in between positions of the par.clu",
                  "object is not the same as the one in the mppData object map."))
       
     }
     
     if(!identical(sort(mppData$parents), sort(colnames(par.clu)))) {
       
-      stop(paste("The list of marker and inbetween position of the par.clu",
+      stop(paste("The list of markers and in between positions of the par.clu",
                  "object is not the same as the one in the mppData object map."))
       
     }

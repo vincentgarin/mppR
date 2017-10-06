@@ -22,9 +22,7 @@ Default = "trait1".}
 
 \item{her}{\code{Numeric} value between 0 and 1 representing the heritability
 of the trait. \code{her} can be a single value or a vector specifying each
-within cross heritability. \strong{By default, the heritability is set to 1
-(\code{her = 1}). This means that the results represent the proportion of
-phenotypic variance explained (predicted) in the training (validation) sets.}}
+within cross heritability. Default = 1.}
 
 \item{Rep}{\code{Numeric} value representing the number of repetition of the
 k-fold procedure. Default = 10.}
@@ -33,12 +31,12 @@ k-fold procedure. Default = 10.}
 cross partition of the population. Default = 5.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
-the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".}
+the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+for ancestral; 4) "biall" for a bi-allelic. For more details see
+\code{\link{mpp_SIM}}. Default = "cr".}
 
 \item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{interger matrix} representing the results of a parents genotypes
+\code{Interger matrix} representing the results of a parents genotypes
 clustering. The columns represent the parental lines and the rows
 the different markers or in between positions. \strong{The columns names must
 be the same as the parents list of the mppData object. The rownames must be
@@ -56,10 +54,7 @@ and 5) "ped_cr.err" for random pedigree and CSRT model.
 For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{thre.cof}{\code{Numeric} value representing the -log10(p-value)
-threshold
-above which a position can be peaked as a cofactor. Significance threshold
-values can be obtained by permutation using \code{\link{mpp_perm}} function.
-Default = 3.}
+threshold above which a position can be peaked as a cofactor. Default = 3.}
 
 \item{win.cof}{\code{Numeric} value in centi-Morgan representing the minimum
 distance between two selected cofactors. Default = 20.}
@@ -67,16 +62,14 @@ distance between two selected cofactors. Default = 20.}
 \item{N.cim}{\code{Numeric} value specifying the number of time the CIM
 analysis is repeated. Default = 1.}
 
-\item{window}{\code{Numeric} distance on the left an right of a cofactor
-position where it is not included in the model. Default = 20.}
+\item{window}{\code{Numeric} distance (cM) on the left and the right of a
+cofactor position where it is not included in the model. Default = 20.}
 
 \item{thre.QTL}{\code{Numeric} value representing the -log10(p-value)
-threshold above which a position can be selected as QTL. Significance
-threshold values can be obtained by permutation using \code{\link{mpp_perm}}
-function. Default = 3.}
+threshold above which a position can be selected as QTL. Default = 3.}
 
 \item{win.QTL}{\code{Numeric} value in centi-Morgan representing the minimum
-distance between two selected QTL. Default = 20.}
+distance between two selected QTLs. Default = 20.}
 
 \item{backward}{\code{Logical} value. If \code{backward = TRUE},
 the function performs a backward elimination on the list of selected QTLs.
@@ -107,18 +100,18 @@ By default the function uses the current working directory.}
 \code{List} containing the following results items:
 
 \item{CV_res}{\code{Data.frame} containing for each CV run: 1) the number
-of detected QTL; 2) the proportion of explained genetic variance in the TS;
-3) the proportion of predicted genetic variance in the VS p.vs at the
-population level (average of within cross prediction); the bias between
-p.ts and p.vs (bias = 1-(p.vs/p.ts))}
+of detected QTL; 2) the proportion of explained genetic variance in the TS
+(p.ts); 3) the proportion of predicted genetic variance in the VS (p.vs) at
+the population level (average of within cross prediction); the bias between
+p.ts and p.vs (bias = 1-(p.vs/p.ts)).}
 
-\item{p.vs.cr}{\code{Matrix} containing the within cross p.vs for each CV run}
+\item{p.vs.cr}{\code{Matrix} containing the within cross p.vs for each CV run.}
 
 \item{QTL}{\code{Data.frame} containing: 1) the list of QTL position detected
-at least one time during the entire CV process; 2) The number of times
-the position has been detected; 3) the average p.ts of the QTL position;
-4) the average p.vs of the QTL position; 5) the average bias of the QTL
-position}
+at least one time during the entire CV process; 2) the number of times
+the position has been detected; 3) the average partial p.ts of the QTL
+position; 4) the average partial p.vs of the QTL position; 5) the average
+partial bias of the QTL position.}
 
 \item{QTL.profiles}{\code{Data.frame} -log10(p-value) QTL profiles of the
 different CV runs.}
@@ -130,13 +123,12 @@ plot of the CV results (plot.pdf) obtained with the function
 \code{\link{plot_CV}} is also saved.
 }
 \description{
-Evaluation of MPP QTL detection procedure by cross-validation (CV). For
-details on the MPP QTL detection models see \code{\link{mpp_SIM}}
-documentation. The CV scheme is adapted from Utz et al. (2000) to the MPP
-context.
+Evaluation of MPP QTL detection procedure by cross-validation (CV).
 }
 \details{
-A single CV run works like that:
+For details on the MPP QTL detection models see \code{\link{mpp_SIM}}
+documentation. The CV scheme is adapted from Utz et al. (2000) to the MPP
+context. A single CV run works like that:
 
 \enumerate{
 
@@ -146,15 +138,16 @@ repetition, the kth subset is used as validation set, the rest goes into the
 training set.}
 
 \item{For the kth repetition, utilisation of the training set for cofactor
-selection and multi-QTL model search (\code{\link{mpp_SIM}} and
+selection and multi-QTL model determination (\code{\link{mpp_SIM}} and
 \code{\link{mpp_CIM}}). If \code{backward = TRUE}, the final list of QTLs is
 tested simultaneously using a backward elimination
 (\code{\link{mpp_BackElim}}).}
 
-\item{Use the list of detected QTLs in the training sets to calculate
+\item{Use the list of detected QTLs in the training set to calculate
 the proportion of genetic variance explained by all detected QTLs in the
 training set (p.ts = R2.ts/h2). Where R2.ts is the adjusted
-R squared and h2 is the average within cross heritability (\code{her}).
+R squared and h2 is the average within cross heritability (\code{her}). By
+default, her = 1, which mean that
 
 For each single QTL effect, difference partial R squared are also
 calculated. Difference R squared are computed by doing the difference between
@@ -169,13 +162,14 @@ predicted values (y.pred.vs). R2.vs = cor(y.ts,y.pred.ts)^2. Then
 the predicted genetic variance in the validation set (p.vs) is equal to
 p.vs = R2.vs/h2. For heritability correction, the user can provide a single
 value for the average within cross heritability or a vector specifying each
-within cross heritability.
+within cross heritability. By default, \code{her = 1}, which means that the
+results represent the proportion of phenotypic variance explained (predicted)
+in the training (validation) sets.
 
 The predicted R squared is computed per cross and then averaged
 at the population level (p.ts). Both results are returned. Partial QTL
 predicted R squared are also calculated using the difference between the
 predicted R squared using all QTL and the predicted R squared without QTL i.
-
 The bias between p.ts and p.vs is calculated as bias = 1 - (p.vs/p.ts).
 
 }
@@ -187,17 +181,15 @@ models (all models with \code{VCOV} different than \code{"h.err"}) is
 technically possible but can be irrealistic in practice due to a reduced
 computer power. Since a mixed model is computed at each single position it
 can take a lot of time. From our estimation it can take between 20 to 50
-times more time than for linear models.
+times more time than for the linear model (HRT).
 
-\strong{WARNING!(2)} The estimation of the random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-\code{asreml()} function fails to produce a results and returns the following
-message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-So far we were not able to identify the reason of this problem and to
-reproduce this error because it seems to happen randomly. The consequence of
-this is that part of the results of the CV procedure can not be produced.
-These will be replaced by NA values. According to the tests we run this
-can affect until 10 percent of the results.
+\strong{WARNING!(2)} The computation of random pedigree models
+(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+due to singularities due to a strong correlation between the QTL term(s) and 
+the polygenic term. This situation can appear in the parental model.
+the error can also sometimes come from the \code{asreml()} function. From
+our experience, in that case, trying to re-run the function one or two times
+allow to obtain a result.
 }
 \examples{
 
@@ -220,6 +212,8 @@ cluster <- makeCluster(n.cores-1)
 
 CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = USNAM_mppData,
              her = .5, output.loc = my.loc, parallel = TRUE, cluster = cluster)
+             
+stopCluster(cl = cluster)
 
 plot_CV(CV.res = CV)
 

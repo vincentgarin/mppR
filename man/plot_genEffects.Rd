@@ -16,12 +16,12 @@ See \code{\link{mppData_form}} for details.}
 \code{est.gen.eff = TRUE}.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
-the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-effects; 3) "anc" for an ancestral effects.}
+the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental
+effects; 3) "anc" for ancestral effects.}
 
 \item{QTL}{Optional argument. Object of class \code{QTLlist} representing a
 list of selected position obtained with the function \code{\link{QTL_select}}
-or vector of \code{character} marker or inbetween marker positions names.
+or vector of \code{character} marker or in between marker positions names.
 These positions will be plotted on the graph. Default = NULL.}
 
 \item{main}{Title of the graph. Default =  "QTL genetic effects plot".}
@@ -31,43 +31,42 @@ elements. Default = 18.}
 }
 \description{
 Visualisation of the genome-wide significance of the QTL effect per cross or
-per parents. It uses the results of a SIM or CIM profile from a
-cross-specific, parental and ancestral model. candidate QTL positions passed
-to the argument \code{QTL} are also drawn on the graph.
+per parents using the package ggplot2.
 }
 \details{
+It uses the results of a SIM or CIM profile from a
+cross-specific, parental and ancestral model.
+
 Plot the significance of the cross-specific or parental components of the QTL
-effects. White colour means no significant effect.
+effects using the results of a SIM or CIM profiles from a cross-specific,
+a parental or an ancestral model. White colour means no significant effect.
 
 For a cross-specific QTL profile (\code{Q.eff = "cr"}): Red color means
 that the allele coming from parent A(1) increases the phenotypic value and
 parent B(2) decreases it and blue that parent A(1) decreases the trait and
 parent B(2) increases it.
 
-For a parental model (\code{Q.eff = "par"}): Effect are defined within
-connected part (indicated as ci). Red (Blue) colour means a signicative
-negative (positive) effect with respect to the reference of the connected
-part. The reference alleles are defined as the most used one regarding first
-the number of cross where it segregates and second the number of genotypes
-where it potentially segregates.
+For a parental (\code{Q.eff = "par"}) or an ancestral model
+(\code{Q.eff = "anc"}), the results are given per parents. The significance
+of the effect must be interpreted as a deviation with respect to the
+reference of each connected part. The reference allele is always defined as
+the most frequent one. Red (Blue) colour means a signicative negative
+(positive) effect with respect to the reference of the connected part.
 
-For an ancestral model the the parent with a red (blue) colour receive an
-allele that has a positive (negative) effect with respect to the reference
-ancestral allele of the connected part. Since the results of the ancetral
-clustering potentially change at each position. It is not possible to
-indicate which allele are the reference alleles. But the reference allele
-within each connected part are defined as for the parental model as the one
-that segregate the most. Therefore interpretation
-of the genetic effect plot should be done with caution. In that case, the
-plot should be taken as a rough indication of the signal distribution.
+The reference parental allele can change at each position according to the
+segregation rate. The parent are plotted from the top to the bottom according
+to the number of time their allele is set as reference.  Therefore
+interpretation of the genetic effect plot should be done with caution.
+In that case, the plot should be taken as a rough indication of the signal
+distribution.
 
 The colour intensity increase with the significance of the effect.
 There are five colour intensities according to the p-value of the QTL
 effect: 0.05<p-val<0.01; 0.01<p-val<0.001; 0.001<p-val<0.0001;
 0.0001<p-val<0.00001 and p-val< 0.00001.
 
-The dashed lines indicate the position that have been introduce in the
-argument \code{QTL}.
+QTL positions passed to the argument \code{QTL} are also drawn on the graph
+using dashed lines.
 }
 \examples{
 

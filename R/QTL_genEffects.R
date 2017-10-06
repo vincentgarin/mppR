@@ -4,8 +4,8 @@
 
 #' QTL genetic effects
 #' 
-#' Computes a multi-QTL model with a list QTL candidates(\code{QTL}) and return
-#' the decomposed QTL effects per cross or per parents.
+#' Computes a multi-QTL model with a list of QTL candidates (\code{QTL}) and
+#' return the decomposed QTL effects per cross or per parents.
 #' 
 #' This function computes for each QTL position the genetic effects of the
 #' cross, parental, ancestral or SNP allele components. For the cross-specific
@@ -27,32 +27,31 @@
 #' of a unique connected part.
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
-#' represent the effects of a single allele copy of the most frequent allele.
+#' represent the effects of a single allele copy of the least frequent allele.
 #' 
-#' \strong{WARNING!} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or inbetween marker positions names.
+#' vector of \code{character} marker or in between marker positions names.
 #' Default = NULL.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be
@@ -77,6 +76,8 @@
 #' 
 #' 
 #' @return Return:
+#' 
+#' List with the following elements:
 #'
 #' \item{Qeff}{\code{List} of \code{data.frame} (one per QTL) containing the
 #' following information:
@@ -99,7 +100,7 @@
 #' }
 #' 
 #' \item{tab.Qeff}{\code{data.frame} with one column per QTL giving the
-#' QTL genetic effect per cross or per parent with its significance. The
+#' QTL genetic effects per cross or per parent with its significance. The
 #' first two rows indicate the chromosome and the position in cM of each
 #' QTL.}
 #' 
@@ -126,24 +127,24 @@
 #' SIM <- mpp_SIM(USNAM_mppData)
 #' QTL <- QTL_select(SIM)
 #' 
-#' # cross-specific model
+#' # Cross-specific model
 #' 
 #' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "cr")
 #' QTL.effects
 #' 
-#' # parental model
+#' # Parental model
 #' 
 #' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL,
 #'                                Q.eff = "par")
 #' QTL.effects
 #' 
-#' # ancestral model
+#' # Ancestral model
 #' 
 #' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "anc",
 #'                               par.clu = par.clu)
 #' QTL.effects
 #' 
-#' # bi-allelic model
+#' # Bi-allelic model
 #' 
 #' SIM <- mpp_SIM(USNAM_mppData_bi, Q.eff = "biall")
 #' QTL <- QTL_select(SIM)
@@ -202,10 +203,12 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   if(is.character(QTL)){
     
     Q.pos <- which(mppData$map[, 1] %in% QTL)
+    pos.info <- t(data.frame(mppData$map[Q.pos, c(2, 4)]))
     
   } else {
     
     Q.pos <- which(mppData$map[, 1] %in% QTL[, 1])
+    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
     
   }
   
@@ -260,7 +263,6 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     Qeff_sign <- lapply(results, `[`, c(1, 5))
     Qeff_sign <- lapply(Qeff_sign, function(x) paste(round(x[, 1], 3), x[, 2]))
     table.QTL <- data.frame(Qeff_sign)
-    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
     colnames(pos.info) <- paste0("Q", 1:length(results))
     table.QTL <- rbind.data.frame(pos.info, table.QTL)
     rownames(table.QTL) <- c("chr", "pos.cM", unique(mppData$cross.ind))
@@ -270,7 +272,6 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     Qeff_sign <- lapply(results, `[`, c(1, 5))
     Qeff_sign <- lapply(Qeff_sign, function(x) paste(round(x[, 1], 3), x[, 2]))
     table.QTL <- data.frame(Qeff_sign)
-    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
     colnames(pos.info) <- paste0("Q", 1:length(results))
     table.QTL <- rbind.data.frame(pos.info, table.QTL)
     
@@ -295,7 +296,6 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     
     Qeff_sign <- lapply(Qeff_sign, function(x) paste(round(x[, 1], 3), x[, 2]))
     table.QTL <- data.frame(Qeff_sign)
-    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
     colnames(pos.info) <- paste0("Q", 1:length(results))
     table.QTL <- rbind.data.frame(pos.info, table.QTL)
     rownames(table.QTL) <- c("chr", "pos.cM", mppData$parents)

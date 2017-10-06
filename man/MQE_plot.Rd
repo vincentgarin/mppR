@@ -17,9 +17,9 @@ See \code{\link{mppData_form}} for details.}
 \item{QTL}{list of QTL positions with the corresponding QTL incidence
 matrix returned by the function \code{\link{MQE_forward}}.}
 
-\item{window}{numeric value representing the distance in centi-Morgan on the
-rigth and left side of a QTL position that will be coloured according
-to the type of QTL effect. Default = 20.}
+\item{window}{\code{Numeric} distance (cM) on the left and the right of a
+QTL position that will be coloured according to the type of QTL effect.
+Default = 20.}
 
 \item{threshold}{\code{Numeric} QTL significance threshold value draw on
 the plots. Default = 3.}
@@ -27,7 +27,7 @@ the plots. Default = 3.}
 \item{main}{Title of the graph. Default = "MQE QTL profile".}
 }
 \description{
-Plots the QTL profile of a multi-QTL effect (MQE) model determined by forward
+Plot the QTL profile of a multi-QTL effect (MQE) model determined by forward
 regression (\code{\link{MQE_forward}}).
 }
 \details{
@@ -39,7 +39,7 @@ that \code{\link{MQE_CIM}} will compute a CIM profile with the QTL list used
 as cofactor and change the type of QTL effect of the tested position
 for the one of the detected QTL when it enter their region. Then the profile
 obtained and the QTL list can be introduced in \code{MQE_plot}. This function
-will draw the QTL profile and colour the QTL region according to the type of
+will draw the QTL profile and colour the QTL regions according to the type of
 QTL effect at the QTL position (cross-specific: black, parental: red,
 ancestral: green and bi-allelic: blue).
 }

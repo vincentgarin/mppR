@@ -5,13 +5,13 @@
   Parental clustering object
 }
 \description{
-  Example of parental clustering object for the selection from the Maize US
+  Example of parental clustering object for the selection from the maize US
   nested association mapping (NAM) population.
 }
 \usage{data(USNAM_parClu)}
 
 \details{
-  Parent clustering matrix specify at each genome position the results
+  The parent clustering matrix specifies at each genome position the results
   of a parent clustering into ancestral groups. The matrix rows
   represent the position and the columns correspond to each parent. For example,
   if we have at the ith row (1, 2, 3, 2, 1), this means that parents 1

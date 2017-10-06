@@ -16,13 +16,13 @@ See \code{\link{mppData_form}} for details. Default = NULL.}
 wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
 be strictly the same as the one of \code{mppData}.} Default = NULL.}
 
-\item{Q.eff}{\code{Character} expression indicating type of QTL effect at the
-tested position. Possibility to choose among: "cr", "par", "anc" or "biall".
-For details look at \code{\link{mpp_SIM}}. Default = "cr".}
+\item{Q.eff}{\code{Character} expression indicating the type of QTL effect at
+the tested position. Possibility to choose among: "cr", "par", "anc" or
+"biall". For details look at \code{\link{mpp_SIM}}. Default = "cr".}
 
 \item{par.clu}{Required argument if the user wants to allow QTLs with an
-ancestral effect. \code{interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
+ancestral effect. \code{Interger matrix} representing the results of a parents
+genotypes clustering. The columns represent the parental lines and the rows
 the different markers or in between positions. \strong{The columns names must
 be the same as the parents list of the mppData object. The rownames must be
 the same as the map marker list of the mppData object.} At a particular
@@ -46,12 +46,11 @@ the type of QTL effect from: "cr", "par", "anc" and "biall".}
 
 \item{chg.Qeff}{\code{Logical} value. If \code{chg.Qeff = TRUE}.
 The type of QTL effect of the tested position will change for the one
-specified in cof.Qeff when the function enter the region of a cofactor
+specified in \code{cof.Qeff} when the function enter the region of a cofactor
 delimited by \code{window}. Default = FALSE.}
 
-\item{window}{\code{Numeric} value in centi-Morgan representing the distance
-on the left an right of a cofactor position where it is not included in the
-model. Default value = 20.}
+\item{window}{\code{Numeric} distance (cM) on the left and the right of a
+cofactor position where it is not included in the model. Default = 20.}
 
 \item{parallel}{\code{Logical} value specifying if the function should be
 executed in parallel on multiple cores. To run function in parallel user must
@@ -67,22 +66,21 @@ Return:
 
 \item{CIM }{\code{Data.frame} of class \code{QTLprof} with five columns :
 1) QTL marker or in between position names; 2) chromosomes;
-3) Interger position indicators on the chromosome;
+3) interger position indicators on the chromosome;
 4) positions in centi-Morgan; and 5) -log10(p-values)}
 }
 \description{
-Computes a QTL profile with cofactors position having different type of QTL
+Compute a QTL profile with cofactors position having different type of QTL
 effects.
 }
 \details{
-\strong{WARNING!} The estimation of the random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-\code{asreml()} function fails to produce a results and returns the following
-message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-So far we were not able to identify the reason of this problem and to
-reproduce this error because it seems to happen randomly. From our
-experience, trying to re-run the function one or two times should allow
-to obtain a result.
+\strong{WARNING!} The computation of random pedigree models
+(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+due to singularities due to a strong correlation between the QTL term(s) and 
+the polygenic term. This situation can appear in the parental model.
+the error can also sometimes come from the \code{asreml()} function. From
+our experience, in that case, trying to re-run the function one or two times
+allow to obtain a result.
 }
 \examples{
 

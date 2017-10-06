@@ -4,7 +4,7 @@
 
 #' Skeleton of parental incidence matrices
 #' 
-#' Forms the skeleton matrices used to form parental incidence
+#' Form the skeleton matrices used to form parental incidence
 #' matrices in parental effect models.
 #' 
 #' @param mppData An object of class \code{mppData}.

@@ -27,7 +27,7 @@ effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
 effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".}
 
 \item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{interger matrix} representing the results of a parents genotypes
+\code{Interger matrix} representing the results of a parents genotypes
 clustering. The columns represent the parental lines and the rows
 the different markers or in between positions. \strong{The columns names must
 be the same as the parents list of the mppData object. The rownames must be
@@ -44,7 +44,7 @@ covariance structure used: 1) "h.err" for an homogeneous variance residual term
 and 5) "ped_cr.err" for random pedigree and CSRT model.
 For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
-\item{est.gen.eff}{\code{Logical} value. if \code{est.gen.eff = TRUE},
+\item{est.gen.eff}{\code{Logical} value. If \code{est.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
 These results can be ploted with the function \code{\link{plot_genEffects}}
 to visualize a genome-wide decomposition of the genetic effects.
@@ -53,10 +53,7 @@ parental and ancestral models.}
 Default value = FALSE.}
 
 \item{thre.cof}{\code{Numeric} value representing the -log10(p-value)
-threshold
-above which a position can be peaked as a cofactor. Significance threshold
-values can be obtained by permutation using \code{\link{mpp_perm}} function.
-Default = 3.}
+threshold above which a position can be peaked as a cofactor. Default = 3.}
 
 \item{win.cof}{\code{Numeric} value in centi-Morgan representing the minimum
 distance between two selected cofactors. Default = 20.}
@@ -64,16 +61,14 @@ distance between two selected cofactors. Default = 20.}
 \item{N.cim}{\code{Numeric} value specifying the number of time the CIM
 analysis is repeated. Default = 1.}
 
-\item{window}{\code{Numeric} distance on the left an right of a cofactor
-position where it is not included in the model. Default = 20.}
+\item{window}{\code{Numeric} distance (cM) on the left and the right of a
+cofactor position where it is not included in the model. Default = 20.}
 
 \item{thre.QTL}{\code{Numeric} value representing the -log10(p-value)
-threshold above which a position can be selected as QTL. Significance
-threshold values can be obtained by permutation using \code{\link{mpp_perm}}
-function. Default = 3.}
+threshold above which a position can be selected as QTL. Default = 3.}
 
 \item{win.QTL}{\code{Numeric} value in centi-Morgan representing the minimum
-distance between two selected QTL. Default = 20.}
+distance between two selected QTLs. Default = 20.}
 
 \item{backward}{\code{Logical} value. If \code{backward = TRUE},
 the function performs a backward elimination on the list of selected QTLs.
@@ -121,14 +116,14 @@ Return:
 
 List containing the following items:
 
-\item{n.QTL}{Number of detected QTLs}
+\item{n.QTL}{Number of detected QTLs.}
 
 \item{cofactors}{\code{Data.frame} with cofactors positions.}
 
 \item{QTL}{\code{Data.frame} with QTL positions.}
 
 \item{R2}{\code{List} containing R squared statistics of the QTL effects.
-for details see \code{\link{QTL_R2}} output section.}
+For details see \code{\link{QTL_R2}} output section.}
 
 \item{QTL.effects}{\code{List} of QTLs genetic effects. For details see
 \code{\link{QTL_genEffects}} output section.}
@@ -169,21 +164,13 @@ lines representing the QTL positions. For more details see
 }
 }
 \description{
-Multi-parent QTL analysis based on models with different possible assumptions
-concerning the number of alleles at the QTL position and the variance
-covariance structure (VCOV) of the model. For more details about the different
-models, see documentation of the function \code{\link{mpp_SIM}}.
+Multi-parent population QTL analysis.
 }
 \details{
-\strong{WARNING!} The estimation of the random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-\code{asreml()} function fails to produce a results and returns the following
-message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-So far we were not able to identify the reason of this problem and to
-reproduce this error because it seems to happen randomly. From our
-experience, trying to re-run the function one or two times should allow
-to obtain a result.
-
+The function run a full MPP QTL detection using models with different possible
+assumptions concerning the number of alleles at the QTL position and the
+variance covariance structure (VCOV) of the model. For more details about
+the different models, see documentation of the function \code{\link{mpp_SIM}}.
 The procedure is the following:
 
 \enumerate{
@@ -206,6 +193,14 @@ and proportion of the phenotypic variation explained by the QTLs (R squared)
 (\code{\link{QTL_CI}}).}
 
 }
+
+\strong{WARNING!} The computation of random pedigree models
+(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+due to singularities due to a strong correlation between the QTL term(s) and 
+the polygenic term. This situation can appear in the parental model.
+the error can also sometimes come from the \code{asreml()} function. From
+our experience, in that case, trying to re-run the function one or two times
+allow to obtain a result.
 }
 \examples{
  
@@ -232,7 +227,7 @@ USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
 # Bi-allelic model
 
 USNAM_biall <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-                     mppData = USNAM_mppData_bi,Q.eff = "biall",
+                     mppData = USNAM_mppData_bi, Q.eff = "biall",
                      output.loc = my.loc)
 
 }

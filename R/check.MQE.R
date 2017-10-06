@@ -98,8 +98,8 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
              "due to the addition of in between position in the formation of the",
              "mppData object. To avoid this problem, in the formation of the",
              "mppData object (mppData_form()), set the argument step with a large",
-             "value (bigger than the largest inbetween marker gap) to avoid",
-             "The introduction of inbetween positions."))
+             "value (bigger than the largest in between marker gap) to avoid",
+             "The introduction of in between positions."))
       
     } 
     
@@ -169,14 +169,14 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
     
     if(!identical(mppData$map[, 1], rownames(par.clu))){
       
-      stop(paste("The list of marker and inbetween position of the par.clu",
+      stop(paste("The list of markers and in between positions of the par.clu",
                  "object is not the same as the one in the mppData object map."))
       
     }
     
     if(!identical(sort(mppData$parents), sort(colnames(par.clu)))) {
       
-      stop(paste("The list of marker and inbetween position of the par.clu",
+      stop(paste("The list of markers and in between positions of the par.clu",
                  "object is not the same as the one in the mppData object map."))
       
     }

@@ -22,7 +22,7 @@ difference positions in cM with Inf at last position ; 4) locus: marker
 positions in cM.}
 }
 \description{
-Transforms a map file with three columns (marker identifiers, chromosomes and
+Transform a map file with three columns (marker identifiers, chromosomes and
 positions in cM) into MapMaker format.
 }
 \examples{

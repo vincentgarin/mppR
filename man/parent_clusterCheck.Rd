@@ -26,7 +26,7 @@ put back to the parental situation (1 allele per parent).}
 parents where groupped into a single group}
 }
 \description{
-Detects marker or position for which all parents have been clustered into
+Detect marker or position for which all parents have been clustered into
 the same ancestral group (monomorphic). Rewrite these positions with one
 allele per parent.
 }

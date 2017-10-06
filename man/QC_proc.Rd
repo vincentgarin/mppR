@@ -24,7 +24,7 @@ GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}}
 \item{geno.par}{\code{Character} marker score \code{matrix} of the parents
 with genotypes as row and markers as column.
 \strong{Rows names must be the parents genotypes identifiers similar to
-the one used in \code{par.per.cros}. The columns names must be the marker
+the one used in \code{par.per.cross}. The columns names must be the marker
 names similar to the one used in \code{map}. Marker scores must be coded
 using one letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA,
 CG, CT, GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}}
@@ -34,13 +34,13 @@ position identifiers; 2) chromosome; 3) positions in centi-Morgan.\strong{
 The marker identifiers must be identical to the column names of the maker
 matrices (\code{geno.off} and \code{geno.par}).}}
 
-\item{trait}{two columns \code{data.frame} with : 1) \code{character}
+\item{trait}{Two columns \code{data.frame} with : 1) \code{character}
 genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
 identifiers must be identical to the rownames of the offspring marker matrix
 (\code{geno.off}).}}
 
 \item{cross.ind}{\code{Character} vector indicating to which cross each
-genotype belong.}
+genotype belongs.}
 
 \item{par.per.cross}{Three columns \code{Character matrix} specifying :
 1) the cross indicators; 2) the parents 1 identifiers
@@ -53,7 +53,7 @@ the argument \code{geno.par}}.}
 \item{subcross.ind}{Optional \code{character} vector specifying to which
 sub-cross each genotype belong. \strong{This argument is only necessary if
 the user want to make ABH assignement per sub-cross. In that case argument
-\code{par.per.subcross must also be provided.}}. Default = NULL.}
+\code{par.per.subcross} must also be provided.}. Default = NULL.}
 
 \item{par.per.subcross}{Optional three columns \code{Character matrix}
 specifying : 1) the sub-cross indicators; 2) the parents 1 identifiers
@@ -74,7 +74,7 @@ frequency for a marker at the population level. Default = 0.05.}
 MAF. Marker with a problematic segregation rate in at least
 one cross is either set as missing within the problematic cross
 (\code{MAF.cr.miss = TRUE}), or remove from the marker matrix
-(\code{MAF.cr.miss = FALSE}). Default = NULL.}
+(\code{MAF.cr.miss = FALSE}). For default value see details.}
 
 \item{MAF.cr.miss}{Logical value specifying if maker with a too low
 segregation rate within cross should be put as missing or discarded. If
@@ -173,57 +173,64 @@ parent 1 of the cross and the parent 2.}
 \item{rem.geno}{Vector of genotypes that have been removed.}
 }
 \description{
-Perform different operation of quality control on the marker matrix and
-return marker matrix, map and phenotype data in format to form a
+Perform different operations of quality control (QC) on the marker matrix and
+return the marker matrix, the map and the phenotype data in format to form a
 \code{mppData} object.
 }
 \details{
-The different operation of the quality control arethe following:
+The different operations of the quality control are the following:
 
 \enumerate{
 
-\item{Remove markers with genotyping error (more than 2 possible alleles)
-\code{\link{QC_GenotypingError}}.}
+\item{Remove markers with more than two alleles
+(\code{\link{QC_GenotypingError}}).}
 
-\item{Remove markers that are monomorphic or completely missing in the parents
-\code{\link{QC_MAF}}.}
+\item{Remove markers that are monomorphic or fully missing in the parents
+(\code{\link{QC_MAF}}).}
 
-\item{Remove marker with a missing rate higher than \code{mk.miss} at the
-population level \code{\link{QC_missing}}.}
+\item{Remove markers with a missing rate higher than \code{mk.miss} across
+the entire MPP (\code{\link{QC_missing}}).}
 
-\item{Remove genotypes with a missing rate higher than \code{gen.miss}
-\code{\link{QC_missing}}.}
+\item{Remove genotypes with more missing markers than \code{gen.miss}
+(\code{\link{QC_missing}}).}
 
-\item{Remove crosses with less than \code{n.lim} observations.}
+\item{Remove crosses with less than \code{n.lim} genotypes
+(\code{\link{QC_minCrSize}}).}
 
-\item{If the map contains some markers at the same position, the function
-keep only the most polymorphic position.}
+\item{Keep only the most polymorphic marker when multiple markers map at the
+same position.}
 
-\item{Remove marker with a population minor allele frequency (MAF) below the
-value provided in \code{MAF.pop.lim}.}
+\item{Remove markers with a minor allele frequency (MAF) below a threshold
+given by \code{MAF.pop.lim} (\code{\link{QC_MAF}}).}
 
-\item{Determine markers having a problematic MAF within cross
-\code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}. The critical within
-cross MAF can be specified by the user via the argument \code{MAF.cr.lim}.
-By default, the critical within cross MAF are defined by the following
-function of the cross-size (n.cr): MAF(n.cr) = 0.5 if n.cr c [0,10] and
-MAF(n.cr) = (4.5/n.cr) + 0.05 if  n.cr > 10. This means that up to 10
-genotypes, the critical within cross MAF is set to 50\%. Then it decreases
-when the number of genotype increases until 5\% set as a lower bound.
-If the within cross MAF is below the limit in at least one
-cross, then marker scores of the problematic cross are either put as missing
-(\code{MAF.cr.miss = TRUE} default) or the whole marker is discared
-(\code{MAF.cr.miss = FALSE}).}
+\item{Determine markers having a too low within cross MAF (\code{\link{QC_MAF}}
+and \code{\link{QC_tagMAFCr}}). The user can give the  critical values for MAF
+within cross using argument \code{MAF.cr.lim}.}
+
+\item{Determine markers having a too low within cross MAF
+(\code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}). The user can give the
+critical values for MAF within cross using \code{MAF.cr.lim}.
+
+By default, the within cross MAF values are defined by the following function
+of the cross-size n.ci: MAF(n.ci) = 0.5 if n.ci c [0, 10] and MAF(n.ci) =
+(4.5/n.ci) + 0.05$ if n.ci > 10. This means that up to 10 genotypes,
+the critical within cross MAF is set to 50%. Then it decreases when the
+number of genotype increases until 5% set as a lower bound.
+
+If the within cross MAF is below the limit in at least one cross, then marker
+scores of the problematic cross are either put as missing
+(\code{MAF.cr.miss = TRUE}) or the whole marker is discarded
+(\code{MAF.cr.miss = FALSE}). By default, \code{MAF.cr.miss = TRUE} which
+allows to include a larger number of markers and to cover a wider genetic
+diversity.}
 
 \item{If \code{ABH = TRUE}, convert offspring genotype data into ABH format
-(\code{\link{cross_ABH}}).
-If parents have heterozygous or missing marker scores, user must specify it
-using \code{het_miss_par = TRUE} (\code{\link{cross_ABH_het}}).}
+(\code{\link{cross_ABH}} or \code{\link{cross_ABH_het}}).}
 
-\item{If \code{impute = TRUE}, imputation of the missing values for the IBS
-bi-allelic model using the \code{codeGeno()} function from synbreed.
-The imputation can only be done if data are not converted into ABH format
-(\code{ABH = FALSE}).}
+\item{If \code{impute = TRUE}, imputation of the missing values for the
+IBS bi-allelic model using the \code{codeGeno()} function from synbreed
+(Wimmer et al., 2012). The imputation can only be done if data are not
+converted into ABH format (\code{ABH = FALSE}).}
 
 }
 }

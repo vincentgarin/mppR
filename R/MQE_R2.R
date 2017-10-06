@@ -5,12 +5,12 @@
 #' Global and partial R squared for multi-QTL effects 
 #' 
 #' Computes the global and partial (adjusted) R squared of a list of QTLs
-#' including positions with different type of QTL effects. For example
+#' including positions with different types of QTL effects. For example
 #' position one is a parental effect, position two a bi-allelic QTL, etc.
 #' The type of effect of the QTL position are specified in \code{Q.eff}.
 #' 
 #' The R squared computation is done using a linear model
-#' corresponding to \code{VCOV = 'h.err'} For more details about R squared
+#' corresponding to \code{VCOV = 'h.err'}. For more details about R squared
 #' computation and adjustement look at function \code{\link{QTL_R2}}.
 #'
 #' @param mppData An IBD object of class \code{mppData}
@@ -20,7 +20,7 @@
 #' wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
 #' be strictly the same as the one of \code{mppData}.} Default = NULL.
 #' 
-#' @param QTL Vector of \code{character} markers or inbetween marker positions
+#' @param QTL Vector of \code{character} markers or in between marker positions
 #' names. Default = NULL.
 #' 
 #' @param Q.eff \code{Character} vector indicating for each QTL position the
@@ -28,7 +28,7 @@
 #' \code{\link{mpp_SIM}}.
 #'
 #' @param par.clu Required argument if the user wants to allow QTLs with an
-#' ancestral effect. \code{interger matrix} representing the results of a parents
+#' ancestral effect. \code{Interger matrix} representing the results of a parents
 #' genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
@@ -38,8 +38,8 @@
 #' ancestor. for more details, see \code{\link{USNAM_parClu}} and
 #' \code{\link{parent_cluster}}. Default = NULL.
 #'
-#' @param glb.only \code{Logical} value. If \code{LR.R2 = TRUE}, only the global
-#' and global adjusted R squared will be returned. Default = FALSE.
+#' @param glb.only \code{Logical} value. If \code{glb.only = TRUE}, only
+#' the global and global adjusted R squared will be returned. Default = FALSE.
 #' 
 #'
 #' @return Return:

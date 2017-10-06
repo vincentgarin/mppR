@@ -4,7 +4,7 @@
 
 #' Minimum cross size
 #' 
-#' Removes the cross that do not have the minimum critical size.
+#' Remove the crosses that do not have the minimum critical size.
 #' 
 #' @param mk.mat Marker score \code{matrix} or \code{data.frame} with genotype as
 #' row and markers as column.
@@ -17,7 +17,7 @@
 #' 
 #' @return Return:
 #' 
-#' \item{mk.mat.red}{Reduced marker matrix with too small crosses removed.}
+#' \item{mk.mat.red}{Reduced marker \code{matrix} with too small crosses removed.}
 #' 
 #' @author Vincent Garin
 #' 

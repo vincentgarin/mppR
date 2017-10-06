@@ -2,10 +2,10 @@
 \alias{USNAM_geno}
 \docType{data}
 \title{
-Reduced genotype data from Maize US-NAM population
+Reduced genotype data maize US-NAM population
 }
 \description{
-Selection of markers and genotypes from the Maize US nested association mapping
+Selection of markers and genotypes from the maize US nested association mapping
 (NAM) population (McMullen et al., 2009).
 }
 \usage{data(USNAM_geno)}
@@ -13,8 +13,8 @@ Selection of markers and genotypes from the Maize US nested association mapping
  \code{data.frame}
 }
 \details{
-Sample of the marker matrix of the US-NAM population (McCullen
-et al., 2009). The selection correspond to 102 markers coming from the two first
+Sample of the marker matrix of the US-NAM population. The selection correspond
+to 102 markers coming from the two first
 chromosomes present in \code{\link{USNAM_map}} and the 506 genotypes. These
 genotypes correspond to the selected phenotypic values in
 \code{\link{USNAM_pheno}}. The selected genotypes come from

@@ -4,10 +4,8 @@
 
 #' Marker scores into 0, 1, 2 format
 #'
-#' Translates genotype marker score into 0, 1, 2 format. The score represents the
-#' number of copies of the allele with the lowest MAF. An homozygous marker score
-#' with two alleles having the highest frequency is therefore set as reference
-#' (0).
+#' Transform genotype marker score into 0, 1, 2 format. The score represents the
+#' number of copies of the allele with the lowest marker allele frequency (MAF).
 #' 
 #' @param mk.mat \code{Character} genotype  marker score \code{matrix}.
 #' \strong{Marker scores must be coded using one letter for each allele.
@@ -16,12 +14,14 @@
 #'   
 #' @return Return:
 #' 
+#' \code{List} with two matrices
+#' 
 #' \item{geno012}{Marker \code{matrix} with marker scores coded as 0, 1, 2
-#' corresponding to the number of copies of the most frequent SNP allele.}
+#' corresponding to the number of copies of the least frequent SNP allele.}
 #' 
 #' \item{all.ref}{\code{matrix} with reference allele scores. The first row
-#' represent the allele with the highest MAF, the second the one with the
-#' lowest and the two other line represent the heterozygous scores.} 
+#' represents the allele with the highest MAF, the second the one with the
+#' lowest MAF and the two others the heterozygous scores.} 
 #' 
 #' @author Vincent Garin    
 #'       

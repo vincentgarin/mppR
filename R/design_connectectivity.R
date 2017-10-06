@@ -3,10 +3,10 @@
 ########################
 
 #'
-#' Determines the connected parts of a design
+#' Connected parts of a MPP design
 #' 
-#' Uses the metod of Weeks and Williams (1964) and the package igraph to
-#' determine connected parts of the design.
+#' Determine the connected parts of a MPP design using the method of Weeks and
+#' Williams (1964) and the package igraph.
 #' 
 #' @param par.per.cross Three columns \code{character matrix} specifying :
 #' 1) the cross indicators ; 2) the parents 1 identifiers of the crosses;

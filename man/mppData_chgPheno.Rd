@@ -10,7 +10,7 @@ mppData_chgPheno(mppData, trait)
 \item{mppData}{An object of class \code{mppData}.
 See \code{\link{mppData_form}} for details.}
 
-\item{trait}{two columns \code{data.frame} with : 1) \code{character}
+\item{trait}{Two columns \code{data.frame} with : 1) \code{character}
 genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
 identifiers must be identical to \code{mppData$geno.id}.}}
 }
@@ -34,7 +34,7 @@ mppData <- mppData_chgPheno(mppData = USNAM_mppData, trait = trait)
 }
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mppData_subset}},
-\code{\link{mppData_chgPedigree}}
+\code{\link{mppData_mdfPedigree}}
 }
 \author{
 Vincent Garin

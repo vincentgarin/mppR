@@ -4,7 +4,7 @@
 
 #' Map into MapMaker format
 #' 
-#' Transforms a map file with three columns (marker identifiers, chromosomes and
+#' Transform a map file with three columns (marker identifiers, chromosomes and
 #' positions in cM) into MapMaker format.
 #' 
 #' @param map Three columns \code{data.frame} with: 1) \code{character}

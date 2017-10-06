@@ -4,7 +4,7 @@
 
 #' Missing value for marker or genotype
 #' 
-#' Returns markers or genotypes with a missing rate higher than the
+#' Identify markers or genotypes with a missing rate higher than the
 #' specified \code{threshold}.
 #' 
 #' @param mk.mat \code{Character} marker score \code{matrix} with genotype as

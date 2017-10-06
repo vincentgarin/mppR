@@ -5,27 +5,20 @@
 
 #' ABH assignment per cross with heterozygous or missing parents
 #' 
-#' Attributes ABH or NA (missing) code to the offspring according to the scores
-#' of parents 1 and 2 of each cross when parents have markers with heterozygous
-#' scores.
+#' Transform offspring genotype scores into A, B, H or NA (missing) according
+#' to the scores of parents 1 and 2 of each cross when parents have markers with
+#' heterozygous scores.
 #' 
-#' The function uses the same assignement rules as \code{\link{cross_ABH}}.
-#' It takes successively the parents of the different cross as
-#' reference and assign the following scores: "A" if the offspring score is
-#' equivalent to parent 1; "B" if it is equivalent to parent 2; "H" if it is
-#' heterozygous. The function attributes NA for missing when: 1) the offspring
-#' score is missing; 2) the two parents have the same score; or
-#' 3) when at least one parental score is missing.
-#' 
-#' If a parent score is heterozygous or missing, the assignment rules are the
-#' following. If the two parents are heterozygous or one parent is heterozygous
-#' and the other missing, the offspring get NA since the parental origin can not
-#' be inferred with certainty. If the on parent is heterozygous or missing and
-#' the second parent is homozygous, the function looks at offspring segregating
-#' pattern to try to infer which allele was transmitted by the heterozygous
-#' parent. If this is possible we consider the heteroxzygous parent as
-#' homozygous for the transmitted allele and use this allele score for ABH
-#' assignment. 
+#' For marker without heterozygous parent scrores, the assignment rules is the
+#' same as in \code{\link{cross_ABH}}. If a parent score is heterozygous or
+#' missing, the assignment rules are the following. If the two parents are
+#' heterozygous or one parent is heterozygous and the other missing, the
+#' offspring get NA since the parental origin can not be inferred with certainty.
+#' If one parent is heterozygous or missing and the second parent is
+#' homozygous, the function looks at offspring segregating pattern to try to
+#' infer which allele was transmitted by the heterozygous parent. If this is
+#' possible we consider the heteroxzygous parent as homozygous for the
+#' transmitted allele and use this allele score for ABH assignment. 
 #' 
 #' @param par.sc \code{Character} marker scores \code{matrix} of the
 #' parents of the different cross. \strong{The rownames
@@ -39,15 +32,14 @@
 #' 
 #' @param cross.ind \code{Character} vector with the same length as the number
 #' of offspring genotypes which specifies to which cross each offspring genotype
-#' belong.
+#' belongs.
 #' 
 #' @param par.per.cross Three columns \code{Character matrix} specifying :
-#' 1) the cross indicators (\strong{In the same order as they appear in
-#' \code{cross.ind}}); 2) the parents 1 identifiers of the crosses;
-#' 3) the parents 2 identifiers of the crosses. \strong{The cross indicators
-#' must be  similar to the one used in the arguement \code{cross.ind}.
-#' The list of parent identifiers must be the same to the rownames of
-#' the argument \code{par.sc}.}
+#' 1) the cross indicators (\strong{The cross indicators must be  similar to
+#' the one used in \code{cross.ind} and appear in the same order}); 2) the
+#' parents 1 identifiers of the crosses; 3) the parents 2 identifiers of the
+#' crosses. \strong{The list of parent identifiers must be similar to the
+#' rownames of the argument \code{par.sc}}.
 #' 
 #' @return Return:
 #' 
@@ -62,10 +54,11 @@
 #' 
 #' @examples
 #' 
+#' # Genotypes
 #' data("USNAM_geno")
 #' geno <- USNAM_geno
 #' 
-#' # Remove marker for which parents are monomorphic
+#' # Remove markers for which parents are monomorphic
 #' par.mono <- QC_MAF(mk.mat = geno[1:6, ])
 #' geno <- geno[, -which(par.mono == 0)]
 #' 
@@ -75,7 +68,7 @@
 #' # Offspring scores
 #' off.sc <- geno[7:506, ]
 #' 
-#' # Cross.indicator
+#' # Cross indicator
 #' cross.ind <- substr(rownames(geno)[7:506], 1, 4)
 #' 
 #' # Parent of the crosses matrix

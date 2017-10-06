@@ -19,15 +19,15 @@ Such a profile can be obtained using a \code{window} larger than the longer
 chromosome.}
 
 \item{drop}{\code{numeric} -log10(p-value) drop value at the limits of the
-interval. Default value = 1.5.}
+interval. Default = 1.5.}
 }
 \value{
 Return:
 
 \item{CI }{\code{data.frame} with the following columns: 1) QTL marker or
 in between position names; 2) chromosomes; 3) QTL positions in cM;
-4) inferior marker or inbetween position names; 5) inferior positions in cM;
-6) superior marker or inbetween position names; 7) superior positions in cM;
+4) inferior marker or in between position names; 5) inferior positions in cM;
+6) superior marker or in between position names; 7) superior positions in cM;
 8) ranges in cM.}
 }
 \description{

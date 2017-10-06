@@ -6,23 +6,21 @@
 #' 
 #' Performs a backward elimination using a list of given QTLs positions. These
 #' position can have different type of QTL effects (cross-specific, parental,
-#' ancestral or bi-allelic). The positions with a p-value above the significance
-#' level \code{alpha}, are successively removed.
+#' ancestral or bi-allelic).
 #' 
 #' The function starts with all QTL positions in the model and test the inclusion
-#' of each position as the last in the model. If all position p-value are below
+#' of each position as the last in the model. If all position p-values are below
 #' \code{alpha} the procedure stop. If not the position with the highest p-value
-#' is remove and the procedure continue until there are no more position with 
-#' a p-value below \code{alpha}.
+#' is remove and the procedure continue until there is no more unsignificant
+#' position.
 #' 
-#' \strong{WARNING!} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #' 
 #' @param mppData An IBD object of class \code{mppData}
 #' See \code{\link{mppData_form}} for details. Default = NULL.
@@ -31,15 +29,15 @@
 #' wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
 #' be strictly the same as the one of \code{mppData}.} Default = NULL.
 #' 
-#' @param QTL Vector of \code{character} markers or inbetween marker positions
+#' @param QTL Vector of \code{character} markers or in between marker positions
 #' names. Default = NULL.
 #' 
 #' @param Q.eff \code{Character} vector indicating for each QTL position the
-#' type of QTL effect among: "cr", "par", "anc" and "biall". For details look at
-#' \code{\link{mpp_SIM}}.
+#' type of QTL effect among: "cr", "par", "anc" and "biall". For details look
+#' at \code{\link{mpp_SIM}}.
 #'
 #' @param par.clu Required argument if the user wants to allow QTLs with an
-#' ancestral effect. \code{interger matrix} representing the results of a parents
+#' ancestral effect. \code{Interger matrix} representing the results of a parents
 #' genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
@@ -62,18 +60,15 @@
 #' 
 #' @return Return:
 #' 
-#' \item{QTL }{Object of class \code{QTLlist}. It is a \code{data.frame}
-#' with four columns containing information on the QTL candidates : marker or
-#' added position names, chromosome indicator, position in centi-Morgan,
-#' -log10(p-val) and the type of QTL effect.}
-#' 
 #' \item{QTL }{\code{Data.frame} of class \code{QTLlist} with six columns :
 #' 1) QTL marker or in between position names; 2) chromosomes;
-#' 3) Interger position indicators on the chromosome;
+#' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; 5) -log10(p-values), and 6) type of QTL effect.}
 #'  
 #' @author Vincent Garin
 #' 
+#' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
+#' \code{\link{USNAM_parClu}}
 #' 
 #' @examples
 #' 

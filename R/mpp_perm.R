@@ -4,46 +4,43 @@
 
 #' QTL significance threshold by permutation
 #'
-#' Determination of the null distribution of the QTL significance threshold for
-#' a MPP QTL analysis using permutation test (Churchill and Doerge, 1994).
-#' For more details about the different possible models and their assumptions
-#' see \code{\link{mpp_SIM}} documentation.
+#' Determination of an empirical null distribution of the QTL significance
+#' threshold for a MPP QTL analysis using permutation test
+#' (Churchill and Doerge, 1994).
 #' 
 #' Performs N permutations of the trait data and
 #' computes each time a genome-wide QTL profile. For every run, it stores the
 #' highest -log10(p-val). These values can be used to build a null distribution
 #' for the QTL significance thershold. Quantile values can be determined from
-#' the previous distribution.
+#' the previous distribution. For more details about the different possible
+#' models and their assumptions see \code{\link{mpp_SIM}} documentation.
 #' 
 #' \strong{WARNING!(1)} The computation of \code{mpp_perm()} function using mixed
 #' models (all models with \code{VCOV} different than \code{"h.err"})
-#' is technically possible but can be irrealistic
-#' in practice due to a reduced computer power. Since a mixed model is computed at
-#' each single position it can take a lot of time. From our estimation it can take
-#' between 20 to 50 times more time than for linear models. We advice to compute
+#' is technically possible but can be irrealistic in practice due to a reduced
+#' computer power. Since a mixed model is computed at each single position it
+#' can take a lot of time. From our estimation it can take between 20 to 50
+#' times more time than for the linear model (HRT). We advice to compute
 #' threshold with the HRT (linear) model and use it for the mixed model as well.
 #' 
-#' \strong{WARNING!(2)} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. The consequence of
-#' this is that part of the results of the CV procedure can not be produced.
-#' These will be replaced by 0 values.
-#' 
-#' 
+#' \strong{WARNING!(2)} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #'
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be

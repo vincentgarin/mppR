@@ -13,8 +13,8 @@ See \code{\link{mppData_form}} for details.}
 \item{...}{further arguments passed to or from other methods.}
 }
 \description{
-S3 \code{summary} method for oject of class \code{mppData}. The summary of
-the map information only list the marker and not the added in between
+S3 \code{summary} method for object of class \code{mppData}. The summary of
+the map information lists only the marker and not the added in between
 positions.
 }
 \examples{

@@ -4,11 +4,11 @@
 
 #' Tag problematic MAF
 #' 
-#' Detects markers with problematic minor allele frequency (MAF)
-#' within crosses. The function returns a logical vector specifying if for
-#' the considered marker at least one within cross MAF is bellow the
-#' \code{MAF.lim} values. If \code{tag.mono = FALSE}, the within cross
-#' monomorphic marker are not considered as problematic.
+#' Detect markers with problematic minor allele frequency (MAF)
+#' within crosses. 
+#' 
+#' If \code{tag.mono = FALSE}, the within cross monomorphic markers are not
+#' considered as problematic.
 #' 
 #' @param MAF Object of class \code{mafRes} obtained with the function
 #' \code{\link{QC_MAF}} using a non null \code{cross.ind} argument.

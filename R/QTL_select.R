@@ -1,6 +1,6 @@
-########################################################################
-# QTL_select (modification of a function from the Biometris pipeline) #
-########################################################################
+##############
+# QTL_select #
+##############
 
 #' QTL candidates selection
 #' 
@@ -8,18 +8,15 @@
 #' 
 #' The function select QTL positions that are above the given
 #' \code{threshold} per chromosome. Once a position has been selected, and
-#' exlusion
-#' \code{window} is set around that position. Positions falling into this
-#' region will not be candidate anymore. The search continue until there is no
-#' more candidate position.
+#' exlusion \code{window} is set around that position. Positions falling into
+#' that region will not be candidate anymore. The search continue until there
+#' is no more candidate position above the \code{threshold}.
 #' 
-#' @param Qprof Object of class \code{QTLprof} returned by the function
-#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}. 
+#' @param Qprof Object of class \code{QTLprof} returned by the function 
+#' \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}} or \code{\link{MQE_CIM}}. 
 #' 
 #' @param threshold \code{Numeric} value representing -log10(p-value) threshold
-#' above which a position can be considered as a QTL candidate. Significance
-#' threshold values can be obtained by permutation using \code{\link{mpp_perm}}
-#' function. Default = 3.
+#' above which a position can be considered as a QTL candidate. Default = 3.
 #' 
 #' @param window \code{Numeric} value in centi-Morgan representing the minimum
 #' distance between two selected positions. Default = 20.
@@ -31,7 +28,7 @@
 #' 
 #' \item{QTL }{\code{Data.frame} of class \code{QTLlist} with five columns :
 #' 1) QTL marker or in between position names; 2) chromosomes;
-#' 3) Interger position indicators on the chromosome;
+#' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-values).}
 #' 
 #' @seealso \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}}, \code{\link{mpp_perm}}
@@ -68,6 +65,7 @@ QTL_select <- function(Qprof, threshold = 3, window = 20, verbose = TRUE) {
   ##################################
   
   stopifnot(inherits(Qprof, "QTLprof"))
+  
   
   # 2. QTL selection procedure
   ############################
@@ -120,7 +118,7 @@ QTL_select <- function(Qprof, threshold = 3, window = 20, verbose = TRUE) {
   if(is.null(QTL)){
     
     if(verbose){
-    message("No position has been selected as QTL candidate.")
+      message("No position has been selected as QTL candidate.")
     }
     
     return(QTL)

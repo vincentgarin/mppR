@@ -4,8 +4,8 @@
 
 #' Minor allele frequency
 #' 
-#' Computes minor allele frequency (MAF) at the whole population and
-#' within crosses.
+#' Compute minor allele frequency (MAF) at the whole population and
+#' within crosses if a cross indicator vector is provided to \code{cross.ind}.
 #' 
 #' @param mk.mat \code{Character} marker score \code{matrix} with genotypes as
 #' row and markers as column. \strong{Rows and columns names must be the genotype
@@ -14,7 +14,7 @@
 #' GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}
 #' 
 #' @param cross.ind \code{Character} vector indicating to which cross each
-#' genotype belong. If \code{cross.ind = NULL}, the function do not consider cross
+#' genotype belongs. If \code{cross.ind = NULL}, the function do not consider cross
 #' subdivisions and only calculate MAF at the population level. Default = NULL.
 #' 
 #' @param parallel \code{Logical} value specifying if the function should be

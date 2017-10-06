@@ -2,7 +2,7 @@
 % Please edit documentation in R/design_connectectivity.R
 \name{design_connectivity}
 \alias{design_connectivity}
-\title{Determines the connected parts of a design}
+\title{Connected parts of a MPP design}
 \usage{
 design_connectivity(par.per.cross, plot.des = TRUE, output.loc = NULL)
 }
@@ -25,8 +25,8 @@ If \code{plot.des = TRUE} and \code{output.loc} has been specified. A plot
 of the graph (con_plot.pdf) will be saved at the specified location.
 }
 \description{
-Uses the metod of Weeks and Williams (1964) and the package igraph to
-determine connected parts of the design.
+Determine the connected parts of a MPP design using the method of Weeks and
+Williams (1964) and the package igraph.
 }
 \examples{
 

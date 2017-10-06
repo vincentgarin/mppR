@@ -4,24 +4,24 @@
 
 #' Cross validation partition
 #' 
-#' Makes a partition of the genotype indicators for a single MPP QTL analysis
-#' cross-validation (CV) run. The genotype indicators are randomly assigned to
-#' k subsets (folds). The function returns a list of k partitions containing one
-#' vector with the indices of the training set and another with the genotypes
-#' indices of the validation set. Each of the k partition is sucessively used as
-#' validation set. The rest of the data going to the training set.
+#' Partition the genotype indices into training and validation sets for
+#' cross-validation (CV).
+#' 
+#' The genotype indices are randomly assigned within cross to k subsets (folds).
+#' Then each subset is used once as validation set, the remaining data go in the
+#' training set.
 #' 
 #' @param cross.ind \code{Character} vector with the same length as the number
-#' of genotypes which specifies to which cross each genotype belong.
+#' of genotypes which specifies to which cross each genotype belongs.
 #' 
 #' @param k \code{Numeric} value representing the number of subsets (fold) into
 #' which data are spread within cross. Default = 5.
 #' 
 #' @return Return:
 #' 
-#' \item{fold}{\code{List} of k lists (one for each fold). Each fold list contain two
-#' vectors with genotypes indices of the training set (\code{$train.set}) and
-#' the one of the validation set (\code{$val.set}).}
+#' \item{fold}{\code{List} of k lists (one for each fold). Each fold list
+#' contains two vectors with genotypes indices of the training (\code{$train.set}) and
+#' the validation set (\code{$val.set}).}
 #' 
 #' 
 #' @author Vincent Garin

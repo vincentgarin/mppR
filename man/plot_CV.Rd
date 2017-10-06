@@ -12,7 +12,7 @@ plot_CV(CV.res, main = "CV QTL profiles")
 \item{main}{Title of the graph. Default = "CV QTL profiles".}
 }
 \description{
-Plots cross-validations QTL profiles using transparency. The
+Plot cross-validation (CV) QTL profiles using transparency. The
 black straight lines are proportional to the number of time a position has
 been detected during the entire CV process. Transparency plot are based on
 an idea by Pieter Jongsma (see reference).

@@ -37,7 +37,7 @@ Possible values are "kernel.const", "kernel.exp", "kernel.gauss",
 "kernel.unif", "kernel.laplace" or "kernel.null". default = "kernel.unif".}
 
 \item{step.size}{\code{Numeric} value. If the length between two marker
-position of consensus.map is bigger than step.size then clusthaplo will
+positions of consensus.map is bigger than step.size then clusthaplo will
 caculate a clustering results of the parental genotype at step.size
 interval(s). The default value is set to 10000. This means that no ancestral
 class will be inferred in between position of the consensus map.}
@@ -57,7 +57,7 @@ One of "equi" or "mosaic". Default = "equi".}
 for the training (only relevant for "mosaic"). Default = 50.}
 
 \item{simulation.Nrep}{The number of replicates to simulate for the training.
-default value = 3.}
+Default = 3.}
 
 \item{threshold.quantile}{The quantile to use to select the threshold
 automatically. It must be a plain integer xx with 80 <= xx <= 100.
@@ -83,16 +83,16 @@ ancestral group.}
 
 \item{av.cl }{Average number of cluster. }
 
-Plot of the ancestral haplotypes are saved in a folder at the location
-specified in \code{plot.loc} if \code{plot = TRUE}.
+If \code{plot = TRUE}, plot of the ancestral haplotypes are saved in a folder
+at the location specified in \code{plot.loc}.
 }
 \description{
-Local clustering of the parental lines obtained using the R package
-clushaplo (Leroux et al. 2014).
+Local clustering of the parental lines done by the R package clushaplo
+(Leroux et al. 2014).
 }
 \details{
-This function is a wrapper of \code{clusthaplo} package functions.
-It can only be run after package Clusthaplo has been installed.
+This function is a wrapper for \code{clusthaplo} R package functions.
+It can only be run after \code{clusthaplo} has been installed.
 It can be found there:
 \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
 visualisation of ancestral haplotype blocks can be obtained setting
@@ -100,7 +100,8 @@ visualisation of ancestral haplotype blocks can be obtained setting
 in \code{plot.loc}. For the moment, due to the difficulty to have the
 package \code{mppR}, \code{clusthaplo} and \code{RHmm} functioning
 simultaneously, the clutering based on hidden Markov model is unavailable.
-Therefore the default method for clustering is threshold (Leroux et al. 2014).
+Therefore the default method for clustering is \code{"threshold"}
+(Leroux et al. 2014).
 }
 \examples{
 

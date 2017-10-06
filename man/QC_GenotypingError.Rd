@@ -7,8 +7,8 @@
 QC_GenotypingError(mk.mat, parallel = FALSE, cluster = NULL)
 }
 \arguments{
-\item{mk.mat}{\code{Character} marker score \code{matrix} with genotype as
-row and marker as column. \strong{Rows and columns names must be the genotype
+\item{mk.mat}{\code{Character} marker scores \code{matrix} with genotypes as
+row and markers as column. \strong{Rows and columns names must be the genotype
 and marker identifiers respectively. Marker scores must be coded using one
 letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
 GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}}
@@ -26,7 +26,7 @@ Return:
 more than two alleles.}
 }
 \description{
-Checks if markers present more than two alleles.
+Check if markers have more than two alleles.
 }
 \examples{
 

@@ -4,19 +4,16 @@
 
 #' Multi-QTL effect MPP analysis
 #' 
-#' This function aim at building multi-QTL models in which different QTL effects
+#' Build multi-QTL effects (MQE) models in which different QTL effects
 #' (cross-specific, parental, ancestral or bi-allelic) can be assumed at
-#' different loci. The possible QTL effect that the user want to allow must be
-#' specified in \code{Q.eff}. Once the model has been determined it also computes
-#' the QTL genetic effects per cross or parent and global and partial R squared
-#' of the detected QTLs.
+#' different loci.
 #' 
-#' 
-#' The procedure is the following:
+#' The possible QTL effect that the user wants to allow must be
+#' specified in \code{Q.eff}. The procedure is the following:
 #' 
 #' \enumerate{
 #' 
-#' \item{forward regression to determine a multi-QTL model with different
+#' \item{Forward regression to determine a MQE model with different
 #' possible assumptions for the QTL effect at different loci. The function use
 #' \code{\link{MQE_forward}}.}
 #' 
@@ -41,14 +38,13 @@
 #' between 20 to 50 times more time than for linear models. If the number of
 #' detected QTL is supposed to be small (until 5) it could still be feasible.
 #' 
-#' \strong{WARNING! (2)} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!(2)} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #' 
 #' @param pop.name \code{Character} name of the studied population.
 #' Default = "MPP_MQE".
@@ -64,11 +60,11 @@
 #' be strictly the same as the one of \code{mppData}.} Default = NULL.
 #' 
 #' @param Q.eff \code{Character} vector of possible QTL effects the user want to
-#' test. Elements of Q.eff can be "cr", "par", "anc" or "biall". For details
-#' look at \code{\link{mpp_SIM}}.
+#' test. Elements of \code{Q.eff} can be "cr", "par", "anc" or "biall".
+#' For details look at \code{\link{mpp_SIM}}.
 #' 
 #' @param par.clu Required argument if the user wants to allow QTLs with an
-#' ancestral effect. \code{interger matrix} representing the results of a parents
+#' ancestral effect. \code{Interger matrix} representing the results of a parents
 #' genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
@@ -88,24 +84,21 @@
 #' 
 #' @param threshold \code{Numeric} value representing the -log10(p-value)
 #' threshold above which a position can be considered as significant.
-#' Significance threshold values can be obtained by permutation using
-#' \code{\link{mpp_perm}} function. Default = 3.
+#' Default = 3.
 #' 
-#' @param window \code{Numeric} value in centi-Morgan representing the distance
-#' on the left an right of a cofactor position where it is not included in the
-#' model. Default value = 20.
+#' @param window \code{Numeric} distance (cM) on the left and the right of a
+#' cofactor position where it is not included in the model. Default = 20.
 #' 
 #' @param backward \code{Logical} value. If \code{backward = TRUE},
 #' the function performs
 #' a backward elimination on the list of selected QTLs. Default = TRUE.
 #' 
 #' @param alpha.bk \code{Numeric} value indicating the significance level for
-#' the backward elimination. Terms with p-values above this value will
-#' iteratively be removed. Default = 0.05.
+#' the backward elimination. Default = 0.05.
 #' 
 #' @param plot.MQE \code{Logical} value. If \code{plot.MQE = TRUE},
-#' the function will make a plot of the last run of the MQE model
-#' determination using function \code{\link{MQE_plot}}. Default = FALSE.
+#' the function will plot the last run of the MQE model determination using
+#' \code{\link{MQE_plot}}. Default = FALSE.
 #' 
 #' @param parallel \code{Logical} value specifying if the function should be
 #' executed in parallel on multiple cores. To run function in parallel user must
@@ -213,6 +206,8 @@
 #'                 mppData_bi = mppData_bi, Q.eff = c("par", "anc", "biall"),
 #'                 par.clu = par.clu, parallel = TRUE, cluster = cluster,
 #'                 output.loc = my.loc)
+#'                 
+#'  stopCluster(cl = cluster)
 #'                  
 #'                 
 #' }

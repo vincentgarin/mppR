@@ -1,13 +1,13 @@
 Package: mppR
 Type: Package
 Title: Multi-parent population QTL analysis
-Version: 1.0.2
+Version: 1.0.4
 Date: 2015-07-15
 Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb,
     dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
 Maintainer: Vincent Garin <vincent.garin@wur.nl>
-Description: R package to sort data from multi-parent populations (MPP), perform
-    QTL detection and visualize the results.
+Description: R package to process data from multi-parent populations (MPP) QTL
+    experiment, perform QTL detection, and visualize the results.
 License: GPL (>=2)
 Imports:
     ggplot2,

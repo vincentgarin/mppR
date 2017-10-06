@@ -17,7 +17,7 @@ names of the matrix.}}
 \value{
 Return:
 
-\item{new.mk.mat}{Marker matrix with only the common genotypes.}
+\item{new.mk.mat}{Marker \code{matrix} with only the common genotypes.}
 
 \item{new.pheno}{Phenotypic data of the common genotypes.}
 
@@ -28,7 +28,7 @@ the phenotypic data.}
 the marker matrix.}
 }
 \description{
-Determines which genotypes are common between the genotypes marker matrix
+Determine which genotypes are common between the genotype marker matrix
 and the phenotypic data. Return the marker matrix and the phenotypic values
 that correspond to these genotypes.
 }
@@ -39,10 +39,10 @@ data(USNAM_geno)
 
 rownames(USNAM_pheno) <- USNAM_pheno$genotypes
 
-# the 6 parents of the crosses were not phenotyped
+# The 6 parents of the crosses were not phenotyped
 match <- QC_matchGeno(mk.mat = USNAM_geno, pheno = USNAM_pheno)
 
-# get the consensus phenotype data and genotype matrix
+# Get the consensus phenotype data and genotype matrix
 new.mk.mat <- match$new.mk.mat
 new.pheno <- match$new.pheno
 rm(match)

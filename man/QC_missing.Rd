@@ -28,7 +28,7 @@ genotype names; 2) column or row positions in the matrix; and
 3) The percentages of missing values.}
 }
 \description{
-Returns markers or genotypes with a missing rate higher than the
+Identify markers or genotypes with a missing rate higher than the
 specified \code{threshold}.
 }
 \examples{

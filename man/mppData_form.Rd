@@ -11,34 +11,30 @@ mppData_form(geno.off, geno.par = NULL, IBS = FALSE, IBS.format = "ATCG",
 }
 \arguments{
 \item{geno.off}{\code{Character} or \code{Numeric matrix} representing
-genotype marker scores
-with genotypes as row and markers as column. For cross-specific, parental and
-ancestral models (\code{IBS = FALSE}) marker matrix in ABH format.
-\strong{The ABH assignement must be done per cross. "A"("B") score means that
-at the considered position the genotype received its allele from parent 1 (2)
-of the cross. "H" means that the marker is heterozygous and NA or "-" that it
-is missing or undertermined. This can be done using \code{\link{cross_ABH}}.}
+genotype marker scores with genotypes as row and markers as column. For
+cross-specific, parental and ancestral models (\code{IBS = FALSE}) marker
+data must be in ABH format (for details see \code{\link{cross_ABH}}).
 
-For bi-allelic models (\code{IBS = TRUE}), the user can provide imputed data.
-The marker scores in \code{geno.off} can be coded using letters using one
-letter for each allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
-GA, GC, GT, TA, TC, TG (\code{IBS.format = "ATCG"}). \code{geno.off} marker
-score can also be already coded in 0, 1, 2 format (\code{IBS.format = "012"}).
-Missing value must be coded \code{NA}.
+For bi-allelic models (\code{IBS = TRUE}), the marker scores in
+\code{geno.off} can be coded using letters using one letter for each allele.
+For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG
+(\code{IBS.format = "ATCG"}). \code{geno.off} marker score can also be
+already coded in 0, 1, 2 format (\code{IBS.format = "012"}). 
 
 For both type of mppData object (bi-allelic or not), \strong{the row names
-(rownames(geno.off)) must be the genotypes identifiers similars to the one of
-trait argument. The column names (colnames(geno.off)) must be the marker
-identifiers similar to the first column of the map.}}
+must be the genotypes identifiers similars to the one of
+trait argument. The column names must be the marker
+identifiers similar to the first column of the map. Missing value
+must be coded \code{NA}.}}
 
-\item{geno.par}{Optional argument used for complementary information in the
-results for the QTL genetic effects.\code{geno.par} is a
-\code{character matrix} representing marker
-scores of the parents with genotypes as row and markers as column. 
-\strong{The column names must be the as the marker list in map and geno.off
-arguments. The rownames must represent the parents identifiers and be
-identical to the parent list given in par.per.cross argument}.
-If \code{IBS.format = "012"}, \code{geno.par} is set to NULL. Default = NULL.}
+\item{geno.par}{Optional argument used as indication in the results for the
+QTL genetic effects. \code{geno.par} is a \code{character matrix}
+representing the marker scores of the parents with genotypes as row and
+markers as column. \strong{The column names must be similar as the marker
+list in \code{map} and \code{geno.off} arguments. The rownames must represent
+the parents identifiers and be identical to the parent list given in
+\code{par.per.cross}}. If \code{IBS.format = "012"}, \code{geno.par} is
+set to NULL. Default = NULL.}
 
 \item{IBS}{\code{Logical} value. Put \code{IBS = TRUE} if you want to
 obtain an IBS \code{mppData} object for the bi-allelic model.
@@ -46,61 +42,51 @@ Default = FALSE.}
 
 \item{IBS.format}{\code{Character} indicator for the format of \code{geno.off}
 marker score for an IBS \code{mppData} object. \code{IBS.format = "ATCG"}, if
-marker scores are coded with one letter per allele.
-\code{IBS.format = "012"}, if marker scores are coded in 0, 1, 2 format
-corresponding to the number of copy of the less frequent allele.
-Default = "ATCG".}
+marker scores are coded with one letter per allele. \code{IBS.format = "012"},
+if marker scores are coded in 0, 1, 2 format. Default = "ATCG".}
 
-\item{type}{\code{Character} indicator for the type of population analysed.
-type = "F" for Fn (F cross n gernerations), type = "bc" for BCn (backcross
-n generations).  Use nb.gen argument to secify the number of generations
-of selfing or back-crossing. Type = "dh" for double haploids and type = "RIL"
+\item{type}{\code{Character} indicator for the type of population analysed:
+type = "F" for Fn (F cross n gernerations); type = "BC" for BCn (backcross
+n generations); type = "DH" for double haploids; and type = "RIL"
 for recombinant inbred lines. For RIL type specify if the population was
-obtain using selfing or sibling mating using type.mating argument.
-If type = "RIL" or "dh" heterozygous marker score of the geno.off argument must
-be set as missing ("-" or NA).}
+obtain using selfing or sibling mating using \code{type.mating}.
+If type = "RIL" or "DH", heterozygous marker scores of the geno.off argument
+must be set as missing (NA).}
 
-\item{nb.gen}{\code{Numeric} integer representing the number of generations
-for F population and backcross. For example nb.gen = 2 for F2 or nb.gen = 1 for
-single backcross BC. Default = NULL.}
+\item{nb.gen}{\code{Numeric} integer representing the number of F and
+backcross generations. For example nb.gen = 2 for F2 or nb.gen = 1 for
+single backcross. Default = NULL.}
 
-\item{type.mating}{Character specifying the type of mating for a RIL population.
-If type.mating = "selfing" selfing, if type.mating = "sib.mat" sibling mating.
+\item{type.mating}{\code{Character} specifying for a RIL population if it was
+obtained by selfing ("selfing") or by sibling mating ("sib.mat").
 Default = NULL.}
 
 \item{map}{Three columns \code{data.frame} with: 1) marker or in between
 position identifiers; 2) chromosome; 3) positions in centi-Morgan.
-The marker identifiers must be identical to the column names of the maker
-matrix (argument geno.off).}
+\strong{The marker identifiers must be identical to the column names of
+\code{geno.off}}.}
 
-\item{trait}{two columns \code{data.frame} with : 1) \code{character}
+\item{trait}{Two columns \code{data.frame} with : 1) \code{character}
 genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
-identifiers must be identical to the rownames of the  marker matrix
-(argument \code{geno.off}).}}
+identifiers must be identical to the rownames of \code{geno.off}).}}
 
 \item{cross.ind}{\code{Character} vector with the same length as the number of
-genotypes which specifies to which cross each genotype belong.}
+genotypes which specifies to which cross each genotype belongs.}
 
-\item{par.per.cross}{Three columns \code{character matrix} specifying :
-1) the cross indicators (\strong{In the same order as they appear in
-\code{cross.ind}}); 2) the parents 1 identifiers of the crosses;
-3) the parents 2 identifiers of the crosses. \strong{The alleles coming from
-parent 1 (2) within each cross correspond to the scores A (B) in argument
-\code{geno.off} for a non bi-allelic model. The cross indicators must be 
-similar to the one used in the cross.ind argument. The list of parent
-identifiers must be the same to the rownames of par.sc argument.}}
+\item{par.per.cross}{Three columns \code{Character matrix} specifying :
+1) the cross indicators (\strong{The cross indicators must be  similar to
+the one used in \code{cross.ind} and appear in the same order}); 2) the
+parents 1 identifiers of the crosses; 3) the parents 2 identifiers of the
+crosses. \strong{The list of parent identifiers must be similar to the
+rownames of \code{geno.par}}.}
 
 \item{step}{\code{Numeric} value representing the maximum distance (in cM)
 between positions at which the genotype probabilities are calculated.
-Parameter for the function calc.genoprob().Definition of this parameter
-from R/qtl package (Broman et al. 2009)). Default value = 10000 (the function
-do not add position in between markers).}
+Default value = 10000 (the function do not add position in between markers).}
 
 \item{error.prob}{\code{Numeric} value for assumed genotyping error rate
-used in
-the calculation of the penetrance Pr(observed genotype | true genotype).
-Parameter for the function \code{calc.genoprob()}. Definition of this parameter
-from R/qtl package (Broman et al. 2009). Default = 0.0001.}
+used in the calculation of the penetrance Pr(observed genotype | true genotype).
+Default = 0.0001.}
 
 \item{map.function}{\code{Character} expression specifying the type of map
 function used to infer the IBD probabilities. possibility to choose
@@ -110,12 +96,10 @@ Parameter for the function \code{calc.genoprob()}. Default = "haldane".}
 \item{stepwidth}{\code{Character} expression indicating if the intermediate
 points should be fixed ("fixed") or if the algorithm should insert a minimal
 number of points in between positions ("max"). If stepwidth = "max" the
-maximum distance between points is step. Stepwidth correspond to the
-parameter passed to the function \code{calc.genoprob()}.
-Default = "max".}
+maximum distance between points is step. Default = "max".}
 
 \item{dir}{Path where a .csv file Cross_object.csv will be stored to be
-used for cross object formation. By default the function uses the current
+used for cross object formation. By default, the function uses the current
 working directory.}
 }
 \value{
@@ -128,9 +112,9 @@ bi-allelic model (\code{IBS = TRUE}), marker score matrix recoded
 as 0, 1, 2 according to the copies number of the most frequent allele.}
 
 \item{allele.ref}{If \code{IBS = TRUE}, \code{character matrix} with
-reference allele scores. The first row represent the allele with the highest
-MAF, the second, the one with the lowest and the two other lines represent
-the heterozygous scores.}
+reference allele scores. The first row represents the allele with the highest
+MAF, the second, the one with the lowest and the two other the heterozygous
+scores.}
 
 \item{geno.id}{ \code{Character} vector of genotpes identifiers.}
 
@@ -141,12 +125,12 @@ the IBD computation, these position are filled as "-".}
 
 \item{map}{\code{Data.frame} with four columns: 1) Marker or in between
 position names; 2) chromosomes; 3) position numbers on the chromosome;
-4) Positions in cM.}
+4) positions in cM.}
 
 \item{trait}{\code{Data.frame} with phenotypic values.}
 
 \item{cross.ind}{\code{Character} vector specifying to which cross each
-genotype belong.}
+genotype belongs.}
 
 \item{ped.mat}{Four columns \code{data.frame}: 1) the type of genotype:
 "offspring" for the last genration and "founder" for the genotypes above
@@ -167,44 +151,40 @@ the offspring in the pedigree; 2) the genotype indicator; 3-4) the parent 1
 \item{n.zigo}{\code{Numeric} value Indicating the number of differenct
 genotypes: 2 (AA/BB) or 3 (AA/AB/BB)}
 
-\item{biall}{\code{Logic} value specifying if data are made for a
+\item{biall}{\code{Logical} value specifying if data are made for a
 bi-allelic model}
 }
 \description{
-Form a single data object containing (almost) all data necessary for the MPP
-QTL anlyses.
+Form a single data object to perform MPP QTL anlyses.
 }
 \details{
-\code{mppData_form} is a function that gather into a single data object the
-necessary data for QTL analyses. Two type of \code{mppData} object can be produced.
-The first one (\code{IBS = FALSE}), for cross-specific, parental and
-ancestral models (for details see \code{\link{mpp_SIM}}), calculates
-identical by descent (IBD) probabilities using
-\code{read.cross} and \code{calc.genoprob} functions from the R/qtl package
-(Broman et al. 2009). The results are saved in a cross object. Several types
-of populations are allowed: F-type (F), back-cross (bc), double
-haploid (dh) and recombinant imbred lines (RIL). DH and RIL populations are
-read as back-cross by R/qtl. For these two population types,
-no heterozygosity is allowed. It must be converted into missing.
+\code{mppData_form} combines into a single data object the all the necessary
+data to run QTL analyses except the parent clustering results
+(\code{\link{parent_cluster}}). Two types of \code{mppData} objects can be
+produced. The first one (\code{IBS = FALSE}), for cross-specific, parental and
+ancestral models calculates identical by descent (IBD) probabilities using
+\code{read.cross()} and \code{calc.genoprob()} functions from the R/qtl package
+(Broman et al. 2009). F-type (F), back-cross (BC), double
+haploid (DH) and recombinant imbred lines (RIL) are the allowed population type.
+DH and RIL populations are read as back-cross by R/qtl. For these two
+population types, no heterozygosity is allowed. It must be converted into missing.
 \code{\link{USNAM_mppData}} is an example of an IBD \code{mppData} object.
 
-The second type of \code{mppData} object (\code{IBS = TRUE}) use identical
-by state (IBS) genetic predictors for bi-allelic model. In such case
-genotype marker score are simply translated into 0, 1, 2 format representing
-the copy number of the less frequent allele. For IBS \code{mppData} object,
-the user can provide imputed data for the argument \code{geno.off}. Such an
-imputation can be done using the software Beagle (Browning and Browning,
-2016) within the R package synbreed (Wimmer et al., 2012). For the IBS
-\code{mppData} object,
-the user can provide marker scores in \code{geno.off} using letters
-(1 letter per allele) setting (\code{IBS.format = "ATCG"}) or already in 0,
-1, 2 format (\code{IBS.format = "012"}). \code{\link{USNAM_mppData_bi}} is
+The second type of \code{mppData} objects (\code{IBS = TRUE}) uses identical
+by state (IBS) genetic predictors for bi-allelic model. In such case,
+genotype marker score are transformed into 0, 1, 2 format representing
+the copy number of the least frequent allele. For IBS \code{mppData} objects,
+the user can provide imputed data for the argument \code{geno.off}. Marker
+score imputation can be done using \code{\link{QC_proc}}. The markers scores
+can be provided to \code{geno.off} using letters (1 letter per allele)
+setting (\code{IBS.format = "ATCG"}) or already in 0, 1, 2 format
+(\code{IBS.format = "012"}). \code{\link{USNAM_mppData_bi}} is
 an example of an IBS \code{mppData} object.
 }
 \examples{
  
-# Mpp data for cross parental or ancestral model
-################################################
+# Mpp data for cross, parental or ancestral model
+#################################################
 
 # Genotypes
 data(USNAM_geno)
@@ -245,7 +225,7 @@ data <- mppData_form(geno.off = USNAM_genoABH, geno.par = geno.par,
 
 
 # Mpp data for bi-allelic model
-##############################
+###############################
 
 # Genotypes
 data(USNAM_geno)
@@ -291,18 +271,11 @@ in experimental crosses. Bioinformatics 19:889-890.
 
 Broman, K. W., & Sen, S. (2009). A Guide to QTL Mapping with R/qtl (Vol. 46).
 New York: Springer.
-
-S R Browning and B L Browning (2016) Genotype imputation with millions of
-reference samples. Am J Hum Genet 98:116-126
-
-Wimmer, V., Albrecht, T., Auinger, H. J., & Schon, C. C. (2012). synbreed: a
-framework for the analysis of genomic prediction data using R. Bioinformatics,
-28(15), 2086-2087.
 }
 \seealso{
 \code{\link{cross_ABH}}, \code{\link{mppData_subset}},
-\code{\link{mppData_chgPheno}}, \code{\link{mppData_chgPedigree}},
-\code{\link{mpp_SIM}},
+\code{\link{mppData_chgPheno}}, \code{\link{mppData_mdfPedigree}},
+\code{\link{mpp_SIM}}, \code{\link{parent_cluster}},
 \code{\link{USNAM_mppData}}, \code{\link{USNAM_mppData_bi}}
 }
 \author{

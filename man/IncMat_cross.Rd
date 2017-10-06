@@ -14,10 +14,10 @@ which cross the genotypes belong.}
 Return:
 
 \item{cross.mat}{Cross effect incidence matrix composed of 0 and 1 value
-indicating to which cross each genotype belong}
+indicating to which cross each genotype belongs.}
 }
 \description{
-Forms a cross effect incidence matrix.
+Form a cross effect incidence matrix.
 }
 \examples{
 

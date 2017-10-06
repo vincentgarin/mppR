@@ -14,7 +14,7 @@ letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
 GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}}
 
 \item{cross.ind}{\code{Character} vector indicating to which cross each
-genotype belong. If \code{cross.ind = NULL}, the function do not consider cross
+genotype belongs. If \code{cross.ind = NULL}, the function do not consider cross
 subdivisions and only calculate MAF at the population level. Default = NULL.}
 
 \item{parallel}{\code{Logical} value specifying if the function should be
@@ -41,8 +41,8 @@ population level. \code{NA} if all markers scores are missing.}
 \code{NA} if all markers scores are missing.}
 }
 \description{
-Computes minor allele frequency (MAF) at the whole population and
-within crosses.
+Compute minor allele frequency (MAF) at the whole population and
+within crosses if a cross indicator vector is provided to \code{cross.ind}.
 }
 \examples{
 

@@ -4,32 +4,33 @@
 
 #' Predicted QTL global and partial R squared
 #' 
-#' Computes predicted R squared in a validation set using QTLs detected in a
-#' training set.
+#' Compute predicted R squared in a validation set using QTLs detected in a
+#' training set. These values are corrected by the heritability \code{her}.
 #'
-#' Compute QTLs predicted R squared in a validation set (\code{mppData.vs}).
+#' Compute QTLs predicted R squared in a validation set  (\code{mppData.vs}).
 #' These QTLs have been previously detected in a training set
-#' (\code{mppData.ts}). The global R squared is obtained using the Pearson
-#' squared correlation between the observed trait values in the validation set
-#' (y.vs) and predicted values using estimated QTL effects in the training set
-#' (y.pred.vs = X.vs * B.ts). The correlation can be calculated within cross and
-#' then averaged (\code{within.cross = TRUE}) or at the whole population level.
+#' (\code{mppData.ts}). The global R squared (R2 = cor(y.ts,y.pred.ts)^2) is
+#' obtained using the Pearson squared correlation between the observed trait
+#' values in the validation set (y.vs) and predicted values using estimated QTL
+#' effects in the training set (y.pred.vs = X.vs * B.ts).
+#' 
+#' After that the values are corrected by the general or within cross
+#' heritability \code{her}. By default \code{her = 1} which means that the
+#' R squared represent the proportion of explained phenotypic variance. The
+#' values are returned per cross (\code{R2.cr}) or averaged at the population
+#' level (\code{glb.R2}).
 #' 
 #' Partial R squared statistics are also calculated for each individual position.
-#' Two types or partial R squared are computed. The first one making the
-#' difference between the global R squared and the R squared computed without
-#' the ith position (difference R squared). The second method only uses
-#' the ith QTL for trait values predition (single R squared) (for details
-#' see documentation of the function \code{\link{QTL_R2}}).
+#' The partial R squared are computed by making the difference between the
+#' global R squared and the R squared computed without the ith position.
 #' 
-#' \strong{WARNING!} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #'
 #' @param mppData.ts An object of class \code{mppData} for the training set. See
 #' \code{\link{mppData_form}} for details.
@@ -37,12 +38,12 @@
 #' @param mppData.vs An object of class \code{mppData} for the validation set.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be
@@ -66,21 +67,21 @@
 #'
 #' @param her \code{Numeric} value between 0 and 1 representing the heritability
 #' of the trait. \code{her} can be a single value or a vector specifying each
-#' within cross heritability. \strong{By default, the heritability is set to 1
-#' (\code{her = 1}). This means that the results represent the proportion of
-#' phenotypic variance explained (predicted) in the training (validation) sets.}
+#' within cross heritability. Default = 1.
 #' 
 #' @return Return:
 #' 
 #' \code{List} containing the following objects:
 #'
-#' \item{glb.R2 }{Global predicted R squared of all QTL terms. Doing the
-#' average of the within cross predicted R squared (R2.cr)}
+#' \item{glb.R2 }{Global predicted R squared corrected for the heritability
+#' of all QTL terms. Doing the average of the within cross predicted R squared
+#' (R2.cr)}
 #' 
-#' \item{R2.cr}{Within cross predicted R squared}
+#' \item{R2.cr}{Within cross predicted R squared corrected for the heritability}
 #'
-#' \item{part.R2.diff }{ Vector of predicted partial R squared doing
-#' the difference between the full model and a model minus the ith QTL.}
+#' \item{part.R2.diff }{ Vector of predicted partial R squared corrected
+#' for the heritability doing the difference between the full model and a model
+#' minus the ith QTL.}
 #' 
 #' 
 #' @author Vincent Garin

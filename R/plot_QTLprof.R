@@ -4,18 +4,19 @@
 
 #' plot QTL profile
 #' 
-#' Plots the -log10(p-val) profile of a QTL analysis using the package ggplot2.
-#' The user can pass a list of cofactors or QTL position to the argument
+#' Plots the -log10(p-val) profile of a QTL analysis using package ggplot2.
+#' 
+#' The user can pass a list of cofactors or QTL positions to the argument
 #' \code{QTL}. These positions will be drawn on the graph using dotted lines.
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function
 #' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}, or three columns
-#' \code{numeric matrix} with chromosome, marker position and -log10(p-value).
+#' \code{numeric matrix} with chromosome, marker position and -log10(p-values).
 #' 
 #' @param QTL Optional argument. List of QTL positions. Object of class
 #' \code{QTLlist} representing a list of selected position obtained with the
 #' function \code{\link{QTL_select}} or two columns numeric matrix with the
-#' chromosome and the position in cM. These positions will be indicated on the
+#' chromosome and the position in cM. These positions will be drawn on the
 #' graph. Default = NULL.
 #' 
 #' @param type \code{Character} expression indicating the type of plot should be

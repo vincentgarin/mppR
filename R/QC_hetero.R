@@ -4,7 +4,7 @@
 
 #' Marker heterozigosity rate
 #' 
-#' Calculates marker heterozigosity rate.
+#' Compute marker heterozigosity rate.
 #' 
 #' @param mk.mat \code{Character} marker score \code{matrix} with genotypes as
 #' row and markers as column. \strong{Rows and columns names must be the genotype

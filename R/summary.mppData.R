@@ -4,8 +4,8 @@
 
 #' Print summary of mppData object
 #' 
-#' S3 \code{summary} method for oject of class \code{mppData}. The summary of
-#' the map information only list the marker and not the added in between
+#' S3 \code{summary} method for object of class \code{mppData}. The summary of
+#' the map information lists only the marker and not the added in between
 #' positions.
 #' 
 #' @param object An object of class \code{mppData}.
@@ -54,7 +54,7 @@ summary.mppData <- function(object, ...) {
   
   if(!object$biall){
     
-    #remove the inbetween positions of the map
+    #remove the in between positions of the map
     map <- object$map
     inb.pos.id <- paste0(unique(map$chr), "_loc")
     inb.pos.loc <- data.frame(lapply(X = inb.pos.id,

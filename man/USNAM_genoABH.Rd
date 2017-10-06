@@ -2,10 +2,10 @@
 \alias{USNAM_genoABH}
 \docType{data}
 \title{
-  Reduced genotype data from Maize US-NAM population in ABH format
+  Reduced genotypes data maize US-NAM population ABH format
 }
 \description{
-  Selection of marker and genotypes from the Maize US nested association mapping
+  Selection of marker and genotypes from the maize US nested association mapping
   (NAM) population in ABH format.
 }
 \usage{data(USNAM_genoABH)}

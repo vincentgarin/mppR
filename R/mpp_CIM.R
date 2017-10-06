@@ -4,31 +4,31 @@
 
 #' MPP composite interval maping
 #' 
-#' Computes QTL models using cofactors with different possible assumptions
-#' concerning the number of alleles at the QTL position and the variance
-#' covariance structure (VCOV) of the model. For more details about the
-#' different models, see documentation of the function \code{\link{mpp_SIM}}.
-#' The function returns a -log10(p-value) QTL profile.
+#' Compute QTL models along the genome using cofactors representing other
+#' genetic positions for control.
 #' 
-#' \strong{WARNING!} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' For more details about the different models, see documentation of the
+#' function \code{\link{mpp_SIM}}. The function returns a -log10(p-value) QTL
+#' profile.
+#' 
+#' \strong{WARNING!} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be
@@ -47,13 +47,13 @@
 #' 
 #' @param cofactors Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or inbetween marker positions names.
+#' vector of \code{character} marker or in between marker positions names.
 #' Default = NULL.
 #' 
-#' @param window \code{Numeric} distance on the left an right of a cofactor
-#' position where it is not included in the model. Default = 20.
+#' @param window \code{Numeric} distance (cM) on the left and the right of a
+#' cofactor position where it is not included in the model. Default = 20.
 #' 
-#' @param est.gen.eff \code{Logical} value. if \code{est.gen.eff = TRUE},
+#' @param est.gen.eff \code{Logical} value. If \code{est.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
 #' These results can be ploted with the function \code{\link{plot_genEffects}}
 #' to visualize a genome-wide decomposition of the genetic effects.
@@ -75,7 +75,7 @@
 #' 
 #' \item{CIM }{\code{Data.frame} of class \code{QTLprof}. with five columns :
 #' 1) QTL marker or in between position names; 2) chromosomes;
-#' 3) Interger position indicators on the chromosome;
+#' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-val). And if
 #' \code{est.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
 #' 
@@ -89,12 +89,10 @@
 #' 
 #' @examples
 #' 
-#' # data
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' 
 #' # Cross-specific effect model
 #' #############################
+#' 
+#' data(USNAM_mppData)
 #' 
 #' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err")
 #' 
@@ -125,7 +123,7 @@
 #' # Bi-allelic model
 #' ##################
 #' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err")
+#' data(USNAM_mppData_bi)
 #' 
 #' cofactors <- USNAM_mppData_bi$map[c(15, 63), 1]
 #' 

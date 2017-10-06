@@ -22,7 +22,7 @@ is the parent 1 or A}
 is the parent 2 or B}
 }
 \description{
-Forms the skeleton matrices used to form parental incidence
+Form the skeleton matrices used to form parental incidence
 matrices in parental effect models.
 }
 \examples{

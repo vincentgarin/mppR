@@ -4,35 +4,36 @@
 
 #' MPP Simple Interval Maping
 #' 
-#' Computes single QTL models with different possible assumptions concerning
-#' the number of alleles at the QTL position and the variance covariance
-#' structure (VCOV) of the model. The function returns a -log10(p-value) QTL
-#' profile.
+#' Computes single QTL models along the genome using different models.
 #' 
 #' The implemented models vary according to the number of alleles assumed at the
-#' QTL position (and their origin) and their variance covariance structure.
-#' In both case four assumptions are possible giving a grid of 16 different
-#' models.
+#' QTL position and their origin. Models also assume different variance
+#' covariance structures (VCOV). Four assumptions for the QTL effect and four
+#' for the VCOV give a grid of 16 different models.
 #' 
-#' Concerning the type of QTL effect, the first option a cross-specific QTL
+#' Concerning the type of QTL effect, the first option is a cross-specific QTL
 #' effects model (\code{Q.eff = "cr"}). In this model, the QTL effects are
 #' assumed to be nested within cross which leads to the estimation of one
-#' parameter per cross. Computed with a homogoenous residual variance term
+#' parameter per cross. Computed with an homogoenous residual variance term
 #' (\code{VCOV = "h.err"}), the cross-specific model corresponds to the
-#' disconnected described in Blanc et al. 2006.
+#' disconnected model described in Blanc et al. 2006.
 #' 
 #' A second possibility is the parental model (\code{Q.eff = "par"}). The
-#' parental model assumes 1 QTL effect (allele) per parent that are independent
+#' parental model assumes one QTL effect (allele) per parent that are independent
 #' from the genetic background. This means that QTL coming form parent i has the
-#' same effect in all crosses where this parent is used. This model is suppose to
-#' allow to have better estimates of the QTL due to larger sample size due to
-#' shared parents. If the number of parents is lower than the number of cross,
-#' it is also expected to be more powerfull due to a reduced number of QTL
-#' parameters to estimate assuming that the hypothesis of similar parental effects
-#' through crosses holds. Calculated with HRT assumption, the parental model
-#' correspond to the connected model presented in Blanc et al. (2006).
+#' same effect in all crosses where this parent is used. This model is supposed
+#' to produce better estimates of the QTL due to larger sample size when parents
+#' are shared between crosses.
 #' 
-#' The third type of model is the ancestral model (code{Q.eff = "anc"}). This
+#' In a connected MPP (\code{\link{design_connectivity}}), if np - 1 < nc, where
+#' np is the number of parents and nc the number of crosses, the parental model
+#' should be more powerfull than the cross-specific model because it estimate
+#' a reduced number of QTL parameters. This gain in power will be only true if
+#' the assumption of constant parental effect through crosses holds. Calculated
+#' with HRT assumption, the parental model corresponds to the connected model
+#' presented in Blanc et al. (2006).
+#' 
+#' The third type of model is the ancestral model (\code{Q.eff = "anc"}). This
 #' model tries to use genetic relatedness that could exist between parents.
 #' Indeed, the parental model assumes that parent are independent which is not
 #' the case. Using genetic relatedness between the parents, it is possible group
@@ -51,8 +52,8 @@
 #' 
 #' The final posibility is the bi-allelic model (\code{Q.eff = "biall"}).
 #' Bi-allelic genetic predictor are a single vector with value 0, 1 or 2
-#' corresponding to the number of allele copy of the most frequent SNP allele.
-#' Relatedness between line is therefore defined via identical by state (IBS)
+#' corresponding to the number of allele copy of the least frequent SNP allele.
+#' Relatedness between lines is therefore defined via identical by state (IBS)
 #' measurement. This model corresponds to models used for association mapping.
 #' For example, if (\code{VCOV = "h.err"}), it is similar to model B in
 #' Wurschum et al. (2012) or association mapping model in Liu et al. (2012).
@@ -72,9 +73,9 @@
 #' (undetected QTLs).
 #' 
 #' The third and fourth VCOV model the polygenic effect directly by adding a
-#' random pedigree term to the model. The variance covariance structure
+#' pedigree term to the model. The variance covariance structure
 #' associated with this random term is the matrix of inbreeding coefficients
-#' based on pedigree information (A). It is calculated using the function
+#' based on pedigree information (G). It is calculated using the function
 #' \code{asreml.Ainverse()}. This function uses the method developped by
 #' Meuwissen and Luo (1992). The third possibility is to use the random pedigree
 #' model with HRT (\code{VCOV = "pedigree"}). The fourth option includes the
@@ -82,25 +83,24 @@
 #' (\code{VCOV = "h.err"}) are fitted using REML via the \code{asreml()} function
 #' from the \code{ASReml-R} package (Butler et al., 2009).
 #' 
-#' \strong{WARNING!} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model.
+#' the error can also sometimes come from the \code{asreml()} function. From
+#' our experience, in that case, trying to re-run the function one or two times
+#' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
-#' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
-#' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
-#' effects. Default = "cr".
+#' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
+#' for ancestral; 4) "biall" for a bi-allelic. For more details see
+#' \code{\link{mpp_SIM}}. Default = "cr".
 #'
 #' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{interger matrix} representing the results of a parents genotypes
+#' \code{Interger matrix} representing the results of a parents genotypes
 #' clustering. The columns represent the parental lines and the rows
 #' the different markers or in between positions. \strong{The columns names must
 #' be the same as the parents list of the mppData object. The rownames must be
@@ -117,7 +117,7 @@
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' Default = "h.err".
 #' 
-#' @param est.gen.eff \code{Logical} value. if \code{est.gen.eff = TRUE},
+#' @param est.gen.eff \code{Logical} value. If \code{est.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
 #' These results can be ploted with the function \code{\link{plot_genEffects}}
 #' to visualize a genome-wide decomposition of the genetic effects.
@@ -139,7 +139,7 @@
 #' 
 #' \item{SIM }{\code{Data.frame} of class \code{QTLprof}. with five columns :
 #' 1) QTL marker or in between position names; 2) chromosomes;
-#' 3) Interger position indicators on the chromosome;
+#' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-val). And if
 #' \code{est.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
 #' 
@@ -191,8 +191,11 @@
 #' 
 #' @examples
 #' 
+#' 
+#' # Cross-specific model
+#' ######################
+#' 
 #' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
 #' 
 #' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
 #' est.gen.eff = TRUE)
@@ -217,6 +220,8 @@
 #' 
 #' # Bi-allelic model
 #' ##################
+#' 
+#' data(USNAM_mppData_bi)
 #' 
 #' SIM <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err")
 #' 

@@ -5,10 +5,11 @@
 
 #' ABH assignment per cross
 #' 
-#' Attributes ABH or NA (missing) code to the offspring according to the scores
-#' of parents 1 and 2 of each cross.
+#' Transform offspring genotype scores into A, B, H or NA (missing) according
+#' to the scores of parents 1 and 2 of each cross.
 #' 
-#' The function takes successively the parents of the different cross as
+#' The function transform offspring genotype data of each cross. The function
+#' takes successively the parents of the different cross as
 #' reference and assign the following scores: "A" if the offspring score is
 #' equivalent to parent 1; "B" if it is equivalent to parent 2; "H" if it is
 #' heterozygous. The function attributes NA for missing when: 1) the offspring
@@ -27,15 +28,14 @@
 #' 
 #' @param cross.ind \code{Character} vector with the same length as the number
 #' of offspring genotypes which specifies to which cross each offspring genotype
-#' belong.
+#' belongs.
 #' 
 #' @param par.per.cross Three columns \code{Character matrix} specifying :
-#' 1) the cross indicators (\strong{In the same order as they appear in
-#' \code{cross.ind}}); 2) the parents 1 identifiers of the crosses;
-#' 3) the parents 2 identifiers of the crosses. \strong{The cross indicators
-#' must be  similar to the one used in the arguement \code{cross.ind}.
-#' The list of parent identifiers must be the same to the rownames of
-#' the argument \code{par.sc}.}
+#' 1) the cross indicators (\strong{The cross indicators must be  similar to
+#' the one used in \code{cross.ind} and appear in the same order}); 2) the
+#' parents 1 identifiers of the crosses; 3) the parents 2 identifiers of the
+#' crosses. \strong{The list of parent identifiers must be similar to the
+#' rownames of the argument \code{par.sc}}.
 #' 
 #' @return Return:
 #' 
@@ -51,15 +51,15 @@
 #' 
 #' @examples
 #' 
-#' # Genotype and phenotype dataset
+#' # Genotypes
 #' data("USNAM_geno")
 #' geno <- USNAM_geno
 #' 
-#' # Remove marker for which parents are monomorphic
+#' # Remove markers for which parents are monomorphic
 #' par.mono <- QC_MAF(mk.mat = geno[1:6, ])
 #' geno <- geno[, -which(par.mono == 0)]
 #' 
-#' # Remove marker for which at least one parent is heterozygous
+#' # Remove markers for which at least one parent is heterozygous
 #' par.het <- QC_hetero(mk.mat = geno[1:6, ])
 #' geno <- geno[, -which(par.het != 0)]
 #' 
@@ -69,7 +69,7 @@
 #' # Offspring scores
 #' off.sc <- geno[7:506, ]
 #' 
-#' # Cross.indicator
+#' # Cross indicator
 #' cross.ind <- substr(rownames(geno)[7:506], 1, 4)
 #' 
 #' # Parent of the crosses matrix

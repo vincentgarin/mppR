@@ -4,7 +4,7 @@
 
 #' Check the result of parent clustering
 #' 
-#' Detects marker or position for which all parents have been clustered into
+#' Detect marker or position for which all parents have been clustered into
 #' the same ancestral group (monomorphic). Rewrite these positions with one
 #' allele per parent.
 #' 
