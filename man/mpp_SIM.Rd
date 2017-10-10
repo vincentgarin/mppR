@@ -5,7 +5,7 @@
 \title{MPP Simple Interval Maping}
 \usage{
 mpp_SIM(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-  est.gen.eff = FALSE, parallel = FALSE, cluster = NULL)
+  plot.gen.eff = FALSE, parallel = FALSE, cluster = NULL)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.
@@ -34,7 +34,7 @@ covariance structure used: 1) "h.err" for an homogeneous variance residual term
 and 5) "ped_cr.err" for random pedigree and CSRT model.
 Default = "h.err".}
 
-\item{est.gen.eff}{\code{Logical} value. If \code{est.gen.eff = TRUE},
+\item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
 These results can be ploted with the function \code{\link{plot_genEffects}}
 to visualize a genome-wide decomposition of the genetic effects.
@@ -58,7 +58,7 @@ Return:
 1) QTL marker or in between position names; 2) chromosomes;
 3) interger position indicators on the chromosome;
 4) positions in centi-Morgan; and 5) -log10(p-val). And if
-\code{est.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
+\code{plot.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
 }
 \description{
 Computes single QTL models along the genome using different models.
@@ -158,7 +158,7 @@ allow to obtain a result.
 data(USNAM_mppData)
 
 SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-est.gen.eff = TRUE)
+plot.gen.eff = TRUE)
 
 plot_QTLprof(Qprof = SIM)  
 plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr")

@@ -5,7 +5,7 @@
 # function to compute a single position QTL model
 
 QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
-                        est.gen.eff){
+                        plot.gen.eff){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
@@ -30,7 +30,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
     
     if (is.null(model)){ 
       
-      if(est.gen.eff) {
+      if(plot.gen.eff) {
         
         if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
         
@@ -44,7 +44,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         # estimated probably due to
         # singularities.
         
-        if(est.gen.eff) {
+        if(plot.gen.eff) {
           
           if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
           
@@ -54,7 +54,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         
       } else {
         
-        if(est.gen.eff){
+        if(plot.gen.eff){
           
           gen.eff <- QTL_pval(mppData = mppData, model = model,
                               Q.eff = Q.eff, x = x, par.clu = par.clu)
@@ -127,7 +127,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
     
     if (is.null(model)){ 
       
-      if(est.gen.eff) {
+      if(plot.gen.eff) {
         
         if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
         
@@ -141,7 +141,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
       
       if(W.stat == 0){
         
-        if(est.gen.eff) {
+        if(plot.gen.eff) {
           
           if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
           
@@ -157,7 +157,7 @@ QTLModelSIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         
         results <- -log10(pval)
         
-        if(est.gen.eff){
+        if(plot.gen.eff){
           
           gen.eff  <- QTL_pval_mix(model = model, Q.eff = Q.eff, QTL.el = QTL.el,
                                    x = x, par.clu = par.clu,

@@ -117,7 +117,7 @@
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' Default = "h.err".
 #' 
-#' @param est.gen.eff \code{Logical} value. If \code{est.gen.eff = TRUE},
+#' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
 #' These results can be ploted with the function \code{\link{plot_genEffects}}
 #' to visualize a genome-wide decomposition of the genetic effects.
@@ -141,7 +141,7 @@
 #' 1) QTL marker or in between position names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-val). And if
-#' \code{est.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
+#' \code{plot.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
 #' 
 #' @author Vincent Garin
 #' 
@@ -198,7 +198,7 @@
 #' data(USNAM_mppData)
 #' 
 #' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-#' est.gen.eff = TRUE)
+#' plot.gen.eff = TRUE)
 #' 
 #' plot_QTLprof(Qprof = SIM)  
 #' plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr")
@@ -232,13 +232,13 @@
 
 
 mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err", 
-                    est.gen.eff = FALSE, parallel = FALSE, cluster = NULL) {
+                    plot.gen.eff = FALSE, parallel = FALSE, cluster = NULL) {
   
   # 1. Check data format and arguments
   ####################################
   
   check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, est.gen.eff = est.gen.eff,
+                   par.clu = par.clu, plot.gen.eff = plot.gen.eff,
                    parallel = parallel, cluster = cluster,
                    fct = "SIM")
   
@@ -277,7 +277,7 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                           mppData = mppData, cross.mat = cross.mat,
                           par.mat = parent.mat, Q.eff = Q.eff,
                           par.clu = par.clu, VCOV = VCOV,
-                          est.gen.eff = est.gen.eff)
+                          plot.gen.eff = plot.gen.eff)
     
   } else {
     
@@ -285,12 +285,12 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                        mppData = mppData, cross.mat = cross.mat,
                        par.mat = parent.mat, Q.eff = Q.eff,
                        par.clu = par.clu, VCOV = VCOV,
-                       est.gen.eff = est.gen.eff)
+                       plot.gen.eff = plot.gen.eff)
     
   }
   
   log.pval <- t(data.frame(log.pval))
-  if(est.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
+  if(plot.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value
   log.pval[is.na(log.pval[, 1]), 1] <- 0
   
@@ -300,7 +300,7 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   
   SIM <- data.frame(mppData$map, log.pval)
   
-  if(est.gen.eff){
+  if(plot.gen.eff){
     
     if(Q.eff == "cr"){ Qeff_names <- unique(mppData$cross.ind)
     

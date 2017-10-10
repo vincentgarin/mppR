@@ -5,7 +5,7 @@
 \title{MPP QTL analysis}
 \usage{
 mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
-  par.clu = NULL, VCOV = "h.err", est.gen.eff = FALSE, thre.cof = 3,
+  par.clu = NULL, VCOV = "h.err", plot.gen.eff = FALSE, thre.cof = 3,
   win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
   backward = TRUE, alpha.bk = 0.05, ref.par = NULL, CI = FALSE,
   drop = 1.5, text.size = 18, parallel = FALSE, cluster = NULL,
@@ -44,7 +44,7 @@ covariance structure used: 1) "h.err" for an homogeneous variance residual term
 and 5) "ped_cr.err" for random pedigree and CSRT model.
 For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
-\item{est.gen.eff}{\code{Logical} value. If \code{est.gen.eff = TRUE},
+\item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
 These results can be ploted with the function \code{\link{plot_genEffects}}
 to visualize a genome-wide decomposition of the genetic effects.
@@ -156,7 +156,7 @@ effects per cross or parents (for details see \code{\link{QTL_genEffects}}).}
 global adjusted and non-adjusted R squared statistics (QTL_genResults.txt).}
 
 \item{The plot of the CIM profile (QTL_profile.pdf) with dotted vertical
-lines representing the cofactors positions. If \code{est.gen.eff = TRUE},
+lines representing the cofactors positions. If \code{plot.gen.eff = TRUE},
 plot of the genetic effects per cross or parents (gen_eff.pdf) with dashed
 lines representing the QTL positions. For more details see
 \code{\link{plot_QTLprof}} and \code{\link{plot_genEffects}}.}
@@ -221,7 +221,7 @@ my.loc <- "C:/.../..."
 # Cross-specific model
 
 USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-                     mppData = USNAM_mppData, est.gen.eff = TRUE, CI = TRUE,
+                     mppData = USNAM_mppData, plot.gen.eff = TRUE, CI = TRUE,
                      parallel = TRUE, cluster = cluster, output.loc = my.loc)
 
 # Bi-allelic model

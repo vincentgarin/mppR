@@ -15,7 +15,7 @@
 
 # par.clu parent clustering object.
 
-# est.gen.eff Logical value specifying if p-value of the single QTL effect
+# plot.gen.eff Logical value specifying if p-value of the single QTL effect
 # must be stored.
 
 # parallel logical indicating if fct must be run in parallel
@@ -36,7 +36,7 @@
 
 
 check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
-                             est.gen.eff = FALSE, parallel = FALSE,
+                             plot.gen.eff = FALSE, parallel = FALSE,
                              cluster, cofactors = NULL, QTL = NULL,
                              ref.par = NULL, mppData.ts = NULL,
                              mppData.vs = NULL, fct = "XXX"){
@@ -250,12 +250,12 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
   if((fct == "SIM")||(fct == "CIM")) {
     
     ### 5.1 test that if the user wants to fit a bi-allelic model, the
-    # est.gen.eff is not activated
+    # plot.gen.eff is not activated
     
-    if((Q.eff == "biall") && est.gen.eff) {
+    if((Q.eff == "biall") && plot.gen.eff) {
       
       stop(paste("The estimation of the decomposed QTL effect",
-                 "(est.gen.eff = TRUE) per cross or parents can not be performed for",
+                 "(plot.gen.eff = TRUE) per cross or parents can not be performed for",
                  "the bi-allelic model"))
       
     }

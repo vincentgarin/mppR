@@ -6,7 +6,7 @@
 # mpp.proc
 
 check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
-                           est.gen.eff = FALSE, ref.par = NULL,
+                           plot.gen.eff = FALSE, ref.par = NULL,
                            parallel = FALSE, cluster, output.loc){
   
   # 1. test the validity of the provided path to store the results
@@ -138,11 +138,11 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
   
   
     # 9. Test that if the user wants to fit a bi-allelic model, the
-    # est.gen.eff is not activated
+    # plot.gen.eff is not activated
     
-    if((Q.eff == "biall") && est.gen.eff) {
+    if((Q.eff == "biall") && plot.gen.eff) {
       
-      stop("The estimation of the decomposed QTL effect (est.gen.eff = TRUE)
+      stop("The estimation of the decomposed QTL effect (plot.gen.eff = TRUE)
            per cross or parents can not be performed for the bi-allelic model")
       
     }

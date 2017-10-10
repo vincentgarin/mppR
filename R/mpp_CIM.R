@@ -53,7 +53,7 @@
 #' @param window \code{Numeric} distance (cM) on the left and the right of a
 #' cofactor position where it is not included in the model. Default = 20.
 #' 
-#' @param est.gen.eff \code{Logical} value. If \code{est.gen.eff = TRUE},
+#' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
 #' These results can be ploted with the function \code{\link{plot_genEffects}}
 #' to visualize a genome-wide decomposition of the genetic effects.
@@ -77,7 +77,7 @@
 #' 1) QTL marker or in between position names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-val). And if
-#' \code{est.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
+#' \code{plot.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
 #' 
 #' @author Vincent Garin
 #' 
@@ -99,7 +99,7 @@
 #' cofactors <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 #' 
 #' CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-#' cofactors = cofactors, window = 20, est.gen.eff = TRUE)
+#' cofactors = cofactors, window = 20, plot.gen.eff = TRUE)
 #' 
 #' plot_QTLprof(Qprof = CIM)
 #' plot_genEffects(mppData = USNAM_mppData, Qprof = CIM, Q.eff = "cr")
@@ -113,7 +113,7 @@
 #' cluster <- makeCluster((n.cores-1))
 #' 
 #' CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-#' cofactors = cofactors, window = 20, est.gen.eff = TRUE, parallel = TRUE,
+#' cofactors = cofactors, window = 20, plot.gen.eff = TRUE, parallel = TRUE,
 #' cluster = cluster)
 #' 
 #' stopCluster(cl = cluster)
@@ -137,7 +137,7 @@
 
 
 mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-                    cofactors = NULL,  window = 20, est.gen.eff = FALSE,
+                    cofactors = NULL,  window = 20, plot.gen.eff = FALSE,
                     parallel = FALSE, cluster = NULL)
 {
   
@@ -145,7 +145,7 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   ####################################
   
   check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, est.gen.eff = est.gen.eff,
+                   par.clu = par.clu, plot.gen.eff = plot.gen.eff,
                    parallel = parallel, cluster = cluster,
                    cofactors = cofactors, fct = "CIM")
   
@@ -224,7 +224,7 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                           mppData = mppData, cross.mat = cross.mat,
                           par.mat = parent.mat, Q.eff = Q.eff,
                           par.clu = par.clu, VCOV = VCOV, cof.list = cof.list,
-                          cof.part = cof.part, est.gen.eff = est.gen.eff)
+                          cof.part = cof.part, plot.gen.eff = plot.gen.eff)
     
   } else {
     
@@ -232,13 +232,13 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
                        mppData = mppData, cross.mat = cross.mat,
                        par.mat = parent.mat, Q.eff = Q.eff,
                        par.clu = par.clu, VCOV = VCOV, cof.list = cof.list,
-                       cof.part = cof.part, est.gen.eff = est.gen.eff)
+                       cof.part = cof.part, plot.gen.eff = plot.gen.eff)
     
   }
   
   
   log.pval <- t(data.frame(log.pval))
-  if(est.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
+  if(plot.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value
   log.pval[is.na(log.pval[, 1]), 1] <- 0
   
@@ -248,7 +248,7 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   CIM <- data.frame(mppData$map, log.pval)
   
   
-  if(est.gen.eff){
+  if(plot.gen.eff){
     
     if(Q.eff == "cr"){ Qeff_names <- unique(mppData$cross.ind)
     

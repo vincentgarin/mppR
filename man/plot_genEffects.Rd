@@ -13,7 +13,7 @@ See \code{\link{mppData_form}} for details.}
 
 \item{Qprof}{Object of class \code{QTLprof} returned by the function
 \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} calculated with argument
-\code{est.gen.eff = TRUE}.}
+\code{plot.gen.eff = TRUE}.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental
@@ -72,7 +72,7 @@ using dashed lines.
 
 data(USNAM_mppData)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", est.gen.eff = TRUE)
+SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", plot.gen.eff = TRUE)
 QTL <- QTL_select(SIM)
 
 # without QTL positions

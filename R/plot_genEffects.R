@@ -46,7 +46,7 @@
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function
 #' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}} calculated with argument
-#' \code{est.gen.eff = TRUE}.
+#' \code{plot.gen.eff = TRUE}.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental
@@ -74,7 +74,7 @@
 #' 
 #' data(USNAM_mppData)
 #' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", est.gen.eff = TRUE)
+#' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", plot.gen.eff = TRUE)
 #' QTL <- QTL_select(SIM)
 #' 
 #' # without QTL positions
@@ -110,7 +110,7 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
   if(n.eff == 0) {
     
     stop("The Qprof object does not contain any QTL p-value information.
-         It was probably not obtained using est.gen.eff = TRUE")
+         It was probably not obtained using plot.gen.eff = TRUE")
     
   }
   

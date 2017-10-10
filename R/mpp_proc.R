@@ -73,7 +73,7 @@
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #'
-#' @param est.gen.eff \code{Logical} value. If \code{est.gen.eff = TRUE},
+#' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
 #' These results can be ploted with the function \code{\link{plot_genEffects}}
 #' to visualize a genome-wide decomposition of the genetic effects.
@@ -185,7 +185,7 @@
 #' global adjusted and non-adjusted R squared statistics (QTL_genResults.txt).}
 #' 
 #' \item{The plot of the CIM profile (QTL_profile.pdf) with dotted vertical
-#' lines representing the cofactors positions. If \code{est.gen.eff = TRUE},
+#' lines representing the cofactors positions. If \code{plot.gen.eff = TRUE},
 #' plot of the genetic effects per cross or parents (gen_eff.pdf) with dashed
 #' lines representing the QTL positions. For more details see
 #' \code{\link{plot_QTLprof}} and \code{\link{plot_genEffects}}.}
@@ -229,7 +229,7 @@
 #' # Cross-specific model
 #' 
 #' USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-#'                      mppData = USNAM_mppData, est.gen.eff = TRUE, CI = TRUE,
+#'                      mppData = USNAM_mppData, plot.gen.eff = TRUE, CI = TRUE,
 #'                      parallel = TRUE, cluster = cluster, output.loc = my.loc)
 #' 
 #' # Bi-allelic model
@@ -248,7 +248,7 @@
 
 mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-                     est.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
+                     plot.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
                      backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
                      CI = FALSE, drop = 1.5, text.size = 18, parallel = FALSE,
@@ -260,7 +260,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   ###################################################################
   
   check.mpp.proc(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                 par.clu = par.clu, est.gen.eff = est.gen.eff,
+                 par.clu = par.clu, plot.gen.eff = plot.gen.eff,
                  ref.par = ref.par, parallel = parallel, cluster = cluster,
                  output.loc = output.loc)
   
@@ -300,7 +300,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   }
   
   SIM <- mpp_SIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-                 VCOV = VCOV, est.gen.eff = est.gen.eff, parallel = parallel,
+                 VCOV = VCOV, plot.gen.eff = plot.gen.eff, parallel = parallel,
                  cluster = cluster)
   
   # save SIM results in output location
@@ -337,7 +337,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
                  VCOV = VCOV, cofactors = cofactors, window = window,
-                 est.gen.eff = est.gen.eff, parallel = parallel,
+                 plot.gen.eff = plot.gen.eff, parallel = parallel,
                  cluster = cluster)
   
   
@@ -370,7 +370,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
         
         CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
                        VCOV = VCOV, cofactors = cofactors, window = window,
-                       est.gen.eff = est.gen.eff, parallel = parallel,
+                       plot.gen.eff = plot.gen.eff, parallel = parallel,
                        cluster = cluster)
         
       }
@@ -492,7 +492,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
     CIM.m <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
                      VCOV = VCOV, cofactors = cofactors, window = 1000000,
-                     est.gen.eff = FALSE, parallel = parallel,
+                     plot.gen.eff = FALSE, parallel = parallel,
                      cluster = cluster)
     
     QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM.m, drop = drop)
@@ -554,7 +554,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
     # genetic effect plot
     
-    if (est.gen.eff) {
+    if (plot.gen.eff) {
       
       pdf(paste0(folder.loc, "/", "gen_eff.pdf"), height = 10, width = 16)
       

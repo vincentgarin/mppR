@@ -6,7 +6,7 @@
 
 
 QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
-                        cof.list, cof.part, est.gen.eff){
+                        cof.list, cof.part, plot.gen.eff){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
@@ -44,7 +44,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
     
     if (is.null(model)){ 
       
-      if(est.gen.eff) {
+      if(plot.gen.eff) {
         
         if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
         
@@ -59,7 +59,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         # estimated probably due to
         # singularities.
         
-        if(est.gen.eff) {
+        if(plot.gen.eff) {
           
           if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
           
@@ -71,7 +71,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         
         results <- -log10(anova(model)$Pr[which(rownames(anova(model))=="QTL")])
         
-        if(est.gen.eff){
+        if(plot.gen.eff){
           
           gen.eff <- QTL_pval(mppData = mppData, model = model,
                               Q.eff = Q.eff, x = x, par.clu = par.clu)
@@ -150,7 +150,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
     
     if (is.null(model)){ 
       
-      if(est.gen.eff) {
+      if(plot.gen.eff) {
         
         if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
         
@@ -164,7 +164,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
       
       if(W.stat == 0){
         
-        if(est.gen.eff) {
+        if(plot.gen.eff) {
           
           if(Q.eff == "cr"){ results <- c(0, rep(1, mppData$n.cr))
           
@@ -180,7 +180,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         
         results <- -log10(pval)
         
-        if(est.gen.eff){
+        if(plot.gen.eff){
           
           gen.eff  <- QTL_pval_mix(model = model, Q.eff = Q.eff, QTL.el = QTL.el,
                                    x = x, par.clu = par.clu,

@@ -5,7 +5,7 @@
 \title{MPP composite interval maping}
 \usage{
 mpp_CIM(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-  cofactors = NULL, window = 20, est.gen.eff = FALSE, parallel = FALSE,
+  cofactors = NULL, window = 20, plot.gen.eff = FALSE, parallel = FALSE,
   cluster = NULL)
 }
 \arguments{
@@ -43,7 +43,7 @@ Default = NULL.}
 \item{window}{\code{Numeric} distance (cM) on the left and the right of a
 cofactor position where it is not included in the model. Default = 20.}
 
-\item{est.gen.eff}{\code{Logical} value. If \code{est.gen.eff = TRUE},
+\item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
 These results can be ploted with the function \code{\link{plot_genEffects}}
 to visualize a genome-wide decomposition of the genetic effects.
@@ -67,7 +67,7 @@ Return:
 1) QTL marker or in between position names; 2) chromosomes;
 3) interger position indicators on the chromosome;
 4) positions in centi-Morgan; and 5) -log10(p-val). And if
-\code{est.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
+\code{plot.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}
 }
 \description{
 Compute QTL models along the genome using cofactors representing other
@@ -98,7 +98,7 @@ SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err")
 cofactors <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 
 CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-cofactors = cofactors, window = 20, est.gen.eff = TRUE)
+cofactors = cofactors, window = 20, plot.gen.eff = TRUE)
 
 plot_QTLprof(Qprof = CIM)
 plot_genEffects(mppData = USNAM_mppData, Qprof = CIM, Q.eff = "cr")
@@ -112,7 +112,7 @@ n.cores <- detectCores()
 cluster <- makeCluster((n.cores-1))
 
 CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-cofactors = cofactors, window = 20, est.gen.eff = TRUE, parallel = TRUE,
+cofactors = cofactors, window = 20, plot.gen.eff = TRUE, parallel = TRUE,
 cluster = cluster)
 
 stopCluster(cl = cluster)
