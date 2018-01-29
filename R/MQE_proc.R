@@ -272,133 +272,144 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                        parallel = parallel, cluster = cluster,
                        verbose = verbose)
     
-    if(backward){
+    if(is.null(QTL)){
+      
+      warning(paste("No position is above the threshold, the stepwise procedure",
+                    "could not select any QTL position."))
+      
+      return(NULL)
+      
+    } else {
+      
+      if(backward){
+        
+        if(verbose){
+          
+          cat("\n")
+          cat("Backward elimination")
+          cat("\n")
+          cat("\n")
+          
+        }
+        
+        QTL <- MQE_BackElim(mppData = mppData, mppData_bi = mppData_bi,
+                            QTL = QTL[, 1], Q.eff = QTL[, 5], par.clu = par.clu,
+                            VCOV = VCOV, alpha = alpha.bk)
+        
+        if (is.null(QTL)) { # test if QTL have been selected
+          
+          stop(paste("No QTL position stayed in the model after the backward",
+                     "elimination. This is probably due to an error in the",
+                     "computation of the model in asreml() function."))
+          
+        }
+        
+      }
+      
+      # save the list of QTL
+      
+      file.QTL <- paste(folder.loc, "/", "QTL.txt", sep = "")
+      
+      write.table(QTL, file = file.QTL, quote = FALSE, row.names = FALSE, 
+                  sep = "\t")
+      
+      # 4. QTL effects and R2
+      #######################
       
       if(verbose){
         
         cat("\n")
-        cat("Backward elimination")
+        cat("Computation QTL genetic effects and R2")
+        cat("\n")
+        cat("\n")
+        
+      }  
+      
+      QTL_effect <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
+                                   QTL = QTL[, 1], Q.eff = QTL[, 5],
+                                   par.clu = par.clu, VCOV = VCOV)
+      
+      R2 <- MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL[, 1],
+                   Q.eff = QTL[, 5], par.clu = par.clu, glb.only = FALSE)
+      
+      
+      # save R2 results
+      
+      QTL.R2 <- data.frame(QTL[, 1:5], round(R2[[3]], 2), round(R2[[4]], 2),
+                           round(R2[[5]], 2), round(R2[[6]], 2),
+                           stringsAsFactors = FALSE)
+      
+      colnames(QTL.R2)[6:9] <- c("R2.diff", "adj.R2.diff", "R2.sg", "adj.R2.sg")
+      
+      write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
+                  quote = FALSE, sep = "\t", row.names = FALSE)
+      
+      # 5. Optional plot
+      ##################
+      
+      if(plot.MQE){
+        
+        if(verbose){
+          
+          cat("\n")
+          cat("Plot MQE last run profile")
+          cat("\n")
+          cat("\n")
+          
+        }
+        
+        CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, par.clu = par.clu,
+                       VCOV = VCOV, cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
+                       chg.Qeff = TRUE, window = window, parallel = parallel,
+                       cluster = cluster)
+        
+        main.plot <- paste("MQE", pop.name, trait.name, VCOV)
+        
+        pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
+        
+        print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
+                       threshold = threshold, main = main.plot))
+        
+        dev.off()
+        
+      }
+      
+      # 6. results processing
+      #######################
+      
+      if(verbose){
+        
+        cat("\n")
+        cat("Results processing")
         cat("\n")
         cat("\n")
         
       }
       
-      QTL <- MQE_BackElim(mppData = mppData, mppData_bi = mppData_bi,
-                          QTL = QTL[, 1], Q.eff = QTL[, 5], par.clu = par.clu,
-                          VCOV = VCOV, alpha = alpha.bk)
       
-      if (is.null(QTL)) { # test if QTL have been selected
-        
-        stop("No QTL position stayed in the model after the backward elimination.
-         This is probably due to an error in the computation of the model
-         in asreml() function.")
-        
-      }
+      # QTL report
       
-    }
-    
-    # save the list of QTL
-  
-    file.QTL <- paste(folder.loc, "/", "QTL.txt", sep = "")
-    
-    write.table(QTL, file = file.QTL, quote = FALSE, row.names = FALSE, 
-                sep = "\t")
-  
-  # 4. QTL effects and R2
-  #######################
-    
-    if(verbose){
+      QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
+                 main = paste(pop.name, trait.name, VCOV), QTL.info = QTL,
+                 QTL.effects = QTL_effect, R2 = R2)
       
-      cat("\n")
-      cat("Computation QTL genetic effects and R2")
-      cat("\n")
-      cat("\n")
+      # save general results
       
-    }  
-    
-  QTL_effect <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
-                               QTL = QTL[, 1], Q.eff = QTL[, 5],
-                               par.clu = par.clu, VCOV = VCOV)
-  
-  R2 <- MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL[, 1],
-               Q.eff = QTL[, 5], par.clu = par.clu, glb.only = FALSE)
-  
-  
-  # save R2 results
-  
-  QTL.R2 <- data.frame(QTL[, 1:5], round(R2[[3]], 2), round(R2[[4]], 2),
-                       round(R2[[5]], 2), round(R2[[6]], 2),
-                       stringsAsFactors = FALSE)
-  
-  colnames(QTL.R2)[6:9] <- c("R2.diff", "adj.R2.diff", "R2.sg", "adj.R2.sg")
-  
-  write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
-              quote = FALSE, sep = "\t", row.names = FALSE)
-  
-  # 5. Optional plot
-  ##################
-  
-  if(plot.MQE){
-    
-    if(verbose){
+      gen.res <- c(dim(QTL)[1], round(R2[[1]][1], 2), round(R2[[2]][1], 2))
+      names(gen.res) <- c("nb.QTL", "glb.R2", "glb.adj.R2")
       
-      cat("\n")
-      cat("Plot MQE last run profile")
-      cat("\n")
-      cat("\n")
+      write.table(gen.res, file = paste0(folder.loc, "/", "QTL_genResults.txt"),
+                  quote = FALSE, sep = "\t", col.names = FALSE)
+      
+      
+      
+      # form the R object to be returned
+      
+      results <- list(n.QTL = dim(QTL)[1], QTL = QTL, R2 = R2,
+                      QTL.effects = QTL_effect)
+      
+      return(results)
       
     }
-    
-    CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, par.clu = par.clu,
-                   VCOV = VCOV, cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
-                   chg.Qeff = TRUE, window = window, parallel = parallel,
-                   cluster = cluster)
-    
-    main.plot <- paste("MQE", pop.name, trait.name, VCOV)
-    
-    pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
-    
-    print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
-                   threshold = threshold, main = main.plot))
-    
-    dev.off()
-    
-  }
-  
-  # 6. results processing
-  #######################
-  
-  if(verbose){
-    
-    cat("\n")
-    cat("Results processing")
-    cat("\n")
-    cat("\n")
-    
-  }
-  
-  
-  # QTL report
-  
-  QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
-             main = paste(pop.name, trait.name, VCOV), QTL.info = QTL,
-             QTL.effects = QTL_effect, R2 = R2)
-  
-  # save general results
-  
-  gen.res <- c(dim(QTL)[1], round(R2[[1]][1], 2), round(R2[[2]][1], 2))
-  names(gen.res) <- c("nb.QTL", "glb.R2", "glb.adj.R2")
-  
-  write.table(gen.res, file = paste0(folder.loc, "/", "QTL_genResults.txt"),
-              quote = FALSE, sep = "\t", col.names = FALSE)
-  
-  
-  
-  # form the R object to be returned
-  
-  results <- list(n.QTL = dim(QTL)[1], QTL = QTL, R2 = R2,
-                  QTL.effects = QTL_effect)
-  
-  return(results)
   
 }

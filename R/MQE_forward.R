@@ -79,7 +79,7 @@
 #' from the parallel package. Default = NULL.
 #' 
 #' @param verbose \code{Logical} value indicating if the steps of the
-#' MQE_forward should be printed.. It will not affect the printing of the other
+#' MQE_forward should be printed. It will not affect the printing of the other
 #' functions called by \code{mpp_proc()}, especially the printing of
 #' \code{asreml()}. Default = TRUE.
 #' 
@@ -256,8 +256,10 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
   } else {
     
     
-    stop(paste("No position is above the threshold, the stepwise procedure",
+    warning(paste("No position is above the threshold, the stepwise procedure",
                "could not select any QTL position."))
+    
+    return(NULL)
     
   }
   

@@ -442,7 +442,7 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
       cross.object <- read.cross("csv", file = file.name, genotypes = c("A", "B"),
                                  alleles = c("A", "B"))
       
-      class(cross.object)[1] <- "DH"
+      class(cross.object)[1] <- "dh"
       
     }
     

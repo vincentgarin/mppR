@@ -54,7 +54,7 @@ Default = FALSE.}
 from the parallel package. Default = NULL.}
 
 \item{verbose}{\code{Logical} value indicating if the steps of the
-MQE_forward should be printed.. It will not affect the printing of the other
+MQE_forward should be printed. It will not affect the printing of the other
 functions called by \code{mpp_proc()}, especially the printing of
 \code{asreml()}. Default = TRUE.}
 }

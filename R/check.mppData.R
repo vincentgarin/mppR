@@ -75,7 +75,7 @@ check.mppData <- function(geno, geno.par = NULL, type, type.mating, nb.gen,
   if (!(type %in% c("F", "BC", "RIL", "DH"))) {
     
     info <- paste("The type of population specified in the argument type:",
-                   type, "is not allowed.", "Please use 'F', 'bc','RIL' or 'dh'")
+                   type, "is not allowed.", "Please use 'F', 'BC','RIL' or 'DH'")
     
     stop(info)
     
