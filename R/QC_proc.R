@@ -365,7 +365,12 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   # 2. Remove markers with genotyping error
   #########################################
   
-  message("The quality control procedure can take few minutes!")
+  if(verbose){
+    
+    message("The quality control procedure can take few minutes!")
+    
+  }
+  
   
   init.nb.mk <- dim(geno.off)[2]
   nb.mk.rem <- c()
