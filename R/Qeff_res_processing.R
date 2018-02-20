@@ -334,8 +334,13 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
         
         ref.mat2[ind.ref, ] <- matrix(rep(Qi, length(ind.ref)),
                                       nrow = length(ind.ref), byrow = TRUE)
+        
+        ref.mat2[ind.ref, 1] <- 2 * ref.mat2[ind.ref, 1] 
+        
         ref.mat2[ind.na, ] <- NA
-        ref.mat2[ind.het, 1] <- Qi[1, 1]/2
+        
+        ref.mat2[ind.het, ] <- matrix(rep(Qi, length(ind.het)),
+                                       nrow = length(ind.het), byrow = TRUE)
         
         # add the sign stars
         
