@@ -593,6 +593,7 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
       geno.par <- geno.par[parents, ]
       
       geno.par <- data.frame(new.map, t(geno.par), stringsAsFactors = FALSE)
+      colnames(geno.par)[5:dim(geno.par)[2]] <- parents
       
       mppData <- list(geno = geno012, allele.ref = allele.ref,
                       geno.id = geno.names, geno.par = geno.par,
