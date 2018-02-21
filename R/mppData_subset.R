@@ -117,10 +117,10 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
     
     # test format marker list
     
-  if (!(is.character(gen.list) || is.logical(gen.list) || is.numeric(gen.list))) {
+    if (!(is.character(gen.list) || is.logical(gen.list) || is.numeric(gen.list))) {
       
       stop("The genotypes list (gen.list) must be a character, logical or numeric
-            vector specifying the list of genotypes to subset.")    
+           vector specifying the list of genotypes to subset.")    
       
     }
     
@@ -128,8 +128,8 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       
       if(length(gen.list) != length(mppData$geno.id))
         
-    stop("The genotype list (gen.list) does not have the same length as the 
-         genotypes list")
+        stop("The genotype list (gen.list) does not have the same length as the 
+             genotypes list")
       
     }
     
@@ -144,8 +144,8 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       
     } else if(is.character(gen.list)) {
       
-    geno.ind <- mppData$geno.id %in% gen.list
-        
+      geno.ind <- mppData$geno.id %in% gen.list
+      
     }
     
   }
@@ -156,12 +156,12 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
   
   if (!mppData$biall) {
     
-  
-      ### 2.1 substitute by marker
+    
+    ### 2.1 substitute by marker
     
     if (!is.null(mk.list)){
       
-    
+      
       # modify the genotype marker matrix
       
       for (i in 1:length(mppData$geno$geno)) {
@@ -204,9 +204,9 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       
       
       ### 2.2 substitute by genotype      
-
+      
     } else if (!is.null(gen.list)){
-
+      
       # modify genotype matrix
       
       
@@ -256,25 +256,37 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       mppData$n.par <- length(mppData$parents)
       mppData$par.per.cross <- ppc
       
+      # modify the geno.par argument. Remove the parent that are not used anymore
+      
+      if (!is.null(mppData$geno.par)) {
+        
+        new_par <- c("mk.names", "chr", "pos.ind", "pos.cM", mppData$parents)
+        
+        mppData$geno.par <- mppData$geno.par[, colnames(mppData$geno.par) %in% new_par ,
+                                             drop = FALSE]
+        
+        
+      }
+      
       return(mppData)
-
+      
     }
-
-
-
+    
+    
+    
     # 3. Bi-allelic mppData object
     ##############################
-
-
+    
+    
   } else {
-
+    
     ### 2.1 substitute by marker
-
+    
     if (!is.null(mk.list)){
-
-
+      
+      
       # modify the genotype marker matrix
-
+      
       mppData$geno <- mppData$geno[, mppData$map[, 1] %in% mk.list,
                                    drop = FALSE]
       
@@ -284,50 +296,50 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
                                                drop = FALSE]
       
       # modify the marker geno.par argument (if present)
-
-
+      
+      
       if (!is.null(mppData$geno.par)) {
-
-      mppData$geno.par <- mppData$geno.par[(mppData$geno.par[, 1] %in% mk.list), ,
-                                           drop = FALSE]
-
-
+        
+        mppData$geno.par <- mppData$geno.par[(mppData$geno.par[, 1] %in% mk.list), ,
+                                             drop = FALSE]
+        
+        
       }
-
+      
       # modify the map
-
+      
       mppData$map <- mppData$map[(mppData$map[, 1] %in% mk.list), , drop = FALSE]
-
+      
       # recalculate the position indicators
-
+      
       mppData$map[, 3] <- sequence(table(mppData$map[, 2]))
-
-
+      
+      
       return(mppData)
-
-
+      
+      
       ### 2.2 substitute by genotype
-
+      
     } else if (!is.null(gen.list)){
-
+      
       # modify genotype matrix
       
       mppData$geno <- mppData$geno[geno.ind, ]
-
+      
       # subset geno.id
-
+      
       mppData$geno.id <- mppData$geno.id[geno.ind]
-
+      
       # subset trait
-
+      
       mppData$trait <- subset(x = mppData$trait, subset = geno.ind, drop = FALSE)
-
+      
       # subset cross indicator
-
+      
       mppData$cross.ind <- mppData$cross.ind[geno.ind]
-
+      
       # subset ped.mat
-
+      
       ped.mat.found <- mppData$ped.mat[mppData$ped.mat[, 1] == "founder", ,
                                        drop = FALSE]
       ped.mat.off <- mppData$ped.mat[mppData$ped.mat[, 1] == "offspring", ,
@@ -346,12 +358,21 @@ mppData_subset <- function(mppData, mk.list = NULL, gen.list = NULL) {
       mppData$n.par <- length(mppData$parents)
       mppData$par.per.cross <- ppc
       
-
+      if (!is.null(mppData$geno.par)) {
+        
+        new_par <- c("mk.names", "chr", "pos.ind", "pos.cM", mppData$parents)
+        
+        mppData$geno.par <- mppData$geno.par[, colnames(mppData$geno.par) %in% new_par ,
+                                             drop = FALSE]
+        
+      }
+      
+      
       return(mppData)
-
+      
     }
-
-
-   }
+    
+    
+  }
   
 } # end function
