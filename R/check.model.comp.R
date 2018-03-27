@@ -28,6 +28,9 @@
 
 # ref.par character expression indicating a reference parent.
 
+# sum_zero Logical expression indicating if the model should be computed using
+# a sum to zero constraint.
+
 # mppData.ts mppData object of the training set
 
 # mppData.vs mppData object of the validation set
@@ -38,7 +41,7 @@
 check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
                              plot.gen.eff = FALSE, parallel = FALSE,
                              cluster, cofactors = NULL, QTL = NULL,
-                             ref.par = NULL, mppData.ts = NULL,
+                             ref.par = NULL, sum_zero = NULL, mppData.ts = NULL,
                              mppData.vs = NULL, fct = "XXX"){
   
   # 1. check mppData format
@@ -311,10 +314,11 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
       
     }
     
-    ### Test the compatibility of the reference parents
     
     if (fct == "QTLeffects"){
-      
+    
+      ### Test the compatibility of the reference parents
+        
       if(!is.null(ref.par)){
         
         # test that there is only one reference parent and one connected part.
@@ -344,6 +348,27 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
           stop(paste("The reference parent you specified in ref.par is not",
                      "contained in the list of parents. Please use one of:",
                      paste(mppData$parents, collapse = ", ")))
+          
+        }
+        
+      }
+      
+      ### Test correct configuration if sum_zero = TRUE
+      
+      if(sum_zero){
+        
+        if(!(Q.eff %in% c('par', 'anc'))){
+          
+          stop(paste('You can only use the sum to zero constraint for the',
+                     'parental (Q.eff = "par") or the ancestral (Q.eff = "anc")',
+                     'models.'))
+          
+        }
+        
+        if(VCOV != 'h.err'){
+          
+          stop(paste('You can only use the sum to zero constraint with the',
+                     'homogeneous error term model (VCOV = "h.err").'))
           
         }
         
