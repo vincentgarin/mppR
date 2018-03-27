@@ -5,8 +5,8 @@
 # function to check data format before the formation of mppData object
 
 
-check.mppData <- function(geno, geno.par = NULL, type, type.mating, nb.gen,
-                          biall, IBS.format, trait, map, cross.ind,
+check.mppData <- function(geno, geno.par = NULL, type, type.mating, BC.gen,
+                          F.gen, biall, IBS.format, trait, map, cross.ind,
                           par.per.cross, dir){
   
   
@@ -72,22 +72,43 @@ check.mppData <- function(geno, geno.par = NULL, type, type.mating, nb.gen,
   # 2. control the type of population
   ###################################
   
-  if (!(type %in% c("F", "BC", "RIL", "DH"))) {
+  if (!(type %in% c("F", "BC", "RIL", "DH", "BCsFt"))) {
     
     info <- paste("The type of population specified in the argument type:",
-                   type, "is not allowed.", "Please use 'F', 'BC','RIL' or 'DH'")
+                   type, "is not allowed.",
+                  "Please use 'F', 'BC','RIL','DH' or 'BCsFt'.")
     
     stop(info)
     
   }
   
-  if ((type == "F") || (type == "BC")){
+  ### Check specification of generation number for BC F and BCsFt populations
+  
+  if (type == "F"){
     
-    if(is.null(nb.gen)){
+    if(is.null(F.gen)){
       
-      stop("The number of generation (nb.gen) is not specified.") }
+      stop("The number of generation (F.gen) is not specified.") }
     
   }
+  
+  if (type == "BC"){
+    
+    if(is.null(BC.gen)){
+      
+      stop("The number of generation (BC.gen) is not specified.") }
+    
+  }
+  
+  if (type == "BCsFt"){
+    
+    if(is.null(BC.gen)|| is.null(F.gen)){
+      
+      stop("The number of generation (BC.gen or F.gen) is/are not specified.") }
+    
+  }
+  
+  
   
   if((type == "RIL") && is.null(type.mating)){
     

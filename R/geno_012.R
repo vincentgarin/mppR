@@ -20,8 +20,8 @@
 #' corresponding to the number of copies of the least frequent SNP allele.}
 #' 
 #' \item{all.ref}{\code{matrix} with reference allele scores. The first row
-#' represents the allele with the highest MAF, the second the one with the
-#' lowest MAF and the two others the heterozygous scores.} 
+#' represents the minor allele (lowest frequency), the second the one represent the
+#' major allele (largest frequency) and the two others the heterozygous scores.} 
 #' 
 #' @author Vincent Garin    
 #'       

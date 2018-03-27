@@ -67,15 +67,19 @@
 #' 
 #' @param type \code{Character} indicator for the type of population analysed:
 #' type = "F" for Fn (F cross n gernerations); type = "BC" for BCn (backcross
-#' n generations); type = "DH" for double haploids; and type = "RIL"
+#' n generations); type = "BCsFt" for backcross followed by selfing;
+#' type = "DH" for double haploids; and type = "RIL"
 #' for recombinant inbred lines. For RIL type specify if the population was
 #' obtain using selfing or sibling mating using \code{type.mating}.
 #' If type = "RIL" or "DH", heterozygous marker scores of the geno.off argument
 #' must be set as missing (NA).
 #' 
-#' @param nb.gen \code{Numeric} integer representing the number of F and
-#' backcross generations. For example nb.gen = 2 for F2 or nb.gen = 1 for
-#' single backcross. Default = NULL.
+#' @param F.gen \code{Numeric} integer representing the number of F generations.
+#' For example F.gen = 2 for F2. Default = NULL.
+#' 
+#' @param BC.gen \code{Numeric} integer representing the number of
+#' backcross generations. For example BC.gen = 1 for single backcross.
+#' Default = NULL.
 #' 
 #' @param type.mating \code{Character} specifying for a RIL population if it was
 #' obtained by selfing ("selfing") or by sibling mating ("sib.mat").
@@ -227,7 +231,7 @@
 #' 
 #' # IBD mppData for cross, parental or ancestral model
 #' data <- mppData_form(geno.off = USNAM_genoABH, geno.par = geno.par,
-#'                      IBS = FALSE, type = "F", nb.gen = 6, map = map,
+#'                      IBS = FALSE, type = "F", F.gen = 6, map = map,
 #'                      trait = trait, cross.ind = cross.ind,
 #'                      par.per.cross = par.per.cross, step = 5,
 #'                      map.function = "haldane",  stepwidth = "max",
@@ -268,7 +272,7 @@
 #' 
 #' # IBS mppData for bi-allelic model
 #' data_IBS <- mppData_form(geno.off = geno[7:506,], geno.par = geno.par,
-#'                            type = "F", nb.gen = 6, IBS = TRUE,
+#'                            type = "F", F.gen = 6, IBS = TRUE,
 #'                            IBS.format = "ATCG", map = map,
 #'                            trait = trait, cross.ind = cross.ind,
 #'                            par.per.cross = par.per.cross, dir = my.dir)
@@ -280,11 +284,11 @@
 
 
 mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
-                         IBS.format = "ATCG",type, nb.gen = NULL,
-                         type.mating = NULL, map, trait, cross.ind,
-                         par.per.cross, step = 10000, error.prob = 1e-04,
-                         map.function = "haldane", stepwidth = "max",
-                         dir = getwd()) {
+                         IBS.format = "ATCG",type, F.gen = NULL,
+                         BC.gen = NULL, type.mating = NULL, map, trait,
+                         cross.ind, par.per.cross, step = 10000,
+                         error.prob = 1e-04, map.function = "haldane",
+                         stepwidth = "max", dir = getwd()) {
   
   
   # 1. chech of the data format
@@ -292,9 +296,9 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
   
   check.mppData(geno = geno.off, geno.par = geno.par, biall = IBS,
                 IBS.format = IBS.format,  type = type,
-                type.mating = type.mating, nb.gen = nb.gen, trait = trait,
-                map = map, cross.ind = cross.ind, par.per.cross = par.per.cross,
-                dir = dir)
+                type.mating = type.mating, BC.gen = BC.gen, F.gen = F.gen,
+                trait = trait, map = map, cross.ind = cross.ind,
+                par.per.cross = par.per.cross, dir = dir)
   
   
   # 2. Elements that are similar to the two types of mppData object
@@ -314,11 +318,11 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
   
   if (type == "F") {
     
-    type.pop <- paste0("F", "(n = ", nb.gen,")")
+    type.pop <- paste0("F", "(n = ", F.gen,")")
     
   } else if (type == "BC") {
     
-    type.pop <- paste0("Back-cross ", "(n = ", nb.gen,")")
+    type.pop <- paste0("Back-cross ", "(n = ", BC.gen,")")
     
   } else if (type == "DH") {
     
@@ -338,6 +342,11 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
       
     }
     
+  } else if (type == 'BCsFt'){
+    
+    type.pop <- paste0('Back-cross followed by selfing ', '(',
+                       paste0('BC', BC.gen, 'F', F.gen), ')')
+    
   }
   
   ### 2.4 number of allele class
@@ -346,7 +355,7 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
     
     n.zigo <- 2
     
-  } else if ((type == "F")) {
+  } else if ((type == "F")| (type == "BCsFt")) {
     
     n.zigo <- 3
     
@@ -379,7 +388,7 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
   
   if(!IBS){
     
-  # 3.1.1 Compute IBD probabilities
+    # 3.1.1 Compute IBD probabilities
     
     # format data to form a cross object
     
@@ -404,13 +413,13 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
     
     if (type == "F") {
       
-      cross.object <- read.cross("csv", , file.name, F.gen = nb.gen, 
+      cross.object <- read.cross("csv", , file.name, F.gen = F.gen, 
                                  crosstype = "bcsft")
       
       
     } else if (type == "BC") {
       
-      cross.object <- read.cross("csv", , file.name, BC.gen = nb.gen, 
+      cross.object <- read.cross("csv", , file.name, BC.gen = BC.gen, 
                                  crosstype = "bcsft")
       
       
@@ -443,6 +452,11 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
                                  alleles = c("A", "B"))
       
       class(cross.object)[1] <- "dh"
+      
+    } else if (type == "BCsFt"){
+      
+      cross.object <- read.cross("csv", , file.name, F.gen = F.gen,
+                                 BC.gen = BC.gen, crosstype = "bcsft")
       
     }
     
@@ -481,44 +495,44 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
       chr.ind <- c(chr.ind, rep(i, length(names)))
       
     }
-  
-  # 3.1.2 map
+    
+    # 3.1.2 map
     
     new.map <- data.frame(mark.names, chr.ind, sequence(table(chr.ind)),
                           positions, stringsAsFactors = FALSE)
     colnames(new.map) <- c("mk.names","chr","pos.ind","pos.cM")
     
     
-  # 3.1.3 parent genotypes (if provided)  
-  
-  if(!is.null(geno.par)){
+    # 3.1.3 parent genotypes (if provided)  
     
-    geno.par <- geno.par[parents, ] # re-order the parents rows
-    
-    #  if positions were added fill them in the parent genotypes
-    
-    if (!identical(new.map[, 1], colnames(geno.par))) {
+    if(!is.null(geno.par)){
       
-      match.id <- match(new.map[, 1], colnames(geno.par))
+      geno.par <- geno.par[parents, ] # re-order the parents rows
       
-      geno.par.new <- c()
+      #  if positions were added fill them in the parent genotypes
       
-      for (i in 1:length(new.map[, 1])) {
+      if (!identical(new.map[, 1], colnames(geno.par))) {
         
-        if (is.na(match.id[i])) {
+        match.id <- match(new.map[, 1], colnames(geno.par))
+        
+        geno.par.new <- c()
+        
+        for (i in 1:length(new.map[, 1])) {
           
-          geno.par.new <- rbind(geno.par.new, rep("-", n.par))
-          
-        } else {
-          
-          geno.par.new <- rbind(geno.par.new,
-                                as.character(geno.par[, match.id[i]]))
+          if (is.na(match.id[i])) {
+            
+            geno.par.new <- rbind(geno.par.new, rep("-", n.par))
+            
+          } else {
+            
+            geno.par.new <- rbind(geno.par.new,
+                                  as.character(geno.par[, match.id[i]]))
+            
+          }
           
         }
         
-      }
-      
-    } else { geno.par.new <- t(geno.par) } # no extra position. geno.par stay the same
+      } else { geno.par.new <- t(geno.par) } # no extra position. geno.par stay the same
       
       # combine with the new map information
       
@@ -530,32 +544,32 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
                       cross.ind = cross.ind, ped.mat = ped.mat,
                       par.per.cross = par.per.cross, parents = parents,
                       n.cr = n.cr, n.par = n.par, type = type.pop, n.zigo =
-                      n.zigo, biall = IBS)
+                        n.zigo, biall = IBS)
       
-    class(mppData) <- c("mppData", "list")
-  
-    return(mppData)  
+      class(mppData) <- c("mppData", "list")
+      
+      return(mppData)  
+      
+    } else {
+      
+      mppData <- list(geno = cross.object, geno.id = geno.names, geno.par = NULL,
+                      map = new.map,
+                      trait = trait.val, cross.ind = cross.ind, ped.mat = ped.mat,
+                      par.per.cross = par.per.cross, parents = parents,
+                      n.cr = n.cr, n.par = n.par, type = type.pop, n.zigo = n.zigo,
+                      biall = IBS)
+      
+      class(mppData) <- c("mppData", "list")
+      
+      return(mppData)
+      
+    } 
+    
+    ### 3.2 mppData object for bi-allelic model      
     
   } else {
     
-    mppData <- list(geno = cross.object, geno.id = geno.names, geno.par = NULL,
-                    map = new.map,
-                    trait = trait.val, cross.ind = cross.ind, ped.mat = ped.mat,
-                    par.per.cross = par.per.cross, parents = parents,
-                    n.cr = n.cr, n.par = n.par, type = type.pop, n.zigo = n.zigo,
-                    biall = IBS)
-    
-    class(mppData) <- c("mppData", "list")
-    
-    return(mppData)
-    
-  } 
-      
-  ### 3.2 mppData object for bi-allelic model      
-    
-  } else {
-    
-  # 3.2.1 Transform marker score at 0, 1, 2 format (0 = AA, 1 = AT, 2 = TT)
+    # 3.2.1 Transform marker score at 0, 1, 2 format (0 = AA, 1 = AT, 2 = TT)
     
     
     if(IBS.format == "ATCG"){
@@ -577,19 +591,19 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
     }
     
     
-  # 3.2.2 map
+    # 3.2.2 map
     
     pos.ind <- sequence(table(map[, 2]))
-
+    
     new.map <- data.frame(map[, 1], map[, 2], pos.ind, map[, 3],
                           stringsAsFactors = FALSE)
-
-    colnames(new.map) <- c("mk.names", "chr", "pos.ind", "pos.cM")
-  
-  # 3.2.3 parent genotypes (if provided)  
-  
-    if (!is.null(geno.par)) {
     
+    colnames(new.map) <- c("mk.names", "chr", "pos.ind", "pos.cM")
+    
+    # 3.2.3 parent genotypes (if provided)  
+    
+    if (!is.null(geno.par)) {
+      
       geno.par <- geno.par[parents, ]
       
       geno.par <- data.frame(new.map, t(geno.par), stringsAsFactors = FALSE)
@@ -605,7 +619,7 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
       class(mppData) <- c("mppData", "list")
       
       return(mppData)
-        
+      
     } else {
       
       mppData <- list(geno = geno012, allele.ref = allele.ref,
@@ -620,7 +634,7 @@ mppData_form <- function(geno.off, geno.par = NULL, IBS = FALSE,
       return(mppData)
       
     }
-  
-  }
     
-} # End function
+  }
+  
+}

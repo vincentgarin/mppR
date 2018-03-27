@@ -5,8 +5,8 @@
 \title{Data for MPP QTL analysis}
 \usage{
 mppData_form(geno.off, geno.par = NULL, IBS = FALSE, IBS.format = "ATCG",
-  type, nb.gen = NULL, type.mating = NULL, map, trait, cross.ind,
-  par.per.cross, step = 10000, error.prob = 1e-04,
+  type, F.gen = NULL, BC.gen = NULL, type.mating = NULL, map, trait,
+  cross.ind, par.per.cross, step = 10000, error.prob = 1e-04,
   map.function = "haldane", stepwidth = "max", dir = getwd())
 }
 \arguments{
@@ -47,15 +47,19 @@ if marker scores are coded in 0, 1, 2 format. Default = "ATCG".}
 
 \item{type}{\code{Character} indicator for the type of population analysed:
 type = "F" for Fn (F cross n gernerations); type = "BC" for BCn (backcross
-n generations); type = "DH" for double haploids; and type = "RIL"
+n generations); type = "BCsFt" for backcross followed by selfing;
+type = "DH" for double haploids; and type = "RIL"
 for recombinant inbred lines. For RIL type specify if the population was
 obtain using selfing or sibling mating using \code{type.mating}.
 If type = "RIL" or "DH", heterozygous marker scores of the geno.off argument
 must be set as missing (NA).}
 
-\item{nb.gen}{\code{Numeric} integer representing the number of F and
-backcross generations. For example nb.gen = 2 for F2 or nb.gen = 1 for
-single backcross. Default = NULL.}
+\item{F.gen}{\code{Numeric} integer representing the number of F generations.
+For example F.gen = 2 for F2. Default = NULL.}
+
+\item{BC.gen}{\code{Numeric} integer representing the number of
+backcross generations. For example BC.gen = 1 for single backcross.
+Default = NULL.}
 
 \item{type.mating}{\code{Character} specifying for a RIL population if it was
 obtained by selfing ("selfing") or by sibling mating ("sib.mat").
@@ -216,7 +220,7 @@ my.dir <- "C:/.../"
 
 # IBD mppData for cross, parental or ancestral model
 data <- mppData_form(geno.off = USNAM_genoABH, geno.par = geno.par,
-                     IBS = FALSE, type = "F", nb.gen = 6, map = map,
+                     IBS = FALSE, type = "F", F.gen = 6, map = map,
                      trait = trait, cross.ind = cross.ind,
                      par.per.cross = par.per.cross, step = 5,
                      map.function = "haldane",  stepwidth = "max",
@@ -257,7 +261,7 @@ my.dir <- "C:/.../"
 
 # IBS mppData for bi-allelic model
 data_IBS <- mppData_form(geno.off = geno[7:506,], geno.par = geno.par,
-                           type = "F", nb.gen = 6, IBS = TRUE,
+                           type = "F", F.gen = 6, IBS = TRUE,
                            IBS.format = "ATCG", map = map,
                            trait = trait, cross.ind = cross.ind,
                            par.per.cross = par.per.cross, dir = my.dir)
