@@ -9,7 +9,7 @@ formPedMatInv <- function(mppData, VCOV){
   
   if((VCOV == "pedigree") || (VCOV == "ped_cr.err")){
     
-    assign("ped.mat.inv", asreml.Ainverse(mppData$ped.mat[, 2:4]),
+    assign("ped.mat.inv", asreml::asreml.Ainverse(mppData$ped.mat[, 2:4]),
            envir = .GlobalEnv)
     
     # extract the sparse inverse

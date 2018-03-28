@@ -55,7 +55,7 @@ QTLModelQeff <- function(mppData, trait, cross.mat, Q.list, VCOV){
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
     } else if (VCOV == "cr.err") {formula.R <- "~at(cr.mat):units"}
     
-    model <- asreml(fixed = as.formula(formula), rcov = as.formula(formula.R),
+    model <- asreml::asreml(fixed = as.formula(formula), rcov = as.formula(formula.R),
                     data = dataset, trace = FALSE, na.method.Y = "omit",
                     na.method.X = "omit")
     
@@ -87,7 +87,7 @@ QTLModelQeff <- function(mppData, trait, cross.mat, Q.list, VCOV){
     if(VCOV == "pedigree"){ formula.R <- "~idv(units)"
     } else if (VCOV == "ped_cr.err") { formula.R <- "~at(cr.mat):units"}
     
-    model <- asreml(fixed = as.formula(formula), random = ~ ped(genotype),
+    model <- asreml::asreml(fixed = as.formula(formula), random = ~ ped(genotype),
                     rcov = as.formula(formula.R),
                     ginverse = list(genotype = ped.mat.inv),
                     data = dataset, trace = FALSE, na.method.Y = "omit",

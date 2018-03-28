@@ -15,7 +15,7 @@ QTL_pval_mix <- function(model, Q.eff, QTL.el, x, par.clu, ref.name, par.names,
     start.ind <- 3; end.ind <- 2}
   
   sign <- sign(rev(model$coefficients$fixed[1:QTL.el]))
-  pval <- wald(model)[start.ind:(QTL.el + end.ind), 4]
+  pval <- asreml::wald(model)[start.ind:(QTL.el + end.ind), 4]
   pval <- pval * sign
   pval[pval == 0] <- 1
   names(pval) <- ref.name

@@ -26,6 +26,13 @@
 #' \code{ref.par}. This option is only available if the MPP design is composed
 #' of a unique connected part.
 #' 
+#' For the parental and ancestral model it is also possible to estimate the QTL
+#' effects using a sum to zero constraint \code{sum_zero = TRUE}. In that case,
+#' the effects of the different parental (ancestral) allele will represent the
+#' deviation with respect to the average trait value. This option is only
+#' available for the parental and ancestral model with homogeneous residual
+#' term \code{VCOV = 'h.err'}.
+#' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 #' represent the effects of a single allele copy of the least frequent allele.
 #' 
@@ -73,6 +80,10 @@
 #' ancestral model, the ancestral class containing the reference parent will be
 #' set as reference. \strong{This option can only be used if the MPP design is
 #' composed of a unique connected part}. Default = NULL.
+#' 
+#' @param sum_zero Optional \code{Logical} value specifying if the QTL effect of
+#' a parental or an ancestral model should be caculated using the sum to zero
+#' constraint. Default = FALSE.
 #' 
 #' 
 #' @return Return:
@@ -160,14 +171,14 @@
 
 
 QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
-                           VCOV = "h.err", ref.par = NULL) {
+                           VCOV = "h.err", ref.par = NULL, sum_zero = FALSE) {
   
   # 1. Check data format
   ######################
   
   check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
                    par.clu = par.clu, QTL = QTL, ref.par = ref.par,
-                   fct = "QTLeffects")
+                   sum_zero = sum_zero, fct = "QTLeffects")
   
   # 2. elements for the model
   ###########################
@@ -218,22 +229,41 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   
-  
-  ### 2.7 For the parental and ancestral model organise the matrix to get the
-  # desired constraint.
-  
-  Q.eff_temp <- rep(Q.eff, length(Q.list))
-  
-  order.Qmat <- mapply(FUN = IncMat_QTL_MAF, QTL = Q.list,
-                       Q.eff_i = Q.eff_temp, Q.pos_i = Q.pos,
-                       MoreArgs = list(mppData = mppData, par.clu = par.clu,
-                                       ref.par = ref.par),
-                       SIMPLIFY = FALSE)
-  
-  
-  Q.list <- lapply(X = order.Qmat, FUN = function(x) x$QTL)
-  allele_order <- lapply(X = order.Qmat, FUN = function(x) x$allele_order)
-  con.ind <- lapply(X = order.Qmat, FUN = function(x) x$con.ind)
+  if(!sum_zero){
+    
+    ### 2.7 For the parental and ancestral model organise the matrix to get the
+    # desired constraint.
+    
+    Q.eff_temp <- rep(Q.eff, length(Q.list))
+    
+    order.Qmat <- mapply(FUN = IncMat_QTL_MAF, QTL = Q.list,
+                         Q.eff_i = Q.eff_temp, Q.pos_i = Q.pos,
+                         MoreArgs = list(mppData = mppData, par.clu = par.clu,
+                                         ref.par = ref.par),
+                         SIMPLIFY = FALSE)
+    
+    
+    Q.list <- lapply(X = order.Qmat, FUN = function(x) x$QTL)
+    allele_order <- lapply(X = order.Qmat, FUN = function(x) x$allele_order)
+    con.ind <- lapply(X = order.Qmat, FUN = function(x) x$con.ind)
+    
+  } else {
+    
+    # re-organise the QTL incidence matrices adding the constraint for sum to 0
+    
+    IncMat_ext <- IncMat_sum0_const(mppData = mppData, Q.eff = Q.eff,
+                                    Q.list = Q.list, Q.pos = Q.pos,
+                                    par.clu = par.clu, cross.mat = cross.mat,
+                                    trait = trait)
+    
+    Q.list <- IncMat_ext$Q.list
+    names(Q.list) <- paste0("Q", 1:length(Q.list))
+    cross.mat <- IncMat_ext$cross.mat
+    trait <- IncMat_ext$trait
+    con.ind <- IncMat_ext$con.ind
+    allele_order <- lapply(X = Q.list, FUN = colnames)
+    
+  }
   
   
   # 3. model computation

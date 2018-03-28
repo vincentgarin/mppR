@@ -156,7 +156,9 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   # 1. check data format
   ######################
   
-  if(!((exists("clusthaplo")) && (is.function(clusthaplo)))){
+  test <- requireNamespace(package = 'clusthaplo', quietly = TRUE)
+  
+  if(!test){
     
     stop("To use this function, you must load the package clusthaplo")
     
@@ -200,7 +202,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   # Initialize the clustering procedure
   
-  clust <- clusthaplo(haplotypes.map = haplo.map,
+  clust <- clusthaplo::clusthaplo(haplotypes.map = haplo.map,
                       mcqtl.consensus.map = consensus.map, 
                       marker.data = marker.data, na.strings = na.strings,
                       discard.unknown.markers = TRUE)

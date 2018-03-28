@@ -40,7 +40,7 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     } else if (VCOV == "cr.err") {formula.R <- "~at(cr.mat):units"}
     
     
-    model <- tryCatch(expr = asreml(fixed = trait ~ -1 + cr.mat + grp(QTL),
+    model <- tryCatch(expr = asreml::asreml(fixed = trait ~ -1 + cr.mat + grp(QTL),
                                     rcov =  as.formula(formula.R),
                                     group = list(QTL = 1:dim(QTL)[2]),
                                     data=dataset, trace = FALSE,
@@ -63,7 +63,7 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     if(VCOV == "pedigree"){ formula.R <- "~idv(units)"
     } else if (VCOV == "ped_cr.err") {formula.R <- "~at(cr.mat):units"}
     
-    model <- tryCatch(expr = asreml(fixed = trait ~ 1 + grp(QTL),
+    model <- tryCatch(expr = asreml::asreml(fixed = trait ~ 1 + grp(QTL),
                                     random = ~ ped(genotype),
                                     rcov =  as.formula(formula.R),
                                     group = list(QTL=1:dim(QTL)[2]),
@@ -79,7 +79,7 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     
     if (is.null(model)){ results <- 0
     
-    } else { pval <- pchisq(wald(model)[2, 3], wald(model)[2, 1],
+    } else { pval <- pchisq(asreml::wald(model)[2, 3], asreml::wald(model)[2, 1],
                             lower.tail = FALSE)
     results <- -log10(pval)
     

@@ -75,7 +75,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
     } else if (VCOV == "cr.err") {formula.R <- "~at(cr.mat):units"}
     
-    model <- tryCatch(expr = asreml(fixed = as.formula(formula.fix),
+    model <- tryCatch(expr = asreml::asreml(fixed = as.formula(formula.fix),
                                     rcov =  as.formula(formula.R),
                                     group = list(cof=1:cof.el),
                                     data=dataset, trace = FALSE,
@@ -103,7 +103,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
     if(VCOV == "pedigree"){ formula.R <- "~idv(units)"
     } else if (VCOV == "ped_cr.err") {formula.R <- "~at(cr.mat):units"}
     
-    model <- tryCatch(expr = asreml(fixed = as.formula(formula.fix),
+    model <- tryCatch(expr = asreml::asreml(fixed = as.formula(formula.fix),
                                     random = ~ ped(genotype),
                                     rcov = as.formula(formula.R),
                                     ginverse = list(genotype = ped.mat.inv),
@@ -126,7 +126,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
       
     } else {
       
-      W.stat <- sum(wald(model)[3:(QTL.el+2), 3])
+      W.stat <- sum(asreml::wald(model)[3:(QTL.el+2), 3])
       
       if(W.stat == 0){
         
@@ -134,7 +134,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
         
       } else {
         
-        df <- sum(wald(model)[3:(QTL.el+2), 1])
+        df <- sum(asreml::wald(model)[3:(QTL.el+2), 1])
         
         pval <- pchisq(W.stat, df, lower.tail = FALSE)
         

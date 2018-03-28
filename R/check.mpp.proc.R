@@ -7,7 +7,8 @@
 
 check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
                            plot.gen.eff = FALSE, ref.par = NULL,
-                           parallel = FALSE, cluster, output.loc){
+                           sum_zero = NULL, parallel = FALSE, cluster,
+                           output.loc){
   
   # 1. test the validity of the provided path to store the results
   
@@ -51,7 +52,9 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
     if (VCOV != "h.err"){
       
-      if(!((exists("asreml")) && (is.function(asreml)))){
+      test <- requireNamespace(package = 'asreml', quietly = TRUE)
+      
+      if(!test){
         
         stop(paste("To use this type of VCOV, you must have access to the asreml",
                    "function from the asreml-R package."))
@@ -180,6 +183,32 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
                  paste(mppData$parents, collapse = ", ")))
       
     }
+    
+  }
+  
+  # 10. Check the argument sum_zero
+  
+  if(!is.null(sum_zero)){
+    
+    if(sum_zero){
+      
+      if(!(Q.eff %in% c('par', 'anc'))){
+        
+        stop(paste('You can only use the sum to zero constraint for the',
+                   'parental (Q.eff = "par") or the ancestral (Q.eff = "anc")',
+                   'models.'))
+        
+      }
+      
+      if(VCOV != 'h.err'){
+        
+        stop(paste('You can only use the sum to zero constraint with the',
+                   'homogeneous error term model (VCOV = "h.err").'))
+        
+      }
+      
+    }
+    
     
   }
     

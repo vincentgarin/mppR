@@ -7,9 +7,9 @@
 mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
   par.clu = NULL, VCOV = "h.err", plot.gen.eff = FALSE, thre.cof = 3,
   win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-  backward = TRUE, alpha.bk = 0.05, ref.par = NULL, CI = FALSE,
-  drop = 1.5, text.size = 18, parallel = FALSE, cluster = NULL,
-  verbose = TRUE, output.loc = getwd())
+  backward = TRUE, alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE,
+  CI = FALSE, drop = 1.5, text.size = 18, parallel = FALSE,
+  cluster = NULL, verbose = TRUE, output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -79,10 +79,14 @@ the backward elimination. Terms with p-values above this value will
 iteratively be removed. Default = 0.05.}
 
 \item{ref.par}{Optional \code{Character} expression defining the parental
-allele that will be used as reference for the parental model. For the
-ancestral model, the ancestral class containing the reference parent will be
-set as reference. \strong{This option can only be used if the MPP design is
-composed of a unique connected part}. Default = NULL.}
+allele that will be used as reference to ocmpute QTL effects for the parental
+model. For the ancestral model, the ancestral class containing the reference
+parent will be set as reference. \strong{This option can only be used if
+the MPP design is composed of a unique connected part}. Default = NULL.}
+
+\item{sum_zero}{Optional \code{Logical} value specifying if the QTL effect of
+a parental or an ancestral model should be caculated using the sum to zero
+constraint. Default = FALSE.}
 
 \item{CI}{\code{Logical} value. If \code{CI = TRUE}, the function will
 compute a -log10(pval) drop confidence interval for each QTL after

@@ -108,10 +108,14 @@
 #' iteratively be removed. Default = 0.05.
 #' 
 #' @param ref.par Optional \code{Character} expression defining the parental
-#' allele that will be used as reference for the parental model. For the
-#' ancestral model, the ancestral class containing the reference parent will be
-#' set as reference. \strong{This option can only be used if the MPP design is
-#' composed of a unique connected part}. Default = NULL.
+#' allele that will be used as reference to ocmpute QTL effects for the parental
+#' model. For the ancestral model, the ancestral class containing the reference
+#' parent will be set as reference. \strong{This option can only be used if
+#' the MPP design is composed of a unique connected part}. Default = NULL.
+#' 
+#' @param sum_zero Optional \code{Logical} value specifying if the QTL effect of
+#' a parental or an ancestral model should be caculated using the sum to zero
+#' constraint. Default = FALSE.
 #' 
 #' @param CI \code{Logical} value. If \code{CI = TRUE}, the function will
 #' compute a -log10(pval) drop confidence interval for each QTL after
@@ -251,8 +255,8 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      plot.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
                      backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
-                     CI = FALSE, drop = 1.5, text.size = 18, parallel = FALSE,
-                     cluster = NULL, verbose = TRUE,
+                     sum_zero = FALSE, CI = FALSE, drop = 1.5, text.size = 18,
+                     parallel = FALSE, cluster = NULL, verbose = TRUE,
                      output.loc = getwd()) {
   
   
@@ -261,8 +265,8 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   check.mpp.proc(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
                  par.clu = par.clu, plot.gen.eff = plot.gen.eff,
-                 ref.par = ref.par, parallel = parallel, cluster = cluster,
-                 output.loc = output.loc)
+                 ref.par = ref.par, sum_zero = sum_zero, parallel = parallel,
+                 cluster = cluster, output.loc = output.loc)
   
   
   # 2. Create a directory to store the results
@@ -474,7 +478,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
                                 par.clu = par.clu, VCOV = VCOV,
-                                ref.par = ref.par)
+                                ref.par = ref.par, sum_zero = sum_zero)
   
   # 8. CIM- and confidence interval computation
   #############################################

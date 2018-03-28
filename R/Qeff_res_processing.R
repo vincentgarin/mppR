@@ -49,7 +49,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     
     index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
     
-    w.table <- wald(model)
+    w.table <- asreml::wald(model)
     w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
     
     results <- cbind(rev(model$coefficients$fixed)[index],

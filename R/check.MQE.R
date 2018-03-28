@@ -214,7 +214,9 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
 
     if (VCOV != "h.err"){
 
-      if(!((exists("asreml")) && (is.function(asreml)))){
+      test <- requireNamespace(package = 'asreml', quietly = TRUE)
+      
+      if(!test){
 
         stop(paste("To use this type of VCOV, you must have access to the asreml",
                    "function from the asreml-R package."))

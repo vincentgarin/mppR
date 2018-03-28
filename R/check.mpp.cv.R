@@ -52,7 +52,9 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
   
   if (VCOV != "h.err"){
     
-    if(!((exists("asreml")) && (is.function(asreml)))){
+    test <- requireNamespace(package = 'asreml', quietly = TRUE)
+    
+    if(!test){
       
       stop(paste("To use this type of VCOV, you must have access to the asreml",
                  "function from the asreml-R package."))

@@ -51,11 +51,11 @@ QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
     } else if (VCOV == "cr.err") {formula.R <- "~at(cr.mat):units"}
   
-    model <- asreml(fixed = as.formula(x), rcov = as.formula(formula.R),
+    model <- asreml::asreml(fixed = as.formula(x), rcov = as.formula(formula.R),
                     group = QTL.seq, data = dataset, trace = FALSE,
                     na.method.Y = "omit", na.method.X = "omit")
     
-    w.table <- wald(model)
+    w.table <- asreml::wald(model)
     res <- w.table[(dim(w.table)[1] - 1), 4]
     
   } else if ((VCOV == "pedigree") || (VCOV == "ped_cr.err")) {
@@ -69,12 +69,12 @@ QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
     if(VCOV == "pedigree"){ formula.R <- "~idv(units)"
     } else if (VCOV == "ped_cr.err") { formula.R <- "~at(cr.mat):units"}
     
-    model <- asreml(fixed = as.formula(x), random = ~ ped(genotype),
+    model <- asreml::asreml(fixed = as.formula(x), random = ~ ped(genotype),
            rcov = as.formula(formula.R), ginverse = list(genotype = ped.mat.inv),
            group = QTL.seq, data = dataset, trace = FALSE, na.method.Y = "omit",
            na.method.X = "omit")
     
-    w.table <- wald(model)
+    w.table <- asreml::wald(model)
     res <- w.table[(dim(w.table)[1] - 1), 4]
     
   }
