@@ -123,6 +123,8 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     
     Q.pos <- which(mppData$map[, 1] %in% QTL)
     
+    QTL <- mppData$map[mppData$map[, 1] %in% QTL, ]
+    
   } else {
     
     Q.pos <- which(mppData$map[, 1] %in% QTL[, 1])
@@ -188,9 +190,15 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     
     QTL <- NULL
     
+    return(QTL)
+    
+  } else{
+    
+    class(QTL) <- c("QTLlist", "data.frame")
+    
+    return(QTL)
+    
   }
-  
-  return(QTL)
   
 }
   
