@@ -55,7 +55,7 @@ mppData_sub <- mppData_subset(mppData = USNAM_mppData, gen.list = gen.list)
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mppData_chgPheno}}
+\code{\link{mppData_form}}
 }
 \author{
 Vincent Garin

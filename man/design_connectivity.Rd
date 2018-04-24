@@ -4,24 +4,24 @@
 \alias{design_connectivity}
 \title{Connected parts of a MPP design}
 \usage{
-design_connectivity(par.per.cross, plot.des = TRUE, output.loc = NULL)
+design_connectivity(par_per_cross, plot_des = TRUE, output_loc = NULL)
 }
 \arguments{
-\item{par.per.cross}{Three columns \code{character matrix} specifying :
+\item{par_per_cross}{Three columns \code{character matrix} specifying :
 1) the cross indicators ; 2) the parents 1 identifiers of the crosses;
 3) the parents 2 identifiers of the crosses.}
 
-\item{plot.des}{\code{Logical} value indicating if connected part of the
+\item{plot_des}{\code{Logical} value indicating if connected part of the
 design should be plotted. Default = TRUE.}
 
-\item{output.loc}{Path where the plot of the design will be saved if the
+\item{output_loc}{Path where the plot of the design will be saved if the
 argument is given. Default = NULL.}
 }
 \value{
 Return a list with each element representing one connected part of the design
 and the list of parents contained in this part.
 
-If \code{plot.des = TRUE} and \code{output.loc} has been specified. A plot
+If \code{plot_des = TRUE} and \code{output_loc} has been specified. A plot
 of the graph (con_plot.pdf) will be saved at the specified location.
 }
 \description{
@@ -32,9 +32,9 @@ Williams (1964) and the package igraph.
 
 data(USNAM_mppData)
 
-par.per.cross <- USNAM_mppData$par.per.cross
+par_per_cross <- USNAM_mppData$par.per.cross
 
-con.part <- design_connectivity(par.per.cross)
+con.part <- design_connectivity(par_per_cross)
 
 }
 \references{

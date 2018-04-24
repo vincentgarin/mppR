@@ -37,8 +37,6 @@ that correspond to these genotypes.
 data(USNAM_pheno)
 data(USNAM_geno)
 
-rownames(USNAM_pheno) <- USNAM_pheno$genotypes
-
 # The 6 parents of the crosses were not phenotyped
 match <- QC_matchGeno(mk.mat = USNAM_geno, pheno = USNAM_pheno)
 

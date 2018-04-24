@@ -333,7 +333,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
         }
         
         nb.con.part <- length(design_connectivity(mppData$par.per.cross,
-                                                  plot.des = FALSE))
+                                                  plot_des = FALSE))
         
         if(nb.con.part > 1){
           

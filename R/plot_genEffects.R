@@ -121,8 +121,8 @@ plot_genEffects <- function(mppData, Qprof, Q.eff, QTL = NULL,
     
     # determine the connected parts
     
-    con.part <- design_connectivity(par.per.cross = mppData$par.per.cross,
-                                     plot.des = FALSE)
+    con.part <- design_connectivity(par_per_cross = mppData$par.per.cross,
+                                     plot_des = FALSE)
     
     len.con <- unlist(lapply(X = con.part, FUN = function(x) length(x)))
     con.part <- con.part[names(sort(len.con, decreasing = FALSE))]

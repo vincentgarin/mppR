@@ -33,17 +33,13 @@
 #' \item{Remove markers with a minor allele frequency (MAF) below a threshold
 #' given by \code{MAF.pop.lim} (\code{\link{QC_MAF}}).}
 #' 
-#' \item{Determine markers having a too low within cross MAF (\code{\link{QC_MAF}}
-#' and \code{\link{QC_tagMAFCr}}). The user can give the  critical values for MAF
-#' within cross using argument \code{MAF.cr.lim}.}
-#' 
 #' \item{Determine markers having a too low within cross MAF
 #' (\code{\link{QC_MAF}} and \code{\link{QC_tagMAFCr}}). The user can give the
 #' critical values for MAF within cross using \code{MAF.cr.lim}.
 #' 
 #' By default, the within cross MAF values are defined by the following function
 #' of the cross-size n.ci: MAF(n.ci) = 0.5 if n.ci c [0, 10] and MAF(n.ci) =
-#' (4.5/n.ci) + 0.05$ if n.ci > 10. This means that up to 10 genotypes,
+#' (4.5/n.ci) + 0.05 if n.ci > 10. This means that up to 10 genotypes,
 #' the critical within cross MAF is set to 50%. Then it decreases when the
 #' number of genotype increases until 5% set as a lower bound. 
 #' 
@@ -249,12 +245,15 @@
 #' data(USNAM_pheno)
 #' data(USNAM_map)
 #' 
-#' cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
+#' cross.ind <- substr(rownames(USNAM_pheno), 1, 4)
 #' geno.off <- USNAM_geno[7:506, ]
 #' geno.par <- USNAM_geno[1:6, ]
 #' 
 #' map <- USNAM_map
-#' trait <- USNAM_pheno
+#' trait <- data.frame(rownames(USNAM_pheno), USNAM_pheno[, 1],
+#'                    stringsAsFactors = FALSE)
+#' colnames(trait) <- c('genotypes', 'ULA')
+#' rownames(trait) <- rownames(USNAM_pheno)
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
 #'                        rownames(geno.par)[2:6])
 #' 
@@ -324,7 +323,10 @@
 #' geno.par <- USNAM_geno[1:6, ]
 #' 
 #' map <- USNAM_map
-#' trait <- USNAM_pheno
+#' trait <- data.frame(rownames(USNAM_pheno), USNAM_pheno[, 1],
+#'                    stringsAsFactors = FALSE)
+#' colnames(trait) <- c('genotypes', 'ULA')
+#' rownames(trait) <- rownames(USNAM_pheno)
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
 #'                        rownames(geno.par)[2:6])
 #' 

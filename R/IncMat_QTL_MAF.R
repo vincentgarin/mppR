@@ -14,8 +14,8 @@ IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu,
       
       # 1. determine the interconnected parts
       
-      con.part <- design_connectivity(par.per.cross = mppData$par.per.cross,
-                                      plot.des = FALSE)
+      con.part <- design_connectivity(par_per_cross = mppData$par.per.cross,
+                                      plot_des = FALSE)
       
     } else if (Q.eff_i == "anc"){
       
@@ -37,8 +37,8 @@ IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu,
       
       par.per.cross_i <- cbind(mppData$par.per.cross[, 1], all.p1, all.p2)
       
-      con.part <- design_connectivity(par.per.cross = par.per.cross_i,
-                                      plot.des = FALSE)
+      con.part <- design_connectivity(par_per_cross = par.per.cross_i,
+                                      plot_des = FALSE)
       
       
       

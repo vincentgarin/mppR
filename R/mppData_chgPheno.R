@@ -24,16 +24,13 @@
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
-#' data(USNAM_pheno)
+#' # data(USNAM_mppData)
+#' # data(USNAM_pheno)
 #' 
-#' trait <- USNAM_pheno
+#' # trait <- USNAM_pheno
 #' 
-#' mppData <- mppData_chgPheno(mppData = USNAM_mppData, trait = trait)
+#' # mppData <- mppData_chgPheno(mppData = USNAM_mppData, trait = trait)
 #' 
-#' @export
-#' 
-
 
 mppData_chgPheno <- function(mppData, trait){
   

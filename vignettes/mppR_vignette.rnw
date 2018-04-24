@@ -465,17 +465,17 @@ table(substr(rownames(USNAM_geno)[-c(1:6)], 1, 4))
 
 Raw genotypic data used in \pkg{mppR} must be bi-allelic markers. The genotypic data are expected to be formatted as a \code{character matrix}, with one letter for each allele. So, when using the ACTG coding all possible genotypes are AA, CC, AC, etc. Missing values must always be coded \code{NA}. We impose a strict data format to make mppR functioning smoothly. Any deviation from this format will produce an informative error message. 
 
-To start the data processing, the genotypic data must be split into offspring and parent genotype scores. These matrices represent the \code{geno.off} and \code{geno.par} arguments in the \code{QC_proc()} function. For these two arguments, the genotypes define the rows with genotype identifiers as row names and the markers are in columns with the marker identifiers as column names. The order of the markers must be the same as the one in the \code{map} argument. The \code{geno.off} genotypes list must also be in the same order as the one of the \code{trait} argument.
+To start the data processing, the genotypic data must be split into offspring and parent genotype scores. These matrices represent the \code{geno_off} and \code{geno_par} arguments in the \code{create.mppData()} function. For these two arguments, the genotypes define the rows with genotype identifiers as row names and the markers are in columns with the marker identifiers as column names. The order of the markers must be the same as the one in the \code{map} argument. The \code{geno_off} genotypes list must also be in the same order as the one of the \code{pheno} argument.
 
 
 <<off_par_genotype_data>>=
-geno.off <- USNAM_geno[7:506, ]
-geno.par <- USNAM_geno[1:6, ]
+geno_off <- USNAM_geno[7:506, ]
+geno_par <- USNAM_geno[1:6, ]
 @
 
 \subsubsection{Map data}
 
-\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has the same format as the one required for the argument \code{map} in function \code{QC_proc()}. As mentioned above, the list of markers must be identical to the column names of the \code{geno.off} and \code{geno.par} arguments.
+\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has the same format as the one required for the argument \code{map} in function \code{create.mppData()}. As mentioned above, the list of markers must be identical to the column names of the \code{geno_off} and \code{geno_par} arguments.
 
 <<map_data>>=
 data("USNAM_map", package = "mppR")
@@ -485,35 +485,47 @@ map <- USNAM_map
 
 \subsubsection{Phenotypic data}
 
-The file \code{USNAM\_pheno} contains phenotypic measurements of 500 offspring genotypes for the trait upper leaf angle (ULA). The two columns of \code{USNAM\_pheno} correspond to the genotypes indicators, and the trait values. \code{USNAM\_pheno} can be used as \code{trait} argument for the \code{QC_proc()} function. The list of genotype identifiers should match the row names of \code{geno.off}. A cross indicator \code{character vector} can be formed by subsetting the genotype names. It specifies to which cross each genotype belongs and can be used for the \code{cross.ind} argument in \code{QC_proc()}.
+The file \code{USNAM\_pheno} is a \code{numeric matrix} containing the phenotypic measurements of 500 offspring genotypes for the trait upper leaf angle (ULA). The row names represent the genotype identifiers. They must be identical to the row names of \code{geno_off}. \code{USNAM\_pheno} can be used as \code{pheno} argument for the \code{create.mppData()} function. A cross indicator \code{character vector} can be formed by subsetting the genotype names. It specifies to which cross each genotype belongs and can be used for the \code{cross_ind} argument in \code{create.mppData()}.
 
 <<phenotype_data>>=
 data("USNAM_pheno", package = "mppR")
 head(USNAM_pheno)
-trait <-  USNAM_pheno[, 1:2]
-cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
+pheno <-  USNAM_pheno
+cross_ind <- substr(rownames(pheno), 1, 4)
 @
 
 \subsubsection{Cross parents information}
 
-A last argument that the user must provide in \code{QC_proc()} is the \code{par.per.cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross.ind} ; 2-3) the parent 1 and 2 of the cross. The parents' identifiers must be identical to the row names of \code{geno.par}.
+A last argument that the user must provide in \code{create.mppData()} is the \code{par_per_cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross_ind} ; 2-3) the parent 1 and 2 of the cross. The parents' identifiers must be identical to the row names of \code{geno_par}.
 
 <<par.per.cross>>=
-par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
-                       rownames(geno.par)[2:6])
+par_per_cross <- cbind(unique(cross_ind), rep("B73", 5),
+                       rownames(geno_par)[2:6])
 @
 
-The \code{par.per.cross} matrix can be used in the \code{design_connectivity()} function to obtain and visualize the connected parts. For example using the example of Figure (\ref{fig:1}), we have
+The \code{par_per_cross} matrix can be used in the \code{design_connectivity()} function to obtain and visualize the connected parts. For example using the example of Figure (\ref{fig:1}), we have
 
 <<design_connectivity>>=
-par.per.cross.ex <- cbind(paste0("c", 1:7),
-                          c("PA", "PA", "PB", "PA", "PE", "PE", "PG"),
-                          c("PB", "PC", "PC", "PD", "PF", "PG", "PF"))
+ppc_ex <- cbind(paste0("c", 1:7),
+                c("PA", "PA", "PB", "PA", "PE", "PE", "PG"),
+                c("PB", "PC", "PC", "PD", "PF", "PG", "PF"))
 
-design_connectivity(par.per.cross.ex)
+design_connectivity(ppc_ex)
 @
 
-For the next part of the illustration, we assume that the \code{geno.off}, \code{geno.par}, \code{map}, \code{trait}, \code{cross.ind}, \code{par.per.cross} objects are loaded in the global environment.
+For the next part of the illustration, we assume that the \code{geno_off}, \code{geno_par}, \code{map}, \code{pheno}, \code{cross_ind}, \code{par_per_cross} objects are loaded in the global environment.
+
+\subsection{create a \code{mppData} object}
+
+The first step of the procedure is to create a single data object containing all raw data sources using \code{create.mppData()}.
+
+<<create.mppData>>=
+mppData <- create.mppData(geno_off = geno_off, geno_par = geno_par,
+                          map = map, pheno = pheno, cross_ind = cross_ind,
+                          par_per_cross = par_per_cross)
+@
+
+%%%%%%%%%%%%%%%%%%%%% Stop there
 
 \subsection{Marker quality control - QC}
  

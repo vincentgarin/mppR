@@ -36,8 +36,8 @@ IncMat_sum0_const <- function(mppData, Q.eff, Q.list, Q.pos, par.clu, cross.mat,
     
     if(Q.eff == "par"){
       
-      con.part <- design_connectivity(par.per.cross = mppData$par.per.cross,
-                                      plot.des = FALSE)
+      con.part <- design_connectivity(par_per_cross = mppData$par.per.cross,
+                                      plot_des = FALSE)
       
     } else if (Q.eff == "anc"){
       
@@ -51,8 +51,8 @@ IncMat_sum0_const <- function(mppData, Q.eff, Q.list, Q.pos, par.clu, cross.mat,
       
       par.per.cross_i <- cbind(mppData$par.per.cross[, 1], all.p1, all.p2)
       
-      con.part <- design_connectivity(par.per.cross = par.per.cross_i,
-                                      plot.des = FALSE)
+      con.part <- design_connectivity(par_per_cross = par.per.cross_i,
+                                      plot_des = FALSE)
       
     }
     

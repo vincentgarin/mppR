@@ -8,14 +8,14 @@
 #' Determine the connected parts of a MPP design using the method of Weeks and
 #' Williams (1964) and the package igraph.
 #' 
-#' @param par.per.cross Three columns \code{character matrix} specifying :
+#' @param par_per_cross Three columns \code{character matrix} specifying :
 #' 1) the cross indicators ; 2) the parents 1 identifiers of the crosses;
 #' 3) the parents 2 identifiers of the crosses.
 #' 
-#' @param plot.des \code{Logical} value indicating if connected part of the
+#' @param plot_des \code{Logical} value indicating if connected part of the
 #' design should be plotted. Default = TRUE.
 #' 
-#' @param output.loc Path where the plot of the design will be saved if the
+#' @param output_loc Path where the plot of the design will be saved if the
 #' argument is given. Default = NULL.
 #' 
 #' @return
@@ -23,7 +23,7 @@
 #' Return a list with each element representing one connected part of the design
 #' and the list of parents contained in this part.
 #' 
-#' If \code{plot.des = TRUE} and \code{output.loc} has been specified. A plot
+#' If \code{plot_des = TRUE} and \code{output_loc} has been specified. A plot
 #' of the graph (con_plot.pdf) will be saved at the specified location. 
 #' 
 #' @author Vincent Garin
@@ -37,58 +37,58 @@
 #' 
 #' data(USNAM_mppData)
 #' 
-#' par.per.cross <- USNAM_mppData$par.per.cross
+#' par_per_cross <- USNAM_mppData$par.per.cross
 #' 
-#' con.part <- design_connectivity(par.per.cross)
+#' con.part <- design_connectivity(par_per_cross)
 #' 
 #' @export
 #' 
 
-design_connectivity <- function(par.per.cross, plot.des = TRUE,
-                                output.loc = NULL){
+design_connectivity <- function(par_per_cross, plot_des = TRUE,
+                                output_loc = NULL){
   
   # 1. Test format of the arguments
   #################################
   
-  if(!is.matrix(par.per.cross)){
+  if(!is.matrix(par_per_cross)){
     
-    stop("The par.per.cross argument is not a matrix")
+    stop("The par_per_cross argument is not a matrix")
   }
   
-  if(!is.character(par.per.cross)){
+  if(!is.character(par_per_cross)){
     
-    stop("The par.per.cross argument is not a character matrix")
+    stop("The par_per_cross argument is not a character matrix")
     
   }
   
-  if(!is.null(output.loc)){
+  if(!is.null(output_loc)){
     
-    if(!file.exists(output.loc)){
+    if(!file.exists(output_loc)){
       
-      stop("The path specified in the argument output.loc is not valid.")
+      stop("The path specified in the argument output_loc is not valid.")
       
     }
     
   }
   
-  if((!is.null(output.loc) && !plot.des)){ plot.des <- TRUE }
+  if((!is.null(output_loc) && !plot_des)){ plot_des <- TRUE }
   
   # 2. Determine design conectedness and plot
   ###########################################
   
-  vertices <- apply(X = par.per.cross[, 2:3], MARGIN = 1, FUN = function(x) x)
+  vertices <- apply(X = par_per_cross[, 2:3], MARGIN = 1, FUN = function(x) x)
   
   vertices <- c(vertices)
   
   g <- graph(vertices)
   
-  if(plot.des) {
+  if(plot_des) {
     
     plot(g)
     
-    if(!is.null(output.loc)){
+    if(!is.null(output_loc)){
       
-      pdf(file.path(output.loc, "con_plot.pdf"), height = 10, width = 16)
+      pdf(file.path(output_loc, "con_plot.pdf"), height = 10, width = 16)
       
       print(plot(g))
       

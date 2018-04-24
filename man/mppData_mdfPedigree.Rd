@@ -55,8 +55,7 @@ pedigree = pedigree.new)
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mppData_subset}},
-\code{\link{mppData_chgPheno}}
+\code{\link{mppData_form}}, \code{\link{mppData_subset}}
 }
 \author{
 Vincent Garin

@@ -183,7 +183,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{cross_ABH}}, \code{\link{mppData_subset}},
-#' \code{\link{mppData_chgPheno}}, \code{\link{mppData_mdfPedigree}},
+#' \code{\link{mppData_mdfPedigree}},
 #' \code{\link{mpp_SIM}}, \code{\link{parent_cluster}},
 #' \code{\link{USNAM_mppData}}, \code{\link{USNAM_mppData_bi}}
 #' 
@@ -211,8 +211,10 @@
 #' # Phenotypes
 #' data(USNAM_pheno)
 #' 
-#' trait <- USNAM_pheno
-#' colnames(trait) <- c("genotype", "ULA")
+#' trait <- data.frame(rownames(USNAM_pheno), USNAM_pheno[, 1],
+#'                    stringsAsFactors = FALSE)
+#' colnames(trait) <- c('genotypes', 'ULA')
+#' rownames(trait) <- rownames(USNAM_pheno)
 #' 
 #' # Map
 #' data(USNAM_map)
@@ -220,7 +222,7 @@
 #' # Same list of markers as in the genotype matrix
 #' map <- USNAM_map[USNAM_map[, 1] %in% colnames(USNAM_genoABH),]
 #' 
-#' cross.ind <- substr(USNAM_pheno[, 1], 1, 4)
+#' cross.ind <- substr(rownames(USNAM_pheno), 1, 4)
 #' 
 #' par.per.cross <- cbind(unique(cross.ind), rep("B73", 5), rownames(geno.par)[-1])
 #' 
@@ -251,8 +253,10 @@
 #' # Phenotypes
 #' data(USNAM_pheno)
 #' 
-#' trait <- USNAM_pheno
-#' colnames(trait) <- c("genotype", "ULA")
+#' trait <- data.frame(rownames(USNAM_pheno), USNAM_pheno[, 1],
+#'                    stringsAsFactors = FALSE)
+#' colnames(trait) <- c('genotypes', 'ULA')
+#' rownames(trait) <- rownames(USNAM_pheno)
 #' 
 #' # Map
 #' data(USNAM_map)

@@ -13,10 +13,7 @@
   data.frame
 }
 \details{
-  Two columns data frame with genotype indicator and upper leaf angle (ULA)
-  trait values. These genotypes correspond to the 500 offspring
-  genotypes of the marker matrix \code{\link{USNAM_geno}}.
-  The data are available on www.panzea.org.
+  Upper leaf angle (ULA) trait values with genotypes identifiers as rownames. These genotypes correspond to the 500 offspring genotypes of the marker matrix \code{\link{USNAM_geno}}. The data are available on www.panzea.org.
   
 }
 \source{
