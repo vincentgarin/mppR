@@ -4,11 +4,11 @@
 \alias{create.mppData}
 \title{Create a multi-parent population data object}
 \usage{
-create.mppData(geno_off = NULL, geno_par = NULL, map = NULL,
-  pheno = NULL, cross_ind = NULL, par_per_cross = NULL)
+create.mppData(geno.off = NULL, geno.par = NULL, map = NULL,
+  pheno = NULL, cross.ind = NULL, par.per.cross = NULL)
 }
 \arguments{
-\item{geno_off}{\code{Character} marker score \code{matrix} of the offspring
+\item{geno.off}{\code{Character} marker score \code{matrix} of the offspring
 with genotypes as row and markers as column.
 \strong{Rows names must be the offspring genotypes identifiers similar to
 the one used in \code{pheno}. The columns names must be the marker names
@@ -16,10 +16,10 @@ similar to the one used in \code{map}. Marker scores must be coded using one
 letter per allele. For example, AA, CC, GG, etc. Missing values must be coded
 \code{NA}.}}
 
-\item{geno_par}{\code{Character} marker score \code{matrix} of the parents
+\item{geno.par}{\code{Character} marker score \code{matrix} of the parents
 with genotypes as row and markers as column.
 \strong{Rows names must be the parents genotypes identifiers similar to
-the one used in \code{par_per_cross}. The columns names must be the marker
+the one used in \code{par.per.cross}. The columns names must be the marker
 names similar to the one used in \code{map}. Marker scores must be coded
 using one letter per allele. For example, AA, CC, GG, etc. Missing values
 must be coded \code{NA}.}}
@@ -27,37 +27,37 @@ must be coded \code{NA}.}}
 \item{map}{Three columns \code{data.frame} with: 1) marker or identifiers;
 2) chromosome; 3) positions in centi-Morgan.\strong{
 The marker identifiers must be identical to the column names of the maker
-matrices (\code{geno_off} and \code{geno_par}).}}
+matrices (\code{geno.off} and \code{geno.par}).}}
 
 \item{pheno}{\code{Numeric matrix} with one column per trait and rownames
 as genotpes identifiers. \strong{The genotypes identifiers must be identical
-to the rownames of the offspring marker matrix (\code{geno_off}).}}
+to the rownames of the offspring marker matrix (\code{geno.off}).}}
 
-\item{cross_ind}{\code{Character} vector indicating to which cross each
+\item{cross.ind}{\code{Character} vector indicating to which cross each
 genotype belongs.}
 
-\item{par_per_cross}{Three columns \code{Character matrix} specifying :
+\item{par.per.cross}{Three columns \code{Character matrix} specifying :
 1) the cross indicators; 2) the parents 1 identifiers
 of the crosses; 3) the parents 2 identifiers of the crosses.
 \strong{The list of crosses must contain the same cross indicators as in
-\code{cross_ind} and they must appear in the same order.
+\code{cross.ind} and they must appear in the same order.
 The list of parent identifiers must be the same to the rownames of
-the argument \code{geno_par}}.}
+the argument \code{geno.par}}.}
 }
 \value{
 a \code{list} of class \code{mppData} which contains the following elements
 
-\item{geno_off}{\code{Matrix} with offspring marker scores.}
+\item{geno.off}{\code{Matrix} with offspring marker scores.}
 
-\item{geno_par}{\code{Matrix} with parents marker scores.}
+\item{geno.par}{\code{Matrix} with parents marker scores.}
 
 \item{pheno}{\code{Matrix} with phenotypic trait values.}
 
 \item{map}{\code{Data.frame} with genetic marker information.}
 
-\item{cross_ind}{Cross indicator.}
+\item{cross.ind}{Cross indicator.}
 
-\item{par_per_cross}{\code{Character matrix} information about cross and
+\item{par.per.cross}{\code{Character matrix} information about cross and
 the parents of the crosses.}
 
 The \code{list} also contain other arguments that will be filled later in
@@ -73,17 +73,17 @@ data(USNAM_geno)
 data(USNAM_map)
 data(USNAM_pheno)
 
-geno_off <- USNAM_geno[7:506, ]
-geno_par <- USNAM_geno[1:6, ]
+geno.off <- USNAM_geno[7:506, ]
+geno.par <- USNAM_geno[1:6, ]
 map <- USNAM_map
 pheno <-  USNAM_pheno
-cross_ind <- substr(rownames(pheno), 1, 4)
-par_per_cross <- cbind(unique(cross_ind), rep("B73", 5),
-                       rownames(geno_par)[2:6])
+cross.ind <- substr(rownames(pheno), 1, 4)
+par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
+                       rownames(geno.par)[2:6])
 
-mppData <- create.mppData(geno_off = geno_off, geno_par = geno_par,
-                          map = map, pheno = pheno, cross_ind = cross_ind,
-                          par_per_cross = par_per_cross)
+mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
+                          map = map, pheno = pheno, cross.ind = cross.ind,
+                          par.per.cross = par.per.cross)
 
 }
 \author{

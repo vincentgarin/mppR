@@ -469,8 +469,8 @@ To start the data processing, the genotypic data must be split into offspring an
 
 
 <<off_par_genotype_data>>=
-geno_off <- USNAM_geno[7:506, ]
-geno_par <- USNAM_geno[1:6, ]
+geno.off <- USNAM_geno[7:506, ]
+geno.par <- USNAM_geno[1:6, ]
 @
 
 \subsubsection{Map data}
@@ -499,8 +499,8 @@ cross_ind <- substr(rownames(pheno), 1, 4)
 A last argument that the user must provide in \code{create.mppData()} is the \code{par_per_cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross_ind} ; 2-3) the parent 1 and 2 of the cross. The parents' identifiers must be identical to the row names of \code{geno_par}.
 
 <<par.per.cross>>=
-par_per_cross <- cbind(unique(cross_ind), rep("B73", 5),
-                       rownames(geno_par)[2:6])
+par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
+                       rownames(geno.par)[2:6])
 @
 
 The \code{par_per_cross} matrix can be used in the \code{design_connectivity()} function to obtain and visualize the connected parts. For example using the example of Figure (\ref{fig:1}), we have
@@ -520,46 +520,51 @@ For the next part of the illustration, we assume that the \code{geno_off}, \code
 The first step of the procedure is to create a single data object containing all raw data sources using \code{create.mppData()}.
 
 <<create.mppData>>=
-mppData <- create.mppData(geno_off = geno_off, geno_par = geno_par,
-                          map = map, pheno = pheno, cross_ind = cross_ind,
-                          par_per_cross = par_per_cross)
+mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
+                          map = map, pheno = pheno, cross.ind = cross.ind,
+                          par.per.cross = par.per.cross)
 @
-
-%%%%%%%%%%%%%%%%%%%%% Stop there
 
 \subsection{Marker quality control - QC}
  
-Before QTL analysis, the raw marker data should go through a quality control (QC). This procedure will ensure that marker format is correct and that markers are informative, meaning that their segregation rate is sufficient to provide a reliable basis to investigate and estimate the QTL effects. The function \code{QC_proc()} is a wrapper for several functions performing a default QC. The user should be aware that it is difficult to propose general settings for QC that will be suitable for all MPPs. Moreover, the type of model fitted should also guide the QC. For example, if the user wants to give more emphasis to the cross-specific model, the QC should ensure that there is enough within cross segregation (point 8 of \code{QC_proc()}). On the other hand, the bi-allelic model assumes that the QTLs segregate in the whole population, therefore for this model, minimum segregation can be evaluated at the whole population level (point 7 of \code{QC_proc()}). The procedure implemented in \code{QC_proc()} is the following:
+Before QTL analysis, the raw data should go through a quality control (QC). This procedure will ensure that marker format is correct and that markers are informative, meaning that their segregation rate is sufficient to provide a reliable basis to investigate and estimate the QTL effects. The function \code{QC.mppData()} performs a default QC.
 
-
+The user should be aware that it is difficult to propose general settings for QC that will be suitable for all MPPs. Moreover, the type of model fitted should also guide the QC. For example, if the user wants to give more emphasis to the cross-specific model, the QC should ensure that there is enough within cross segregation. On the other hand, the bi-allelic model assumes that the QTLs segregate in the whole population, therefore for this model, minimum segregation can be evaluated at the whole population level. The procedure implemented in \code{QC.mppData()} is the following:
 
 \begin{enumerate}
 
-\item Remove markers with more than two alleles (\code{QC_GenotypingError()}).
+\item Remove markers with more than two alleles.
 
-\item Remove markers that are monomorphic or fully missing in the parents (\code{QC_MAF()}).
+\item Remove markers that are monomorphic or fully missing in the parents.
 
-\item Remove markers with a missing rate higher than \code{mk.miss} across the entire MPP (\code{QC_missing()}).
+\item Remove markers with a missing rate higher than \code{mk.miss} across the entire MPP.
 
-\item Remove genotypes with more missing markers than \code{gen.miss} (\code{QC_missing()}).
+\item Remove genotypes with more missing markers than \code{gen.miss}.
 
-\item Remove crosses with less than \code{n.lim} genotypes (\code{QC_minCrSize()}).
+\item Remove crosses with less than \code{n.lim} genotypes.
 
 \item Keep only the most polymorphic marker when multiple markers map at the same position. 
 
-\item Remove markers with a minor allele frequency (MAF) below a threshold given by \code{MAF.pop.lim} (\code{QC_MAF()}).
+\item Filter markers based on minor allele frequency (MAF). Different options are possible.
 
-\item Determine markers having a too low within cross MAF (\code{QC_MAF()} and \code{QC_tagMAFCr()}). The user can specify the  critical values for MAF within cross using \code{MAF.cr.lim}.
+The first one filter marker based on MAF at the whole population
+level, and/or on MAF within crosses. The markers with a MAF below a threshold given by \code{MAF.pop.lim} at the whole population level will be discarded.
 
-By default, the within cross MAF values are defined by the following function of the cross-size $N_{c}$: $MAF(N_{c}) = 0.5$ if $N_{c} \in [0, 10]$ and $MAF(N_{c}) = (4.5/N_{c}) + 0.05$ if $N_{c} > 10$. This means that up to $10$ genotypes, the critical within cross MAF is set to $50\%$. Then it decreases when the number of genotype increases until $5\%$ set as a lower bound. 
+The user can specify the  critical values for MAF within cross using \code{MAF.cr.lim}. By default, the within cross MAF values are defined by the following function of the cross-size $N_{c}$: $MAF(N_{c}) = 0.5$ if $N_{c} \in [0, 10]$ and $MAF(N_{c}) = (4.5/N_{c}) + 0.05$ if $N_{c} > 10$. This means that up to $10$ genotypes, the critical within cross MAF is set to $50\%$. Then it decreases when the number of genotype increases until $5\%$ set as a lower bound. 
 
-If the within cross MAF is below the limit in at least one cross, then marker scores of the problematic cross are either put as missing (\code{MAF.cr.miss = TRUE}) or the whole marker is discarded (\code{MAF.cr.miss = FALSE}). By default, \code{MAF.cr.miss = TRUE} which allows to include a larger number of markers and to cover a wider genetic diversity. 
+If the within cross MAF is below the limit in at least one cross, then marker scores of the problematic cross are either put as missing (\code{MAF.cr.miss = TRUE}) or the whole marker is discarded (\code{MAF.cr.miss = FALSE}). By default, \code{MAF.cr.miss = TRUE} which allows to include a larger number of markers and to cover a wider genetic diversity.
 
-\item If \code{ABH = TRUE}, convert offspring genotype data into ABH format (\code{cross_ABH()} or \code{cross_ABH_het()}).
-
-\item If \code{impute = TRUE}, impute of the missing values for the IBS bi-allelic model.
+An alternative is to select only markers that segregate in at least one cross at the \code{MAF.cr.lim2} rate.
 
 \end{enumerate}
+
+<<create.mppData>>=
+mppData <- QC.mppData(mppData = mppData, n.lim = 15, MAF.pop.lim = 0.05,
+                      MAF.cr.miss = TRUE, mk.miss = 0.1,
+                      gen.miss = 0.25, verbose = TRUE)
+@
+
+%%%%%%%%%%%%%%%%%% stop there
 
 \subsubsection{ABH assignment}
 
