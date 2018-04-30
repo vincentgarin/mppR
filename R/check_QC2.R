@@ -18,6 +18,17 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
     
   }
   
+  # test if correct step in the mppData processing
+  
+  if(mppData$status != 'init'){
+    
+    stop(paste('You have to process the mppData objects in a strict sequential order:',
+               'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
+               'parent_cluster.mppData(). You can only use QC.mppData() right',
+               'after create.mppData().'))
+    
+  }
+  
   # n.lim
   #######
   

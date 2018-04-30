@@ -133,22 +133,7 @@
 #' 
 #' @export
 
-# library(mppR)
-# data(mppData_init)
-# 
-# mppData = mppData_init
-# n.lim = 15
-# MAF.pop.lim = 0.05
-# MAF.cr.lim = NULL
-# MAF.cr.lim2 = NULL
-# MAF.cr.miss = TRUE
-# mk.miss = 0.1
-# gen.miss = 0.25
-# verbose = TRUE
-# n.cores = 1
-# 
-# source('H:/PhD/R/package/mppR/R/check_format_class.R')
-# source('H:/PhD/R/package/mppR/R/check_QC2.R')
+
 
 QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
                        MAF.pop.lim = 0.05, MAF.cr.lim = NULL,
@@ -699,7 +684,7 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
                   cross.ind = cross.ind, par.per.cross = par.per.cross,
                   type = NULL, parents = parents, n.cr = n.cr, n.par = n.par,
                   n.zigo = NULL, rem.mk = prob.mk.list, rem.gen = prob.gen.list,
-                  complete = FALSE)
+                  status = 'QC')
   
   class(mppData) <- c("mppData", "list")
   

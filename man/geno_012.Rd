@@ -4,13 +4,20 @@
 \alias{geno_012}
 \title{Marker scores into 0, 1, 2 format}
 \usage{
-geno_012(mk.mat)
+geno_012(mk.mat, parallel = FALSE, cluster = NULL)
 }
 \arguments{
 \item{mk.mat}{\code{Character} genotype  marker score \code{matrix}.
 \strong{Marker scores must be coded using one letter for each allele.
 For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG.
 Missing values must be coded NA.}}
+
+\item{parallel}{\code{Logical} value specifying if the function should be
+executed in parallel on multiple cores. To run function in parallel user must
+provide cluster in the \code{cluster} argument. Default = FALSE.}
+
+\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
+from the parallel package. Default = NULL.}
 }
 \value{
 Return:

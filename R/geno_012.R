@@ -10,7 +10,14 @@
 #' @param mk.mat \code{Character} genotype  marker score \code{matrix}.
 #' \strong{Marker scores must be coded using one letter for each allele.
 #' For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG.
-#' Missing values must be coded NA.} 
+#' Missing values must be coded NA.}
+#' 
+#' @param parallel \code{Logical} value specifying if the function should be
+#' executed in parallel on multiple cores. To run function in parallel user must
+#' provide cluster in the \code{cluster} argument. Default = FALSE.
+#' 
+#' @param cluster Cluster object obtained with the function \code{makeCluster()}
+#' from the parallel package. Default = NULL.
 #'   
 #' @return Return:
 #' 
@@ -39,7 +46,7 @@
 #'           
 
 
-geno_012 <- function(mk.mat) {
+geno_012 <- function(mk.mat, parallel = FALSE, cluster = NULL) {
   
   geno.names <- rownames(mk.mat)
   
@@ -90,7 +97,18 @@ geno_012 <- function(mk.mat) {
   
   ### 1.2 computation of the allele with the highest MAF
   
-  all.class <- apply(X = mk.mat, MARGIN = 2, FUN = allele.MAF)
+  if(parallel){
+    
+    all.class <- parApply(cl = cluster, X = mk.mat, MARGIN = 2,
+                          FUN = allele.MAF)
+    
+  } else {
+    
+    all.class <- apply(X = mk.mat, MARGIN = 2, FUN = allele.MAF)
+    
+  }
+  
+  
   
   
   # 2. transform the marker scores. Given the allele with the highest MAF
@@ -119,8 +137,19 @@ geno_012 <- function(mk.mat) {
   mk.mat.list <- data.frame(mk.mat, stringsAsFactors = FALSE)
   all.class.list <- data.frame(all.class, stringsAsFactors = FALSE)
   
-  geno012 <- mapply(FUN = trans012, x = mk.mat.list, ref = all.class.list)
+  if(parallel){
+    
+    geno012 <- clusterMap(cl = cluster, fun = trans012, x = mk.mat.list,
+                          ref = all.class.list, SIMPLIFY = TRUE)
+    
+  } else {
+    
+    geno012 <- mapply(FUN = trans012, x = mk.mat.list, ref = all.class.list)
+    
+  }
+  
   rownames(geno012) <- geno.names
+  
   
   results <- list(geno012 = geno012, all.ref = all.class)
   

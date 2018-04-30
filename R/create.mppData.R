@@ -233,7 +233,7 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
                   cross.ind = cross.ind, par.per.cross = par.per.cross,
                   type = NULL, parents = NULL, n.cr = NULL, n.par = NULL,
                   n.zigo = NULL, rem.mk = NULL, rem.gen = NULL,
-                  complete = FALSE)
+                  status = 'init')
   
   class(mppData) <- c("mppData", "list")
   

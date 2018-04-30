@@ -3,6 +3,7 @@
 S3method(print,summary.mppData)
 S3method(summary,mppData)
 export(CV_partition)
+export(IBS.mppData)
 export(IncMat_QTL)
 export(IncMat_cross)
 export(IncMat_parent)

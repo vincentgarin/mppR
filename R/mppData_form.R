@@ -136,10 +136,10 @@
 #' bi-allelic model (\code{IBS = TRUE}), marker score matrix recoded
 #' as 0, 1, 2 according to the copies number of the most frequent allele.}
 #' 
-#' \item{allele.ref}{If \code{IBS = TRUE}, \code{character matrix} with
-#' reference allele scores. The first row represents the allele with the highest
-#' MAF, the second, the one with the lowest and the two other the heterozygous
-#' scores.}
+#' \item{allele.ref}{If \code{IBS = TRUE}, \code{matrix} with reference allele
+#' scores. The first row represents the minor allele (lowest frequency),
+#' the second the one represent the major allele (largest frequency) and the
+#' two others the heterozygous scores.}
 #' 
 #' \item{geno.id}{ \code{Character} vector of genotpes identifiers.}
 #' 
