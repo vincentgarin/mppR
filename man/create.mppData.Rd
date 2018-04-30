@@ -84,7 +84,7 @@ par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
 mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
                           map = map, pheno = pheno, cross.ind = cross.ind,
                           par.per.cross = par.per.cross)
-
+                          
 }
 \author{
 Vincent Garin

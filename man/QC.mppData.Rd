@@ -9,8 +9,8 @@ QC.mppData(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   MAF.cr.lim2 = NULL, verbose = TRUE, n.cores = 1)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{create.mppData}} for details.}
+\item{mppData}{An object of class \code{mppData} formed with
+\code{\link{create.mppData}}.}
 
 \item{mk.miss}{\code{Numeric} maximum marker missing rate at the whole
 population level comprised between 0 and 1. Default = 0.1.}

@@ -52,8 +52,8 @@
 #' 
 #' }
 #' 
-#' @param mppData  An object of class \code{mppData}.
-#' See \code{\link{create.mppData}} for details.
+#' @param mppData  An object of class \code{mppData} formed with
+#' \code{\link{create.mppData}}.
 #' 
 #' @param mk.miss \code{Numeric} maximum marker missing rate at the whole
 #' population level comprised between 0 and 1. Default = 0.1.

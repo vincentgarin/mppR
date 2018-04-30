@@ -8,7 +8,7 @@
 #' Transform offspring genotype scores into A, B, H or NA (missing) according
 #' to the scores of parents 1 and 2 of each cross.
 #' 
-#' The function transform offspring genotype data of each cross. The function
+#' The function transforms offspring genotype data of each cross. The function
 #' takes successively the parents of the different cross as
 #' reference and assign the following scores: "A" if the offspring score is
 #' equivalent to parent 1; "B" if it is equivalent to parent 2; "H" if it is
@@ -78,18 +78,6 @@
 #' geno.ABH <- cross_ABH(par.sc = par.sc, off.sc = off.sc, cross.ind = cross.ind,
 #'                       par.per.cross = par.per.cross)
 #'
-#' @import ggplot2
-#' @import nlme
-#' @import parallel
-#' @import qtl
-#' @import methods
-#' @import utils
-#' @import grDevices
-#' @import graphics
-#' @import igraph
-#' @import synbreed
-#' @importFrom stats anova as.formula coef complete.cases cor df.residual lm
-#' @importFrom stats model.matrix pchisq pt quantile runif vcov
 #' 
 #' @export
 #' 

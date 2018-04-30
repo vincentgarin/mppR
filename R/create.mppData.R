@@ -82,6 +82,19 @@
 #' mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
 #'                           map = map, pheno = pheno, cross.ind = cross.ind,
 #'                           par.per.cross = par.per.cross)
+#'                           
+#' @import ggplot2
+#' @import nlme
+#' @import parallel
+#' @import qtl
+#' @import methods
+#' @import utils
+#' @import grDevices
+#' @import graphics
+#' @import igraph
+#' @import synbreed
+#' @importFrom stats anova as.formula coef complete.cases cor df.residual lm
+#' @importFrom stats model.matrix pchisq pt quantile runif vcov                           
 #' 
 #' @export
 #' 

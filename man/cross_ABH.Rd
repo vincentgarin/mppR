@@ -39,7 +39,7 @@ Transform offspring genotype scores into A, B, H or NA (missing) according
 to the scores of parents 1 and 2 of each cross.
 }
 \details{
-The function transform offspring genotype data of each cross. The function
+The function transforms offspring genotype data of each cross. The function
 takes successively the parents of the different cross as
 reference and assign the following scores: "A" if the offspring score is
 equivalent to parent 1; "B" if it is equivalent to parent 2; "H" if it is
@@ -75,6 +75,7 @@ par.per.cross <- cbind(unique(cross.ind), rep("B73",5), rownames(par.sc)[-1])
 
 geno.ABH <- cross_ABH(par.sc = par.sc, off.sc = off.sc, cross.ind = cross.ind,
                       par.per.cross = par.per.cross)
+
 
 }
 \seealso{

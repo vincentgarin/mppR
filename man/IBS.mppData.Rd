@@ -8,8 +8,9 @@ IBS.mppData(mppData, impute = FALSE, impute.type = "random",
   map_bp = NULL, replace.value = NULL, label.heter = "alleleCoding")
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{create.mppData}} for details.}
+\item{mppData}{An object of class \code{mppData}. The \code{mppData} must
+have been processed using: \code{\link{create.mppData}} and
+\code{\link{QC.mppData}}.}
 
 \item{impute}{\code{Logical} value. if \code{impute = TRUE}, the function
 will impute missing values using the \code{codeGeno()} function from the

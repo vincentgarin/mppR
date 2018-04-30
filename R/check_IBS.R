@@ -21,7 +21,7 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
   
   if(mppData$status != 'QC'){
     
-    stop(paste('You have to process the mppData objects in a strict sequential order:',
+    stop(paste('You have to process the mppData objects in a strict order:',
                'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
                'parent_cluster.mppData(). You can only use IBS.mppData()',
                'after performing create.mppData() and QC.mppData().'))

@@ -575,6 +575,17 @@ mppData <- IBS.mppData(mppData = mppData, impute = TRUE, impute.type = 'random')
 
 \subsubsection{IBD processing}
 
+This function estimates IBD probabilities after converting the marker genotype data into within cross ABH format. For each cross, the maker scores of the two cross parents are used as reference. Homozygous offspring genotype scores similar to parent 1 get score \code{"A"} (\code{"B"} for parent 2). Heterozygous genotypes are scored \code{"H"}. If at least one of the parents is missing or the parents are monomorphic, the offspring will receive \code{NA}. The regular ABH conversion assumes that the reference parent scores are fully homozygous or missing. However, if some parent marker scores are heterozygous, the ABH conversion can still be performed setting argument \code{het.miss.par = TRUE}. In that case, when a parent score is heterozygous or missing and the other parent is homozygous, the function will try to infer the score of the allele that was transmitted to the offspring by the heterozygous or missing parent looking at the segregation pattern.
+
+Then the computation of the IBD probabilities is done by calling the function \code{calc.genoprob()} of the \proglang{R}/\pkg{qtl} package \citep{broman_rqtl}. For that purpose a csv file that can be loaded by \proglang{R}/\pkg{qtl} will be saved at the location specified in \code{dir}.
+
+The type of population must be specified in argument \cite{type}. Different population types are possible: F-type ("F"), back-cross ("BC"), backcross followed by selfing ("BCsFt"), double haploid ("DH"), and recombinant imbred lines ("RIL"). The number of F and BC generations can be specified using \code{F.gen} and \code{BC.gen}. The agument \code{type.mating} specifies if F and RIL populations were obtained by selfing or by sibling mating. DH and RIL populations are read as back-cross by R/qtl. For these two population types, heterozygous scores will be treated as missing values.
+
+
+<<IBD.mppData>>=
+mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
+                       type.mating = 'selfing', dir = getwd())
+@
 
 
 %%%%%%%%%%%%%%%%%% stop there

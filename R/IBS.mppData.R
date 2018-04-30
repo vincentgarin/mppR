@@ -12,8 +12,9 @@
 #' function from synbreed (Wimmer et al., 2012).
 #' 
 #' 
-#' @param mppData  An object of class \code{mppData}.
-#' See \code{\link{create.mppData}} for details.
+#' @param mppData  An object of class \code{mppData}. The \code{mppData} must
+#' have been processed using: \code{\link{create.mppData}} and
+#' \code{\link{QC.mppData}}.
 #' 
 #' @param impute \code{Logical} value. if \code{impute = TRUE}, the function
 #' will impute missing values using the \code{codeGeno()} function from the
@@ -79,7 +80,7 @@
 #' 
 #' data(mppData_init)
 #' 
-#' mppData <- QC.mppData(mppData_init) # Quality control
+#' mppData <- QC.mppData(mppData_init)
 #' 
 #' mppData <- IBS.mppData(mppData = mppData, impute = TRUE,
 #' impute.type = "random")
