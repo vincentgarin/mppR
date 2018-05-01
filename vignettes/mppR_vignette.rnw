@@ -38,7 +38,7 @@
 %% an abstract and keywords
 
 \Abstract{
-	\pkg{mppR} is an add-on package for the statistical software \proglang{R} for QTL analyses in multi-parent populations composed of genotypes from more than one cross like NAM populations, diallels or factorial designs. \pkg{mppR} contains functions to assist the user in a range of activities of QTL analysis such as: data processing, QTL detection, visualisation of results, and estimation of QTL effects. \pkg{mppR} workflow is structured along six main functions allowing to: 1) perform preliminary data quality control; 2) organize data into a single data object; 3) cluster parental lines based on ancestry; 4) perform QTL detection; 5) evaluate QTL discoveries by cross-validation; and 6) determine multi-QTL effect models. The search of QTLs can be done by 16 different models that vary with respect to two main aspects: 1) how the QTL effects are modelled (cross-specific, parental, ancestral or bi-allelic), and 2) the form of the variance covariance structure. The package is illustrated with a NAM maize population.}
+	\pkg{mppR} is an add-on package for the statistical software \proglang{R} for QTL analyses in multi-parent populations composed of genotypes from more than one cross like NAM populations, diallels or factorial designs. \pkg{mppR} contains functions to assist the user in a range of activities of QTL analysis such as: data processing, QTL detection, visualisation of results, and estimation of QTL effects. \pkg{mppR} workflow is structured along main functions allowing to: 1) perform preliminary data quality control; 2) organize data into a single data object; 3) cluster parental lines based on ancestry; 4) perform QTL detection; 5) evaluate QTL discoveries by cross-validation; and 6) determine multi-QTL effect models. The search of QTLs can be done by 16 different models that vary with respect to two main aspects: 1) how the QTL effects are modelled (cross-specific, parental, ancestral or bi-allelic), and 2) the form of the variance covariance structure. The package is illustrated with a NAM maize population.}
 
 
 
@@ -435,10 +435,11 @@ A cross-validation (CV) approach can be used to evaluate the performance of the 
 
 \subsection{Overview}
 
-\pkg{mppR} contains functions to perform all steps of an MPP QTL analysis, starting from the raw data management to the visualisation of results. Figure~\ref{fig:2} shows a schematic representation of the \pkg{mppR} workflow, which contains six main functions. \code{QC_proc()} performs data quality control. \code{mppData_form()} uses outputs from \code{QC_proc()} and combines them in a single \code{mppData} object. \code{parent_cluster()} groups parental lines into ancestral classes. The \code{mppData} object and the output of \code{parent_cluster()} contain all the data necessary for the QTL analysis. They can be used in the functions: \code{mpp_proc()}, \code{mpp_CV()} and \code{MQE_proc()} which are generic functions to perform QTL analyses, cross-validation, and multi-QTL effect model computations respectively.
+\pkg{mppR} contains functions to perform all steps of an MPP QTL analysis, starting from the data processing to the visualisation of results. Figure~\ref{fig:2} shows a schematic representation of the \pkg{mppR} workflow. The first part concerns the processing of the raw data to gather all required data in a single \code{mppData} object. The functions \code{create.mppData()}, \code{QC.mppData()}, \code{IBS.mppData()}, \code{IBD.mppData()}, and \code{parent_cluster.mppData()} must be called in the defined sequence. Any deviation from this sequence will be signaled by an error message. The \code{mppData} object can be used in the functions: \code{mpp_proc()}, \code{mpp_CV()} and \code{MQE_proc()} which are generic functions to perform QTL analyses, cross-validation, and multi-QTL effect model computations respectively.
+
 
 \begin{figure}[!ht]
-	\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/Workflow.jpg}
+	\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/Workflow2.jpg}
 	\caption{mppR workflow.}
 	\label{fig:2}
 \end{figure}
@@ -465,7 +466,7 @@ table(substr(rownames(USNAM_geno)[-c(1:6)], 1, 4))
 
 Raw genotypic data used in \pkg{mppR} must be bi-allelic markers. The genotypic data are expected to be formatted as a \code{character matrix}, with one letter for each allele. So, when using the ACTG coding all possible genotypes are AA, CC, AC, etc. Missing values must always be coded \code{NA}. We impose a strict data format to make mppR functioning smoothly. Any deviation from this format will produce an informative error message. 
 
-To start the data processing, the genotypic data must be split into offspring and parent genotype scores. These matrices represent the \code{geno_off} and \code{geno_par} arguments in the \code{create.mppData()} function. For these two arguments, the genotypes define the rows with genotype identifiers as row names and the markers are in columns with the marker identifiers as column names. The order of the markers must be the same as the one in the \code{map} argument. The \code{geno_off} genotypes list must also be in the same order as the one of the \code{pheno} argument.
+To start the data processing, the genotypic data must be split into offspring and parent genotype scores. These matrices represent the \code{geno.off} and \code{geno_par} arguments in the \code{create.mppData()} function. For these two arguments, the genotypes define the rows with genotype identifiers as row names and the markers are in columns with the marker identifiers as column names. The order of the markers must be the same as the one in the \code{map} argument. The \code{geno.off} genotypes list must also be in the same order as the one of the \code{pheno} argument.
 
 
 <<off_par_genotype_data>>=
@@ -475,7 +476,7 @@ geno.par <- USNAM_geno[1:6, ]
 
 \subsubsection{Map data}
 
-\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has the same format as the one required for the argument \code{map} in function \code{create.mppData()}. As mentioned above, the list of markers must be identical to the column names of the \code{geno_off} and \code{geno_par} arguments.
+\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has the same format as the one required for the argument \code{map} in function \code{create.mppData()}. As mentioned above, the list of markers must be identical to the column names of the \code{geno.off} and \code{geno.par} arguments.
 
 <<map_data>>=
 data("USNAM_map", package = "mppR")
@@ -496,7 +497,7 @@ cross_ind <- substr(rownames(pheno), 1, 4)
 
 \subsubsection{Cross parents information}
 
-A last argument that the user must provide in \code{create.mppData()} is the \code{par_per_cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross_ind} ; 2-3) the parent 1 and 2 of the cross. The parents' identifiers must be identical to the row names of \code{geno_par}.
+A last argument that the user must provide in \code{create.mppData()} is the \code{par_per_cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross_ind} ; 2-3) the parent 1 and 2 of the cross. The parents' identifiers must be identical to the row names of \code{geno.par}.
 
 <<par.per.cross>>=
 par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
@@ -513,7 +514,7 @@ ppc_ex <- cbind(paste0("c", 1:7),
 design_connectivity(ppc_ex)
 @
 
-For the next part of the illustration, we assume that the \code{geno_off}, \code{geno_par}, \code{map}, \code{pheno}, \code{cross_ind}, \code{par_per_cross} objects are loaded in the global environment.
+For the next part of the illustration, we assume that the \code{geno_off}, \code{geno_par}, \code{map}, \code{pheno}, \code{cross.ind}, \code{par.per.cross} objects are loaded in the global environment.
 
 \subsection{create a \code{mppData} object}
 
@@ -587,6 +588,20 @@ mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
                        type.mating = 'selfing', dir = getwd())
 @
 
+\subsection{Parent clustering}
+  
+The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster.mppData()}. This function calls functions from the \proglang{R} package \pkg{clusthaplo}, which can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. \code{parent_cluster.mppData()} performs the clustering using the \code{"threshold"} method. \code{window} specifies the size of the window around the marker. The marker falling into this window will be used for the local clustering. The value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} start to use the general kinship coefficient. A visualization of the clustering results can be obtained using \code{plot = TRUE}. In that case, the plots will be saved in a folder at the location specified in \code{plot.loc}. 
+
+\code{parent_cluster()} function can be fed by \code{QC_proc()} outputs \code{\textdollar map.par.clu} for the \code{haplo.map} argument and \code{\textdollar geno.par.clu} for \code{marker.data}. Concerning \code{consensus.map}, the user should use the one of the \code{mppData} object after removing the third column. \code{parent_cluster} returns a list with two objects. The first one contains a \code{matrix} with the result of the parent clustering. The second is the average number of ancestral classes along the genome.
+
+<<parent_clustering>>=
+library("clusthaplo")
+set.seed(68769)
+
+mppData <- parent_cluster.mppData(mppData = mppData, K = 10, window = 25,
+                                  plot = FALSE)
+@
+ 
 
 %%%%%%%%%%%%%%%%%% stop there
 

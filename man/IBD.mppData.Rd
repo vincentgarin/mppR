@@ -116,8 +116,8 @@ population types, heterozygous scores will be treated as missing values.
 
 data(mppData_init)
 
-mppData <- QC.mppData(mppData_init) # Quality control
-mppData <- IBS.mppData(mppData = mppData) # IBS processing
+mppData <- QC.mppData(mppData_init)
+mppData <- IBS.mppData(mppData = mppData)
 
 \dontrun{
 

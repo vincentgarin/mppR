@@ -67,7 +67,7 @@ function from synbreed (Wimmer et al., 2012).
 
 data(mppData_init)
 
-mppData <- QC.mppData(mppData_init) # Quality control
+mppData <- QC.mppData(mppData_init)
 
 mppData <- IBS.mppData(mppData = mppData, impute = TRUE,
 impute.type = "random")
