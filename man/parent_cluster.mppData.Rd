@@ -62,6 +62,8 @@ columns corresponding to the parents. At a single marker position, parents
 with the same value were clustered in the same ancestral group.}
 
 \item{n.anc}{Average number of ancestral clusters along the genome.}
+
+\item{mono.anc}{Positions for which the ancestral clustering was monomorphic.}
 }
 \description{
 Local clustering of the parental lines done by the R package clushaplo

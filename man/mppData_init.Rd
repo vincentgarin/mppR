@@ -2,12 +2,11 @@
 \alias{mppData_init}
 \docType{data}
 \title{
-  mppData object with raw data
+  \code{mppData} object with raw data
 }
 \description{
   
-  mppData object with raw genotypic and phenotypic data of a sample of the
-  maize US nested association mapping (NAM) population. Different operations
+  \code{mppData} object with raw genotypic and phenotypic data of a sample of the maize US nested association mapping (NAM) population. Different operations
   of quality control and data processing still need to be performed before
   the QTL detection analysis.
 }

@@ -71,6 +71,8 @@
 #' 
 #' \item{n.anc}{Average number of ancestral clusters along the genome.}
 #' 
+#' \item{mono.anc}{Positions for which the ancestral clustering was monomorphic.}
+#' 
 #' 
 #' @author Vincent Garin
 #' 
@@ -124,7 +126,7 @@ parent_cluster.mppData <- function(mppData, w1 = "kernel.exp",
   
   # test if correct step in the mppData processing
   
-  if(mppData$status != 'IBD'){
+  if(!(mppData$status %in% c('IBD', 'complete'))){
     
     stop(paste('You have to process the mppData objects in a strict order:',
                'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
