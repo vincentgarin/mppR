@@ -20,7 +20,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{mppData_subset}},
-#' \code{\link{mppData_mdfPedigree}}
+#' \code{\link{pedigree_update.mppData}}
 #' 
 #' @examples
 #' 

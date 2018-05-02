@@ -183,7 +183,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{cross_ABH}}, \code{\link{mppData_subset}},
-#' \code{\link{mppData_mdfPedigree}},
+#' \code{\link{pedigree_update.mppData}},
 #' \code{\link{mpp_SIM}}, \code{\link{parent_cluster}},
 #' \code{\link{USNAM_mppData}}, \code{\link{USNAM_mppData_bi}}
 #' 

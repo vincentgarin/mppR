@@ -34,7 +34,7 @@ Replaces the phenotypic values of a \code{mppData} object by new trait values.
 }
 \seealso{
 \code{\link{mppData_form}}, \code{\link{mppData_subset}},
-\code{\link{mppData_mdfPedigree}}
+\code{\link{pedigree_update.mppData}}
 }
 \author{
 Vincent Garin

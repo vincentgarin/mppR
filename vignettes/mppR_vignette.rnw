@@ -435,7 +435,7 @@ A cross-validation (CV) approach can be used to evaluate the performance of the 
 
 \subsection{Overview}
 
-\pkg{mppR} contains functions to perform all steps of an MPP QTL analysis, starting from the data processing to the visualisation of results. Figure~\ref{fig:2} shows a schematic representation of the \pkg{mppR} workflow. The first part concerns the processing of the raw data to gather all required data in a single \code{mppData} object. The functions \code{create.mppData()}, \code{QC.mppData()}, \code{IBS.mppData()}, \code{IBD.mppData()}, and \code{parent_cluster.mppData()} must be called in the defined sequence. Any deviation from this sequence will be signaled by an error message. The \code{mppData} object can be used in the functions: \code{mpp_proc()}, \code{mpp_CV()} and \code{MQE_proc()} which are generic functions to perform QTL analyses, cross-validation, and multi-QTL effect model computations respectively.
+\pkg{mppR} contains functions to perform all steps of an MPP QTL analysis, starting from the data processing to the visualisation of results. Figure~\ref{fig:2} shows a schematic representation of the \pkg{mppR} workflow. The first part concerns the processing of the raw data to gather all required data in a single \code{mppData} object. The \code{mppData} object can be used in the functions: \code{mpp_proc()}, \code{mpp_CV()} and \code{MQE_proc()} which are generic functions to perform QTL analyses, cross-validation, and multi-QTL effect model computations respectively.
 
 
 \begin{figure}[!ht]
@@ -504,7 +504,7 @@ par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
                        rownames(geno.par)[2:6])
 @
 
-The \code{par_per_cross} matrix can be used in the \code{design_connectivity()} function to obtain and visualize the connected parts. For example using the example of Figure (\ref{fig:1}), we have
+The \code{par.per.cross} matrix can be used in the \code{design_connectivity()} function to obtain and visualize the connected parts. For example using the example of Figure (\ref{fig:1}), we have
 
 <<design_connectivity>>=
 ppc_ex <- cbind(paste0("c", 1:7),
@@ -516,7 +516,11 @@ design_connectivity(ppc_ex)
 
 For the next part of the illustration, we assume that the \code{geno_off}, \code{geno_par}, \code{map}, \code{pheno}, \code{cross.ind}, \code{par.per.cross} objects are loaded in the global environment.
 
-\subsection{create a \code{mppData} object}
+\subsection{Data processing}
+
+The initial step is the processing of the raw data to gather all required data in a single \code{mppData} object. The functions \code{create.mppData()}, \code{QC.mppData()}, \code{IBS.mppData()}, \code{IBD.mppData()}, and \code{parent_cluster.mppData()} must be called in the defined sequence to form a complete \code{mppData} object. Any deviation from this sequence will be signaled by an error message.
+
+\subsubsection{create a \code{mppData} object}
 
 The first step of the procedure is to create a single data object containing all raw data sources using \code{create.mppData()}.
 
@@ -526,7 +530,7 @@ mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
                           par.per.cross = par.per.cross)
 @
 
-\subsection{Marker quality control - QC}
+\subsubsection{Marker quality control - QC}
  
 Before QTL analysis, the raw data should go through a quality control (QC). This procedure will ensure that marker format is correct and that markers are informative, meaning that their segregation rate is sufficient to provide a reliable basis to investigate and estimate the QTL effects. The function \code{QC.mppData()} performs a default QC.
 
@@ -582,13 +586,12 @@ Then the computation of the IBD probabilities is done by calling the function \c
 
 The type of population must be specified in argument \cite{type}. Different population types are possible: F-type ("F"), back-cross ("BC"), backcross followed by selfing ("BCsFt"), double haploid ("DH"), and recombinant imbred lines ("RIL"). The number of F and BC generations can be specified using \code{F.gen} and \code{BC.gen}. The agument \code{type.mating} specifies if F and RIL populations were obtained by selfing or by sibling mating. DH and RIL populations are read as back-cross by R/qtl. For these two population types, heterozygous scores will be treated as missing values.
 
-
 <<IBD.mppData>>=
 mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
                        type.mating = 'selfing', dir = getwd())
 @
 
-\subsection{Parent clustering}
+\subsubsection{Parent clustering}
   
 The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster.mppData()}. This function calls functions from the \proglang{R} package \pkg{clusthaplo}, which can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. \code{parent_cluster.mppData()} performs the clustering using the \code{"threshold"} method. \code{window} specifies the size of the window around the marker. The marker falling into this window will be used for the local clustering. The value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} start to use the general kinship coefficient. A visualization of the clustering results can be obtained using \code{plot = TRUE}. In that case, the plots will be saved in a folder at the location specified in \code{plot.loc}. 
 
@@ -608,7 +611,11 @@ When the \code{mppData} object is complete,  summary can be obtained calling the
 summary(mppData)
 @
 
-\subsection{mppData subset}
+\subsection{mppData manipulation}
+
+Three functions allow to manipulate and modify the \code{mppData objects}: \code{subset.mppData()}, \code{pedigree_update.mppData()}, and \code{par_clu_chg.mppData()}.
+
+\subsubsection{mppData subset}
 
 Subsets from \code{mppData} objects can be obtained using the generic fuction \code{subset()}. The \code{mppData} objects can be subsetted by markers (\code{mk.list}) and/or by genotypes (\code{gen.list}).
 
@@ -617,23 +624,23 @@ mppData_sub <- subset(x = mppData, mk.list = mppData$map[, 2] == 1,
                       gen.list = sample(mppData$geno.id, 200))
 @
 
-%%%%%%%%%%%%%%%%%% stop there
+\subsubsection{Update mppData pedigree}
 
-\subsection{mppData pedigree modification}
+The function \code{pedigree_update.mppData()} can be used to complete the pedigree relationship. By default, \code{QC.mppData()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
 
-Finally \code{mppData_mdfPedigree()} can be used to complete the pedigree relationship. By default, \code{mppData_form()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
-
-<<mppData_mdfPedigree>>=
-ped.old <- mppData_IBD$ped.mat # old pedigree information
+<<pedigree_update.mppData>>=
+ped.old <- mppData$ped.mat # old pedigree information
 founder.info <- data.frame(rep("founder", 2), c("CML103", "CML322"),
                            rep("A1", 2), c("A2", "A3"))
 colnames(founder.info) <- colnames(ped.old)
 ped.new <- rbind(founder.info, ped.old)
-mppData_IBD <- mppData_mdfPedigree(mppData = mppData_IBD,
-                                   pedigree = ped.new)
+mppData <- pedigree_update.mppData(mppData = mppData, pedigree = ped.new)
  
 @
 
+\subsubsection{Change mppData parent clustering}
+
+%%%%%%%%%%%%%%%%%% stop there
 
 \subsubsection{ABH assignment}
 
@@ -749,15 +756,15 @@ mppData_IBD <- mppData_chgPheno(mppData = mppData_IBD, trait = new.trait)
 
 @
  
-Finally \code{mppData_mdfPedigree()} can be used to complete the pedigree relationship. By default, \code{mppData_form()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
+Finally \code{pedigree_update.mppData()} can be used to complete the pedigree relationship. By default, \code{mppData_form()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
 
-<<mppData_mdfPedigree>>=
+<<pedigree_update.mppData>>=
 ped.old <- mppData_IBD$ped.mat # old pedigree information
 founder.info <- data.frame(rep("founder", 2), c("CML103", "CML322"),
                            rep("A1", 2), c("A2", "A3"))
 colnames(founder.info) <- colnames(ped.old)
 ped.new <- rbind(founder.info, ped.old)
-mppData_IBD <- mppData_mdfPedigree(mppData = mppData_IBD,
+mppData_IBD <- pedigree_update.mppData(mppData = mppData_IBD,
                                    pedigree = ped.new)
  
 @

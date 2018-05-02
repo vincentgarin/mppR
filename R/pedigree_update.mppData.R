@@ -1,20 +1,20 @@
-#######################
-# mppData_mdfPedigree #
-#######################
+###########################
+# pedigree_update.mppData #
+###########################
 
 #' Modify pedigree information in a mppData object
 #'
 #' Modify the pedigree information of a \code{mppData} object.
 #' 
-#' In the formation of the \code{mppData} object, \code{mppData_from()} only
+#' In the formation of the \code{mppData} object, the functions only
 #' uses the parental relationships specified in the \code{par.per.cross}
 #' argument. However, if pedigree relationship among parents are know by the
 #' user a more complete pedigree information can be provided to the
 #' \code{mppData} object. This pedigree information can be given via the
-#' \code{pedigree} argument of the \code{mppData_mdfPedigree()} function. 
+#' \code{pedigree} argument of the \code{pedigree_update.mppData()} function. 
 #' 
-#' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
+#' @param mppData An object of class \code{mppData}. The \code{mppData} object
+#' must have been processed with \code{\link{QC.mppData}}
 #' 
 #' @param pedigree Four columns \code{data.frame}: 1) the type of
 #' genotype: "offspring" for the last genration and "founder" for genotype above
@@ -30,12 +30,12 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{mppData_subset}}
+#' @seealso \code{\link{QC.mppData}}, \code{\link{subset.mppData}}
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
-#' pedigree <- USNAM_mppData$ped.mat
+#' data(mppData)
+#' pedigree <- mppData$ped.mat
 #' 
 #' # Let us assume for example that parent CML103 and CML322 share a
 #' # common parent (A1). Then we can write a new pedigree adding this
@@ -47,7 +47,7 @@
 #' 
 #' pedigree.new <- rbind(founder.info, pedigree)
 #' 
-#' mppData <- mppData_mdfPedigree(mppData = USNAM_mppData,
+#' mppData <- pedigree_update.mppData(mppData = USNAM_mppData,
 #' pedigree = pedigree.new)
 #' 
 #' 
@@ -55,16 +55,40 @@
 #' 
 
 
-mppData_mdfPedigree <- function(mppData, pedigree){
+pedigree_update.mppData <- function(mppData, pedigree){
   
   
   stopifnot(inherits(mppData, "mppData"))
   
-  if(!identical(as.character(pedigree[pedigree[, 1]=="offspring", 2]),
+  if(mppData$status == 'init'){
+    
+    stop('The mppData object must at least have been processed with QC.mppData().')
+    
+  }
+  
+  if(!identical(as.character(pedigree[pedigree[, 1] == "offspring", 2]),
                 mppData$geno.id )) {
     
     stop("The genotypes  identifiers of the mppData object and the offspring
          pedigree information are not the same")
+    
+  }
+  
+  # Test if the newly introduced genotype are also mentioned earlier
+  
+  new.geno <- pedigree[pedigree[, 1] == "founder", 2]
+  
+  old.geno <- unlist(pedigree[pedigree[, 1] == "offspring", 3:4])
+  
+  if(!all(new.geno %in% old.geno)) {
+    
+    prob_geno <- new.geno[!(new.geno %in% old.geno)]
+    
+    mess <- paste('the folowing founder genotype(s):',
+                  paste(prob_geno, collapse = ", "), 'is/are not present',
+                  'in the old pedigree.')
+    
+    stop(mess)
     
   }
   
