@@ -14,8 +14,7 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
   
   if(!is_mppData(mppData)){
     
-    stop(paste('the mppData provided provided is not a mppData object.',
-               'Please use function create.mppData().'))
+    stop('the mppData provided provided is not a mppData object.')
     
   }
   

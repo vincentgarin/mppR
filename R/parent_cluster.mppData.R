@@ -119,8 +119,7 @@ parent_cluster.mppData <- function(mppData, w1 = "kernel.exp",
   
   if(!is_mppData(mppData)){
     
-    stop(paste('the mppData provided provided is not a mppData object.',
-               'Please use function create.mppData().'))
+    stop('the mppData provided provided is not a mppData object.')
     
   }
   

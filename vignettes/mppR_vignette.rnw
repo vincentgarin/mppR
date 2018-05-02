@@ -640,6 +640,17 @@ mppData <- pedigree_update.mppData(mppData = mppData, pedigree = ped.new)
 
 \subsubsection{Change mppData parent clustering}
 
+Using the function \code{par_clu_chg.mppData()},the user can change the parent clustering information of a \code{mppData} object. For example if he wants to cluster the parents using another software than \pkg{clusthaplo}. The new parent cluster information must be provided in argument \code{par.clu}.
+
+<<par_clu_chg.mppData>>=
+data(mppData)
+data("par_clu", package = "mppR")
+
+mppData <- par_clu_chg.mppData(mppData = mppData, par.clu = parent_cluster)
+ 
+@
+
+
 %%%%%%%%%%%%%%%%%% stop there
 
 \subsubsection{ABH assignment}

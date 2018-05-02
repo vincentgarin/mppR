@@ -2,7 +2,7 @@
 # pedigree_update.mppData #
 ###########################
 
-#' Modify pedigree information in a mppData object
+#' Modify pedigree information in a \code{mppData} object
 #'
 #' Modify the pedigree information of a \code{mppData} object.
 #' 
@@ -24,9 +24,9 @@
 #' The row giving the pedigree of an individual must appear before any row
 #' where that individual appears as a parent.}
 #' 
-#' @return Return:
+#' @return
 #' 
-#' \item{mppData}{New \code{mppData} object with completed pedigree information.}
+#' \code{mppData} object with completed pedigree information.
 #' 
 #' @author Vincent Garin
 #' 
@@ -47,7 +47,7 @@
 #' 
 #' pedigree.new <- rbind(founder.info, pedigree)
 #' 
-#' mppData <- pedigree_update.mppData(mppData = USNAM_mppData,
+#' mppData <- pedigree_update.mppData(mppData = mppData,
 #' pedigree = pedigree.new)
 #' 
 #' 

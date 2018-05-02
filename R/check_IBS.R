@@ -12,8 +12,7 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
   
   if(!is_mppData(mppData)){
     
-    stop(paste('the mppData provided provided is not a mppData object.',
-               'Please use function create.mppData().'))
+    stop('the mppData provided provided is not a mppData object.')
     
   }
   

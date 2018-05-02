@@ -2,7 +2,7 @@
 % Please edit documentation in R/pedigree_update.mppData.R
 \name{pedigree_update.mppData}
 \alias{pedigree_update.mppData}
-\title{Modify pedigree information in a mppData object}
+\title{Modify pedigree information in a \code{mppData} object}
 \usage{
 pedigree_update.mppData(mppData, pedigree)
 }
@@ -19,9 +19,7 @@ The row giving the pedigree of an individual must appear before any row
 where that individual appears as a parent.}}
 }
 \value{
-Return:
-
-\item{mppData}{New \code{mppData} object with completed pedigree information.}
+\code{mppData} object with completed pedigree information.
 }
 \description{
 Modify the pedigree information of a \code{mppData} object.
@@ -49,7 +47,7 @@ colnames(founder.info) <- colnames(pedigree)
 
 pedigree.new <- rbind(founder.info, pedigree)
 
-mppData <- pedigree_update.mppData(mppData = USNAM_mppData,
+mppData <- pedigree_update.mppData(mppData = mppData,
 pedigree = pedigree.new)
 
 
