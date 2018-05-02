@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.mppData.R
 \name{summary.mppData}
 \alias{summary.mppData}
-\title{Print summary of mppData object}
+\title{Summary of mppData object}
 \usage{
 \method{summary}{mppData}(object, ...)
 }
@@ -13,14 +13,12 @@ See \code{\link{mppData_form}} for details.}
 \item{...}{further arguments passed to or from other methods.}
 }
 \description{
-S3 \code{summary} method for object of class \code{mppData}. The summary of
-the map information lists only the marker and not the added in between
-positions.
+\code{summary} for object of class \code{mppData}.
 }
 \examples{
 
-data(USNAM_mppData)
-summary(USNAM_mppData)
+data(mppData)
+summary(mppData)
 
 }
 \seealso{

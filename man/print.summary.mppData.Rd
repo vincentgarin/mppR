@@ -16,8 +16,8 @@ Print summary.mppData object
 }
 \examples{
 
-data(USNAM_mppData)
-sum.mppData <- summary(USNAM_mppData)
+data(mppData)
+sum.mppData <- summary(mppData)
 print(sum.mppData)
 
 }

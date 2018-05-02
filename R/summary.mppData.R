@@ -2,11 +2,9 @@
 # summary.mppData #
 ###################
 
-#' Print summary of mppData object
+#' Summary of mppData object
 #' 
-#' S3 \code{summary} method for object of class \code{mppData}. The summary of
-#' the map information lists only the marker and not the added in between
-#' positions.
+#' \code{summary} for object of class \code{mppData}.
 #' 
 #' @param object An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
@@ -18,12 +16,15 @@
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
-#' summary(USNAM_mppData)
+#' data(mppData)
+#' summary(mppData)
 #' 
 #' @export
 #' 
 
+# data(mppData)
+# summary(mppData)
+# object = mppData
 
 summary.mppData <- function(object, ...) {
   
@@ -39,38 +40,24 @@ summary.mppData <- function(object, ...) {
   # genotype info
   
   ans$typePop <- object$type
-  ans$Ngeno <- length(object$geno.id)
+  ans$Ngeno <- dim(object$pheno)[1]
   ans$par.per.cross <- par.per.cross
-  ans$NgenoCr <- table(object$cross)
-  ans$biall <- object$biall
   
   # phenotype info
   
-  ans$phenoName <- colnames(object$trait)
-  ans$phenoPer <- (1 - (sum(is.na(object$trait[, 1]))/
-                          length(object$trait[, 1])))*100
+  ans$phenoName <- colnames(object$pheno)
+  
+  miss_fct <- function(x){(1 - (sum(is.na(x))/ length(x)))*100 }
+  
+  ans$phenoPer <- apply(X = object$pheno, MARGIN = 2, FUN = miss_fct)
   
   # map information
-  
-  if(!object$biall){
-    
-    #remove the in between positions of the map
-    map <- object$map
-    inb.pos.id <- paste0(unique(map$chr), "_loc")
-    inb.pos.loc <- data.frame(lapply(X = inb.pos.id,
-                                     FUN = function(y) grepl(pattern = y, x = map[, 1])))
-    map <- map[rowSums(x = inb.pos.loc) == 0, ]
-    
-    ans$mkNb <- dim(map)[1]
-    ans$mkChr <- table(map[, 2])
-    
-    
-  } else {
+
     ans$mkNb <- dim(object$map)[1]
-    ans$mkChr <- table(object$map[, 2])
-  }
+    chr_ind <- factor(x = object$map[, 2], levels = unique(object$map[, 2]))
+    ans$mkChr <- table(chr_ind)
   
   class(ans) <- "summary.mppData"
   ans
   
-  }
+}
