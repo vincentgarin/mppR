@@ -9,11 +9,11 @@
 
 # mppData object of class mppData.
 
+# trait numeric or character indicator to specify the trait
+
 # Q.eff Character expression specifying the type of QTL effect.
 
 # VCOV Character specify the variance covariance structure.
-
-# par.clu parent clustering object.
 
 # plot.gen.eff Logical value specifying if p-value of the single QTL effect
 # must be stored.
@@ -38,11 +38,11 @@
 # fct specify which type of function to allow specific tests.
 
 
-check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
-                             plot.gen.eff = FALSE, parallel = FALSE,
-                             cluster, cofactors = NULL, QTL = NULL,
-                             ref.par = NULL, sum_zero = NULL, mppData.ts = NULL,
-                             mppData.vs = NULL, fct = "XXX"){
+check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
+                             plot.gen.eff = FALSE,
+                             parallel = FALSE, cluster, cofactors = NULL,
+                             QTL = NULL, ref.par = NULL, sum_zero = NULL,
+                             mppData.ts = NULL, mppData.vs = NULL, fct = "XXX"){
   
   # 1. check mppData format
   #########################
@@ -65,8 +65,12 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     
   }
   
+  # 2. check trait
+  ################
   
-  # 2. check Q.eff argument
+  check_trait(trait = trait, mppData = mppData)
+  
+  # 3. check Q.eff argument
   #########################
   
   if (!(Q.eff %in% c("cr", "par", "anc", "biall"))){
@@ -75,7 +79,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 3. check the VCOV argument
+  # 4. check the VCOV argument
   ############################
   
   
@@ -125,67 +129,8 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 2. consistency between Q.eff and the type of mppData object
-  #############################################################
   
-  if(fct != "R2_pred"){
-    
-    if ((Q.eff=="cr" && mppData$biall) | (Q.eff=="par" && mppData$biall) |
-        (Q.eff=="anc" && mppData$biall)){
-      
-      stop(paste("The mppData object is made for bi-allelic models and not for",
-                 "cross, parental or ancestral models."))
-      
-    }
-    
-    if((Q.eff=="biall" & !mppData$biall)){
-      
-      stop(paste("The mppData object is made for cross, parental or ancestral",
-                 "models and not for bi-allelic models."))
-      
-    }
-    
-  } else {
-    
-    # training set
-    
-    if ((Q.eff=="cr" && mppData.ts$biall) | (Q.eff=="par" && mppData.ts$biall) |
-        (Q.eff=="anc" && mppData.ts$biall)){
-      
-      stop(paste("The mppData.ts object is made for bi-allelic models and not",
-                 "for cross, parental or ancestral models."))
-      
-    }
-    
-    if((Q.eff=="biall" & !mppData.ts$biall)){
-      
-      stop(paste("The mppData.ts object is made for cross, parental or ancestral",
-                 "models and not for bi-allelic models."))
-      
-    }
-    
-    # validation set
-    
-    if ((Q.eff=="cr" && mppData.vs$biall) | (Q.eff=="par" && mppData.vs$biall) |
-        (Q.eff=="anc" && mppData.vs$biall)){
-      
-      stop(paste("the mppData.vs object is made for bi-allelic models and not",
-                 "for cross, parental or ancestral models."))
-      
-    }
-    
-    if((Q.eff=="biall" & !mppData.vs$biall)){
-      
-      stop(paste("The mppData.vs object is made for cross, parental or",
-                 "ancestral models and not for bi-allelic models."))
-      
-    }
-    
-  }
-  
-  
-  
-  # 3. Consistency for parallelization.
+  # 5. Consistency for parallelization.
   ####################################
   
   
@@ -207,49 +152,7 @@ check.model.comp <- function(mppData = NULL, Q.eff, VCOV, par.clu = NULL,
   }
   
   
-  
-  # 4. if ancestral model, check the format of the par.clu object
-  ##############################################################
-  
-  if(Q.eff == "anc"){
-    
-    if(is.null(par.clu)){
-      
-      stop(paste("You need to provide a parent clustering object",
-                 "(argument par.clu) for the computation of an ancestral model."))
-      
-    }
-    
-    if(!is.integer(par.clu)){
-      
-      stop("The par.clu argument is not and integer matrix.")
-      
-    }
-    
-    if(fct != "R2_pred"){
-      
-      if(!identical(mppData$map[, 1], rownames(par.clu))){
-        
-        stop(paste("The list of markers and in between positions of the par.clu",
-                   "object is not the same as the one in the mppData object map."))
-        
-      }
-      
-      
-    } else {
-      
-      if(!identical(mppData.ts$map[, 1], rownames(par.clu))){
-        
-        stop(paste("The list of markers and in between positions of the par.clu",
-                   "object is not the same as the one in the mppData object map."))
-        
-      }
-      
-    }
-    
-  }
-  
-  # 5. other checks according to specific type of functions
+  # 6. other checks according to specific type of functions
   #########################################################
   
   if((fct == "SIM")||(fct == "CIM")) {

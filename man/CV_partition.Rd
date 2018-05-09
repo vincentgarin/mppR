@@ -31,9 +31,9 @@ training set.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-part.cv <- CV_partition(cross.ind = USNAM_mppData$cross.ind, k = 5)
+part.cv <- CV_partition(cross.ind = mppData$cross.ind, k = 5)
 
 part.cv[[1]]$train.set
 part.cv[[1]]$val.set

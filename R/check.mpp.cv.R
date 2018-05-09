@@ -6,7 +6,7 @@
 # mpp_CV
 
 
-check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
+check.mpp.cv <- function(mppData, trait, Q.eff, VCOV,
                          parallel = FALSE, cluster, output.loc, her){
   
   
@@ -27,7 +27,11 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 3. check Q.eff argument
+  # 3. check the trait
+  
+  check_trait(trait = trait, mppData = mppData)
+  
+  # 4. check Q.eff argument
   
   
   if (!(Q.eff %in% c("cr", "par", "anc", "biall"))){
@@ -36,7 +40,7 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 4. check the VCOV argument
+  # 5. check the VCOV argument
   
   
   if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
@@ -46,7 +50,7 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 5. test if the asreml function is present for the compuation of the
+  # 6. test if the asreml function is present for the compuation of the
   # mixed models
   
   
@@ -73,24 +77,6 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  
-  # 6. consistency between Q.eff and the type of mppData object
-  
-  if ((Q.eff=="cr" && mppData$biall) | (Q.eff=="par" && mppData$biall) |
-      (Q.eff=="anc" && mppData$biall)){
-    
-    stop(paste("the mppData object is made for bi-allelic models and not for",
-               "cross, parental or ancestral models."))
-    
-  }
-  
-  if((Q.eff=="biall" & !mppData$biall)){
-    
-    stop(paste("The mppData object is made for cross, parental or ancestral",
-               "models and not for bi-allelic models."))
-    
-  }
-  
   # 7. Consistency for parallelization.
   
   
@@ -112,42 +98,7 @@ check.mpp.cv <- function(mppData, Q.eff, VCOV, par.clu = NULL,
   }
   
   
-  
-  # 8. if ancestral model, check the format of the par.clu object
-  
-  
-  if(Q.eff == "anc"){
-    
-    if(is.null(par.clu)){
-      
-      stop(paste("You need to provide a parent clustering object",
-                 "(argument par.clu) for the computation of an ancestral model."))
-      
-    }
-    
-    if(!is.integer(par.clu)){
-      
-      stop("The par.clu argument is not and integer matrix.")
-      
-    }
-    
-    if(!identical(mppData$map[, 1], rownames(par.clu))){
-      
-      stop(paste("The list of markers and in between positions of the par.clu",
-                 "object is not the same as the one in the mppData object map."))
-      
-    }
-    
-    if(!identical(sort(mppData$parents), sort(colnames(par.clu)))) {
-      
-      stop(paste("The list of markers and in between positions of the par.clu",
-                 "object is not the same as the one in the mppData object map."))
-      
-    }
-    
-  }
-  
-  # 9 check the format of her argument
+  # 8. check the format of her argument
   
   if((length(her) != 1) & (length(her) != mppData$n.cr)){
     

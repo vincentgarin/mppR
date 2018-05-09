@@ -20,7 +20,7 @@
 #' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
+#' See \code{\link{_form}} for details.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"

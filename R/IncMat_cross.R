@@ -21,9 +21,9 @@
 #' 
 #' @examples
 #'
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' cross.mat <- IncMat_cross(cross.ind = USNAM_mppData$cross.ind)
+#' cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
 #'
 #' @export
 #'

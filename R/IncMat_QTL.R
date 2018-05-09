@@ -10,22 +10,11 @@
 #' (\code{mppData$map}) of the QTL incidence matrix.
 #' 
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param cross.mat Cross effect incidence matrix that can be obtained with
 #' \code{\link{IncMat_cross}}.
@@ -56,39 +45,36 @@
 #'
 #' @examples
 #' 
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' data(USNAM_parClu)
+#' data(mppData)
 #' 
-#' cross.mat <- IncMat_cross(cross.ind = USNAM_mppData$cross.ind)
-#' par.mat <- IncMat_parent(USNAM_mppData)
-#' par.clu <- USNAM_parClu
+#' cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
+#' par.mat <- IncMat_parent(mppData)
 #' 
-#' QTLmatCr <- IncMat_QTL(x = 2, mppData = USNAM_mppData,
+#' QTLmatCr <- IncMat_QTL(x = 2, mppData = mppData,
 #'                        cross.mat = cross.mat, Q.eff = "cr")
 #' 
-#' QTLmatPar <- IncMat_QTL(x = 2, mppData = USNAM_mppData, par.mat = par.mat,
+#' QTLmatPar <- IncMat_QTL(x = 2, mppData = mppData, par.mat = par.mat,
 #'                         Q.eff = "par")
 #' 
-#' QTLmatAnc <- IncMat_QTL(x = 2, mppData = USNAM_mppData, par.mat = par.mat,
-#'                         par.clu = par.clu, Q.eff = "anc")
+#' QTLmatAnc <- IncMat_QTL(x = 2, mppData = mppData, par.mat = par.mat,
+#'                         Q.eff = "anc")
 #' 
-#' QTLmatBi <- IncMat_QTL(x = 2, mppData = USNAM_mppData_bi, Q.eff = "biall")
+#' QTLmatBi <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "biall")
 #' 
 #' 
 #' @export
 #' 
 
 
-IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
+IncMat_QTL <- function(x, mppData, Q.eff, cross.mat, par.mat,
                        order.MAF = FALSE) {
   
   pos <- unlist(mppData$map[x, c(2,3)])
   
   if(Q.eff == "cr"){
     
-    alpha.pred <- mppData$geno$geno[[pos[1]]]$prob[, pos[2], mppData$n.zigo] -
-      mppData$geno$geno[[pos[1]]]$prob[, pos[2], 1]
+    alpha.pred <- mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], mppData$n.zigo] -
+      mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 1]
     
     alpha.pred <- t(rep(1, dim(cross.mat)[2])) %x% alpha.pred
     QTL.mat <- cross.mat * alpha.pred
@@ -99,16 +85,16 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
     
     if (mppData$n.zigo == 3){
       
-      alleleA <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 1]) +
-        mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2]
+      alleleA <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 1]) +
+        mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 2]
       
-      alleleB <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 3]) +
-        mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2]
+      alleleB <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 3]) +
+        mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 2]
       
     } else if (mppData$n.zigo == 2){
       
-      alleleA <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 1])
-      alleleB <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2])
+      alleleA <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 1])
+      alleleB <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 2])
       
     }
     
@@ -126,16 +112,16 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
     
     if (mppData$n.zigo == 3){
       
-      alleleA <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 1]) +
-        mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2]
+      alleleA <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 1]) +
+        mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 2]
       
-      alleleB <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 3]) +
-        mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2]
+      alleleB <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 3]) +
+        mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 2]
       
     } else if (mppData$n.zigo == 2){
       
-      alleleA <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 1])
-      alleleB <- (2*mppData$geno$geno[[pos[1]]]$prob[, pos[2], 2])
+      alleleA <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 1])
+      alleleB <- (2*mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 2])
       
     }
     
@@ -146,7 +132,7 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
     
     # modify parental matrix according to ancestral matrix (par. clustering)
     
-    A.allele <- as.factor(par.clu[x, ])
+    A.allele <- as.factor(mppData$par.clu[x, ])
     
     A <- model.matrix(~ A.allele - 1)
     
@@ -155,7 +141,7 @@ IncMat_QTL <- function(x, mppData, Q.eff, par.clu, cross.mat, par.mat,
     
   } else if (Q.eff == "biall"){
     
-    QTL.mat <- subset(x = mppData$geno, select = x, drop = FALSE)
+    QTL.mat <- subset(x = mppData$geno.IBS, select = x, drop = FALSE)
     
   }
   

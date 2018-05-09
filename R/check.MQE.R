@@ -28,6 +28,8 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
   #########################
 
   # mppData object for IBD
+  
+  ################# only check for mppData
 
   if(is.null(mppData) & is.null(mppData_bi)){
 
@@ -85,6 +87,8 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
 
   # test if list of the two dataset are identical
 
+  ############## remove
+  
   if((!is.null(mppData)) & (!is.null(mppData_bi))){
 
     if (!identical(as.character(mppData$map$mk.names),
@@ -102,6 +106,8 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
              "The introduction of in between positions."))
 
     }
+    
+    ################# remove now there is a single trait argument
 
     if (!identical(mppData$trait, mppData_bi$trait)) {
 
@@ -140,7 +146,8 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
 
   }
 
-
+  ################# remove par.clu test
+  
   # 3. if ancestral model, check the format of the par.clu object
   ##############################################################
 
@@ -154,6 +161,7 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
 
   if(test.anc){
 
+    
     if(is.null(par.clu)){
 
       stop(paste("You need to provide a parent clustering object",
@@ -186,6 +194,8 @@ check.MQE <- function(mppData = NULL, mppData_bi = NULL, Q.eff, VCOV,
   # 4. consistency between Q.eff and the type of mppData object
   #############################################################
 
+  ################## remove
+  
   test.Qeff <- c("cr", "anc", "par") %in% Q.eff
 
   if ((sum(test.Qeff) >= 1) && mppData$biall){

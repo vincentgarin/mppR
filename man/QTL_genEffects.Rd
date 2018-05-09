@@ -8,8 +8,7 @@ QTL_genEffects(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   VCOV = "h.err", ref.par = NULL, sum_zero = FALSE)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or

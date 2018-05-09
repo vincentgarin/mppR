@@ -5,7 +5,7 @@
 # function to check the format of all elements introduced in the function
 # mpp.proc
 
-check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
+check.mpp.proc <- function(mppData, trait, Q.eff, VCOV,
                            plot.gen.eff = FALSE, ref.par = NULL,
                            sum_zero = NULL, parallel = FALSE, cluster,
                            output.loc){
@@ -27,7 +27,11 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 3. check Q.eff argument
+  # 3. check trait format
+  
+  check_trait(trait = trait, mppData = mppData)
+  
+  # 4. check Q.eff argument
   
   
   if (!(Q.eff %in% c("cr", "par", "anc", "biall"))){
@@ -36,7 +40,7 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 4. check the VCOV argument
+  # 5. check the VCOV argument
   
   
   if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
@@ -46,7 +50,7 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
     
   }
   
-  # 5. test if the asreml function is present for the compuation of the
+  # 6. test if the asreml function is present for the compuation of the
   # mixed models
   
     
@@ -63,25 +67,6 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
       
     }
     
-
-  
-  
-  # 6. consistency between Q.eff and the type of mppData object
-  
-  if ((Q.eff=="cr" && mppData$biall) | (Q.eff=="par" && mppData$biall) |
-      (Q.eff=="anc" && mppData$biall)){
-    
-    stop(paste("The mppData object is made for bi-allelic models and not for",
-               "cross, parental or ancestral models."))
-    
-  }
-  
-  if((Q.eff=="biall" & !mppData$biall)){
-    
-    stop(paste("The mppData object is made for cross, parental or ancestral",
-               "models and not for bi-allelic models."))
-    
-  }
   
   # 7. Consistency for parallelization.
   
@@ -104,43 +89,7 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
   }
   
   
-  
-  # 8. if ancestral model, check the format of the par.clu object
-  
-  
-  if(Q.eff == "anc"){
-    
-    if(is.null(par.clu)){
-      
-      stop(paste("You need to provide a parent clustering object",
-                 "(argument par.clu) for the computation of an ancestral model."))
-      
-    }
-    
-    if(!is.integer(par.clu)){
-      
-      stop("The par.clu argument is not and integer matrix.")
-      
-    }
-    
-    if(!identical(mppData$map[, 1], rownames(par.clu))){
-      
-      stop(paste("The list of markers and in between positions of the par.clu",
-                 "object is not the same as the one in the mppData object map."))
-      
-    }
-    
-    if(!identical(sort(mppData$parents), sort(colnames(par.clu)))) {
-      
-      stop("The list of parents of the par.clu object (colnames(par.clu)) is
-           not the same as the one of the mppData object.")
-      
-    }
-    
-  }
-  
-  
-    # 9. Test that if the user wants to fit a bi-allelic model, the
+    # 8. Test that if the user wants to fit a bi-allelic model, the
     # plot.gen.eff is not activated
     
     if((Q.eff == "biall") && plot.gen.eff) {
@@ -150,7 +99,7 @@ check.mpp.proc <- function(mppData, Q.eff, VCOV, par.clu = NULL,
       
     }
   
-  # 10. Check the argument ref.par
+  # 9. Check the argument ref.par
   
   if(!is.null(ref.par)){
     

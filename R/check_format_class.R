@@ -10,22 +10,22 @@ is_mppData <- function(x){
 
 # check trait
 
-check_trait <- function(trait, gp){
+check_trait <- function(trait, mppData){
   
   if(!(is.character(trait) || is.numeric(trait))){
     
-    stop("The trait object must be either numeric or character")
+    stop("The trait object must be either numeric or character.")
     
   }
   
   if(is.numeric(trait)){
     
-    nb.trait <- dim(gp$pheno)[3]
+    nb.trait <- dim(mppData$pheno)[2]
     
     if(!((0 < trait) && (trait <=nb.trait))){
       
       stop(paste("The trait indicator should be between 1 and", nb.trait,
-                 "the total number of traits in the gp object"))
+                 "the total number of traits in the mppData object"))
       
     }
     
@@ -33,7 +33,7 @@ check_trait <- function(trait, gp){
   
   if(is.character(trait)){
     
-    trait.names <- attr(gp$pheno, "dimnames")[[2]]
+    trait.names <- colnames(mppData$pheno)
     
     if (!(trait %in% trait.names)){
       
@@ -44,3 +44,17 @@ check_trait <- function(trait, gp){
   }
   
 }
+
+# peak the trait
+################
+
+# if(is.numeric(trait)){
+#   
+#   t_val <- mppData$pheno[, trait]
+#   
+# } else {
+#   
+#   trait.names <- colnames(mppData$pheno)
+#   t_val <- mppData$pheno[, which(trait %in% trait.names)]
+#   
+# }
