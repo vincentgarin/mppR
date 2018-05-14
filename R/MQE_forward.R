@@ -101,6 +101,8 @@
 #'
 #' @examples
 #'
+#'\dontrun{
+#'
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' data(USNAM_parClu)
@@ -124,6 +126,8 @@
 #'                    
 #' R2 <- MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = QTL[, 5],
 #' par.clu = par.clu)
+#'
+#'}
 #'
 #' @export
 #'
@@ -182,16 +186,19 @@ MQE_forward <- function(mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL
     
     Q.eff_i <- Q.eff[i]
     
+    ########## only one mpp_SIM
+    ########## add mpp_SIM_clu to have the global cluster
+    
     if (Q.eff_i == "biall") {
       
-      SIM <- mpp_SIM(mppData = mppData_bi, Q.eff = Q.eff_i,
-                     par.clu = par.clu, VCOV = VCOV, parallel = parallel,
+      SIM <- mpp_SIM_clu(mppData = mppData_bi, Q.eff = Q.eff_i,
+                     VCOV = VCOV, parallel = parallel,
                      cluster = cluster)
       
     } else {
       
-      SIM <- mpp_SIM(mppData = mppData, Q.eff = Q.eff_i,
-                     par.clu = par.clu, VCOV = VCOV, parallel = parallel,
+      SIM <- mpp_SIM_clu(mppData = mppData, Q.eff = Q.eff_i,
+                     VCOV = VCOV, parallel = parallel,
                      cluster = cluster)
       
     }

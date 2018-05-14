@@ -69,6 +69,8 @@ computation and adjustement look at function \code{\link{QTL_R2}}.
 }
 \examples{
 
+\dontrun{
+
 data(USNAM_mppData)
 data(USNAM_mppData_bi)
 data(USNAM_parClu)
@@ -92,6 +94,8 @@ QTL <- QTL[, 1]
 
 MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL,
        Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
+
+}
 
 }
 \seealso{

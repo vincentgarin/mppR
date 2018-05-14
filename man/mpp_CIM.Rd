@@ -4,28 +4,19 @@
 \alias{mpp_CIM}
 \title{MPP composite interval maping}
 \usage{
-mpp_CIM(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-  cofactors = NULL, window = 20, plot.gen.eff = FALSE, parallel = FALSE,
-  cluster = NULL)
+mpp_CIM(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
+  cofactors = NULL, window = 20, plot.gen.eff = FALSE, n.cores = 1)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -51,14 +42,8 @@ to visualize a genome-wide decomposition of the genetic effects.
 parental and ancestral models.}
 Default value = FALSE.}
 
-\item{parallel}{\code{Logical} value specifying if the function should be
-executed in parallel on multiple cores. To run function in parallel user must
-provide cluster in the \code{cluster} argument. \strong{Parallelization is
-only available for HRT (linear) models \code{VCOV = "h.err"}}.
-Default = FALSE.}
-
-\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
-from the parallel package. Default = NULL.}
+\item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
+use. Default = 1.}
 }
 \value{
 Return:
@@ -91,42 +76,24 @@ allow to obtain a result.
 # Cross-specific effect model
 #############################
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err")
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err")
 
 cofactors <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 
-CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
+CIM <- mpp_CIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 cofactors = cofactors, window = 20, plot.gen.eff = TRUE)
 
 plot_QTLprof(Qprof = CIM)
-plot_genEffects(mppData = USNAM_mppData, Qprof = CIM, Q.eff = "cr")
-
-\dontrun{
-
-# Using multiple core
-
-library(parallel)
-n.cores <- detectCores()
-cluster <- makeCluster((n.cores-1))
-
-CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-cofactors = cofactors, window = 20, plot.gen.eff = TRUE, parallel = TRUE,
-cluster = cluster)
-
-stopCluster(cl = cluster)
-
-}
+plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = "cr")
 
 # Bi-allelic model
 ##################
 
-data(USNAM_mppData_bi)
+cofactors <- mppData$map[c(15, 63), 1]
 
-cofactors <- USNAM_mppData_bi$map[c(15, 63), 1]
-
-CIM <- mpp_CIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err",
+CIM <- mpp_CIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err",
 cofactors = cofactors, window = 20)
 
 plot_QTLprof(Qprof = CIM, type = "h")

@@ -18,9 +18,7 @@
 # plot.gen.eff Logical value specifying if p-value of the single QTL effect
 # must be stored.
 
-# parallel logical indicating if fct must be run in parallel
-
-# cluster cluster to run the function in parallel
+# n.cores : number of cluster
 
 # cofactors list of cofactors
 
@@ -39,10 +37,10 @@
 
 
 check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
-                             plot.gen.eff = FALSE,
-                             parallel = FALSE, cluster, cofactors = NULL,
-                             QTL = NULL, ref.par = NULL, sum_zero = NULL,
-                             mppData.ts = NULL, mppData.vs = NULL, fct = "XXX"){
+                             plot.gen.eff = FALSE, n.cores = 1,
+                             cofactors = NULL, QTL = NULL, ref.par = NULL,
+                             sum_zero = NULL, mppData.ts = NULL,
+                             mppData.vs = NULL, fct = "XXX"){
   
   # 1. check mppData format
   #########################
@@ -68,7 +66,9 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
   # 2. check trait
   ################
   
-  check_trait(trait = trait, mppData = mppData)
+  if(fct != 'R2_pred'){ check_trait(trait = trait, mppData = mppData)
+    
+  } else { check_trait(trait = trait, mppData = mppData.ts)}
   
   # 3. check Q.eff argument
   #########################
@@ -134,20 +134,10 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
   ####################################
   
   
-  if (parallel){
+  if ((n.cores > 1) && (VCOV != "h.err")){
     
-    if(parallel & (!(VCOV == "h.err"))) {
-      
-      stop("Parallelization is only allowed for VCOV = 'h.err'.") 
-      
-    }
+    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
     
-    if(!inherits(cluster, "cluster")){
-      
-      stop(paste("You must provide cluster objects to compute this function",
-                 "in parallel. Use function makeCluster() from parallel pakage."))
-      
-    }
     
   }
   

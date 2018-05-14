@@ -47,23 +47,15 @@
 #' @param trait.name \code{Character} name of the studied trait.
 #' Default = "trait1".
 #' 
-#' @param mppData An object of class \code{mppData}. See
-#' \code{\link{mppData_form}} for details.
+#' @param mppData An object of class \code{mppData}.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
 #' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
 #' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -85,7 +77,7 @@
 #' threshold above which a position can be peaked as a cofactor. Default = 3.
 #' 
 #' @param win.cof \code{Numeric} value in centi-Morgan representing the minimum
-#' distance between two selected cofactors. Default = 20.
+#' distance between two selected cofactors. Default = 50.
 #' 
 #' @param N.cim \code{Numeric} value specifying the number of time the CIM
 #' analysis is repeated. Default = 1.
@@ -128,14 +120,8 @@
 #' @param text.size \code{Numeric} value specifying the size of graph axis text
 #' elements. Default = 18.
 #' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. \strong{Parallelization is
-#' only available for HRT (linear) models \code{VCOV = "h.err"}}.
-#' Default = FALSE.
-#'
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
+#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
+#' use. Default = 1.
 #' 
 #' @param verbose \code{Logical} value indicating if the steps of mpp_proc should
 #' be printed. It will not affect the printing of the other functions called by
@@ -218,14 +204,7 @@
 #'  
 #' \dontrun{
 #' 
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' 
-#' # Detect the number of cores and build cluster
-#' 
-#' library(parallel)
-#' n.cores <- detectCores()
-#' cluster <- makeCluster(n.cores-1)
+#' data(mppData)
 #' 
 #' # Specify a location where your results will be saved
 #' my.loc <- "C:/.../..."
@@ -233,14 +212,9 @@
 #' # Cross-specific model
 #' 
 #' USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-#'                      mppData = USNAM_mppData, plot.gen.eff = TRUE, CI = TRUE,
-#'                      parallel = TRUE, cluster = cluster, output.loc = my.loc)
-#' 
-#' # Bi-allelic model
-#' 
-#' USNAM_biall <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-#'                      mppData = USNAM_mppData_bi, Q.eff = "biall",
+#'                      mppData = mppData, plot.gen.eff = TRUE, CI = TRUE,
 #'                      output.loc = my.loc)
+#' 
 #' 
 #' }
 #' 
@@ -249,24 +223,23 @@
 #'
 
 
-
 mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
-                     Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-                     plot.gen.eff = FALSE, thre.cof = 3, win.cof = 20,
+                     trait = 1, Q.eff = "cr", VCOV = "h.err",
+                     plot.gen.eff = FALSE, thre.cof = 3, win.cof = 50,
                      N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
                      backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
                      sum_zero = FALSE, CI = FALSE, drop = 1.5, text.size = 18,
-                     parallel = FALSE, cluster = NULL, verbose = TRUE,
+                     n.cores = 1, verbose = TRUE,
                      output.loc = getwd()) {
   
   
   # 1. Check the validity of the parameters that have been introduced
   ###################################################################
   
-  check.mpp.proc(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                 par.clu = par.clu, plot.gen.eff = plot.gen.eff,
-                 ref.par = ref.par, sum_zero = sum_zero, parallel = parallel,
-                 cluster = cluster, output.loc = output.loc)
+  check.mpp.proc(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                 plot.gen.eff = plot.gen.eff, ref.par = ref.par,
+                 sum_zero = sum_zero, n.cores = n.cores,
+                 output.loc = output.loc)
   
   
   # 2. Create a directory to store the results
@@ -274,22 +247,24 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   # create a directory to store the results of the QTL analysis
   
-  end.char <- substr(output.loc, nchar(output.loc), nchar(output.loc))
-  
-  if(end.char == "/"){
-    
-    folder.loc <- paste0(output.loc, paste("QTLan", pop.name, trait.name, Q.eff,
-                                           VCOV, sep = "_"))
-    
-  } else {
-    
-    folder.loc <- paste0(output.loc, "/", paste("QTLan", pop.name, trait.name,
-                                                Q.eff, VCOV, sep = "_"))
-    
-  }
+  folder.loc <- file.path(output.loc, paste("QTLan", pop.name, trait.name,
+                                            Q.eff, VCOV, sep = "_"))
   
   dir.create(folder.loc)
   
+  # Build optional cluster
+  
+  if(n.cores > 1){
+    
+    parallel <- TRUE
+    cluster <- makeCluster(n.cores)
+    
+  } else {
+    
+    parallel <- FALSE
+    cluster <- NULL
+    
+  }
   
   # 3. Cofactors selection - SIM
   ##############################
@@ -303,13 +278,13 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
   }
   
-  SIM <- mpp_SIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-                 VCOV = VCOV, plot.gen.eff = plot.gen.eff, parallel = parallel,
-                 cluster = cluster)
+  SIM <- mpp_SIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                     plot.gen.eff = plot.gen.eff, parallel = parallel,
+                     cluster = cluster)
   
   # save SIM results in output location
   
-  write.table(SIM, file = paste0(folder.loc, "/", "SIM.txt"), quote = FALSE,
+  write.table(SIM, file = file.path(folder.loc, "SIM.txt"), quote = FALSE,
               sep = "\t", row.names = FALSE)
   
   # cofactors selection
@@ -339,7 +314,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
   }
   
-  CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+  CIM <- mpp_CIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
                  VCOV = VCOV, cofactors = cofactors, window = window,
                  plot.gen.eff = plot.gen.eff, parallel = parallel,
                  cluster = cluster)
@@ -372,7 +347,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
           
         }
         
-        CIM <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
+        CIM <- mpp_CIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
                        VCOV = VCOV, cofactors = cofactors, window = window,
                        plot.gen.eff = plot.gen.eff, parallel = parallel,
                        cluster = cluster)
@@ -385,12 +360,12 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   # save the list of cofactors
   
-  write.table(cofactors[, 1:5], file = paste0(folder.loc, "/", "cofactors.txt"),
+  write.table(cofactors[, 1:5], file = file.path(folder.loc, "cofactors.txt"),
               quote = FALSE, sep = "\t", row.names = FALSE)
   
   # save CIM results
   
-  write.table(CIM, file = paste0(folder.loc, "/", "CIM.txt"), quote = FALSE,
+  write.table(CIM, file = file.path(folder.loc, "CIM.txt"), quote = FALSE,
               sep = "\t", row.names = FALSE)
   
   # select QTL candidates
@@ -419,8 +394,8 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
       
     }
     
-    QTL <- mpp_BackElim(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
-                        par.clu = par.clu, VCOV = VCOV, alpha = alpha.bk)
+    QTL <- mpp_BackElim(mppData = mppData, trait = trait, QTL = QTL,
+                        Q.eff = Q.eff, VCOV = VCOV, alpha = alpha.bk)
     
     if (is.null(QTL)) { # test if QTL have been selected
       
@@ -434,7 +409,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   # save the final list of QTLs
   
-  write.table(QTL[, 1:5], file = paste0(folder.loc, "/", "QTL.txt"),
+  write.table(QTL[, 1:5], file = file.path(folder.loc, "QTL.txt"),
               quote = FALSE, sep = "\t", row.names = FALSE)
   
   
@@ -451,7 +426,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   }
   
   
-  R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = Q.eff, par.clu = par.clu)
+  R2 <- QTL_R2(mppData = mppData, trait = trait, QTL = QTL, Q.eff = Q.eff)
   
   # save R2 results
   
@@ -461,7 +436,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   colnames(QTL.R2)[6:9] <- c("R2.diff", "adj.R2.diff", "R2.sg", "adj.R2.sg")
   
-  write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
+  write.table(QTL.R2, file = file.path(folder.loc, "QTL_R2.txt"),
               quote = FALSE, sep = "\t", row.names = FALSE)
   
   # 7. QTL effects estimation
@@ -476,9 +451,9 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
   }
   
-  QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = Q.eff,
-                                par.clu = par.clu, VCOV = VCOV,
-                                ref.par = ref.par, sum_zero = sum_zero)
+  QTL.effects <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+                                Q.eff = Q.eff, VCOV = VCOV, ref.par = ref.par,
+                                sum_zero = sum_zero)
   
   # 8. CIM- and confidence interval computation
   #############################################
@@ -494,19 +469,27 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
       
     }
     
-    CIM.m <- mpp_CIM(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-                     VCOV = VCOV, cofactors = cofactors, window = 1000000,
+    # determine larger chromosome distance
+    
+    map <- mppData$map
+    chr.fact <- factor(x = map[, 2], levels = unique(map[, 2]))
+    step.size <- max(tapply(X = map[, 4], INDEX = chr.fact, FUN = max)) + 100 
+    
+    CIM.m <- mpp_CIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
+                     VCOV = VCOV, cofactors = cofactors, window = step.size,
                      plot.gen.eff = FALSE, parallel = parallel,
                      cluster = cluster)
     
     QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM.m, drop = drop)
     
-    write.table(QTL.CI, file = paste0(folder.loc, "/", "QTL_CI.txt"),
+    write.table(QTL.CI, file = file.path(folder.loc, "QTL_CI.txt"),
                 quote = FALSE, sep = "\t", row.names = FALSE)
     
   } else { QTL.CI <- NULL}
   
+  # stop the clusters
   
+  if(n.cores > 1){stopCluster(cluster)}
   
   # 9. Results processing
   #######################
@@ -525,7 +508,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   gen.res <- c(dim(QTL)[1], round(R2[[1]][1], 2), round(R2[[2]][1], 2))
   names(gen.res) <- c("nb.QTL", "glb.R2", "glb.adj.R2")
   
-  write.table(gen.res, file = paste0(folder.loc, "/", "QTL_genResults.txt"),
+  write.table(gen.res, file = file.path(folder.loc, "QTL_genResults.txt"),
               quote = FALSE, sep = "\t", col.names = FALSE)
   
   
@@ -537,7 +520,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   if (Q.eff == "biall") {
     
-    pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
+    pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
     
     print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "h", main = main.cim,
                        threshold = thre.QTL, text.size = text.size))
@@ -548,7 +531,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
     # CIM profile
     
-    pdf(paste0(folder.loc, "/", "QTL_profile.pdf"), height = 10, width = 16)
+    pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
     
     
     print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "l", main = main.cim,
@@ -560,7 +543,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
     if (plot.gen.eff) {
       
-      pdf(paste0(folder.loc, "/", "gen_eff.pdf"), height = 10, width = 16)
+      pdf(file.path(folder.loc, "gen_eff.pdf"), height = 10, width = 16)
       
       print(plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = Q.eff,
                             QTL = QTL, main = main.Qeff, text.size = text.size))
@@ -578,7 +561,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                                  stringsAsFactors = FALSE)
   } else {QTL.info <-  QTL[, c(1, 2, 4, 5)]}
   
-  QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
+  QTL_report(out.file = file.path(folder.loc, "QTL_REPORT.txt"),
              main = paste(pop.name, trait.name, Q.eff, VCOV), QTL.info = QTL.info,
              QTL.effects = QTL.effects[[1]], R2 = R2)
   

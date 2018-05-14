@@ -24,7 +24,9 @@
 #' to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
@@ -35,16 +37,6 @@
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -71,53 +63,52 @@
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' SIM <- mpp_SIM(USNAM_mppData)
+#' SIM <- mpp_SIM(mppData)
 #' 
 #' QTL <- QTL_select(SIM)
 #' 
-#' QTL.sel <- mpp_BackElim(mppData = USNAM_mppData, QTL = QTL)
+#' QTL.sel <- mpp_BackElim(mppData = mppData, QTL = QTL)
 #' 
 #' @export
 #' 
 
 
-mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
+mpp_BackElim <- function (mppData, trait = 1, QTL = NULL, Q.eff = "cr",
                          VCOV = "h.err", alpha = 0.05) {
   
   # 1. Check data format
   ######################
   
-  check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, QTL = QTL, fct = "back")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                   QTL = QTL, fct = "back")
   
   # 2. elements for the model
   ###########################
   
-  ### 2.1 inverse of the pedigree matrix
+  ### 2.1 trait values
+  
+  if(is.numeric(trait)){
+    
+    t_val <- mppData$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
+  
+  ### 2.2 inverse of the pedigree matrix
   
   formPedMatInv(mppData = mppData, VCOV = VCOV)
   
-  ### 2.2 cross matrix (cross intercept)
+  ### 2.3 cross matrix (cross intercept)
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.3 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.4 modify the par.clu object order parents columns and replace monomorphic
-  
-  if (Q.eff == "anc") {
-    
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
-    
-  } else {par.clu <- NULL}
-  
-  
-  ### 2.5 Formation of the list of QTL
+  ### 2.4 Formation of the list of QTL
   
   if(is.character(QTL)){
     
@@ -132,8 +123,7 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   }
   
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
-                     cross.mat = cross.mat, par.mat = parent.mat,
-                     par.clu = par.clu, Q.eff = Q.eff, order.MAF = TRUE)
+                    Q.eff = Q.eff, order.MAF = TRUE)
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   
@@ -152,7 +142,8 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     ### 3.2 computation of the models
     
     pvals <- lapply(X = model.formulas, FUN = QTLModelBack, mppData = mppData,
-                    Q.list = Q.list, cross.mat = cross.mat, VCOV = VCOV)
+                    trait = t_val, Q.list = Q.list, cross.mat = cross.mat,
+                    VCOV = VCOV)
     
     pvals <- unlist(pvals)
     
@@ -201,5 +192,3 @@ mpp_BackElim <- function (mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   }
   
 }
-  
-  

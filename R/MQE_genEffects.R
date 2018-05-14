@@ -97,6 +97,8 @@
 #'
 #' @examples
 #'
+#'\dontrun{
+#'
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' data(USNAM_parClu)
@@ -121,6 +123,8 @@
 #' QTL.eff <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
 #'                           QTL = QTL.res[, 1], Q.eff = QTL.res[, 5],
 #'                           par.clu = par.clu)
+#'
+#'}
 #'
 #' @export
 #'

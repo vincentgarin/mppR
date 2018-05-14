@@ -84,6 +84,8 @@ allow to obtain a result.
 }
 \examples{
 
+\dontrun{
+
 data(USNAM_mppData)
 data(USNAM_mppData_bi)
 data(USNAM_parClu)
@@ -108,6 +110,8 @@ CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, Q.eff = "cr",
                cof.Qeff = c("anc", "par", "biall"))
 
 plot_QTLprof(CIM)
+
+}
                                
 }
 \seealso{

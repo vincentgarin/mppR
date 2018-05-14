@@ -6,8 +6,8 @@
 # mpp_CV
 
 
-check.mpp.cv <- function(mppData, trait, Q.eff, VCOV,
-                         parallel = FALSE, cluster, output.loc, her){
+check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
+                         her){
   
   
   # 1. test the validity of the provided path to store the results
@@ -80,20 +80,10 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV,
   # 7. Consistency for parallelization.
   
   
-  if (parallel){
+  if ((n.cores > 1) && (VCOV != "h.err")){
     
-    if(parallel & (!(VCOV == "h.err"))) {
+    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
       
-      stop("Parallelization is only allowed for VCOV = 'h.err'.") 
-      
-    }
-    
-    if(!inherits(cluster, "cluster")){
-      
-      stop(paste("You must provide cluster objects to compute this function",
-                 "in parallel. Use function makeCluster() from parallel pakage."))
-      
-    }
     
   }
   

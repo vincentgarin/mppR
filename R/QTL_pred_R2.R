@@ -32,25 +32,17 @@
 #' our experience, in that case, trying to re-run the function one or two times
 #' allow to obtain a result.
 #'
-#' @param mppData.ts An object of class \code{mppData} for the training set. See
-#' \code{\link{mppData_form}} for details.
+#' @param mppData.ts An object of class \code{mppData} for the training set.
 #' 
 #' @param mppData.vs An object of class \code{mppData} for the validation set.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -92,17 +84,15 @@
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' folds <- CV_partition(cross.ind = USNAM_mppData$cross.ind, k = 5)
+#' folds <- CV_partition(cross.ind = mppData$cross.ind, k = 5)
 #' 
-#' mppData.ts <- mppData_subset(mppData = USNAM_mppData,
-#'                              gen.list = folds[[1]]$train.set)
+#' mppData.ts <- subset(x = mppData, gen.list = folds[[1]]$train.set)
 #' 
-#' mppData.vs <- mppData_subset(mppData = USNAM_mppData,
-#'                              gen.list = folds[[1]]$val.set)
+#' mppData.vs <- subset(x = mppData, gen.list = folds[[1]]$val.set)
 #' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData)
+#' SIM <- mpp_SIM(mppData = mppData)
 #' QTL <- QTL_select(SIM)
 #'
 #' QTL_pred_R2(mppData.ts = mppData.ts, mppData.vs = mppData.vs, QTL = QTL)
@@ -111,28 +101,42 @@
 #' 
 
 
-QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
+QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
                         VCOV = "h.err", QTL = NULL, her = 1) {
   
   # 1. test data format
   #####################
   
-  check.model.comp(Q.eff = Q.eff, VCOV = VCOV, par.clu = par.clu, QTL = QTL,
+  check.model.comp(Q.eff = Q.eff, trait = trait, VCOV = VCOV, QTL = QTL,
                    mppData.ts = mppData.ts, mppData.vs = mppData.vs,
                    fct = "R2_pred")
   
-  
   if(is.character(QTL)){ n.QTL <- length(QTL) } else { n.QTL <- dim(QTL)[1] }
+  
+  # trait values
+  
+  if(is.numeric(trait)){
+    
+    t_val <- mppData.vs$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData.vs$pheno)
+    t_val <- mppData.vs$pheno[, which(trait %in% trait.names)]
+    
+  }
+  
   
   # 2. obtain the genetic effects (Betas)
   #######################################
   
   if((Q.eff == "biall") || (Q.eff == "cr")){
     if(!is.null(mppData.ts$geno.par)) {mppData.ts$geno.par <- NULL}
+    if(!is.null(mppData.ts$geno.par.clu)) {mppData.ts$geno.par.clu <- NULL}
   }
   
-  effects <- QTL_genEffects(mppData = mppData.ts, QTL = QTL, Q.eff = Q.eff,
-                            par.clu = par.clu, VCOV = VCOV)[[1]]
+  effects <- QTL_genEffects(mppData = mppData.ts, trait = trait, QTL = QTL,
+                            Q.eff = Q.eff, VCOV = VCOV)[[1]]
   
   # need to re-order the row of the effects according to the parent list
   
@@ -165,8 +169,6 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
   if(Q.eff == "anc") Q.eff.part <- "par" else Q.eff.part <- Q.eff
   
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData.vs,
-                   cross.mat = IncMat_cross(mppData.vs$cross.ind),
-                   par.mat = IncMat_parent(mppData.vs), par.clu = par.clu,
                    Q.eff = Q.eff.part)
   
   # 4. Predicted R squared computation cor(y.vs, X.vs * B.ts)^2
@@ -174,21 +176,21 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
   
   # global R squared
   
-  R2 <- R2_pred(mppData.vs = mppData.vs, B.ts = B.ts, Q.list = Q.list,
-                her = her)
+  R2 <- R2_pred(mppData.vs = mppData.vs, y.vs = t_val, B.ts = B.ts,
+                Q.list = Q.list, her = her)
   
   # partial R2
   
   if (n.QTL > 1) {
     
-    part.R2.diff <- function(x, mppData.vs, B.ts, Q.list, her) {
-      R2_pred(mppData.vs = mppData.vs, B.ts = B.ts[-x],
+    part.R2.diff <- function(x, mppData.vs, y.vs, B.ts, Q.list, her) {
+      R2_pred(mppData.vs = mppData.vs, y.vs = t_val, B.ts = B.ts[-x],
               Q.list =  Q.list[-x], her = her)[[1]]
     }
     
     
     R2_i.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, mppData.vs = mppData.vs,
-                       B.ts = B.ts, Q.list = Q.list, her = her)
+                       y.vs = t_val, B.ts = B.ts, Q.list = Q.list, her = her)
     
     R2_i.dif <- R2[[1]] - unlist(R2_i.dif) # difference full model and model minus i
     

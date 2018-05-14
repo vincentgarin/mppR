@@ -6,7 +6,7 @@
 # parental and ancestral linear models.
 
 
-QTL_pval <- function(mppData, model, Q.eff, x, par.clu) {
+QTL_pval <- function(mppData, model, Q.eff, x) {
   
   coeffs <- coef(model)
   index <- which(substr(names(coeffs), 1, 3) == "QTL")
@@ -36,7 +36,7 @@ QTL_pval <- function(mppData, model, Q.eff, x, par.clu) {
     
   } else if (Q.eff == "anc") {
     
-    ref.all <- paste0("A.allele", par.clu[x, ])
+    ref.all <- paste0("A.allele", mppData$par.clu[x, ])
     pval <- pval[ref.all]
     
   }

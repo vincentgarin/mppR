@@ -4,27 +4,19 @@
 \alias{mpp_SIM}
 \title{MPP Simple Interval Maping}
 \usage{
-mpp_SIM(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-  plot.gen.eff = FALSE, parallel = FALSE, cluster = NULL)
+mpp_SIM(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
+  plot.gen.eff = FALSE, n.cores = 1)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -42,14 +34,8 @@ to visualize a genome-wide decomposition of the genetic effects.
 parental and ancestral models.}
 Default value = FALSE.}
 
-\item{parallel}{\code{Logical} value specifying if the function should be
-executed in parallel on multiple cores. To run function in parallel user must
-provide cluster in the \code{cluster} argument. \strong{Parallelization is
-only available for HRT (linear) models \code{VCOV = "h.err"}}.
-Default = FALSE.}
-
-\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
-from the parallel package. Default = NULL.}
+\item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
+use. Default = 1.}
 }
 \value{
 Return:
@@ -97,11 +83,8 @@ Indeed, the parental model assumes that parent are independent which is not
 the case. Using genetic relatedness between the parents, it is possible group
 these parents into a reduced number of ancestral cluster. Parents belonging
 to the same ancestral group are assumed to transmit the same allele
-(Jansen et al. 2003; Leroux et al. 2014). Clustering of parental line can
-be performed using the \code{\link{parent_cluster}} function which calls
-functions of the R package
-\code{clustahplo}. This information allows to modify the IBD relationship
-between the parents. The ancestral model estimate therefore one QTL effect
+(Jansen et al. 2003; Leroux et al. 2014). The ancestral model estimate
+therefore one QTL effect
 per ancestral class. Once again, the theoretical expectation is a gain of
 QTL detection power by the reduction of the number of parameters to estimate.
 The HRT ancestral model correspond to the linkage desequilibrium
@@ -155,35 +138,19 @@ allow to obtain a result.
 # Cross-specific model
 ######################
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 plot.gen.eff = TRUE)
 
 plot_QTLprof(Qprof = SIM)  
-plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr")
+plot_genEffects(mppData = mppData, Qprof = SIM, Q.eff = "cr")
 
-\dontrun{
-
-# Using multiple cores
-
-library(parallel)
-n.cores <- detectCores()
-cluster <- makeCluster((n.cores-1))
-
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-               parallel = TRUE, cluster = cluster)
-
-stopCluster(cl = cluster)
-
-}
 
 # Bi-allelic model
 ##################
 
-data(USNAM_mppData_bi)
-
-SIM <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err")
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err")
 
 plot_QTLprof(Qprof = SIM, type = "h")
 

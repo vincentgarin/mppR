@@ -6,7 +6,7 @@
 # parental and ancestral mixed models.
 
 
-QTL_pval_mix <- function(model, Q.eff, QTL.el, x, par.clu, ref.name, par.names,
+QTL_pval_mix <- function(model, Q.eff, QTL.el, x, ref.name, par.names, par.clu,
                          fct) {
   
   if(fct == "SIM"){

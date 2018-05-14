@@ -4,11 +4,11 @@
 \alias{mpp_CV}
 \title{MPP cross-validation}
 \usage{
-mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData, her = 1,
-  Rep = 10, k = 5, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
-  thre.cof = 3, win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3,
-  win.QTL = 20, backward = TRUE, alpha.bk = 0.05, parallel = FALSE,
-  cluster = NULL, verbose = TRUE, output.loc = getwd())
+mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData, trait = 1,
+  her = 1, Rep = 10, k = 5, Q.eff = "cr", VCOV = "h.err",
+  thre.cof = 3, win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3,
+  win.QTL = 20, backward = TRUE, alpha.bk = 0.05, n.cores = 1,
+  verbose = TRUE, output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -17,8 +17,10 @@ Default = "MPP_CV".}
 \item{trait.name}{\code{Character} name of the studied trait.
 Default = "trait1".}
 
-\item{mppData}{An object of class \code{mppData}. See
-\code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{her}{\code{Numeric} value between 0 and 1 representing the heritability
 of the trait. \code{her} can be a single value or a vector specifying each
@@ -35,16 +37,6 @@ the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
 
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
-
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
 (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
@@ -57,7 +49,7 @@ For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 threshold above which a position can be peaked as a cofactor. Default = 3.}
 
 \item{win.cof}{\code{Numeric} value in centi-Morgan representing the minimum
-distance between two selected cofactors. Default = 20.}
+distance between two selected cofactors. Default = 50.}
 
 \item{N.cim}{\code{Numeric} value specifying the number of time the CIM
 analysis is repeated. Default = 1.}
@@ -79,14 +71,8 @@ Default = TRUE.}
 the backward elimination. Terms with p-values above this value will
 iteratively be removed. Default = 0.05.}
 
-\item{parallel}{\code{Logical} value specifying if the function should be
-executed in parallel on multiple cores. To run function in parallel user must
-provide cluster in the \code{cluster} argument. \strong{Parallelization is
-only available for HRT (linear) models \code{VCOV = "h.err"}}.
-Default = FALSE.}
-
-\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
-from the parallel package. Default = NULL.}
+\item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
+use. Default = 1.}
 
 \item{verbose}{\code{Logical} value indicating if the progressiong of the CV
 should be printed. It will not affect the printing of the other functions
@@ -195,25 +181,12 @@ allow to obtain a result.
 
 \dontrun{
 
-data(USNAM_mppData)
+data(mppData)
 
 my.loc <- "C:/..."
 
-CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = USNAM_mppData,
+CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 her = .5, output.loc = my.loc)
-
-plot_CV(CV.res = CV)
-
-# Using parallelization
-
-library(parallel)
-n.cores <- detectCores()
-cluster <- makeCluster(n.cores-1)
-
-CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = USNAM_mppData,
-             her = .5, output.loc = my.loc, parallel = TRUE, cluster = cluster)
-             
-stopCluster(cl = cluster)
 
 plot_CV(CV.res = CV)
 

@@ -15,12 +15,6 @@
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param cross.mat Cross effect incidence matrix that can be obtained with
-#' \code{\link{IncMat_cross}}.
-#' 
-#' @param par.mat Parents incidence matrix that can be obtained with
-#' \code{\link{IncMat_parent}}.
 #' 
 #' @param order.MAF \code{Logical} value specifying if the QTL incidence matrix
 #' should be ordered by allele frequency for a parental and ancestral QTL
@@ -47,17 +41,11 @@
 #' 
 #' data(mppData)
 #' 
-#' cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
-#' par.mat <- IncMat_parent(mppData)
+#' QTLmatCr <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "cr")
 #' 
-#' QTLmatCr <- IncMat_QTL(x = 2, mppData = mppData,
-#'                        cross.mat = cross.mat, Q.eff = "cr")
+#' QTLmatPar <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "par")
 #' 
-#' QTLmatPar <- IncMat_QTL(x = 2, mppData = mppData, par.mat = par.mat,
-#'                         Q.eff = "par")
-#' 
-#' QTLmatAnc <- IncMat_QTL(x = 2, mppData = mppData, par.mat = par.mat,
-#'                         Q.eff = "anc")
+#' QTLmatAnc <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "anc")
 #' 
 #' QTLmatBi <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "biall")
 #' 
@@ -66,12 +54,13 @@
 #' 
 
 
-IncMat_QTL <- function(x, mppData, Q.eff, cross.mat, par.mat,
-                       order.MAF = FALSE) {
+IncMat_QTL <- function(x, mppData, Q.eff, order.MAF = FALSE) {
   
   pos <- unlist(mppData$map[x, c(2,3)])
   
   if(Q.eff == "cr"){
+    
+    cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
     
     alpha.pred <- mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], mppData$n.zigo] -
       mppData$geno.IBD$geno[[pos[1]]]$prob[, pos[2], 1]
@@ -80,6 +69,8 @@ IncMat_QTL <- function(x, mppData, Q.eff, cross.mat, par.mat,
     QTL.mat <- cross.mat * alpha.pred
     
   } else if(Q.eff == "par") {
+    
+    par.mat <- IncMat_parent(mppData = mppData)
     
     # get number of alleles from parent A and B
     
@@ -107,6 +98,8 @@ IncMat_QTL <- function(x, mppData, Q.eff, cross.mat, par.mat,
     
     
   } else if (Q.eff == "anc") {
+    
+    par.mat <- IncMat_parent(mppData = mppData)
     
     # form a parental matrix. Same as for Q.eff == "par"
     

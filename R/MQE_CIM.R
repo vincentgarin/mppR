@@ -84,6 +84,8 @@
 #' 
 #' @examples
 #' 
+#' \dontrun{
+#' 
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' data(USNAM_parClu)
@@ -108,6 +110,8 @@
 #'                cof.Qeff = c("anc", "par", "biall"))
 #'
 #'plot_QTLprof(CIM)
+#'
+#' }
 #'                                
 #' @export
 #' 

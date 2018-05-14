@@ -44,6 +44,8 @@
 #' 
 #' @examples
 #' 
+#' \dontrun{
+#' 
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' data(USNAM_parClu)
@@ -71,6 +73,8 @@
 #'                chg.Qeff = TRUE)
 #' 
 #' MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL)
+#'
+#'}
 #'
 #' @export
 #' 

@@ -19,8 +19,7 @@
 
 # trait: trait vector.
 
-IncMat_sum0_const <- function(mppData, Q.eff, Q.list, Q.pos, par.clu, cross.mat,
-                              trait){
+IncMat_sum0_const <- function(mppData, Q.eff, Q.list, Q.pos, cross.mat, trait){
   
   n_QTL <- length(Q.list)
   
@@ -42,7 +41,7 @@ IncMat_sum0_const <- function(mppData, Q.eff, Q.list, Q.pos, par.clu, cross.mat,
     } else if (Q.eff == "anc"){
       
       
-      par.clu_i <- par.clu[Q.pos[i], ]
+      par.clu_i <- mppData$par.clu[Q.pos[i], ]
       par.clu_i <- paste0("A.allele", par.clu_i)
       names(par.clu_i) <- mppData$parents
       

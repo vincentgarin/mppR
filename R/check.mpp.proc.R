@@ -5,9 +5,8 @@
 # function to check the format of all elements introduced in the function
 # mpp.proc
 
-check.mpp.proc <- function(mppData, trait, Q.eff, VCOV,
-                           plot.gen.eff = FALSE, ref.par = NULL,
-                           sum_zero = NULL, parallel = FALSE, cluster,
+check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
+                           ref.par = NULL, sum_zero = NULL, n.cores = 1,
                            output.loc){
   
   # 1. test the validity of the provided path to store the results
@@ -71,20 +70,10 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV,
   # 7. Consistency for parallelization.
   
   
-  if (parallel){
+  if ((n.cores > 1) && (VCOV != "h.err")){
     
-    if(parallel & (!(VCOV == "h.err"))) {
-      
-      stop("Parallelization is only allowed for VCOV = 'h.err'.") 
-      
-    }
+    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
     
-    if(!inherits(cluster, "cluster")){
-      
-      stop(paste("You must provide cluster objects to compute this function",
-                 "in parallel. Use function makeCluster() from parallel pakage."))
-      
-    }
     
   }
   

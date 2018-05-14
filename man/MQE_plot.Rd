@@ -45,6 +45,8 @@ ancestral: green and bi-allelic: blue).
 }
 \examples{
 
+\dontrun{
+
 data(USNAM_mppData)
 data(USNAM_mppData_bi)
 data(USNAM_parClu)
@@ -72,6 +74,8 @@ CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, Q.eff = "cr",
                chg.Qeff = TRUE)
 
 MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL)
+
+}
 
 }
 \seealso{

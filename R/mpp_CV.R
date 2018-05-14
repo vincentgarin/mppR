@@ -77,8 +77,10 @@
 #' @param trait.name \code{Character} name of the studied trait.
 #' Default = "trait1".
 #'
-#' @param mppData An object of class \code{mppData}. See
-#' \code{\link{mppData_form}} for details.
+#' @param mppData An object of class \code{mppData}.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param her \code{Numeric} value between 0 and 1 representing the heritability
 #' of the trait. \code{her} can be a single value or a vector specifying each
@@ -95,16 +97,6 @@
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
 #'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
-#'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
 #' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
@@ -117,7 +109,7 @@
 #' threshold above which a position can be peaked as a cofactor. Default = 3.
 #' 
 #' @param win.cof \code{Numeric} value in centi-Morgan representing the minimum
-#' distance between two selected cofactors. Default = 20.
+#' distance between two selected cofactors. Default = 50.
 #' 
 #' @param N.cim \code{Numeric} value specifying the number of time the CIM
 #' analysis is repeated. Default = 1.
@@ -139,14 +131,8 @@
 #' the backward elimination. Terms with p-values above this value will
 #' iteratively be removed. Default = 0.05.
 #' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. \strong{Parallelization is
-#' only available for HRT (linear) models \code{VCOV = "h.err"}}.
-#' Default = FALSE.
-#'
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
+#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
+#' use. Default = 1.
 #'
 #' @param verbose \code{Logical} value indicating if the progressiong of the CV
 #' should be printed. It will not affect the printing of the other functions
@@ -211,25 +197,12 @@
 #' 
 #' \dontrun{
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
 #' my.loc <- "C:/..."
 #' 
-#' CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = USNAM_mppData,
+#' CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 #' her = .5, output.loc = my.loc)
-#' 
-#' plot_CV(CV.res = CV)
-#' 
-#' # Using parallelization
-#' 
-#' library(parallel)
-#' n.cores <- detectCores()
-#' cluster <- makeCluster(n.cores-1)
-#' 
-#' CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = USNAM_mppData,
-#'              her = .5, output.loc = my.loc, parallel = TRUE, cluster = cluster)
-#'              
-#' stopCluster(cl = cluster)
 #' 
 #' plot_CV(CV.res = CV)
 #' 
@@ -240,40 +213,42 @@
 
 
 mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
-                   mppData, her = 1, Rep = 10, k = 5, Q.eff = "cr",
-                   par.clu = NULL, VCOV = "h.err", thre.cof = 3, win.cof = 20,
+                   mppData, trait = 1, her = 1, Rep = 10, k = 5, Q.eff = "cr",
+                   VCOV = "h.err", thre.cof = 3, win.cof = 50,
                    N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-                   backward = TRUE, alpha.bk = 0.05, parallel = FALSE,
-                   cluster = NULL, verbose = TRUE, output.loc = getwd())
+                   backward = TRUE, alpha.bk = 0.05, n.cores = 1,
+                   verbose = TRUE, output.loc = getwd())
 {
   
   # 1. Check the validity of the parameters that have been introduced
   ###################################################################
   
-  check.mpp.cv(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-               par.clu = par.clu, parallel = parallel, cluster = cluster,
-               output.loc = output.loc, her = her)
+  check.mpp.cv(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+               n.cores = n.cores, output.loc = output.loc, her = her)
   
   # 2. Create a directory to store the results
   ############################################
   
   # create a directory to store the results of the QTL analysis
   
-  end.char <- substr(output.loc, nchar(output.loc), nchar(output.loc))
+  folder.loc <- file.path(output.loc, paste("CV", pop.name, trait.name,
+                                            Q.eff, VCOV, sep = "_"))
   
-  if(end.char == "/"){
+  dir.create(folder.loc)
+  
+  # Build optional cluster
+  
+  if(n.cores > 1){
     
-    folder.loc <- paste0(output.loc, paste("CV",pop.name, trait.name, Q.eff,
-                                           VCOV, sep = "_"))
+    parallel <- TRUE
+    cluster <- makeCluster(n.cores)
     
   } else {
     
-    folder.loc <- paste0(output.loc, "/", paste("CV",pop.name, trait.name,
-                                                Q.eff, VCOV, sep = "_"))
+    parallel <- FALSE
+    cluster <- NULL
     
   }
-  
-  dir.create(folder.loc)
   
   # 3. Create space to store the results
   ######################################
@@ -333,20 +308,18 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
       
       # training set
       
-      mppData.ts <- mppData_subset(mppData = mppData,
-                                   gen.list = folds[[j]]$train.set)
+      mppData.ts <- subset(x = mppData, gen.list = folds[[j]]$train.set)
       
       # validation set
       
-      mppData.vs <- mppData_subset(mppData = mppData,
-                                   gen.list = folds[[j]]$val.set)
+      mppData.vs <- subset(x = mppData, gen.list = folds[[j]]$val.set)
       
       prob.prog <- FALSE # indicator variable for a programmation problem
       
       # 4.2.1 cofactors selection
       
-      SIM <- mpp_SIM(mppData = mppData.ts, Q.eff = Q.eff, par.clu = par.clu,
-                     VCOV = VCOV, parallel = parallel, cluster = cluster)
+      SIM <- mpp_SIM_clu(mppData = mppData.ts, trait = trait, Q.eff = Q.eff,
+                         VCOV = VCOV, parallel = parallel, cluster = cluster)
       
       if(sum(SIM$log10pval) == 0){prob.prog <- TRUE }
       
@@ -362,9 +335,9 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
         
         # there are some cofactors
         
-        CIM <- mpp_CIM(mppData = mppData.ts, Q.eff = Q.eff,
-                       par.clu = par.clu, VCOV = VCOV, cofactors = cofactors,
-                       window = window, parallel = parallel, cluster = cluster)
+        CIM <- mpp_CIM_clu(mppData = mppData.ts, trait = trait, Q.eff = Q.eff,
+                       VCOV = VCOV, cofactors = cofactors, window = window,
+                       parallel = parallel, cluster = cluster)
         
         if(sum(CIM$log10pval) == 0){prob.prog <- TRUE }
         
@@ -381,11 +354,10 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
             
             if (!is.null(cofactors)) {
               
-              CIM <- mpp_CIM(mppData = mppData.ts, Q.eff = Q.eff,
-                             par.clu = par.clu, VCOV = VCOV,
-                             cofactors = cofactors,
-                             window = window, parallel = parallel,
-                             cluster = cluster)
+              CIM <- mpp_CIM_clu(mppData = mppData.ts, trait = trait,
+                                 Q.eff = Q.eff, VCOV = VCOV,
+                                 cofactors = cofactors, window = window,
+                                 parallel = parallel, cluster = cluster)
               
               if(sum(CIM$log10pval) == 0){prob.prog <- TRUE }
               
@@ -396,8 +368,6 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           }
           
         }
-        
-        
         
         #### end multi QTL search
         
@@ -410,8 +380,9 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
         
         if(!is.null(QTL) & backward){
           
-          QTL.back <- mpp_BackElim(mppData = mppData.ts, QTL = QTL, Q.eff = Q.eff,
-                                   par.clu = par.clu, VCOV = VCOV, alpha = alpha.bk)
+          QTL.back <- mpp_BackElim(mppData = mppData.ts, trait = trait,
+                                   QTL = QTL, Q.eff = Q.eff, VCOV = VCOV,
+                                   alpha = alpha.bk)
           
           if(is.null(QTL.back)){ # If there was QTL position and backward return
             # no QTL it is (probably) due to programming error.
@@ -449,15 +420,15 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
           ################################
           
           
-          R2.ts <- QTL_R2(mppData = mppData.ts, QTL = QTL, Q.eff = Q.eff,
-                          par.clu = par.clu)
+          R2.ts <- QTL_R2(mppData = mppData.ts, trait = trait, QTL = QTL,
+                          Q.eff = Q.eff)
           
           
           # compute predicted R squared
           ##############################
           
           R2.vs <- QTL_pred_R2(mppData.ts = mppData.ts, mppData.vs = mppData.vs,
-                               Q.eff = Q.eff, par.clu = par.clu, VCOV = VCOV,
+                               trait = trait, Q.eff = Q.eff, VCOV = VCOV,
                                QTL = QTL, her = her)
           
           
@@ -565,6 +536,9 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
     
   }  # end ith repetition loop
   
+  # stop the clusters
+  
+  if(n.cores > 1){stopCluster(cluster)}
   
   # 5. format the results of the CV process
   #########################################

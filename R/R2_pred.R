@@ -14,9 +14,8 @@
 # within cross heritability.
 
 
-R2_pred <- function(mppData.vs, B.ts, Q.list, her) {
+R2_pred <- function(mppData.vs, y.vs, B.ts, Q.list, her) {
   
-  y.vs <- mppData.vs$trait[, 1]
   X.vs <- as.matrix(do.call(cbind, Q.list))
   
   # use only complete case informations

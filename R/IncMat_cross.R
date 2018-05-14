@@ -17,8 +17,6 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{IncMat_parent}}, \code{\link{IncMat_QTL}}
-#' 
 #' @examples
 #'
 #' data(mppData)

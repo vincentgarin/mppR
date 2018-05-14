@@ -45,6 +45,9 @@
 #' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
@@ -55,16 +58,6 @@
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -127,41 +120,31 @@
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' data(USNAM_parClu)
-#' par.clu <- USNAM_parClu
+#' data(mppData)
 #' 
 #' # QTL candidates
 #' 
-#' SIM <- mpp_SIM(USNAM_mppData)
+#' SIM <- mpp_SIM(mppData)
 #' QTL <- QTL_select(SIM)
 #' 
 #' # Cross-specific model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "cr")
+#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "cr")
 #' QTL.effects
 #' 
 #' # Parental model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL,
-#'                                Q.eff = "par")
+#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "par")
 #' QTL.effects
 #' 
 #' # Ancestral model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData, QTL = QTL, Q.eff = "anc",
-#'                               par.clu = par.clu)
+#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "anc")
 #' QTL.effects
 #' 
 #' # Bi-allelic model
 #' 
-#' SIM <- mpp_SIM(USNAM_mppData_bi, Q.eff = "biall")
-#' QTL <- QTL_select(SIM)
-#' 
-#' 
-#' QTL.effects <- QTL_genEffects(mppData = USNAM_mppData_bi, QTL = QTL,
-#' Q.eff = "biall")
+#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "biall")
 #' 
 #' QTL.effects
 #' 
@@ -169,22 +152,31 @@
 #'
 
 
-QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
+QTL_genEffects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
                            VCOV = "h.err", ref.par = NULL, sum_zero = FALSE) {
   
   # 1. Check data format
   ######################
   
-  check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, QTL = QTL, ref.par = ref.par,
-                   sum_zero = sum_zero, fct = "QTLeffects")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                   QTL = QTL, ref.par = ref.par, sum_zero = sum_zero,
+                   fct = "QTLeffects")
   
   # 2. elements for the model
   ###########################
   
-  ### 2.1 Phenotypic values
+  ### 2.1 trait values
   
-  trait <- mppData$trait[, 1]
+  if(is.numeric(trait)){
+    
+    t_val <- mppData$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
   
   ### 2.2 inverse of the pedigree matrix
   
@@ -194,21 +186,7 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.4 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.5 modify the par.clu object order parents columns and replace monomorphic
-  
-  if (Q.eff == "anc") {
-    
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
-    
-  } else {par.clu <- NULL}
-  
-  
-  ### 2.6 Formation of the list of QTL
+  ### 2.4 Formation of the list of QTL
   
   if(is.character(QTL)){
     
@@ -223,8 +201,7 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   }
   
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
-                   cross.mat = cross.mat, par.mat = parent.mat,
-                   par.clu = par.clu, Q.eff = Q.eff)
+                  Q.eff = Q.eff)
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))
   
@@ -237,8 +214,7 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     
     order.Qmat <- mapply(FUN = IncMat_QTL_MAF, QTL = Q.list,
                          Q.eff_i = Q.eff_temp, Q.pos_i = Q.pos,
-                         MoreArgs = list(mppData = mppData, par.clu = par.clu,
-                                         ref.par = ref.par),
+                         MoreArgs = list(mppData = mppData, ref.par = ref.par),
                          SIMPLIFY = FALSE)
     
     
@@ -252,13 +228,12 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
     
     IncMat_ext <- IncMat_sum0_const(mppData = mppData, Q.eff = Q.eff,
                                     Q.list = Q.list, Q.pos = Q.pos,
-                                    par.clu = par.clu, cross.mat = cross.mat,
-                                    trait = trait)
+                                    cross.mat = cross.mat, trait = t_val)
     
     Q.list <- IncMat_ext$Q.list
     names(Q.list) <- paste0("Q", 1:length(Q.list))
     cross.mat <- IncMat_ext$cross.mat
-    trait <- IncMat_ext$trait
+    t_val <- IncMat_ext$trait
     con.ind <- IncMat_ext$con.ind
     allele_order <- lapply(X = Q.list, FUN = colnames)
     
@@ -268,7 +243,7 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   # 3. model computation
   ######################
   
-  model <- QTLModelQeff(mppData = mppData, trait = trait, cross.mat = cross.mat,
+  model <- QTLModelQeff(mppData = mppData, trait = t_val, cross.mat = cross.mat,
                         Q.list = Q.list, VCOV = VCOV)
   
   
@@ -278,9 +253,8 @@ QTL_genEffects <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   results <- Qeff_res_processing(model = model, mppData = mppData,
                                  cross.mat =  cross.mat, Q.list = Q.list,
-                                 QTL = QTL, Q.eff = Q.eff, par.clu = par.clu,
-                                 VCOV = VCOV, allele_order = allele_order,
-                                 con.ind = con.ind)
+                                 QTL = QTL, Q.eff = Q.eff, VCOV = VCOV,
+                                 allele_order = allele_order, con.ind = con.ind)
   
   
   names(results) <- paste0("Q", 1:length(results))

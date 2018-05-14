@@ -32,22 +32,14 @@
 #' allow to obtain a result.
 #'
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -62,19 +54,13 @@
 #' @param q.val Single \code{numeric} valu or vector of desired quantiles from
 #' the null distribution. Default = 0.95.
 #' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. \strong{Parallelization is
-#' only available for HRT (linear) models \code{VCOV = "h.err"}}.
-#' Default = FALSE.
-#'
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
-#' 
 #' @param verbose \code{Logical} value indicating if progression of the function
 #' should be printed. It will not affect the printing of the other functions
 #' called by \code{mpp_perm()}, especially the printing of \code{asreml()}.
 #' Default = TRUE.
+#' 
+#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
+#' use. Default = 1.
 #'
 #' @return Return:
 #'
@@ -103,21 +89,10 @@
 #' 
 #' \dontrun{
 #'
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' PermTestCr <- mpp_perm(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
+#' Perm <- mpp_perm(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 #'                        N = 100)
-#' 
-#' # Using multiple core
-#' 
-#' library(parallel)
-#' n.cores <- detectCores()
-#' cluster <- makeCluster((n.cores-1))
-#' 
-#' PermTestCr <- mpp_perm(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-#'                        N = 100, parallel = TRUE, cluster = cluster)
-#' 
-#' stopCluster(cl = cluster)
 #' 
 #' }
 #'
@@ -126,44 +101,41 @@
 #'
 
 
-mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000, 
-                     q.val = 0.95, parallel = FALSE, cluster = NULL,
-                     verbose = TRUE) {
+mpp_perm <- function(mppData, trait = 1, Q.eff = 'cr', VCOV = "h.err", N = 1000,
+                     q.val = 0.95, verbose = TRUE, n.cores = 1) {
   
   # 1. Check data format and arguments
   ####################################
   
-  check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, parallel = parallel, cluster = cluster,
-                   fct = "perm")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                   n.cores = n.cores, fct = "perm")
   
   
   # 2. Form required elements for the analysis
   ############################################
   
-  ### 2.1 inverse of the pedigree matrix
+  ### 2.1 trait values
+  
+  if(is.numeric(trait)){
+    
+    t_val <- mppData$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
+  
+  ### 2.2 inverse of the pedigree matrix
   
   formPedMatInv(mppData = mppData, VCOV = VCOV)
   
-  ### 2.2 cross matrix (cross intercept)
+  ### 2.3 cross matrix (cross intercept)
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.3 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.4 modify the par.clu object order parents columns and replace monomorphic
-  
-  if (Q.eff == "anc") {
-    
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
-    
-  } else {par.clu <- NULL}
-  
-  
-  ### 2.5 create space to store the results
+  ### 2.4 create space to store the results
   
   max.pval <- numeric(N)
   seed <- numeric(N)
@@ -171,6 +143,19 @@ mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
   
   if (N >= 100) { reference <- reference.count(N = N, l = 10) ;count <- 1 }
   
+  ### 2.5 Optional cluster
+  
+  if(n.cores > 1){
+    
+    parallel <- TRUE
+    cluster <- makeCluster(n.cores)
+    
+  } else {
+    
+    parallel <- FALSE
+    cluster <- NULL
+    
+  }
   
   # 3. Run the permutations
   #########################
@@ -187,25 +172,22 @@ mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
     cross.ind.fac <- factor(x = mppData$cross.ind,
                             levels = unique(mppData$cross.ind))
     
-    mppData$trait[, 1] <- unlist(tapply(mppData$trait[, 1], cross.ind.fac,
-                                         perm_cross))
+    t_val_i <- unlist(tapply(t_val, cross.ind.fac, perm_cross))
     
     ### 3.2 genome scan 
     
     if (parallel) {
       
       perm.i <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelPerm, 
-                       mppData = mppData, cross.mat = cross.mat,
-                       par.mat = parent.mat, Q.eff = Q.eff,
-                       par.clu = par.clu, VCOV = VCOV)
+                          mppData = mppData, trait = t_val_i,
+                          cross.mat = cross.mat, Q.eff = Q.eff, VCOV = VCOV)
       
     } else {
       
-      perm.i <- lapply(X = vect.pos, FUN = QTLModelPerm, 
-                      mppData = mppData, cross.mat = cross.mat,
-                      par.mat = parent.mat, Q.eff = Q.eff,
-                      par.clu = par.clu, VCOV = VCOV)
-        
+      perm.i <- lapply(X = vect.pos, FUN = QTLModelPerm,  mppData = mppData,
+                       trait = t_val_i, cross.mat = cross.mat, Q.eff = Q.eff,
+                       VCOV = VCOV)
+      
     }
     
     max.pval[i] <- max(unlist(perm.i), na.rm = TRUE)
@@ -230,6 +212,8 @@ mpp_perm <- function(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
     
     
   } # end permutations
+  
+  if(n.cores > 1){stopCluster(cluster)}
   
   # 4. return.results
   ###################

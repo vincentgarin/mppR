@@ -26,9 +26,6 @@ data(mppData)
 cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
 
 }
-\seealso{
-\code{\link{IncMat_parent}}, \code{\link{IncMat_QTL}}
-}
 \author{
 Vincent Garin
 }

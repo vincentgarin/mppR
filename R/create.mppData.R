@@ -172,6 +172,15 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
     
   }
   
+  # Add trait title is not provided
+  
+  if(is.null(colnames(pheno))){
+    
+    trait_names <- paste0('trait', 1:dim(pheno)[2])
+    colnames(pheno) <- trait_names
+    
+  }
+  
   # length cross.ind same as list of genotypes
   
   if(length(cross.ind) != dim(geno.off)[1]){
@@ -259,6 +268,7 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   cat(paste(n_cr, 'crosses\n'))
   cat(paste(n_par, 'parents\n'))
   cat(paste(n_pheno, 'phenotype(s)\n'))
+  
   if(n_con == 1){
     
     cat('1 connected part\n')

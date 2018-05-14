@@ -4,12 +4,12 @@
 \alias{mpp_proc}
 \title{MPP QTL analysis}
 \usage{
-mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, Q.eff = "cr",
-  par.clu = NULL, VCOV = "h.err", plot.gen.eff = FALSE, thre.cof = 3,
-  win.cof = 20, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
+mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, trait = 1,
+  Q.eff = "cr", VCOV = "h.err", plot.gen.eff = FALSE, thre.cof = 3,
+  win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
   backward = TRUE, alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE,
-  CI = FALSE, drop = 1.5, text.size = 18, parallel = FALSE,
-  cluster = NULL, verbose = TRUE, output.loc = getwd())
+  CI = FALSE, drop = 1.5, text.size = 18, n.cores = 1, verbose = TRUE,
+  output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -18,23 +18,15 @@ Default = "MPP".}
 \item{trait.name}{\code{Character} name of the studied trait.
 Default = "trait1".}
 
-\item{mppData}{An object of class \code{mppData}. See
-\code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
 the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
 effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
 effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -56,7 +48,7 @@ Default value = FALSE.}
 threshold above which a position can be peaked as a cofactor. Default = 3.}
 
 \item{win.cof}{\code{Numeric} value in centi-Morgan representing the minimum
-distance between two selected cofactors. Default = 20.}
+distance between two selected cofactors. Default = 50.}
 
 \item{N.cim}{\code{Numeric} value specifying the number of time the CIM
 analysis is repeated. Default = 1.}
@@ -99,14 +91,8 @@ interval. Default = 1.5.}
 \item{text.size}{\code{Numeric} value specifying the size of graph axis text
 elements. Default = 18.}
 
-\item{parallel}{\code{Logical} value specifying if the function should be
-executed in parallel on multiple cores. To run function in parallel user must
-provide cluster in the \code{cluster} argument. \strong{Parallelization is
-only available for HRT (linear) models \code{VCOV = "h.err"}}.
-Default = FALSE.}
-
-\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
-from the parallel package. Default = NULL.}
+\item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
+use. Default = 1.}
 
 \item{verbose}{\code{Logical} value indicating if the steps of mpp_proc should
 be printed. It will not affect the printing of the other functions called by
@@ -210,14 +196,7 @@ allow to obtain a result.
  
 \dontrun{
 
-data(USNAM_mppData)
-data(USNAM_mppData_bi)
-
-# Detect the number of cores and build cluster
-
-library(parallel)
-n.cores <- detectCores()
-cluster <- makeCluster(n.cores-1)
+data(mppData)
 
 # Specify a location where your results will be saved
 my.loc <- "C:/.../..."
@@ -225,14 +204,9 @@ my.loc <- "C:/.../..."
 # Cross-specific model
 
 USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-                     mppData = USNAM_mppData, plot.gen.eff = TRUE, CI = TRUE,
-                     parallel = TRUE, cluster = cluster, output.loc = my.loc)
-
-# Bi-allelic model
-
-USNAM_biall <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-                     mppData = USNAM_mppData_bi, Q.eff = "biall",
+                     mppData = mppData, plot.gen.eff = TRUE, CI = TRUE,
                      output.loc = my.loc)
+
 
 }
 

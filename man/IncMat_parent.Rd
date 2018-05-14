@@ -27,13 +27,10 @@ matrices in parental effect models.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-par.mat <- IncMat_parent(USNAM_mppData)
+par.mat <- IncMat_parent(mppData)
 
-}
-\seealso{
-\code{\link{IncMat_cross}}, \code{\link{IncMat_QTL}}
 }
 \author{
 Vincent Garin

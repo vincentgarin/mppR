@@ -21,7 +21,7 @@ formula_backward <- function(Q.names, VCOV){
   
   if(VCOV == "h.err"){
     
-    fbegin <- "mppData$trait[, 1] ~ cross.mat +"
+    fbegin <- "trait ~ cross.mat +"
     
   } else if((VCOV == "h.err.as") || (VCOV == "cr.err")){
     

@@ -17,7 +17,7 @@
 # VCOV type of variance covariance structure
 
 
-QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
+QTLModelBack <- function(x, mppData, trait, Q.list, cross.mat, VCOV){
   
   # 1. compute the QTL groups for asreml formula
   ##############################################
@@ -46,7 +46,7 @@ QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
     dataset <- data.frame(QTL = do.call(cbind, Q.list),
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1])
+                          trait = trait)
     
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
     } else if (VCOV == "cr.err") {formula.R <- "~at(cr.mat):units"}
@@ -63,7 +63,7 @@ QTLModelBack <- function(x, mppData, Q.list, cross.mat, VCOV){
     dataset <- data.frame(QTL = do.call(cbind, Q.list),
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1],
+                          trait = trait,
                           genotype = mppData$geno.id)
     
     if(VCOV == "pedigree"){ formula.R <- "~idv(units)"

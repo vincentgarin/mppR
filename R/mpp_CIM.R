@@ -20,22 +20,14 @@
 #' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{_form}} for details.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -61,14 +53,8 @@
 #' parental and ancestral models.}
 #' Default value = FALSE.
 #' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. \strong{Parallelization is
-#' only available for HRT (linear) models \code{VCOV = "h.err"}}.
-#' Default = FALSE.
-#'
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
+#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
+#' use. Default = 1.
 #' 
 #'   
 #' @return Return:
@@ -92,42 +78,24 @@
 #' # Cross-specific effect model
 #' #############################
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err")
+#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err")
 #' 
 #' cofactors <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 #' 
-#' CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
+#' CIM <- mpp_CIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 #' cofactors = cofactors, window = 20, plot.gen.eff = TRUE)
 #' 
 #' plot_QTLprof(Qprof = CIM)
-#' plot_genEffects(mppData = USNAM_mppData, Qprof = CIM, Q.eff = "cr")
-#' 
-#' \dontrun{
-#' 
-#' # Using multiple core
-#' 
-#' library(parallel)
-#' n.cores <- detectCores()
-#' cluster <- makeCluster((n.cores-1))
-#' 
-#' CIM <- mpp_CIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-#' cofactors = cofactors, window = 20, plot.gen.eff = TRUE, parallel = TRUE,
-#' cluster = cluster)
-#' 
-#' stopCluster(cl = cluster)
-#' 
-#' }
+#' plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = "cr")
 #' 
 #' # Bi-allelic model
 #' ##################
 #' 
-#' data(USNAM_mppData_bi)
+#' cofactors <- mppData$map[c(15, 63), 1]
 #' 
-#' cofactors <- USNAM_mppData_bi$map[c(15, 63), 1]
-#' 
-#' CIM <- mpp_CIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err",
+#' CIM <- mpp_CIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err",
 #' cofactors = cofactors, window = 20)
 #' 
 #' plot_QTLprof(Qprof = CIM, type = "h")
@@ -136,21 +104,33 @@
 #' 
 
 
-mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
+mpp_CIM <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
                     cofactors = NULL,  window = 20, plot.gen.eff = FALSE,
-                    parallel = FALSE, cluster = NULL)
+                    n.cores = 1)
 {
   
   # 1. Check data format and arguments
   ####################################
   
-  check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, plot.gen.eff = plot.gen.eff,
-                   parallel = parallel, cluster = cluster,
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                   plot.gen.eff = plot.gen.eff, n.cores = n.cores,
                    cofactors = cofactors, fct = "CIM")
   
   # 2. Form required elements for the analysis
   ############################################
+  
+  ### 2.1 trait values
+  
+  if(is.numeric(trait)){
+    
+    t_val <- mppData$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
   
   ### 2.1 inverse of the pedigree matrix
   
@@ -160,21 +140,7 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.3 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.4 modify the par.clu object order parents columns and replace monomorphic
-  
-  if (Q.eff == "anc") {
-    
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
-    
-  } else {par.clu <- NULL}
-  
-  
-  ### 2.5 Formation of the list of cofactors
+  ### 2.3 Formation of the list of cofactors
   
   if(is.character(cofactors)){
     
@@ -187,14 +153,13 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   }
   
   cof.list <- lapply(X = cof.pos, FUN = IncMat_QTL, mppData = mppData,
-                     cross.mat = cross.mat, par.mat = parent.mat,
-                     par.clu = par.clu, Q.eff = Q.eff, order.MAF = TRUE)
+                     Q.eff = Q.eff, order.MAF = TRUE)
   
-  ### 2.6 Formation of the genome-wide and cofactors partition
+  ### 2.4 Formation of the genome-wide and cofactors partition
   
   vect.pos <- 1:dim(mppData$map)[1]
   
-  # 2.6.1 cofactor partition tells if the cofactor should be included or
+  # cofactor partition tells if the cofactor should be included or
   # not in the model at each position.
   
   if (is.character(cofactors)){
@@ -214,6 +179,19 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   cof.part <- apply(X = cofactors2, MARGIN = 1, FUN = test.cof,
                     map = mppData$map, window = window)
   
+  ### 2.5 Optional cluster
+  
+  if(n.cores > 1){
+    
+    parallel <- TRUE
+    cluster <- makeCluster(n.cores)
+    
+  } else {
+    
+    parallel <- FALSE
+    cluster <- NULL
+    
+  }
   
   # 3. computation of the CIM profile (genome scan)
   #################################################
@@ -221,21 +199,20 @@ mpp_CIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   if (parallel) {
     
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelCIM,
-                          mppData = mppData, cross.mat = cross.mat,
-                          par.mat = parent.mat, Q.eff = Q.eff,
-                          par.clu = par.clu, VCOV = VCOV, cof.list = cof.list,
+                          mppData = mppData, trait = t_val, cross.mat = cross.mat,
+                          Q.eff = Q.eff, VCOV = VCOV, cof.list = cof.list,
                           cof.part = cof.part, plot.gen.eff = plot.gen.eff)
     
   } else {
     
     log.pval <- lapply(X = vect.pos, FUN = QTLModelCIM,
-                       mppData = mppData, cross.mat = cross.mat,
-                       par.mat = parent.mat, Q.eff = Q.eff,
-                       par.clu = par.clu, VCOV = VCOV, cof.list = cof.list,
+                       mppData = mppData, trait = t_val, cross.mat = cross.mat,
+                       Q.eff = Q.eff, VCOV = VCOV, cof.list = cof.list,
                        cof.part = cof.part, plot.gen.eff = plot.gen.eff)
     
   }
   
+  if(n.cores > 1){stopCluster(cluster)}
   
   log.pval <- t(data.frame(log.pval))
   if(plot.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}

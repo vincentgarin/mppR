@@ -13,15 +13,14 @@
 
 # adjust should the R squared value be adjusted or not
 
-R2_LR <- function(mppData, QTL){
+R2_LR <- function(mppData, trait, QTL){
   
-  trait <- mppData$trait[, 1]
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   cross.ind <- mppData$cross.ind
   
   # remove non complete observations
   
-  dataset <- cbind(mppData$trait[, 1], cross.mat, QTL, cross.ind)
+  dataset <- cbind(trait, cross.mat, QTL, cross.ind)
   index <- complete.cases(dataset)
   trait <- trait[index]
   cross.mat <- cross.mat[index, , drop = FALSE] 

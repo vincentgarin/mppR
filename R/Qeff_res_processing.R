@@ -20,14 +20,12 @@
 
 # QTL: list of QTLs
 
-# par.clu: parental clustering object
-
 # allele_ref: list of parental (ancestral) alleles used as reference
 
 # con.part: list of connected parts
 
 Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
-                                Q.eff, par.clu, VCOV, allele_order, con.ind){
+                                Q.eff, VCOV, allele_order, con.ind){
   
   n.QTL <- length(Q.list)
   
@@ -241,7 +239,7 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     for(i in 1:n.QTL){
       
       Q.mat <- results[Q.ind == ref.Q[i], ]
-      A.allele <- factor(par.clu[QTL.list[i], ])
+      A.allele <- factor(mppData$par.clu[QTL.list[i], ])
       A <- model.matrix(~ A.allele - 1)
       
       # modify column order of A

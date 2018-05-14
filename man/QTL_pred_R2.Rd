@@ -4,29 +4,21 @@
 \alias{QTL_pred_R2}
 \title{Predicted QTL global and partial R squared}
 \usage{
-QTL_pred_R2(mppData.ts, mppData.vs, Q.eff = "cr", par.clu = NULL,
+QTL_pred_R2(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   VCOV = "h.err", QTL = NULL, her = 1)
 }
 \arguments{
-\item{mppData.ts}{An object of class \code{mppData} for the training set. See
-\code{\link{mppData_form}} for details.}
+\item{mppData.ts}{An object of class \code{mppData} for the training set.}
 
 \item{mppData.vs}{An object of class \code{mppData} for the validation set.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -92,17 +84,15 @@ allow to obtain a result.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-folds <- CV_partition(cross.ind = USNAM_mppData$cross.ind, k = 5)
+folds <- CV_partition(cross.ind = mppData$cross.ind, k = 5)
 
-mppData.ts <- mppData_subset(mppData = USNAM_mppData,
-                             gen.list = folds[[1]]$train.set)
+mppData.ts <- subset(x = mppData, gen.list = folds[[1]]$train.set)
 
-mppData.vs <- mppData_subset(mppData = USNAM_mppData,
-                             gen.list = folds[[1]]$val.set)
+mppData.vs <- subset(x = mppData, gen.list = folds[[1]]$val.set)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData)
+SIM <- mpp_SIM(mppData = mppData)
 QTL <- QTL_select(SIM)
 
 QTL_pred_R2(mppData.ts = mppData.ts, mppData.vs = mppData.vs, QTL = QTL)

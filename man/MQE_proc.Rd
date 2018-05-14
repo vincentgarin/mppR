@@ -169,6 +169,8 @@ allow to obtain a result.
 }
 \examples{
 
+\dontrun{
+
 data(USNAM_mppData)
 data(USNAM_mppData_bi)
 data(USNAM_parClu)
@@ -187,7 +189,6 @@ mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
 par.clu <- par.clu[rownames(par.clu) \%in\% com.mk.list, ]
 
 
-\dontrun{
 
 # Specify a location where your results will be saved
 my.loc <- "C:/.../..."
@@ -210,7 +211,6 @@ MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
                 
  stopCluster(cl = cluster)
                  
-                
 }
 
 

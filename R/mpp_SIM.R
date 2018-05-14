@@ -39,11 +39,8 @@
 #' the case. Using genetic relatedness between the parents, it is possible group
 #' these parents into a reduced number of ancestral cluster. Parents belonging
 #' to the same ancestral group are assumed to transmit the same allele
-#' (Jansen et al. 2003; Leroux et al. 2014). Clustering of parental line can
-#' be performed using the \code{\link{parent_cluster}} function which calls
-#' functions of the R package
-#' \code{clustahplo}. This information allows to modify the IBD relationship
-#' between the parents. The ancestral model estimate therefore one QTL effect
+#' (Jansen et al. 2003; Leroux et al. 2014). The ancestral model estimate
+#' therefore one QTL effect
 #' per ancestral class. Once again, the theoretical expectation is a gain of
 #' QTL detection power by the reduction of the number of parameters to estimate.
 #' The HRT ancestral model correspond to the linkage desequilibrium
@@ -92,22 +89,14 @@
 #' allow to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -125,14 +114,8 @@
 #' parental and ancestral models.}
 #' Default value = FALSE.
 #' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. \strong{Parallelization is
-#' only available for HRT (linear) models \code{VCOV = "h.err"}}.
-#' Default = FALSE.
-#'
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
+#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
+#' use. Default = 1.
 #' 
 #'   
 #' @return Return:
@@ -195,35 +178,19 @@
 #' # Cross-specific model
 #' ######################
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
+#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 #' plot.gen.eff = TRUE)
 #' 
 #' plot_QTLprof(Qprof = SIM)  
-#' plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr")
+#' plot_genEffects(mppData = mppData, Qprof = SIM, Q.eff = "cr")
 #' 
-#' \dontrun{
-#' 
-#' # Using multiple cores
-#' 
-#' library(parallel)
-#' n.cores <- detectCores()
-#' cluster <- makeCluster((n.cores-1))
-#' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-#'                parallel = TRUE, cluster = cluster)
-#' 
-#' stopCluster(cl = cluster)
-#' 
-#' }
 #' 
 #' # Bi-allelic model
 #' ##################
 #' 
-#' data(USNAM_mppData_bi)
-#' 
-#' SIM <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall", VCOV = "h.err")
+#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err")
 #' 
 #' plot_QTLprof(Qprof = SIM, type = "h")
 #' 
@@ -231,40 +198,52 @@
 #' 
 
 
-mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err", 
-                    plot.gen.eff = FALSE, parallel = FALSE, cluster = NULL) {
+mpp_SIM <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err", 
+                    plot.gen.eff = FALSE, n.cores = 1) {
   
   # 1. Check data format and arguments
   ####################################
   
-  check.model.comp(mppData = mppData, Q.eff = Q.eff, VCOV = VCOV,
-                   par.clu = par.clu, plot.gen.eff = plot.gen.eff,
-                   parallel = parallel, cluster = cluster,
-                   fct = "SIM")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+                   plot.gen.eff = plot.gen.eff, n.cores = n.cores, fct = "SIM")
   
   # 2. Form required elements for the analysis
   ############################################
   
-  ### 2.1 inverse of the pedigree matrix
+  ### 2.1 trait values
+  
+  if(is.numeric(trait)){
+    
+    t_val <- mppData$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
+  
+  ### 2.2 inverse of the pedigree matrix
   
   formPedMatInv(mppData = mppData, VCOV = VCOV)
   
-  ### 2.2 cross matrix (cross intercept)
+  ### 2.3 cross matrix (cross intercept)
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.3 parent matrix
+  ### 2.4 Optional cluster
   
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.4 modify the par.clu object order parents columns and replace monomorphic
-  
-  if (Q.eff == "anc") {
+  if(n.cores > 1){
     
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
+    parallel <- TRUE
+    cluster <- makeCluster(n.cores)
     
-  } else {par.clu <- NULL}
+  } else {
+    
+    parallel <- FALSE
+    cluster <- NULL
+    
+  }
   
   vect.pos <- 1:dim(mppData$map)[1]
   
@@ -274,20 +253,19 @@ mpp_SIM <- function(mppData, Q.eff = "cr", par.clu = NULL, VCOV = "h.err",
   if (parallel) {
     
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelSIM,
-                          mppData = mppData, cross.mat = cross.mat,
-                          par.mat = parent.mat, Q.eff = Q.eff,
-                          par.clu = par.clu, VCOV = VCOV,
+                          mppData = mppData, trait = t_val,
+                          cross.mat = cross.mat, Q.eff = Q.eff, VCOV = VCOV,
                           plot.gen.eff = plot.gen.eff)
     
   } else {
     
     log.pval <- lapply(X = vect.pos, FUN = QTLModelSIM,
-                       mppData = mppData, cross.mat = cross.mat,
-                       par.mat = parent.mat, Q.eff = Q.eff,
-                       par.clu = par.clu, VCOV = VCOV,
-                       plot.gen.eff = plot.gen.eff)
+                       mppData = mppData, trait = t_val, cross.mat = cross.mat,
+                      Q.eff = Q.eff, VCOV = VCOV, plot.gen.eff = plot.gen.eff)
     
   }
+  
+  if(n.cores > 1){stopCluster(cluster)}
   
   log.pval <- t(data.frame(log.pval))
   if(plot.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}

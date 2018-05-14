@@ -4,12 +4,13 @@
 \alias{QTL_R2}
 \title{QTL global and partial R squared}
 \usage{
-QTL_R2(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
-  glb.only = FALSE)
+QTL_R2(mppData, trait = 1, QTL = NULL, Q.eff = "cr", glb.only = FALSE)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
@@ -20,16 +21,6 @@ Default = NULL.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{glb.only}{\code{Logical} value. If glb.only = TRUE, only the global and 
 global adjusted R squared will be returned. Default = FALSE.}
@@ -82,13 +73,13 @@ of phenotypic information, and n.cr is the number of intercept (cross) terms.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(USNAM_mppData)
+SIM <- mpp_SIM(mppData)
 
 QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 
-QTL_R2(mppData = USNAM_mppData, QTL = QTL, Q.eff = "cr")
+QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
 
 
 }

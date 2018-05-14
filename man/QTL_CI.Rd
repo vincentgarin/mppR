@@ -35,9 +35,9 @@ Computes a -log10(p-value) drop-off confidence interval for QTL positions.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData)
+SIM <- mpp_SIM(mppData = mppData)
 
 QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 

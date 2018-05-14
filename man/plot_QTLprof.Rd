@@ -38,14 +38,13 @@ The user can pass a list of cofactors or QTL positions to the argument
 }
 \examples{
 
-data(USNAM_mppData)
-data(USNAM_mppData_bi)
+data(mppData)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr")
+SIM <- mpp_SIM(mppData = mppData)
 QTL <- QTL_select(SIM)
 plot_QTLprof(Qprof = SIM, QTL = QTL)
 
-SIM_biall <- mpp_SIM(mppData = USNAM_mppData_bi, Q.eff = "biall")
+SIM_biall <- mpp_SIM(mppData = mppData, Q.eff = "biall")
 plot_QTLprof(Qprof = SIM_biall, type = "h")
 
 }

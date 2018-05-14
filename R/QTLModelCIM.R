@@ -5,7 +5,7 @@
 # function to compute a single position QTL model
 
 
-QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
+QTLModelCIM <- function(x, mppData, trait, cross.mat, Q.eff, VCOV,
                         cof.list, cof.part, plot.gen.eff){
   
   # 1. formation of the QTL incidence matrix
@@ -13,9 +13,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   
   ### 2.2 QTL position
   
-  QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
-                    par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff,
-                    order.MAF = TRUE)
+  QTL <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   
@@ -39,7 +37,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
   
   if(VCOV == "h.err"){
     
-    model <- tryCatch(expr = lm(mppData$trait[, 1] ~ - 1 + cross.mat + cof.mat
+    model <- tryCatch(expr = lm(trait ~ - 1 + cross.mat + cof.mat
                                 + QTL), error = function(e) NULL)
     
     if (is.null(model)){ 
@@ -74,7 +72,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         if(plot.gen.eff){
           
           gen.eff <- QTL_pval(mppData = mppData, model = model,
-                              Q.eff = Q.eff, x = x, par.clu = par.clu)
+                              Q.eff = Q.eff, x = x)
           
           
           results <- c(results, gen.eff)
@@ -92,7 +90,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1])
+                          trait = trait)
     
     colnames(dataset) <- c(paste0("cof",1:cof.el),paste0("Q",1:QTL.el),
                            "cr.mat", "trait")
@@ -118,7 +116,7 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1],
+                          trait = trait,
                           genotype = mppData$geno.id)
     
     colnames(dataset) <- c(paste0("cof", 1:cof.el), paste0("Q", 1:QTL.el),
@@ -183,8 +181,8 @@ QTLModelCIM <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV,
         if(plot.gen.eff){
           
           gen.eff  <- QTL_pval_mix(model = model, Q.eff = Q.eff, QTL.el = QTL.el,
-                                   x = x, par.clu = par.clu,
-                                   ref.name = ref.name,
+                                   x = x, ref.name = ref.name,
+                                   par.clu = mppData$par.clu,
                                    par.names = mppData$parents, fct = "CIM")
           
           results  <- c(results, gen.eff)

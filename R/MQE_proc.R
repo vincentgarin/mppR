@@ -168,6 +168,8 @@
 #' 
 #' @examples
 #' 
+#' \dontrun{
+#' 
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' data(USNAM_parClu)
@@ -186,7 +188,6 @@
 #' par.clu <- par.clu[rownames(par.clu) %in% com.mk.list, ]
 #' 
 #' 
-#' \dontrun{
 #' 
 #' # Specify a location where your results will be saved
 #' my.loc <- "C:/.../..."
@@ -209,7 +210,6 @@
 #'                 
 #'  stopCluster(cl = cluster)
 #'                  
-#'                 
 #' }
 #' 
 #' 

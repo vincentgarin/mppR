@@ -99,6 +99,8 @@ allow to obtain a result.
 }
 \examples{
 
+\dontrun{
+
 data(USNAM_mppData)
 data(USNAM_mppData_bi)
 data(USNAM_parClu)
@@ -122,6 +124,8 @@ QTL <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
                    
 R2 <- MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = QTL[, 5],
 par.clu = par.clu)
+
+}
 
 }
 \seealso{

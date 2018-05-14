@@ -70,16 +70,16 @@ using dashed lines.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "cr", plot.gen.eff = TRUE)
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", plot.gen.eff = TRUE)
 QTL <- QTL_select(SIM)
 
 # without QTL positions
-plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr") 
+plot_genEffects(mppData = mppData, Qprof = SIM, Q.eff = "cr") 
 
 # with QTL positions
-plot_genEffects(mppData = USNAM_mppData, Qprof = SIM, Q.eff = "cr",
+plot_genEffects(mppData = mppData, Qprof = SIM, Q.eff = "cr",
 QTL = QTL) 
 
 }

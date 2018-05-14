@@ -39,9 +39,9 @@ is no more candidate position above the \code{threshold}.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(USNAM_mppData)
+SIM <- mpp_SIM(mppData)
 
 QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 

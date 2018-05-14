@@ -70,6 +70,16 @@ subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
   
   stopifnot(is_mppData(x))
   
+  if(x$status != 'complete'){
+    
+    stop(paste('You have to process the mppData objects in a strict order:',
+               'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
+               'parent_cluster.mppData(). You can only use subset.mppData()',
+               'after performing create.mppData(), QC.mppData(),',
+               'IBS.mppData(), IBD.mppData(), and parent_cluster.mppData.'))
+    
+  }
+  
   # user must at least specify one argument (mk.list or gen.list)
   
   if(is.null(mk.list) && is.null(gen.list)){

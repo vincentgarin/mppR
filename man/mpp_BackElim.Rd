@@ -4,12 +4,14 @@
 \alias{mpp_BackElim}
 \title{Backward elimination on QTL candidates}
 \usage{
-mpp_BackElim(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
+mpp_BackElim(mppData, trait = 1, QTL = NULL, Q.eff = "cr",
   VCOV = "h.err", alpha = 0.05)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
@@ -20,16 +22,6 @@ Default = NULL.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -73,13 +65,13 @@ to obtain a result.
 }
 \examples{
 
-data(USNAM_mppData)
+data(mppData)
 
-SIM <- mpp_SIM(USNAM_mppData)
+SIM <- mpp_SIM(mppData)
 
 QTL <- QTL_select(SIM)
 
-QTL.sel <- mpp_BackElim(mppData = USNAM_mppData, QTL = QTL)
+QTL.sel <- mpp_BackElim(mppData = mppData, QTL = QTL)
 
 }
 \seealso{

@@ -4,27 +4,19 @@
 \alias{mpp_perm}
 \title{QTL significance threshold by permutation}
 \usage{
-mpp_perm(mppData, Q.eff, par.clu = NULL, VCOV = "h.err", N = 1000,
-  q.val = 0.95, parallel = FALSE, cluster = NULL, verbose = TRUE)
+mpp_perm(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err", N = 1000,
+  q.val = 0.95, verbose = TRUE, n.cores = 1)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
+
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument for the ancesral model \code{(Q.eff = "anc")}.
-\code{Interger matrix} representing the results of a parents genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -39,19 +31,13 @@ For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 \item{q.val}{Single \code{numeric} valu or vector of desired quantiles from
 the null distribution. Default = 0.95.}
 
-\item{parallel}{\code{Logical} value specifying if the function should be
-executed in parallel on multiple cores. To run function in parallel user must
-provide cluster in the \code{cluster} argument. \strong{Parallelization is
-only available for HRT (linear) models \code{VCOV = "h.err"}}.
-Default = FALSE.}
-
-\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
-from the parallel package. Default = NULL.}
-
 \item{verbose}{\code{Logical} value indicating if progression of the function
 should be printed. It will not affect the printing of the other functions
 called by \code{mpp_perm()}, especially the printing of \code{asreml()}.
 Default = TRUE.}
+
+\item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
+use. Default = 1.}
 }
 \value{
 Return:
@@ -99,21 +85,10 @@ allow to obtain a result.
 
 \dontrun{
 
-data(USNAM_mppData)
+data(mppData)
 
-PermTestCr <- mpp_perm(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
+Perm <- mpp_perm(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
                        N = 100)
-
-# Using multiple core
-
-library(parallel)
-n.cores <- detectCores()
-cluster <- makeCluster((n.cores-1))
-
-PermTestCr <- mpp_perm(mppData = USNAM_mppData, Q.eff = "cr", VCOV = "h.err",
-                       N = 100, parallel = TRUE, cluster = cluster)
-
-stopCluster(cl = cluster)
 
 }
 

@@ -4,14 +4,12 @@
 
 # function to compute a single position QTL model
 
-QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
+QTLModelPerm <- function(x, mppData, trait, cross.mat, Q.eff, VCOV){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
   
-  QTL <- IncMat_QTL(x = x, mppData = mppData, cross.mat = cross.mat,
-                    par.mat = par.mat, par.clu = par.clu, Q.eff = Q.eff,
-                    order.MAF = TRUE)
+  QTL <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
   
   # 2. model computation
   ######################
@@ -20,7 +18,7 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
   
   if(VCOV == "h.err"){
     
-    model <- tryCatch(expr = lm(mppData$trait[, 1] ~ -1 + cross.mat + QTL),
+    model <- tryCatch(expr = lm(trait ~ -1 + cross.mat + QTL),
                       error = function(e) NULL)
     
     if (is.null(model)){ results <- 0
@@ -34,7 +32,7 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     dataset <- data.frame(QTL = QTL,
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1])
+                          trait = trait)
     
     if(VCOV == "h.err.as"){ formula.R <- "~idv(units)"
     } else if (VCOV == "cr.err") {formula.R <- "~at(cr.mat):units"}
@@ -55,7 +53,7 @@ QTLModelPerm <- function(x, mppData, cross.mat, par.mat, Q.eff, par.clu, VCOV){
     
     # compose the dataset for the asreml function
     
-    dataset <- data.frame(QTL = QTL, trait = mppData$trait[, 1],
+    dataset <- data.frame(QTL = QTL, trait = trait,
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
                           genotype = mppData$geno.id)

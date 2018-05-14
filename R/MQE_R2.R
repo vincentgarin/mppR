@@ -70,6 +70,8 @@
 #'
 #' @examples
 #'
+#' \dontrun{
+#'
 #' data(USNAM_mppData)
 #' data(USNAM_mppData_bi)
 #' data(USNAM_parClu)
@@ -93,6 +95,8 @@
 #' 
 #' MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL,
 #'        Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
+#'
+#' }
 #'
 #' @export
 #'

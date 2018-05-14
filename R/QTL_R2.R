@@ -30,7 +30,9 @@
 #' 
 #'
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
@@ -41,16 +43,6 @@
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param par.clu Required argument for the ancesral model \code{(Q.eff = "anc")}.
-#' \code{Interger matrix} representing the results of a parents genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #' 
 #' @param glb.only \code{Logical} value. If glb.only = TRUE, only the global and 
 #' global adjusted R squared will be returned. Default = FALSE.
@@ -89,51 +81,45 @@
 #'
 #' @examples
 #'
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' SIM <- mpp_SIM(USNAM_mppData)
+#' SIM <- mpp_SIM(mppData)
 #' 
 #' QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 #' 
-#' QTL_R2(mppData = USNAM_mppData, QTL = QTL, Q.eff = "cr")
+#' QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
 #' 
 #' 
 #' @export
 #'
 
 
-QTL_R2 <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
+QTL_R2 <- function(mppData, trait = 1, QTL = NULL, Q.eff = "cr",
                    glb.only = FALSE){
   
   # 1. check the data format
   ##########################
   
-  check.model.comp(mppData = mppData, Q.eff = Q.eff, par.clu = par.clu,
-                   QTL = QTL, fct = "R2")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, QTL = QTL,
+                   fct = "R2")
   
   # 2. elements for the model
   ###########################
   
-  ### 2.1 cross matrix (cross intercept)
+  ### 2.1 trait values
   
-  cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
-  
-  ### 2.2 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.3 modify the par.clu object order parents columns and replace
-  # monomorphic
-  
-  if (Q.eff == "anc") {
+  if(is.numeric(trait)){
     
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
+    t_val <- mppData$pheno[, trait]
     
-  } else {par.clu <- NULL}
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
   
-  
-  ### 2.4 Formation of the list of QTL
+  ### 2.2 Formation of the list of QTLs
   
   if(is.character(QTL)){
     
@@ -146,8 +132,7 @@ QTL_R2 <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   }
   
   Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
-                   cross.mat = cross.mat, par.mat = parent.mat,
-                   par.clu = par.clu, Q.eff = Q.eff, order.MAF = TRUE)
+                   Q.eff = Q.eff, order.MAF = TRUE)
   
   n.QTL <- length(Q.list)
   
@@ -156,7 +141,8 @@ QTL_R2 <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
   
   ### 3.1 Global adjusted and unadjusted linear R squared
   
-  R2.all <- R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list))
+  R2.all <- R2_lin(mppData = mppData, trait = t_val,
+                   QTL = do.call(cbind, Q.list))
   
   R2 <- R2.all[[1]]
   R2.adj <- R2.all[[2]]
@@ -172,16 +158,18 @@ QTL_R2 <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
       
       # functions to compute the R squared or all QTL minus 1 or only 1 QTL position
       
-      part.R2.diff <- function(x, QTL, mppData) {
-        R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[-x]))
+      part.R2.diff <- function(x, QTL, mppData, trait) {
+        R2_lin(mppData = mppData, trait = trait,
+               QTL = do.call(cbind, Q.list[-x]))
       }
       
-      part.R2.sg <- function(x, QTL, mppData) {
-        R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[x]))
+      part.R2.sg <- function(x, QTL, mppData, trait) {
+        R2_lin(mppData = mppData, trait = trait,
+               QTL = do.call(cbind, Q.list[x]))
       }
       
       R2.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, QTL = Q.list,
-                       mppData = mppData)
+                       mppData = mppData, trait = t_val)
       
       R2_i.dif <- lapply(X = R2.dif, FUN = function(x) x[[1]])
       R2_i.dif.adj <- lapply(X = R2.dif, FUN = function(x) x[[2]])
@@ -190,7 +178,7 @@ QTL_R2 <- function(mppData, QTL = NULL, Q.eff = "cr", par.clu = NULL,
       R2_i.dif.adj <- R2.adj - unlist(R2_i.dif.adj)
       
       R2.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, QTL = Q.list,
-                      mppData = mppData)
+                      mppData = mppData, trait = t_val)
       
       R2_i.sg <- unlist(lapply(X = R2.sg, FUN = function(x) x[[1]]))
       R2_i.sg.adj <- unlist(lapply(X = R2.sg, FUN = function(x) x[[2]]))

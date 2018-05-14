@@ -5,8 +5,7 @@
 # function to order the QTL incidence matrix parental and ancestral according
 # to MAF per interconnected part. From left to right the MAF increase.
 
-IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu,
-                           ref.par = NULL){
+IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, ref.par = NULL){
   
   if ((Q.eff_i == "par") || (Q.eff_i == "anc")){
     
@@ -20,7 +19,7 @@ IncMat_QTL_MAF <- function(QTL, Q.eff_i, Q.pos_i, mppData, par.clu,
     } else if (Q.eff_i == "anc"){
       
       
-      par.clu_i <- par.clu[Q.pos_i, ]
+      par.clu_i <- mppData$par.clu[Q.pos_i, ]
       par.clu_i <- paste0("A.allele", par.clu_i)
       names(par.clu_i) <- mppData$parents
       
