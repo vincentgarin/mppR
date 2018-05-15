@@ -2,16 +2,14 @@
 # QTLModelCIM_MQE #
 ###################
 
-QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
-                            Qeff.part, par.clu, VCOV, cof.list, cof.part){
+QTLModelCIM_MQE <- function(x, mppData, trait, cross.mat, Qeff.part,
+                            VCOV, cof.list, cof.part){
   
   # 1. formation of the QTL incidence matrix
   ###########################################
   
-  QTL <- IncMat_QTL_MQE(x = x, mppData = mppData, mppData_bi = mppData_bi,
-                        Q.eff = Qeff.part[x], par.clu = par.clu,
-                        cross.mat = cross.mat, par.mat = par.mat,
-                        order.MAF = TRUE)
+  QTL <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Qeff.part[x],
+                    order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   
@@ -33,7 +31,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
   
   if(VCOV == "h.err"){
     
-    model <- tryCatch(expr = lm(mppData$trait[, 1] ~ - 1 + cross.mat + cof.mat
+    model <- tryCatch(expr = lm(trait ~ - 1 + cross.mat + cof.mat
                                 + QTL), error = function(e) NULL)
     
     if (is.null(model)){
@@ -64,7 +62,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1])
+                          trait = trait)
     
     colnames(dataset) <- c(paste0("cof", 1:cof.el), paste0("Q", 1:QTL.el),
                            "cr.mat", "trait")
@@ -90,7 +88,7 @@ QTLModelCIM_MQE <- function(x, mppData, mppData_bi, cross.mat, par.mat,
     dataset <- data.frame(cof.mat = cof.mat, QTL = QTL,
                           cr.mat = factor(mppData$cross.ind,
                                           levels = unique(mppData$cross.ind)),
-                          trait = mppData$trait[, 1],
+                          trait = trait,
                           genotype = mppData$geno.id)
     
     colnames(dataset) <- c(paste0("cof", 1:cof.el), paste0("Q", 1:QTL.el),

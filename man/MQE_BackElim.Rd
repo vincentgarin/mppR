@@ -4,16 +4,14 @@
 \alias{MQE_BackElim}
 \title{Backward elimination on multi-QTL effect candidates}
 \usage{
-MQE_BackElim(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-  par.clu = NULL, VCOV = "h.err", alpha = 0.05)
+MQE_BackElim(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
+  VCOV = "h.err", alpha = 0.05)
 }
 \arguments{
-\item{mppData}{An IBD object of class \code{mppData}
-See \code{\link{mppData_form}} for details. Default = NULL.}
+\item{mppData}{An object of class \code{mppData}}
 
-\item{mppData_bi}{Required IBS object of class \code{mppData} if the user
-wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-be strictly the same as the one of \code{mppData}.} Default = NULL.}
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{QTL}{Vector of \code{character} markers or in between marker positions
 names. Default = NULL.}
@@ -21,17 +19,6 @@ names. Default = NULL.}
 \item{Q.eff}{\code{Character} vector indicating for each QTL position the
 type of QTL effect among: "cr", "par", "anc" and "biall". For details look
 at \code{\link{mpp_SIM}}.}
-
-\item{par.clu}{Required argument if the user wants to allow QTLs with an
-ancestral effect. \code{Interger matrix} representing the results of a parents
-genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -74,33 +61,14 @@ allow to obtain a result.
 }
 \examples{
 
-\dontrun{
+data(mppData)
 
-data(USNAM_mppData)
-data(USNAM_mppData_bi)
-data(USNAM_parClu)
+SIM <- mpp_SIM(mppData = mppData)
+QTL <- QTL_select(SIM)
 
-mppData <- USNAM_mppData
-mppData_bi <- USNAM_mppData_bi
-par.clu <- USNAM_parClu
+QTL <-  MQE_BackElim(mppData = mppData, QTL = QTL[, 1],
+                     Q.eff = c("anc", "par", "biall"))
 
-
-# Equalize the list of markers of the two mppData objects and par.clu
-
-com.mk.list <- intersect(mppData$map$mk.names, mppData_bi$map$mk.names)
-
-mppData <- mppData_subset(mppData = mppData, mk.list = com.mk.list)
-mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
-par.clu <- par.clu[rownames(par.clu) \%in\% com.mk.list, ]
-
-
-QTL <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
-                   Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
-
-QTL <-  MQE_BackElim(mppData = mppData, mppData_bi = mppData_bi,
-                     QTL = QTL[, 1], Q.eff = QTL[, 5], par.clu = par.clu)
-
-}
 
 }
 \seealso{

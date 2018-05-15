@@ -13,12 +13,10 @@
 #' corresponding to \code{VCOV = 'h.err'}. For more details about R squared
 #' computation and adjustement look at function \code{\link{QTL_R2}}.
 #'
-#' @param mppData An IBD object of class \code{mppData}
-#' See \code{\link{mppData_form}} for details. Default = NULL.
-#'
-#' @param mppData_bi Required IBS object of class \code{mppData} if the user
-#' wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-#' be strictly the same as the one of \code{mppData}.} Default = NULL.
+#' @param mppData An object of class \code{mppData}.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param QTL Vector of \code{character} markers or in between marker positions
 #' names. Default = NULL.
@@ -26,17 +24,6 @@
 #' @param Q.eff \code{Character} vector indicating for each QTL position the
 #' type of QTL effect among: "cr", "par", "anc" and "biall". For details look at
 #' \code{\link{mpp_SIM}}.
-#'
-#' @param par.clu Required argument if the user wants to allow QTLs with an
-#' ancestral effect. \code{Interger matrix} representing the results of a parents
-#' genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param glb.only \code{Logical} value. If \code{glb.only = TRUE}, only
 #' the global and global adjusted R squared will be returned. Default = FALSE.
@@ -70,70 +57,44 @@
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' data(USNAM_parClu)
-#' 
-#' mppData <- USNAM_mppData
-#' mppData_bi <- USNAM_mppData_bi
-#' par.clu <- USNAM_parClu
-#' 
-#' 
-#' # Equalize the list of markers of the two mppData objects and par.clu
-#' 
-#' com.mk.list <- intersect(mppData$map$mk.names, mppData_bi$map$mk.names)
-#' 
-#' mppData <- mppData_subset(mppData = mppData, mk.list = com.mk.list)
-#' mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
-#' par.clu <- par.clu[rownames(par.clu) %in% com.mk.list, ]
+#' data(mppData)
 #' 
 #' SIM <- mpp_SIM(mppData = mppData)
 #' QTL <- QTL_select(SIM)
-#' QTL <- QTL[, 1]
 #' 
-#' MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL,
-#'        Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
-#'
-#' }
+#' MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = c("par", "anc", "biall"))
 #'
 #' @export
 #'
 
 
-MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-                   par.clu = NULL, glb.only = FALSE){
+MQE_R2 <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
+                   glb.only = FALSE){
   
   # 1. check the data format
   ##########################
   
-  check.MQE(mppData = mppData, mppData_bi =  mppData_bi, Q.eff = Q.eff,
-            par.clu = par.clu, QTL = QTL, fct = "R2")
+  check.MQE(mppData = mppData, trait = trait, Q.eff = Q.eff,
+            QTL = QTL, fct = "R2")
   
   # 2. elements for the model
   ###########################
   
-  ### 2.1 cross matrix (cross intercept)
+  ### 2.1 trait values
   
-  cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
-  
-  ### 2.2 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
-  ### 2.3 modify the par.clu object order parents columns and replace
-  # monomorphic
-  
-  if ("anc" %in% Q.eff) {
+  if(is.numeric(trait)){
     
-    check <- parent_clusterCheck(par.clu = par.clu)
-    par.clu <- check$par.clu[, mppData$parents] # order parents columns
+    t_val <- mppData$pheno[, trait]
     
-  } else {par.clu <- NULL}
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait %in% trait.names)]
+    
+  }
   
   
-  ### 2.4 Formation of the list of QTL incidence matrices
+  ### 2.2 Formation of the list of QTL incidence matrices
   
   # order list of QTL positions
   
@@ -153,11 +114,8 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   
   # function to produce different type of QTL incidence matricdes
   
-  
-  Q.list <- mapply(FUN = IncMat_QTL_MQE, x = Q.pos, Q.eff = Q.eff,
-                   MoreArgs = list(mppData = mppData, mppData_bi = mppData_bi,
-                                   par.clu = par.clu, cross.mat = cross.mat,
-                                   par.mat = parent.mat, order.MAF = TRUE),
+  Q.list <- mapply(FUN = IncMat_QTL, x = Q.pos, Q.eff = Q.eff,
+                   MoreArgs = list(mppData = mppData, order.MAF = TRUE),
                    SIMPLIFY = FALSE)
   
   n.QTL <- length(Q.list)
@@ -167,7 +125,8 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
   
   ### 3.1 Global adjusted and unadjusted linear R squared
   
-  R2.all <- R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list))
+  R2.all <- R2_lin(mppData = mppData, trait = t_val,
+                   QTL = do.call(cbind, Q.list))
   
   R2 <- R2.all[[1]]
   R2.adj <- R2.all[[2]]
@@ -184,16 +143,18 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
       
       # functions to compute the R squared or all QTL minus 1 or only 1 QTL position
       
-      part.R2.diff <- function(x, QTL, mppData) {
-        R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[-x]))
+      part.R2.diff <- function(x, QTL, mppData, trait) {
+        R2_lin(mppData = mppData, trait = trait,
+               QTL = do.call(cbind, Q.list[-x]))
       }
       
-      part.R2.sg <- function(x, QTL, mppData) {
-        R2_lin(mppData = mppData, QTL = do.call(cbind, Q.list[x]))
+      part.R2.sg <- function(x, QTL, mppData, trait) {
+        R2_lin(mppData = mppData, trait = trait,
+               QTL = do.call(cbind, Q.list[x]))
       }
       
       R2.dif <- lapply(X = 1:n.QTL, FUN = part.R2.diff, QTL = Q.list,
-                       mppData = mppData)
+                       mppData = mppData, trait = t_val)
       
       R2_i.dif <- lapply(X = R2.dif, FUN = function(x) x[[1]])
       R2_i.dif.adj <- lapply(X = R2.dif, FUN = function(x) x[[2]])
@@ -202,7 +163,7 @@ MQE_R2 <- function(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
       R2_i.dif.adj <- R2.adj - unlist(R2_i.dif.adj)
       
       R2.sg <- lapply(X = 1:n.QTL, FUN = part.R2.sg, QTL = Q.list,
-                      mppData = mppData)
+                      mppData = mppData, trait = t_val)
       
       R2_i.sg <- unlist(lapply(X = R2.sg, FUN = function(x) x[[1]]))
       R2_i.sg.adj <- unlist(lapply(X = R2.sg, FUN = function(x) x[[2]]))

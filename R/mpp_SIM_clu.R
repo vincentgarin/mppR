@@ -39,10 +39,6 @@ mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
   
-  ### 2.4 parent matrix
-  
-  parent.mat <- IncMat_parent(mppData)
-  
   vect.pos <- 1:dim(mppData$map)[1]
   
   # 3. computation of the SIM profile (genome scan)
@@ -52,7 +48,7 @@ mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelSIM,
                           mppData = mppData, trait = t_val,
-                          cross.mat = cross.mat, par.mat = parent.mat,
+                          cross.mat = cross.mat,
                           Q.eff = Q.eff, VCOV = VCOV,
                           plot.gen.eff = plot.gen.eff)
     
@@ -60,8 +56,7 @@ mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
     log.pval <- lapply(X = vect.pos, FUN = QTLModelSIM,
                        mppData = mppData, trait = t_val, cross.mat = cross.mat,
-                       par.mat = parent.mat, Q.eff = Q.eff, VCOV = VCOV,
-                       plot.gen.eff = plot.gen.eff)
+                       Q.eff = Q.eff, VCOV = VCOV, plot.gen.eff = plot.gen.eff)
     
   }
   

@@ -1,94 +1,21 @@
-###########
-# MQE_CIM #
-###########
+###############
+# mpp_CIM_clu #
+###############
 
-#' Composite interval maping for MQE model
-#' 
-#' Compute a QTL profile with cofactors position having different type of QTL
-#' effects.
-#' 
-#' \strong{WARNING!} The computation of random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-#' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
-#' 
-#' @param mppData An object of class \code{mppData}.
-#' 
-#' @param trait \code{Numerical} or \code{character} indicator to specify which
-#' trait of the \code{mppData} object should be used. Default = 1.
-#' 
-#' @param Q.eff \code{Character} expression indicating the type of QTL effect at
-#' the tested position. Possibility to choose among: "cr", "par", "anc" or
-#' "biall". For details look at \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
-#' 
-#' @param cofactors Vector of \code{character} marker or in between marker
-#' positions names. Default = NULL.
-#' 
-#' @param cof.Qeff \code{Character} vector indicating for each cofactor position
-#' the type of QTL effect from: "cr", "par", "anc" and "biall".
-#' 
-#' @param chg.Qeff \code{Logical} value. If \code{chg.Qeff = TRUE}.
-#' The type of QTL effect of the tested position will change for the one
-#' specified in \code{cof.Qeff} when the function enter the region of a cofactor
-#' delimited by \code{window}. Default = FALSE.
-#' 
-#' @param window \code{Numeric} distance (cM) on the left and the right of a
-#' cofactor position where it is not included in the model. Default = 20.
-#' 
-#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
-#' use. Default = 1.
-#' 
-#'   
-#' @return Return:
-#' 
-#' \item{CIM }{\code{Data.frame} of class \code{QTLprof} with five columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
-#' 3) interger position indicators on the chromosome;
-#' 4) positions in centi-Morgan; and 5) -log10(p-values)}
-#' 
-#' @author Vincent Garin
-#' 
-#' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-#' \code{\link{parent_cluster}}, \code{\link{QTL_select}}
-#' 
-#' 
-#' @examples
-#' 
-#' data(mppData)
-#' 
-#' SIM <- mpp_SIM(mppData = mppData)
-#' cofactors <- QTL_select(SIM)[, 1]
-#' 
-#' CIM <- MQE_CIM(mppData = mppData, Q.eff = "cr", cofactors = cofactors,
-#'                cof.Qeff = c("anc", "par", "biall"))
-#'
-#' plot_QTLprof(CIM)
-#'                                
-#' @export
-#' 
+# CIM function for general procedure and forward. This function is an exact
+# copy from MQE_CIM function. The only difference is that it keep the
+# possibility to pass to the function a cluster object that is already defined.
 
-MQE_CIM <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
+MQE_CIM_clu <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
                     cofactors = NULL, cof.Qeff, chg.Qeff = FALSE, window = 20,
-                    n.cores = 1){
+                    parallel = FALSE, cluster = NULL){
   
   # 1. Check data format and arguments
   ####################################
   
   check.MQE(mppData = mppData, Q.eff = Q.eff, trait = trait,
             VCOV = VCOV, cofactors = cofactors, cof.Qeff = cof.Qeff,
-            n.cores = n.cores, fct = "CIM")
+            n.cores = 1, fct = "CIM")
   
   # 2. Form required elements for the analysis
   ############################################
@@ -171,20 +98,6 @@ MQE_CIM <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
   } else {Qeff.part <- rep(Q.eff, length(vect.pos))}
   
-  ### 2.6 Optional cluster
-  
-  if(n.cores > 1){
-    
-    parallel <- TRUE
-    cluster <- makeCluster(n.cores)
-    
-  } else {
-    
-    parallel <- FALSE
-    cluster <- NULL
-    
-  }
-  
   
   # 3. computation of the CIM profile (genome scan)
   #################################################
@@ -204,8 +117,6 @@ MQE_CIM <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
                        Qeff.part = Qeff.part, VCOV = VCOV,
                        cof.list = cof.list, cof.part = cof.part)
   }
-  
-  if(n.cores > 1){stopCluster(cluster)}
   
   log.pval <- t(data.frame(log.pval))
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value

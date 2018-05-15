@@ -28,6 +28,7 @@
         Fred van Eeuwijk\\Wageningen University \And
         Marcos Malosetti\\Wageningen University \And
     }
+    
 \title{\pkg{mppR}: An \proglang{R} Package for QTL Analysis in Multi-parent Populations using Linear Mixed Models}
 
 %% for pretty printing and a nice hypersummary also set:
@@ -429,13 +430,12 @@ A cross-validation (CV) approach can be used to evaluate the performance of the 
 \end{enumerate}
 
 
-
 \section{Illustration:  QTL analysis US-NAM population}
 \label{sec:3}
 
 \subsection{Overview}
 
-\pkg{mppR} contains functions to perform all steps of an MPP QTL analysis, starting from the data processing to the visualisation of results. Figure~\ref{fig:2} shows a schematic representation of the \pkg{mppR} workflow. The first part concerns the processing of the raw data to gather all required data in a single \code{mppData} object. The \code{mppData} object can be used in the functions: \code{mpp_proc()}, \code{mpp_CV()} and \code{MQE_proc()} which are generic functions to perform QTL analyses, cross-validation, and multi-QTL effect model computations respectively.
+\pkg{mppR} contains functions to perform all steps of an MPP QTL analysis, starting from the data processing to the visualisation of results. Figure~\ref{fig:2} shows a schematic representation of the \pkg{mppR} workflow. The first part concerns the raw data processing to gather all required data in a single \code{mppData} object. The \code{mppData} object can be used in the functions: \code{mpp_proc()}, \code{mpp_CV()} and \code{MQE_proc()} which are generic functions to perform QTL analyses, cross-validation, and multi-QTL effect model computations respectively.
 
 
 \begin{figure}[!ht]
@@ -466,7 +466,7 @@ table(substr(rownames(USNAM_geno)[-c(1:6)], 1, 4))
 
 Raw genotypic data used in \pkg{mppR} must be bi-allelic markers. The genotypic data are expected to be formatted as a \code{character matrix}, with one letter for each allele. So, when using the ACTG coding all possible genotypes are AA, CC, AC, etc. Missing values must always be coded \code{NA}. We impose a strict data format to make mppR functioning smoothly. Any deviation from this format will produce an informative error message. 
 
-To start the data processing, the genotypic data must be split into offspring and parent genotype scores. These matrices represent the \code{geno.off} and \code{geno_par} arguments in the \code{create.mppData()} function. For these two arguments, the genotypes define the rows with genotype identifiers as row names and the markers are in columns with the marker identifiers as column names. The order of the markers must be the same as the one in the \code{map} argument. The \code{geno.off} genotypes list must also be in the same order as the one of the \code{pheno} argument.
+To start the data processing, the genotypic data must be split into offspring and parent genotype scores. These matrices represent the \code{geno.off} and \code{geno.par} arguments in the \code{create.mppData()} function. For these two arguments, the genotypes define the rows with genotype identifiers as row names and the markers are in columns with the marker identifiers as column names. The order of the markers must be the same as the one in the \code{map} argument. The \code{geno.off} genotypes list must also be in the same order as the one of the \code{pheno} argument.
 
 
 <<off_par_genotype_data>>=
@@ -476,7 +476,7 @@ geno.par <- USNAM_geno[1:6, ]
 
 \subsubsection{Map data}
 
-\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has the same format as the one required for the argument \code{map} in function \code{create.mppData()}. As mentioned above, the list of markers must be identical to the column names of the \code{geno.off} and \code{geno.par} arguments.
+\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has required format for the argument \code{map} in function \code{create.mppData()}. The list of markers must be identical to the column names of the \code{geno.off} and \code{geno.par} arguments.
 
 <<map_data>>=
 data("USNAM_map", package = "mppR")
@@ -486,18 +486,18 @@ map <- USNAM_map
 
 \subsubsection{Phenotypic data}
 
-The file \code{USNAM\_pheno} is a \code{numeric matrix} containing the phenotypic measurements of 500 offspring genotypes for the trait upper leaf angle (ULA). The row names represent the genotype identifiers. They must be identical to the row names of \code{geno_off}. \code{USNAM\_pheno} can be used as \code{pheno} argument for the \code{create.mppData()} function. A cross indicator \code{character vector} can be formed by subsetting the genotype names. It specifies to which cross each genotype belongs and can be used for the \code{cross_ind} argument in \code{create.mppData()}.
+The file \code{USNAM\_pheno} is a \code{numeric matrix} containing the phenotypic measurements of 500 offspring genotypes for the trait upper leaf angle (ULA). The row names represent the genotype identifiers. They must be identical to the row names of \code{geno.off}. \code{USNAM\_pheno} can be used as \code{pheno} argument for the \code{create.mppData()} function. The \code{pheno} argument can contain more than one trait. A cross indicator \code{character vector} can be formed by subsetting the genotype names. It specifies to which cross each genotype belongs and can be used for the \code{cross.ind} argument in \code{create.mppData()}.
 
 <<phenotype_data>>=
 data("USNAM_pheno", package = "mppR")
 head(USNAM_pheno)
 pheno <-  USNAM_pheno
-cross_ind <- substr(rownames(pheno), 1, 4)
+cross.ind <- substr(rownames(pheno), 1, 4)
 @
 
 \subsubsection{Cross parents information}
 
-A last argument that the user must provide in \code{create.mppData()} is the \code{par_per_cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross_ind} ; 2-3) the parent 1 and 2 of the cross. The parents' identifiers must be identical to the row names of \code{geno.par}.
+The last raw data source is provided via the \code{par.per.cross} argument. It is a three column \code{character matrix} with one row per cross specifying: 1) the cross indicator that must be identical and appear in the same order with the one used in \code{cross.ind} ; 2-3) the parents 1 and 2 of the crosses. The parents' identifiers must be identical to the row names of \code{geno.par}.
 
 <<par.per.cross>>=
 par.per.cross <- cbind(unique(cross.ind), rep("B73", 5),
@@ -514,7 +514,7 @@ ppc_ex <- cbind(paste0("c", 1:7),
 design_connectivity(ppc_ex)
 @
 
-For the next part of the illustration, we assume that the \code{geno_off}, \code{geno_par}, \code{map}, \code{pheno}, \code{cross.ind}, \code{par.per.cross} objects are loaded in the global environment.
+For the next part of the illustration, we assume that the \code{geno.off}, \code{geno.par}, \code{map}, \code{pheno}, \code{cross.ind}, and \code{par.per.cross} objects are loaded in the global environment.
 
 \subsection{Data processing}
 
@@ -522,7 +522,7 @@ The initial step is the processing of the raw data to gather all required data i
 
 \subsubsection{create a \code{mppData} object}
 
-The first step of the procedure is to create a single data object containing all raw data sources using \code{create.mppData()}.
+The function \code{create.mppData()} creates a unified \code{mppData} object containing all raw data sources.
 
 <<create.mppData>>=
 mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
@@ -574,15 +574,16 @@ mppData <- QC.mppData(mppData = mppData, n.lim = 15, MAF.pop.lim = 0.05,
 To compute a bi-allelic model, the user needs to convert genotype data into IBS format using \code{IBS.mppData()}. This function transforms genotype scores into 0, 1, 2 coding where the score represents the number of minor allele copies. The user can also perform imputation of the missing values (\code{impute = TRUE}). Different options are available, some of them rely on the \code{codeGeno()} function from the package \pkg{synbreed} \citep{wimmer2012synbreed}.
 
 <<IBS.mppData>>=
-mppData <- IBS.mppData(mppData = mppData, impute = TRUE, impute.type = 'random')
+mppData <- IBS.mppData(mppData = mppData, impute = TRUE,
+                       impute.type = 'random')
 
 @
 
 \subsubsection{IBD processing}
 
-This function estimates IBD probabilities after converting the marker genotype data into within cross ABH format. For each cross, the maker scores of the two cross parents are used as reference. Homozygous offspring genotype scores similar to parent 1 get score \code{"A"} (\code{"B"} for parent 2). Heterozygous genotypes are scored \code{"H"}. If at least one of the parents is missing or the parents are monomorphic, the offspring will receive \code{NA}. The regular ABH conversion assumes that the reference parent scores are fully homozygous or missing. However, if some parent marker scores are heterozygous, the ABH conversion can still be performed setting argument \code{het.miss.par = TRUE}. In that case, when a parent score is heterozygous or missing and the other parent is homozygous, the function will try to infer the score of the allele that was transmitted to the offspring by the heterozygous or missing parent looking at the segregation pattern.
+The other models (cross-specific, parental, and ancestral) use IBD probabilities. The function \code{IBD.mppData()} estimates IBD probabilities after converting the marker genotype data into within cross ABH format. For each cross, the maker scores of the two cross parents are used as reference. Homozygous offspring genotype scores similar to parent 1 get score \code{"A"} (\code{"B"} for parent 2). Heterozygous genotypes are scored \code{"H"}. If at least one of the parents is missing or the parents are monomorphic, the offspring will receive \code{NA}. The regular ABH conversion assumes that the reference parent scores are fully homozygous or missing. However, if some parent marker scores are heterozygous, the ABH conversion can still be performed setting argument \code{het.miss.par = TRUE}. In that case, when a parent score is heterozygous or missing and the other parent is homozygous, the function will try to infer the score of the allele that was transmitted to the offspring by the heterozygous or missing parent looking at the segregation pattern.
 
-Then the computation of the IBD probabilities is done by calling the function \code{calc.genoprob()} of the \proglang{R}/\pkg{qtl} package \citep{broman_rqtl}. For that purpose a csv file that can be loaded by \proglang{R}/\pkg{qtl} will be saved at the location specified in \code{dir}.
+Then the computation of the IBD probabilities is done by calling the function \code{calc.genoprob()} of the \proglang{R}/\pkg{qtl} package \citep{broman_rqtl}. For that purpose a temporary csv file, which can be loaded by \proglang{R}/\pkg{qtl}, will be saved at the location specified in \code{dir}.
 
 The type of population must be specified in argument \cite{type}. Different population types are possible: F-type ("F"), back-cross ("BC"), backcross followed by selfing ("BCsFt"), double haploid ("DH"), and recombinant imbred lines ("RIL"). The number of F and BC generations can be specified using \code{F.gen} and \code{BC.gen}. The agument \code{type.mating} specifies if F and RIL populations were obtained by selfing or by sibling mating. DH and RIL populations are read as back-cross by R/qtl. For these two population types, heterozygous scores will be treated as missing values.
 
@@ -593,9 +594,7 @@ mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
 
 \subsubsection{Parent clustering}
   
-The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster.mppData()}. This function calls functions from the \proglang{R} package \pkg{clusthaplo}, which can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. \code{parent_cluster.mppData()} performs the clustering using the \code{"threshold"} method. \code{window} specifies the size of the window around the marker. The marker falling into this window will be used for the local clustering. The value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} start to use the general kinship coefficient. A visualization of the clustering results can be obtained using \code{plot = TRUE}. In that case, the plots will be saved in a folder at the location specified in \code{plot.loc}. 
-
-\code{parent_cluster()} function can be fed by \code{QC_proc()} outputs \code{\textdollar map.par.clu} for the \code{haplo.map} argument and \code{\textdollar geno.par.clu} for \code{marker.data}. Concerning \code{consensus.map}, the user should use the one of the \code{mppData} object after removing the third column. \code{parent_cluster} returns a list with two objects. The first one contains a \code{matrix} with the result of the parent clustering. The second is the average number of ancestral classes along the genome.
+The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster.mppData()}. This function calls functions from the \proglang{R} package \pkg{clusthaplo}, which can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. \code{parent_cluster.mppData()} performs the clustering using the \code{"threshold"} method. \code{window} specifies the size of the window around the marker. The marker falling into this window will be used for the local clustering. The value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} starts to use the general kinship coefficient. A visualization of the clustering results can be obtained using \code{plot = TRUE}. In that case, the plots will be saved in a folder at the location specified in \code{plot.loc}. The funcion store the average number of ancetral group along the genome in \code{mppData$n.anc}.
 
 <<parent_clustering>>=
 library("clusthaplo")
@@ -603,6 +602,8 @@ set.seed(68769)
 
 mppData <- parent_cluster.mppData(mppData = mppData, K = 10, window = 25,
                                   plot = FALSE)
+
+mppData$n.anc
 @
 
 When the \code{mppData} object is complete,  summary can be obtained calling the generic function \code{summary()}.
@@ -626,7 +627,7 @@ mppData_sub <- subset(x = mppData, mk.list = mppData$map[, 2] == 1,
 
 \subsubsection{Update mppData pedigree}
 
-The function \code{pedigree_update.mppData()} can be used to complete the pedigree relationship. By default, \code{QC.mppData()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
+The function \code{pedigree_update.mppData()} can be used to complete the pedigree relationship. By default, \code{QC.mppData()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or a "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
 
 <<pedigree_update.mppData>>=
 ped.old <- mppData$ped.mat # old pedigree information
@@ -640,169 +641,15 @@ mppData <- pedigree_update.mppData(mppData = mppData, pedigree = ped.new)
 
 \subsubsection{Change mppData parent clustering}
 
-Using the function \code{par_clu_chg.mppData()},the user can change the parent clustering information of a \code{mppData} object. For example if he wants to cluster the parents using another software than \pkg{clusthaplo}. The new parent cluster information must be provided in argument \code{par.clu}.
+The user can change the parent clustering information of a \code{mppData} object using the function \code{par_clu_chg.mppData()}. For example, if he wants to cluster the parents using another software than \pkg{clusthaplo}. The new parent cluster information must be provided in argument \code{par.clu}.
 
 <<par_clu_chg.mppData>>=
 data(mppData)
 data("par_clu", package = "mppR")
 
-mppData <- par_clu_chg.mppData(mppData = mppData, par.clu = parent_cluster)
+mppData <- par_clu_chg.mppData(mppData = mppData, par.clu = par_clu)
  
 @
-
-
-%%%%%%%%%%%%%%%%%% stop there
-
-\subsubsection{ABH assignment}
-
-Genotypic data must be converted into ABH format for the computation of cross-specific, parental, or ancestral models. This operation can be done in \code{QC_proc()} which will call the function \code{cross_ABH()} if \code{ABH = TRUE}. For the bi-allelic model, the user must set \code{ABH = FALSE}. The ABH conversion is done within crosses. For each cross, the maker scores of the two cross parents defined in argument \code{par.per.cross} are used as reference. Homozygous offspring genotype scores similar to parent 1 get score \code{"A"} (\code{"B"} for parent 2). Heterozygous genotypes are scored \code{"H"}. If at least one of the parents is missing or the parents are monomorphic, the offspring will receive \code{NA}.
-
-The regular ABH conversion assumes that the reference parent scores are fully homozygous or missing. However, if some parent marker scores are heterozygous, the ABH conversion can still be performed setting argument \code{het_miss_par = TRUE}. In that case, when a parent score is heterozygous or missing and the other parent is homozygous, the function will try to infer the score of the allele that was transmitted to the offspring by the heterozygous or missing parent looking at the segregation pattern. If this can be done, ABH assignment will be done using this inferred score as reference for the heterozygous or missing parent. Otherwise, scores will be set as missing.
-
-\subsubsection{Imputation}
-
-\code{QC_proc()} contains an option to impute IBS data that will be used to compute a bi-allelic model. The imputation is performed using the \code{codeGeno()} function from the \proglang{R} package \pkg{synbreed}. The argument \code{impute.type} allows to specify the type of imputation performed. One option is to use the program \pkg{Beagle} \citep{browning2013improving}. In that case, the user must give a map with marker physical position in base pair (\code{map_bp}). The imputation can only be done if data are not converted into ABH format (\code{ABH = FALSE}).
-
-To use \code{QC_proc()}, the user must provide the \code{geno.off}, \code{geno.par}, \code{map}, \code{trait}, \code{cross.ind}, and \code{par.per.cross} arguments with the same format defined in the raw data format section (\ref{raw_data_form}).
-
-<<QC_proc_ABH>>=
-data_IBD <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
-                    trait = trait, cross.ind = cross.ind,
-                    par.per.cross = par.per.cross, n.lim = 15,
-                    MAF.pop.lim = 0.05, MAF.cr.miss = TRUE, mk.miss = 0.1,
-                    gen.miss = 0.25, ABH = TRUE, het_miss_par = TRUE,
-                    verbose = FALSE)
-
-@
-
-To filter data that can be used to make an IBS \code{mppData} object, the user only needs to set \code{ABH = FALSE}.
-
-<<QC_proc_IBS>>=
-data_IBS <- QC_proc(geno.off = geno.off, geno.par = geno.par, map = map,
-                    trait = trait, cross.ind = cross.ind,
-                    par.per.cross = par.per.cross, n.lim = 15,
-                    MAF.pop.lim = 0.05, MAF.cr.miss = TRUE, mk.miss = 0.1,
-                    gen.miss = 0.25, ABH = FALSE, verbose = FALSE)
-
-@
-
-
-\subsection{mppData object formation}
-\label{mppData.form}
-
-The next step of the analysis is to combine all the necessary data except the parent clustering information in a single \code{mppData} object. Two types of \code{mppData} objects can be formed: one for cross-specific, parental, or ancestral model using IBD probabilities; the other for a bi-allelic model based on IBS marker scores.
-
-\subsubsection{IBD data object}
-
-The main difference between the IBD and IBS objects is the format of the offspring genotype data provided in argument \code{geno.off}. For the IBD \code{mppData} object, \code{geno.off} must be in ABH format. The conversion of the offspring genotype data can be done using \code{cross_ABH()} or \code{cross_ABH_het()} or within \code{QC_proc()}.
-
-Once ABH assignment has been done, it is possible to form the \code{mppData} object using function \code{mppData_form()}. The main use of this function is to estimate IBD probabilities, conditional QTL genotype probabilities, by calling the function \code{calc.genoprob()} of the \proglang{R}/\pkg{qtl} package \citep{broman_rqtl}. For that purpose a csv file that can be loaded by \proglang{R}/\pkg{qtl} will be saved at the location specified in \code{dir}.
-
-The type of population must be specified in \code{type}. Four types are possible: F-type (\code{"F"}), back-cross (\code{"BC"}), doubled haploid (DH) (\code{"DH"}), and recombinant inbred line (RIL) (\code{"RIL"}). The argument \code{F.gen} and \code{BC.gen} represent the number of generations for F-type and  back-cross populations respectively. The argument \code{type.mating} specifies if F and RIL populations have been obtained by selfing or sibling mating. For RIL and DH population, heterozygous score should be set as \code{NA}. \proglang{R}/\pkg{qtl} reads RIL and DH populations as back-cross.
-
-The \code{step} argument provides the distance at which in between marker positions conditional QTL genotype probabilities are inferred. To use an MQE model, IBD and IBS \code{mppData} objects must have the same marker list. Therefore, in our US-NAM example, no in between position is inferred by giving \code{step} a value larger than the largest in between marker distance.
-
-The argument \code{geno.off} can be obtained as an output of the \code{QC_proc()}. The arguments \code{geno.par}, \code{map}, \code{trait}, \code{cross.ind}, \code{par.per.cross} have the same format as the one described for \code{QC_proc()} and can be obtained as outputs of \code{QC_proc()}. The argument \code{IBS} allows to specify if the user wants to form an IBD (\code{IBS = FALSE}) or IBS \code{mppData} object (\code{IBS = TRUE}).
-
-
-<<mppData_IBD>>=
-data_IBD$geno.off[data_IBD$geno.off == "H"] <- NA
-
-mppData_IBD <- mppData_form(geno.off = data_IBD$geno.off,
-                            geno.par = data_IBD$geno.par, IBS = FALSE,
-                            type = "RIL", type.mating = "selfing",
-                            map = data_IBD$map, trait = data_IBD$trait,
-                            cross.ind = data_IBD$cross.ind,
-                            par.per.cross = data_IBD$par.per.cross, step = 20,
-                            dir = getwd())
-@
-
-\subsubsection{IBS data object}
-
-To compute a bi-allelic model, the user needs to form an IBS \code{mppData} object. This can be done by providing marker data coded in the standard format (one letter per allele) (\code{IBS.format = "ATCG"}) or coded in 0, 1, 2 format (\code{IBS.format = "012"}) for the argument \code{geno}. If the user uses imputed data obtained via the \pkg{synbreed}, those will be coded in 0, 1, 2 format.  Marker scores for \code{geno.off} can be obtained as an output of \code{QC_proc())}.
-
-<<mppData_IBS>>=
-mppData_IBS <- mppData_form(geno.off = data_IBS$geno.off,
-                            geno.par = data_IBS$geno.par,
-                            IBS = TRUE, type = "RIL",
-                            type.mating = "selfing", map = data_IBS$map,
-                            trait = data_IBS$trait,
-                            cross.ind = data_IBS$cross.ind,
-                            par.per.cross = data_IBS$par.per.cross)
-@
-
-The two previous \code{mppData} objects are saved as \code{mppR} data object and can be loaded using \code{data(USNAM_mppData)} and \code{data(USNAM_mppData_bi)} for the IBD and IBS \code{mppData} object respectively. An \code{mppData} object summary can be obtained calling the generic function \code{summary()}. \code{mppData} objects can be saved and reloaded using \code{saveRDS()} and \code{readRDS()} functions from the \pkg{base} library.
-
-\newpage
-
-<<summary_mppData>>=
-summary(mppData_IBD)
-@
-
-\subsection{mppData object modification}
-
-\code{mppData} objects are lists containing all the necessary data except the clustering of the parental lines. The different \code{mppData} elements (geno, trait, map, etc.) can be accessed using \code{\textdollar}. Three functions have been programmed to modify \code{mppData} objects.
-
-\code{mppData_subset()} subsets the \code{mppData} objects for a specific list of markers (\code{mk.list}) or a list of genotypes (\code{gen.list}). For example, select only the markers from the first chromosome.
- 
-<<mppData_subset1>>=
-mk.chr1 <- mppData_IBD$map[, 2] == 1
-mppData_red <- mppData_subset(mppData = mppData_IBD, mk.list = mk.chr1)
- 
-@
-
-or select only the genotypes from crosses 1 and 5
- 
-<<mppData_subset2>>=
-geno.cr1_5 <- mppData_IBD$cross.ind %in% c("Z002", "Z016")
-mppData_red <- mppData_subset(mppData = mppData_IBD, gen.list = geno.cr1_5)
- 
-@
-
-\code{mppData_chgPheno()} allows to change the trait values
-
-<<mppData_subset3>>=
-new.trait <- data_IBD$trait
-mppData_IBD <- mppData_chgPheno(mppData = mppData_IBD, trait = new.trait)
-
-@
- 
-Finally \code{pedigree_update.mppData()} can be used to complete the pedigree relationship. By default, \code{mppData_form()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
-
-<<pedigree_update.mppData>>=
-ped.old <- mppData_IBD$ped.mat # old pedigree information
-founder.info <- data.frame(rep("founder", 2), c("CML103", "CML322"),
-                           rep("A1", 2), c("A2", "A3"))
-colnames(founder.info) <- colnames(ped.old)
-ped.new <- rbind(founder.info, ped.old)
-mppData_IBD <- pedigree_update.mppData(mppData = mppData_IBD,
-                                   pedigree = ped.new)
- 
-@
-  
-\subsection{Parent clustering}
-  
-The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster()}. This function calls functions from the \proglang{R} package \pkg{clusthaplo}, which can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. \code{parent_cluster()} performs the clustering using the \code{"threshold"} method. To run \code{parent_cluster()}, the user needs to provide two maps (\code{haplo.map} and \code{consensus.map}). These are three columns maps with marker names, chromosome and position in cM. \code{haplo.map} is the map of the parent genotypes used for the clustering and \code{consensus.map} specifies the positions for which the user wants \pkg{clusthaplo} to group the parents. \code{haplo.map} can include as much markers as available. The argument \code{geno.par} represents the parent genotypes at the positions specified in \code{haplo.map}. In this \code{data.frame}, genotypes (parents) are in columns and markers are in rows. The map in \code{consensus.map} must be the same as the one of the \code{mppData} object. Finally, the value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} start to use the general kinship coefficient. 
-
-\code{parent_cluster()} function can be fed by \code{QC_proc()} outputs \code{\textdollar map.par.clu} for the \code{haplo.map} argument and \code{\textdollar geno.par.clu} for \code{marker.data}. Concerning \code{consensus.map}, the user should use the one of the \code{mppData} object after removing the third column. \code{parent_cluster} returns a list with two objects. The first one contains a \code{matrix} with the result of the parent clustering. The second is the average number of ancestral classes along the genome.
-
-\newpage
- 
-<<parent_clustering1>>=
-library("clusthaplo")
-set.seed(68769)
-
-cluster <- parent_cluster(haplo.map = data_IBD$map.par.clu,
-                          consensus.map = mppData_IBD$map[, -3],
-                          marker.data = t(data_IBD$geno.par.clu),
-                          na.strings = NA, K = 10, window = 25)
-
-cluster[[2]] #average number of ancestors
-
-par.clu <- cluster[[1]] # clustering results
-
-@
- 
 
 \subsection{QTL analysis}
   
@@ -810,11 +657,11 @@ When all data elements are ready, the user can start the QTL analysis. In all fu
   
 \begin{enumerate}
 
-\item SIM scan to select cofactors (\code{mpp_SIM()}). The user needs to provide the \code{mppData} object to the \code{mppData} argument. In that case, we fit an ancestral model (\code{Q.eff = "anc"}) with HRT residual term (\code{VCOV = "h.err"}). For the ancestral model, the user must also provide the results of the parent clustering to the \code{par.clu} argument.
+\item SIM scan to select cofactors (\code{mpp_SIM()}).  In that case, we fit an ancestral model (\code{Q.eff = "anc"}) with HRT residual term (\code{VCOV = "h.err"}).
 
 \item Cofactor selection with SIM -log10($p$)~value above the \code{threshold} value with a minimum distance (\code{win.cof}) between selected positions (\code{QTL_select()}). The cofactor selection procedure is done per chromosome. It first picks the most significant position and then removes the positions in the neighbourhood of the selected position from the candidate list of QTLs/cofactors. The process continues until no position is significant anymore. The threshold (\code{thre.cof} or \code{thre.QTL}) values can be determined by permutation using \code{mpp_perm()}.
 
-\item CIM scan using the selected cofactors except within an exclusion window (\code{window}) around the selected cofactors where they are excluded from the model. It is possible to perform several consecutive run of CIM using \code{N.cim} (\code{mpp_CIM}).
+\item CIM scan (\code{mpp_CIM()}) using the selected cofactors except within an exclusion window (\code{window}) around the selected cofactors where they are excluded from the model. It is possible to perform several consecutive run of CIM using \code{N.cim} .
 
 \item Selection of QTL candidates with CIM -log10($p$)~value above \code{thre.QTL} and a minimum distance (\code{win.QTL}) between the selected positions (\code{QTL_select()}). The selection procedure is the same as for the cofactors.
 
@@ -822,16 +669,15 @@ When all data elements are ready, the user can start the QTL analysis. In all fu
 
 \item Estimation of the QTLs genetic effects (\code{QTL_genEffects()}), the global and partial QTLs $R^{2}$ (\code{QTL_R2()}).
 
-\item If \code{CI = TRUE}, computation of QTL confidence intervals from a CIM- profile (excluding cofactors on the scanned chromosome) (\code{QTL_CI()}). The confidence interval is based on a -log10($p$)~value drop-off value (\code{drop}).
+\item If \code{CI = TRUE}, computation of QTL confidence intervals from a CIM- profile (excluding cofactors on the scanned chromosome). The confidence interval is based on a -log10($p$)~value drop-off value (\code{drop}).
 
 \item plot of the -log10($p$)~value CIM QTL profile (\code{plot_QTLprof()}) and if \code{plot.gen.eff = TRUE}, visualisation of the genome-wide significance of the QTL effect per cross or per parent (\code{plot_genEffects()}).
 
 \end{enumerate}
 
 <<mpp_proc>>=
-QTL.proc <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
-                     mppData = mppData_IBD, Q.eff = "anc",
-                     par.clu = par.clu, VCOV = "h.err",
+QTL_proc <- mpp_proc(pop.name = "USNAM", trait.name = "ULA", trait = "ULA",
+                     mppData = mppData, Q.eff = "anc", VCOV = "h.err",
                      plot.gen.eff = TRUE, N.cim = 2, thre.cof = 3,
                      win.cof = 20, window = 20, thre.QTL = 3,
                      win.QTL = 20, CI = TRUE, drop = 1.5,
@@ -842,15 +688,12 @@ The results of \code{mpp_proc()} are returned as a list of \proglang{R} objects.
 
 \subsection{Multi QTL Effect (MQE) model}
 
-A multi-QTL effects model~\ref{MQE} can be determined using \code{MQE_proc()}. The user has to specify at least two types of QTL tested effects in the argument \code{Q.eff}. If the user wants to allow for bi-allelic QTL, an IBS \code{mppData} object must be provided in \code{mppData_bi}. In such a case, the marker list of the IBS \code{mppData} object must be strictly equivalent to the one of \code{mppData} argument. The \code{window} argument specifies the distance on both sides of an already detected QTL position where the search will be forbidden. A backward elimination on the final list of detected QTLs can be performed using (\code{backward = TRUE}). The results of the last MQE CIM run can be plotted using the function \code{MQE_plot()}. This \code{MQE_plot()} will colour the QTL positions corresponding to the type of QTL effect assumed at the position. This will be automatically done by \code{MQE_proc()} if \code{plot.MQE = TRUE}. The plot (plot\_MQE.pdf) will be saved with the other results at \code{output.loc}.
+A multi-QTL effects model~\ref{MQE} can be determined using \code{MQE_proc()}. The user has to specify the types of tested QTL effects in the argument \code{Q.eff}. The \code{window} argument specifies the distance on both sides of an already detected QTL position where the search will be forbidden. A backward elimination on the final list of detected QTLs can be performed using (\code{backward = TRUE}). The results of the last MQE CIM run can be plotted using the function \code{MQE_plot()}. This \code{MQE_plot()} will colour the QTL positions corresponding to the type of QTL effect assumed at the position. This will be automatically done by \code{MQE_proc()} if \code{plot.MQE = TRUE}. The plot (plot\_MQE.pdf) will be saved with the other results at \code{output.loc}.
 
 <<MQE>>=
-MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA",
-                mppData = mppData_IBD, mppData_bi = mppData_IBS,
-                Q.eff = c("par", "anc", "biall"), par.clu = par.clu,
-                window = 20, backward = TRUE, alpha.bk = .05,
-                plot.MQE = TRUE, verbose = FALSE,
-                output.loc = getwd())
+MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
+                Q.eff = c("par", "anc", "biall"), window = 20,
+                plot.MQE = TRUE, verbose = FALSE, output.loc = getwd())
 @
 
 \subsection{QTL effects estimation}
@@ -860,14 +703,14 @@ Once a list of QTL candidates has been determined, it is possible to estimate th
 For the parental and ancestral models (\code{Q.eff = "par"} (\ref{par.mod}) or \code{Q.eff = "anc"} (\ref{anc.mod})), the QTL effects are given per parents and must be interpreted as deviation with respect to most frequent allele within the connected part set as reference. For the parental and ancestral models, the parental alleles are listed from the most (top) to the least frequent (bottom). For the ancestral model, parents with the same score correspond to the same ancestral allele according to \pkg{clusthaplo} results. In a NAM population, all crosses are connected via the central parent (B73), which is the most frequent allele, and was therefore set as reference.
 
 <<QTL_effect>>=
-SIM <- mpp_SIM(mppData = mppData_IBD, Q.eff = "anc", par.clu = par.clu)
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "anc")
 cofactors <- QTL_select(Qprof = SIM)
-CIM <- mpp_CIM(mppData = mppData_IBD, Q.eff = "anc", par.clu = par.clu,
-               cofactors = cofactors, plot.gen.eff = TRUE)
+CIM <- mpp_CIM(mppData = mppData, Q.eff = "anc", cofactors = cofactors,
+               plot.gen.eff = TRUE)
 QTL <- QTL_select(Qprof = CIM)
-gen.eff <- QTL_genEffects(mppData = mppData_IBD, QTL = QTL, Q.eff = "anc",
-                          par.clu = par.clu)
-gen.eff[[1]][[1]]
+gen.eff <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "anc")
+
+gen.eff$Qeff$Q1
 
 @
 
@@ -891,8 +734,7 @@ plot_QTLprof(Qprof = CIM, QTL = QTL, type = "l")
 \code{Mpp_SIM()} or \code{mpp_CIM()} results obtained with \code{plot.gen.eff = TRUE} can also be passed to the function \code{plot_genEffects()} to obtain a visualisation of the genetic effect distribution along the genome (Figure~\ref{fig:4}). Once again, the positions passed to the \code{QTL} argument will be drawn on the graph.
 
 <<gen_eff_plot>>=
-plot_genEffects(mppData = mppData_IBD, Qprof = CIM, QTL = QTL,
-                Q.eff = "anc")
+plot_genEffects(mppData = mppData, Qprof = CIM, QTL = QTL, Q.eff = "anc")
 @
 
 \begin{figure}[!ht]
@@ -905,19 +747,17 @@ The interpretation of the genetic effect plot depends on the type of QTL effects
 
 For the parental and ancestral models, the effect must be interpreted as deviation with respect to the reference within a connected part. The reference allele is always defined as the most frequent allele. It can change at different positions. Therefore, it is not possible to establish a unique reference allele for the whole genome. The parental alleles significances are assessed per connected part. The red (blue) colour means that the parental allele decrease (increase) the trait value. Parents are ordered from the top to the bottom given the number of times their allele was set as reference in the whole genome. For example the upper parent was the one for which its allele was the highest number of times set as reference in the whole genome. These plots should be interpreted as a rough indication of signal distribution.
 
-
 \subsection{Cross-validation}
 
 The cross-validation procedure (\ref{CV}) can be performed by the function \code{mpp_CV()}. The arguments \code{Rep} and \code{k} represent the number of repetitions of the k-fold procedure. The heritability, allowing to express $R^{2}$ in terms of percentage of the explained genotypic variance, can be specified in \code{her}. By default \code{her = 1}, therefore the results are expressed in terms of phenotypic variation. The results of the CV procedure will be saved in a folder at \code{output.loc}. The different CV QTL profiles can be visualized using transparency plots with the function \code{plot_CV()} (Figure~\ref{fig:5}).
 
 
-
 <<CV_proc>>=
 set.seed(89341)
 
-CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData_IBD,
-             Q.eff = "cr", her = 0.4, Rep = 2, k = 5,
-             verbose = FALSE, output.loc = getwd())
+CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
+             Q.eff = "cr", her = 0.4, Rep = 2, k = 5, verbose = FALSE,
+             output.loc = getwd())
 plot_CV(CV)
 @
 
@@ -930,17 +770,7 @@ plot_CV(CV)
 
 \subsection{Parallelization}
 
-All functions involving genome scan(s) (\code{mpp_perm()}, \code{mpp_SIM()}, \code{mpp_CIM()}, \code{mpp_proc()}, \code{mpp_CV()} or \code{MQE_proc()}) can be executed in parallel for the HRT model only (\code{VCOV = h.err}). Parallelization is done using the function \code{parApply()} from the \pkg{parallel} library. To run a function in parallel, the user must build clusters using \code{makeCluster()} for the argument \code{cluster} and set \code{parallel = TRUE}.
-
-<<parallelization>>=
-library(parallel)
-cluster <- makeCluster(2)
-CV.par <- mpp_CV(mppData = mppData_IBS, Q.eff = "biall", parallel = TRUE,
-                 cluster = cluster, her = 0.4, Rep = 1, k = 5,
-                 verbose = FALSE, output.loc = getwd())
-stopCluster(cluster)
-@
-
+All functions involving genome scan(s) (\code{mpp_perm()}, \code{mpp_SIM()}, \code{mpp_CIM()}, \code{mpp_proc()}, \code{mpp_CV()} or \code{MQE_proc()}) can be executed in parallel for the HRT model only (\code{VCOV = h.err}). The number of cores can be specified using \code{n.cores}. Parallelization is done using functions from the \pkg{parallel} library.
 
 \subsection{Limitations}
 
@@ -948,10 +778,9 @@ The QTL analyses performed in \pkg{mppR} are all based on "exact" (complete REML
 
 \section{Summary}
 
-\pkg{mppR} is a package for QTL analysis in multi-parent populations working in the \proglang{R} environment. It can analyse any type of MPP design composed of more than one cross between at least three parents like NAM populations, diallels or factorial designs, where individual crosses are of the Fx, RIL, BCx or DH type. It contains functions to perform all the steps of the QTL detection from the data processing to the results visualisation. The \pkg{mppR} workflow is based on six main functions that: control data quality, combine data in a single object, cluster the parental lines and perform QTL detection. The QTL detection process is based on a grid of 16 possible models varying according to the type of QTL effects and the assumption about the residual variance covariance structure.
+\pkg{mppR} is a package for QTL analysis in multi-parent populations working in the \proglang{R} environment. It can analyse any type of MPP design composed of more than one cross between at least three parents like NAM populations, diallels or factorial designs, where individual crosses are of the Fx, BCx, BCsFt, RIL or DH type. It contains functions to perform all the steps of the QTL detection from the data processing to the results visualisation. The QTL detection process is based on a grid of 16 possible models varying according to the type of QTL effects and the assumption about the residual variance covariance structure.
 
 
-%' 
 \section*{Acknowledgements}
 
 The development of \pkg{mppR} is part of a project financed by KWS Saat SE.

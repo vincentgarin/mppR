@@ -4,26 +4,15 @@
 \alias{QTL_effect_plot}
 \title{Plot QTL effect accross model}
 \usage{
-QTL_effect_plot(mppData, mppData_bi, par.clu, QTL, sum_zero = TRUE,
-  ref.par = NULL, trait.lab = "trait", text.size = 16,
-  output.loc = getwd(), plot_label = "Qeff_tab")
+QTL_effect_plot(mppData, trait = 1, QTL, sum_zero = TRUE, ref.par = NULL,
+  trait.lab = "trait", text.size = 16, output.loc = getwd(),
+  plot_label = "Qeff_tab")
 }
 \arguments{
-\item{mppData}{An IBD object of class \code{mppData}
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
 
-\item{mppData_bi}{Required IBS object of class \code{mppData} if the user
-wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-be strictly the same as the one of \code{mppData}.}.}
-
-\item{par.clu}{\code{Interger matrix} representing the results of a parents
-genotypes clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}.}
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
@@ -99,11 +88,22 @@ In that case, the most frequent parental, ancestral and SNP allele will
 be used as reference. For the parental and the ancestral model it is also
 possible to fix the reference allele using argument ref.par.
 }
-\seealso{
-\code{\link{mppData_form}},
-\code{\link{parent_cluster}},
-\code{\link{QTL_select}},
-\code{\link{USNAM_parClu}}
+\examples{
+
+\dontrun{
+
+data(mppData)
+
+SIM <- mpp_SIM(mppData = mppData)
+QTL <- QTL_select(SIM)
+
+# Specify a location where your results will be saved
+my.loc <- "C:/.../..."
+
+MQE <- QTL_effect_plot(mppData = mppData, QTL = QTL, output.loc = my.loc)
+                 
+}
+
 }
 \author{
 Vincent Garin

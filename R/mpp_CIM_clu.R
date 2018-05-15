@@ -2,8 +2,8 @@
 # mpp_CIM_clu #
 ###############
 
-# SIM function for general procedure and CV. This function is an exact copy from
-# mpp_SIM function. The only difference is that it keep the possibility to
+# CIM function for general procedure and CV. This function is an exact copy from
+# mpp_CIM function. The only difference is that it keep the possibility to
 # pass to the function a cluster object that is already defined.
 
 mpp_CIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",

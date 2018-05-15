@@ -4,16 +4,13 @@
 \alias{MQE_R2}
 \title{Global and partial R squared for multi-QTL effects}
 \usage{
-MQE_R2(mppData = NULL, mppData_bi = NULL, QTL = NULL, Q.eff,
-  par.clu = NULL, glb.only = FALSE)
+MQE_R2(mppData = NULL, trait = 1, QTL = NULL, Q.eff, glb.only = FALSE)
 }
 \arguments{
-\item{mppData}{An IBD object of class \code{mppData}
-See \code{\link{mppData_form}} for details. Default = NULL.}
+\item{mppData}{An object of class \code{mppData}.}
 
-\item{mppData_bi}{Required IBS object of class \code{mppData} if the user
-wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-be strictly the same as the one of \code{mppData}.} Default = NULL.}
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{QTL}{Vector of \code{character} markers or in between marker positions
 names. Default = NULL.}
@@ -21,17 +18,6 @@ names. Default = NULL.}
 \item{Q.eff}{\code{Character} vector indicating for each QTL position the
 type of QTL effect among: "cr", "par", "anc" and "biall". For details look at
 \code{\link{mpp_SIM}}.}
-
-\item{par.clu}{Required argument if the user wants to allow QTLs with an
-ancestral effect. \code{Interger matrix} representing the results of a parents
-genotypes
-clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{glb.only}{\code{Logical} value. If \code{glb.only = TRUE}, only
 the global and global adjusted R squared will be returned. Default = FALSE.}
@@ -69,33 +55,12 @@ computation and adjustement look at function \code{\link{QTL_R2}}.
 }
 \examples{
 
-\dontrun{
-
-data(USNAM_mppData)
-data(USNAM_mppData_bi)
-data(USNAM_parClu)
-
-mppData <- USNAM_mppData
-mppData_bi <- USNAM_mppData_bi
-par.clu <- USNAM_parClu
-
-
-# Equalize the list of markers of the two mppData objects and par.clu
-
-com.mk.list <- intersect(mppData$map$mk.names, mppData_bi$map$mk.names)
-
-mppData <- mppData_subset(mppData = mppData, mk.list = com.mk.list)
-mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
-par.clu <- par.clu[rownames(par.clu) \%in\% com.mk.list, ]
+data(mppData)
 
 SIM <- mpp_SIM(mppData = mppData)
 QTL <- QTL_select(SIM)
-QTL <- QTL[, 1]
 
-MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL,
-       Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
-
-}
+MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = c("par", "anc", "biall"))
 
 }
 \seealso{

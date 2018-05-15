@@ -21,7 +21,6 @@
 #' ancestral: green and bi-allelic: blue).
 #'
 #' @param mppData An object of class \code{mppData}
-#' See \code{\link{mppData_form}} for details.
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function
 #' \code{\link{MQE_CIM}} with argument \code{chg.Qeff = TRUE}.
@@ -44,42 +43,17 @@
 #' 
 #' @examples
 #' 
-#' \dontrun{
+#' data(mppData)
 #' 
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' data(USNAM_parClu)
+#' QTL <- MQE_forward(mppData = mppData, Q.eff = c("par", "anc", "biall"))
 #' 
-#' mppData <- USNAM_mppData
-#' mppData_bi <- USNAM_mppData_bi
-#' par.clu <- USNAM_parClu
-#' 
-#' 
-#' # equalize the list of markers of the two mppData objects and par.clu
-#' 
-#' com.mk.list <- intersect(mppData$map$mk.names, mppData_bi$map$mk.names)
-#' 
-#' mppData <- mppData_subset(mppData = mppData, mk.list = com.mk.list)
-#' mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
-#' par.clu <- par.clu[rownames(par.clu) %in% com.mk.list, ]
-#' 
-#' 
-#' QTL <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
-#'                    Q.eff = c("par", "anc", "biall"), par.clu = par.clu)
-#' 
-#' CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, Q.eff = "cr",
-#'                par.clu = par.clu, cofactors = QTL[, 1],
-#'                cof.Qeff = QTL[, 5],
-#'                chg.Qeff = TRUE)
+#' CIM <- MQE_CIM(mppData = mppData,  Q.eff = "cr", cofactors = QTL[, 1],
+#'                cof.Qeff = QTL[, 5], chg.Qeff = TRUE)
 #' 
 #' MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL)
 #'
-#'}
-#'
 #' @export
 #' 
-
-
 
 
 MQE_plot <- function(mppData, Qprof, QTL, window = 30, threshold = 3, 

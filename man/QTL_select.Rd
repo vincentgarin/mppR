@@ -4,7 +4,7 @@
 \alias{QTL_select}
 \title{QTL candidates selection}
 \usage{
-QTL_select(Qprof, threshold = 3, window = 20, verbose = TRUE)
+QTL_select(Qprof, threshold = 3, window = 50, verbose = TRUE)
 }
 \arguments{
 \item{Qprof}{Object of class \code{QTLprof} returned by the function 
@@ -14,7 +14,7 @@ QTL_select(Qprof, threshold = 3, window = 20, verbose = TRUE)
 above which a position can be considered as a QTL candidate. Default = 3.}
 
 \item{window}{\code{Numeric} value in centi-Morgan representing the minimum
-distance between two selected positions. Default = 20.}
+distance between two selected positions. Default = 50.}
 
 \item{verbose}{\code{Logical} value specifying if the detection of no QTL
 should be printed. Default = TRUE.}
@@ -43,7 +43,7 @@ data(mppData)
 
 SIM <- mpp_SIM(mppData)
 
-QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
+QTL <- QTL_select(Qprof = SIM, threshold = 3)
 
 }
 \references{

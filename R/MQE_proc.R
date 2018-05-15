@@ -52,27 +52,14 @@
 #' @param trait.name \code{Character} name of the studied trait.
 #' Default = "trait1".
 #' 
-#' @param mppData An IBD object of class \code{mppData}
-#' See \code{\link{mppData_form}} for details. Default = NULL.
-#'
-#' @param mppData_bi Required IBS object of class \code{mppData} if the user
-#' wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-#' be strictly the same as the one of \code{mppData}.} Default = NULL.
+#' @param mppData An object of class \code{mppData}.
+#' 
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param Q.eff \code{Character} vector of possible QTL effects the user want to
 #' test. Elements of \code{Q.eff} can be "cr", "par", "anc" or "biall".
 #' For details look at \code{\link{mpp_SIM}}.
-#' 
-#' @param par.clu Required argument if the user wants to allow QTLs with an
-#' ancestral effect. \code{Interger matrix} representing the results of a parents
-#' genotypes
-#' clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}. Default = NULL.
 #'
 #' @param VCOV \code{Character} expression defining the type of variance
 #' covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -84,10 +71,10 @@
 #' 
 #' @param threshold \code{Numeric} value representing the -log10(p-value)
 #' threshold above which a position can be considered as significant.
-#' Default = 3.
+#' Default = 4.
 #' 
 #' @param window \code{Numeric} distance (cM) on the left and the right of a
-#' cofactor position where it is not included in the model. Default = 20.
+#' cofactor position where it is not included in the model. Default = 30.
 #' 
 #' @param backward \code{Logical} value. If \code{backward = TRUE},
 #' the function performs
@@ -100,14 +87,8 @@
 #' the function will plot the last run of the MQE model determination using
 #' \code{\link{MQE_plot}}. Default = FALSE.
 #' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. \strong{Parallelization is
-#' only available for HRT (linear) models \code{VCOV = "h.err"}}.
-#' Default = FALSE.
-#' 
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the \code{parallel} package. Default = NULL.
+#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
+#' use. Default = 1.
 #' 
 #' @param verbose \code{Logical} value indicating if the steps of MQE_proc should
 #' be printed. It will not affect the printing of the other functions called by
@@ -170,45 +151,13 @@
 #' 
 #' \dontrun{
 #' 
-#' data(USNAM_mppData)
-#' data(USNAM_mppData_bi)
-#' data(USNAM_parClu)
-#' 
-#' mppData <- USNAM_mppData
-#' mppData_bi <- USNAM_mppData_bi
-#' par.clu <- USNAM_parClu
-#' 
-#' 
-#' # Equalize the list of markers of the two mppData objects and par.clu
-#' 
-#' com.mk.list <- intersect(mppData$map$mk.names, mppData_bi$map$mk.names)
-#' 
-#' mppData <- mppData_subset(mppData = mppData, mk.list = com.mk.list)
-#' mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
-#' par.clu <- par.clu[rownames(par.clu) %in% com.mk.list, ]
-#' 
-#' 
+#' data(mppData)
 #' 
 #' # Specify a location where your results will be saved
 #' my.loc <- "C:/.../..."
 #' 
 #' MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-#'                 mppData_bi = mppData_bi, Q.eff = c("par", "anc", "biall"),
-#'                 par.clu = par.clu, output.loc = my.loc)
-#'                  
-#' 
-#' # Using parallel
-#' 
-#' library(parallel)
-#' n.cores <- detectCores()
-#' cluster <- makeCluster(n.cores-1)
-#' 
-#' MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-#'                 mppData_bi = mppData_bi, Q.eff = c("par", "anc", "biall"),
-#'                 par.clu = par.clu, parallel = TRUE, cluster = cluster,
-#'                 output.loc = my.loc)
-#'                 
-#'  stopCluster(cl = cluster)
+#'                 Q.eff = c("par", "anc", "biall"), output.loc = my.loc)
 #'                  
 #' }
 #' 
@@ -219,18 +168,17 @@
 
 
 MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
-                     mppData = NULL, mppData_bi = NULL, Q.eff, par.clu = NULL,
-                     VCOV = "h.err", threshold = 3, window = 20, backward = TRUE,
-                     alpha.bk = 0.05, plot.MQE = FALSE, parallel = FALSE,
-                     cluster = NULL, verbose = TRUE,
-                     output.loc = getwd()) {
+                     mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
+                     threshold = 4, window = 30, backward = TRUE,
+                     alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1,
+                     verbose = TRUE, output.loc = getwd()) {
   
   # 1. check the format of the data
   #################################
   
-  check.MQE(mppData = mppData, mppData_bi = mppData_bi, Q.eff = Q.eff,
-            VCOV = VCOV, par.clu = par.clu, parallel = parallel,
-            cluster = cluster, output.loc = output.loc, fct = "proc")
+  check.MQE(mppData = mppData, trait = trait, Q.eff = Q.eff,
+            VCOV = VCOV, n.cores = n.cores, output.loc = output.loc,
+            fct = "proc")
   
   
   # 2. Create a directory to store the results
@@ -238,19 +186,8 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   
   # create a directory to store the results of the QTL analysis
   
-  end.char <- substr(output.loc, nchar(output.loc), nchar(output.loc))
-  
-  if(end.char == "/"){
-    
-    folder.loc <- paste0(output.loc, paste("MQE",pop.name, trait.name,
-                                           VCOV, sep = "_"))
-    
-  } else {
-    
-    folder.loc <- paste0(output.loc, "/", paste("MQE",pop.name, trait.name,
-                                                VCOV, sep = "_"))
-    
-  }
+  folder.loc <- file.path(output.loc, paste("MQE", pop.name, trait.name,
+                                            VCOV, sep = "_"))
   
   dir.create(folder.loc)
   
@@ -266,11 +203,9 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
     
   }
     
-    QTL <- MQE_forward(mppData = mppData, mppData_bi = mppData_bi,
-                       Q.eff = Q.eff, par.clu = par.clu, VCOV = VCOV,
-                       threshold = threshold, window = window,
-                       parallel = parallel, cluster = cluster,
-                       verbose = verbose)
+    QTL <- MQE_forward(mppData = mppData, trait = trait, Q.eff = Q.eff,
+                       VCOV = VCOV, threshold = threshold, window = window,
+                       n.cores = n.cores, verbose = verbose)
     
     if(is.null(QTL)){
       
@@ -292,9 +227,8 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
           
         }
         
-        QTL <- MQE_BackElim(mppData = mppData, mppData_bi = mppData_bi,
-                            QTL = QTL[, 1], Q.eff = QTL[, 5], par.clu = par.clu,
-                            VCOV = VCOV, alpha = alpha.bk)
+        QTL <- MQE_BackElim(mppData = mppData, trait = trait, QTL = QTL[, 1],
+                            Q.eff = QTL[, 5], VCOV = VCOV, alpha = alpha.bk)
         
         if (is.null(QTL)) { # test if QTL have been selected
           
@@ -325,12 +259,12 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
         
       }  
       
-      QTL_effect <- MQE_genEffects(mppData = mppData, mppData_bi = mppData_bi,
+      QTL_effect <- MQE_genEffects(mppData = mppData, trait = trait,
                                    QTL = QTL[, 1], Q.eff = QTL[, 5],
-                                   par.clu = par.clu, VCOV = VCOV)
+                                   VCOV = VCOV)
       
-      R2 <- MQE_R2(mppData = mppData, mppData_bi = mppData_bi, QTL = QTL[, 1],
-                   Q.eff = QTL[, 5], par.clu = par.clu, glb.only = FALSE)
+      R2 <- MQE_R2(mppData = mppData, trait = trait, QTL = QTL[, 1],
+                   Q.eff = QTL[, 5], glb.only = FALSE)
       
       
       # save R2 results
@@ -358,10 +292,9 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
           
         }
         
-        CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, par.clu = par.clu,
-                       VCOV = VCOV, cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
-                       chg.Qeff = TRUE, window = window, parallel = parallel,
-                       cluster = cluster)
+        CIM <- MQE_CIM(mppData = mppData, trait = trait, VCOV = VCOV,
+                       cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
+                       chg.Qeff = TRUE, window = window, n.cores = n.cores)
         
         main.plot <- paste("MQE", pop.name, trait.name, VCOV)
         

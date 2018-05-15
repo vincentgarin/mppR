@@ -20,8 +20,6 @@
 
 # QTL: list of QTLs
 
-# par.clu: parental clustering object
-
 # allele_ref: list of parental (ancestral) alleles used as reference
 
 # con.part: list of connected parts
@@ -29,7 +27,7 @@
 
 
 Qeff_res_processing_MQE <- function(Q.res, Q.eff, Q.pos, con.ind, allele_order,
-                                    Q.nb, mppData, mppData_bi, par.clu, VCOV){
+                                    Q.nb, mppData, VCOV){
   
   
   if (Q.eff == "cr"){
@@ -101,7 +99,7 @@ Qeff_res_processing_MQE <- function(Q.res, Q.eff, Q.pos, con.ind, allele_order,
     
     # project into parents
     
-    A.allele <- factor(par.clu[Q.pos, ])
+    A.allele <- factor(mppData$par.clu[Q.pos, ])
     A <- model.matrix(~ A.allele - 1)
     A <- A[, rownames(Q.res)]
     
@@ -141,7 +139,7 @@ Qeff_res_processing_MQE <- function(Q.res, Q.eff, Q.pos, con.ind, allele_order,
     
     # project into parents and add genotype score if possible
     
-    if(!is.null(mppData_bi$geno.par)){
+    if(!is.null(mppData$geno.par)){
       
       ref.mat2 <- matrix(rep(c(0, 0, 0, 1), mppData$n.par),
                          nrow = mppData$n.par, byrow = TRUE)
@@ -149,8 +147,8 @@ Qeff_res_processing_MQE <- function(Q.res, Q.eff, Q.pos, con.ind, allele_order,
       Par.all <- mppData$geno.par[Q.pos, 5:dim(mppData$geno.par)[2]]
       Par.all <- unlist(Par.all)
       
-      ref.all <- c(mppData_bi$allele.ref[1, Q.pos, drop = FALSE])
-      het.sc <- mppData_bi$allele.ref[c(3, 4), Q.pos]
+      ref.all <- c(mppData$allele.ref[1, Q.pos, drop = FALSE])
+      het.sc <- mppData$allele.ref[c(3, 4), Q.pos]
       
       ind.na <- which(is.na(Par.all))
       ind.ref <- which(Par.all == ref.all)

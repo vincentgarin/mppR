@@ -19,7 +19,7 @@
 #' above which a position can be considered as a QTL candidate. Default = 3.
 #' 
 #' @param window \code{Numeric} value in centi-Morgan representing the minimum
-#' distance between two selected positions. Default = 20.
+#' distance between two selected positions. Default = 50.
 #' 
 #' @param verbose \code{Logical} value specifying if the detection of no QTL
 #' should be printed. Default = TRUE.
@@ -53,13 +53,13 @@
 #' 
 #' SIM <- mpp_SIM(mppData)
 #' 
-#' QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
+#' QTL <- QTL_select(Qprof = SIM, threshold = 3)
 #' 
 #' @export
 #' 
 
 
-QTL_select <- function(Qprof, threshold = 3, window = 20, verbose = TRUE) {
+QTL_select <- function(Qprof, threshold = 3, window = 50, verbose = TRUE) {
   
   # 1. verify the format of the data
   ##################################

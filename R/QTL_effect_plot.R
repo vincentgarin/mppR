@@ -42,21 +42,10 @@
 #' be used as reference. For the parental and the ancestral model it is also
 #' possible to fix the reference allele using argument ref.par.
 #' 
-#' @param mppData An IBD object of class \code{mppData}
-#' See \code{\link{mppData_form}} for details.
-#'
-#' @param mppData_bi Required IBS object of class \code{mppData} if the user
-#' wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-#' be strictly the same as the one of \code{mppData}.}.
+#' @param mppData An object of class \code{mppData}.
 #' 
-#' @param par.clu \code{Interger matrix} representing the results of a parents
-#' genotypes clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. \strong{The columns names must
-#' be the same as the parents list of the mppData object. The rownames must be
-#' the same as the map marker list of the mppData object.} At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor. for more details, see \code{\link{USNAM_parClu}} and
-#' \code{\link{parent_cluster}}.
+#' @param trait \code{Numerical} or \code{character} indicator to specify which
+#' trait of the \code{mppData} object should be used. Default = 1.
 #' 
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
@@ -94,16 +83,25 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso
+#' @examples
 #' 
-#' \code{\link{mppData_form}},
-#' \code{\link{parent_cluster}},
-#' \code{\link{QTL_select}},
-#' \code{\link{USNAM_parClu}}
+#' \dontrun{
+#' 
+#' data(mppData)
+#' 
+#' SIM <- mpp_SIM(mppData = mppData)
+#' QTL <- QTL_select(SIM)
+#' 
+#' # Specify a location where your results will be saved
+#' my.loc <- "C:/.../..."
+#' 
+#' MQE <- QTL_effect_plot(mppData = mppData, QTL = QTL, output.loc = my.loc)
+#'                  
+#' }
 #' 
 #' @export
 
-QTL_effect_plot <- function(mppData, mppData_bi, par.clu, QTL, sum_zero = TRUE,
+QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
                             ref.par = NULL, trait.lab = 'trait', text.size = 16,
                             output.loc = getwd(), plot_label = 'Qeff_tab'){
   
@@ -132,28 +130,32 @@ QTL_effect_plot <- function(mppData, mppData_bi, par.clu, QTL, sum_zero = TRUE,
   
   # Estimation of the QTL effects of the given list for the 4 different models
   
-  QEff_cr <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = 'cr')
+  QEff_cr <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+                            Q.eff = 'cr')
   
-  QEff_par <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = 'par',
-                             ref.par = ref.par, sum_zero = sum_zero)
+  QEff_par <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+                             Q.eff = 'par', ref.par = ref.par,
+                             sum_zero = sum_zero)
   
-  QEff_anc <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = 'anc',
-                             ref.par = ref.par, sum_zero = sum_zero)
+  QEff_anc <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+                             Q.eff = 'anc', ref.par = ref.par,
+                             sum_zero = sum_zero)
   
   if(sum_zero){
     
-    QEff_biall <- QTL_genEffects(mppData = mppData_bi, QTL = QTL,
+    QEff_biall <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
                                  Q.eff = 'biall')
     
     # recalculate to get only the single beta values for the minor allele
     
-    mppData_bi2 <- mppData_bi
-    mppData_bi2$geno.par <- NULL
+    mppData2 <- mppData
+    mppData2$geno.par <- NULL
+    mppData2$geno.par.clu <- NULL
     
-    QEff_biall2 <- QTL_genEffects(mppData = mppData_bi2, QTL = QTL,
+    QEff_biall2 <- QTL_genEffects(mppData = mppData2, trait = trait, QTL = QTL,
                                   Q.eff = 'biall')
     
-    rm(mppData_bi2)
+    rm(mppData2)
     
     # Need to convert the obtained result into coefficient obtained with sum to
     # zero constraint.
@@ -162,7 +164,7 @@ QTL_effect_plot <- function(mppData, mppData_bi, par.clu, QTL, sum_zero = TRUE,
     
     for(i in 1:n_QTL){
       
-      all_i <- mppData_bi$allele.ref[, Q_pos[i], drop = FALSE]
+      all_i <- mppData$allele.ref[, Q_pos[i], drop = FALSE]
       B_i <- QEff_biall2$Qeff[[i]]$Effect
       pval_i <- QEff_biall2$Qeff[[i]]$`p-value`
       all_sc <- c(B_i, -B_i, 0, 0)
@@ -178,7 +180,7 @@ QTL_effect_plot <- function(mppData, mppData_bi, par.clu, QTL, sum_zero = TRUE,
     
   } else {
     
-    QEff_biall <- QTL_genEffects(mppData = mppData_bi, QTL = QTL,
+    QEff_biall <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
                                  Q.eff = 'biall')
     
   }
@@ -295,11 +297,11 @@ QTL_effect_plot <- function(mppData, mppData_bi, par.clu, QTL, sum_zero = TRUE,
   
   # bi_code <- c()
   # 
-  # gen_par <- mppData_bi$geno.par
+  # gen_par <- mppData$geno.par
   # 
   # SNP_QTL <- gen_par[gen_par[, 1] %in% Q_info[, 1], 5:dim(gen_par)[2], ]
   # 
-  # SNP_QTL_ref <- mppData_bi$allele.ref[, Q_info[, 1]]
+  # SNP_QTL_ref <- mppData$allele.ref[, Q_info[, 1]]
   # 
   # 
   # for(i in 1:n_QTL){

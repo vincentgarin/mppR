@@ -4,31 +4,19 @@
 \alias{MQE_CIM}
 \title{Composite interval maping for MQE model}
 \usage{
-MQE_CIM(mppData = NULL, mppData_bi = NULL, Q.eff = "cr", par.clu = NULL,
-  VCOV = "h.err", cofactors = NULL, cof.Qeff, chg.Qeff = FALSE,
-  window = 20, parallel = FALSE, cluster = NULL)
+MQE_CIM(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
+  cofactors = NULL, cof.Qeff, chg.Qeff = FALSE, window = 20,
+  n.cores = 1)
 }
 \arguments{
-\item{mppData}{An IBD object of class \code{mppData}
-See \code{\link{mppData_form}} for details. Default = NULL.}
+\item{mppData}{An object of class \code{mppData}.}
 
-\item{mppData_bi}{Required IBS object of class \code{mppData} if the user
-wants to allow QTLs with a bi-allelic effect. \strong{The list of marker must
-be strictly the same as the one of \code{mppData}.} Default = NULL.}
+\item{trait}{\code{Numerical} or \code{character} indicator to specify which
+trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{Q.eff}{\code{Character} expression indicating the type of QTL effect at
 the tested position. Possibility to choose among: "cr", "par", "anc" or
 "biall". For details look at \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{par.clu}{Required argument if the user wants to allow QTLs with an
-ancestral effect. \code{Interger matrix} representing the results of a parents
-genotypes clustering. The columns represent the parental lines and the rows
-the different markers or in between positions. \strong{The columns names must
-be the same as the parents list of the mppData object. The rownames must be
-the same as the map marker list of the mppData object.} At a particular
-position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}. Default = NULL.}
 
 \item{VCOV}{\code{Character} expression defining the type of variance
 covariance structure used: 1) "h.err" for an homogeneous variance residual term
@@ -52,14 +40,8 @@ delimited by \code{window}. Default = FALSE.}
 \item{window}{\code{Numeric} distance (cM) on the left and the right of a
 cofactor position where it is not included in the model. Default = 20.}
 
-\item{parallel}{\code{Logical} value specifying if the function should be
-executed in parallel on multiple cores. To run function in parallel user must
-provide cluster in the \code{cluster} argument. \strong{Parallelization is
-only available for HRT (linear) models \code{VCOV = "h.err"}}.
-Default = FALSE.}
-
-\item{cluster}{Cluster object obtained with the function \code{makeCluster()}
-from the parallel package. Default = NULL.}
+\item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
+use. Default = 1.}
 }
 \value{
 Return:
@@ -84,34 +66,15 @@ allow to obtain a result.
 }
 \examples{
 
-\dontrun{
-
-data(USNAM_mppData)
-data(USNAM_mppData_bi)
-data(USNAM_parClu)
-
-mppData <- USNAM_mppData
-mppData_bi <- USNAM_mppData_bi
-par.clu <- USNAM_parClu
-
-# Equalize the list of markers of the two mppData objects and par.clu
-
-com.mk.list <- intersect(mppData$map$mk.names, mppData_bi$map$mk.names)
-
-mppData <- mppData_subset(mppData = mppData, mk.list = com.mk.list)
-mppData_bi <- mppData_subset(mppData = mppData_bi, mk.list = com.mk.list)
-par.clu <- par.clu[rownames(par.clu) \%in\% com.mk.list, ]
+data(mppData)
 
 SIM <- mpp_SIM(mppData = mppData)
 cofactors <- QTL_select(SIM)[, 1]
 
-CIM <- MQE_CIM(mppData = mppData, mppData_bi = mppData_bi, Q.eff = "cr",
-               par.clu = par.clu, cofactors = cofactors,
+CIM <- MQE_CIM(mppData = mppData, Q.eff = "cr", cofactors = cofactors,
                cof.Qeff = c("anc", "par", "biall"))
 
 plot_QTLprof(CIM)
-
-}
                                
 }
 \seealso{
