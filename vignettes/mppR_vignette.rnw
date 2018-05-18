@@ -653,7 +653,7 @@ mppData <- par_clu_chg.mppData(mppData = mppData, par.clu = par_clu)
 
 \subsection{QTL analysis}
   
-When all data elements are ready, the user can start the QTL analysis. In all functions involving the computation of a QTL model (\code{mpp_CIM()}, \code{mpp_CV()}, \code{mpp_perm()}, \code{mpp_proc()}, \code{mpp_SIM()}, \code{MQE_proc()}, \code{QTL_genEffects()}, etc.), the arguments \code{Q.eff} and \code{VCOV} describe the type of QTL effect and the form of the VCOV. \code{Q.eff} takes the values \code{"cr"}, \code{"par"}, \code{"anc"}, \code{"biall"} for the cross-specific, parental, ancestral, and bi-allelic model respectively. \code{VCOV} takes the values \code{"h.err"} or \code{"h.err.as"} for the HRT model, \code{"cr.err"} for the CSRT model, \code{"pedigree"} for the pedigree model with HRT, and \code{"ped_cr.err"} for the pedigree model with CSRT. A complete QTL analysis can be performed using the generic function \code{mpp_proc()}. This is a wrapping function for individual functions, indicated in parenthesis, performing each a part of the following QTL detection procedure:
+When all data elements are ready, the user can start the QTL analysis. In all functions involving the computation of a QTL model (\code{mpp_CIM()}, \code{mpp_CV()}, \code{mpp_perm()}, \code{mpp_proc()}, \code{mpp_SIM()}, \code{MQE_proc()}, \code{QTL_gen_effects()}, etc.), the arguments \code{Q.eff} and \code{VCOV} describe the type of QTL effect and the form of the VCOV. \code{Q.eff} takes the values \code{"cr"}, \code{"par"}, \code{"anc"}, \code{"biall"} for the cross-specific, parental, ancestral, and bi-allelic model respectively. \code{VCOV} takes the values \code{"h.err"} or \code{"h.err.as"} for the HRT model, \code{"cr.err"} for the CSRT model, \code{"pedigree"} for the pedigree model with HRT, and \code{"ped_cr.err"} for the pedigree model with CSRT. A complete QTL analysis can be performed using the generic function \code{mpp_proc()}. This is a wrapping function for individual functions, indicated in parenthesis, performing each a part of the following QTL detection procedure:
   
 \begin{enumerate}
 
@@ -665,9 +665,9 @@ When all data elements are ready, the user can start the QTL analysis. In all fu
 
 \item Selection of QTL candidates with CIM -log10($p$)~value above \code{thre.QTL} and a minimum distance (\code{win.QTL}) between the selected positions (\code{QTL_select()}). The selection procedure is the same as for the cofactors.
 
-\item If \code{backward = TRUE}, backward elimination on the list of selected QTL positions (\code{mpp_BackElim()}).
+\item If \code{backward = TRUE}, backward elimination on the list of selected QTL positions (\code{mpp_back_elim()}).
 
-\item Estimation of the QTLs genetic effects (\code{QTL_genEffects()}), the global and partial QTLs $R^{2}$ (\code{QTL_R2()}).
+\item Estimation of the QTLs genetic effects (\code{QTL_gen_effects()}), the global and partial QTLs $R^{2}$ (\code{QTL_R2()}).
 
 \item If \code{CI = TRUE}, computation of QTL confidence intervals from a CIM- profile (excluding cofactors on the scanned chromosome). The confidence interval is based on a -log10($p$)~value drop-off value (\code{drop}).
 
@@ -698,7 +698,7 @@ MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 
 \subsection{QTL effects estimation}
 
-Once a list of QTL candidates has been determined, it is possible to estimate the QTL effect per cross or per parents (parental, ancestral, and bi-allelic model) using the function \code{QTL_genEffects()}. For the cross-specific model (\code{Q.eff = "cr"}) (\ref{cr.mod}), the effects are given in absolute value and represent the substitution effect of one allele copy from the parent increasing the trait.
+Once a list of QTL candidates has been determined, it is possible to estimate the QTL effect per cross or per parents (parental, ancestral, and bi-allelic model) using the function \code{QTL_gen_effects()}. For the cross-specific model (\code{Q.eff = "cr"}) (\ref{cr.mod}), the effects are given in absolute value and represent the substitution effect of one allele copy from the parent increasing the trait.
 
 For the parental and ancestral models (\code{Q.eff = "par"} (\ref{par.mod}) or \code{Q.eff = "anc"} (\ref{anc.mod})), the QTL effects are given per parents and must be interpreted as deviation with respect to most frequent allele within the connected part set as reference. For the parental and ancestral models, the parental alleles are listed from the most (top) to the least frequent (bottom). For the ancestral model, parents with the same score correspond to the same ancestral allele according to \pkg{clusthaplo} results. In a NAM population, all crosses are connected via the central parent (B73), which is the most frequent allele, and was therefore set as reference.
 
@@ -708,7 +708,7 @@ cofactors <- QTL_select(Qprof = SIM)
 CIM <- mpp_CIM(mppData = mppData, Q.eff = "anc", cofactors = cofactors,
                plot.gen.eff = TRUE)
 QTL <- QTL_select(Qprof = CIM)
-gen.eff <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "anc")
+gen.eff <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "anc")
 
 gen.eff$Qeff$Q1
 

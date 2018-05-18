@@ -1,5 +1,5 @@
 ################
-# mpp_BackElim #
+# mpp_back_elim #
 ################
 
 #' Backward elimination on QTL candidates
@@ -69,13 +69,13 @@
 #' 
 #' QTL <- QTL_select(SIM)
 #' 
-#' QTL.sel <- mpp_BackElim(mppData = mppData, QTL = QTL)
+#' QTL.sel <- mpp_back_elim(mppData = mppData, QTL = QTL)
 #' 
 #' @export
 #' 
 
 
-mpp_BackElim <- function (mppData, trait = 1, QTL = NULL, Q.eff = "cr",
+mpp_back_elim <- function (mppData, trait = 1, QTL = NULL, Q.eff = "cr",
                          VCOV = "h.err", alpha = 0.05) {
   
   # 1. Check data format
@@ -122,7 +122,7 @@ mpp_BackElim <- function (mppData, trait = 1, QTL = NULL, Q.eff = "cr",
     
   }
   
-  Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
+  Q.list <- lapply(X = Q.pos, FUN = inc_mat_QTL, mppData = mppData,
                     Q.eff = Q.eff, order.MAF = TRUE)
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))

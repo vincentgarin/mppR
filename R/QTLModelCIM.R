@@ -13,7 +13,7 @@ QTLModelCIM <- function(x, mppData, trait, cross.mat, Q.eff, VCOV,
   
   ### 2.2 QTL position
   
-  QTL <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
+  QTL <- inc_mat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   

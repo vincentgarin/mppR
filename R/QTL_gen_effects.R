@@ -1,5 +1,5 @@
 ##################
-# QTL_genEffects #
+# QTL_gen_effects #
 ##################
 
 #' QTL genetic effects
@@ -129,22 +129,22 @@
 #' 
 #' # Cross-specific model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "cr")
+#' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "cr")
 #' QTL.effects
 #' 
 #' # Parental model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "par")
+#' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "par")
 #' QTL.effects
 #' 
 #' # Ancestral model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "anc")
+#' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "anc")
 #' QTL.effects
 #' 
 #' # Bi-allelic model
 #' 
-#' QTL.effects <- QTL_genEffects(mppData = mppData, QTL = QTL, Q.eff = "biall")
+#' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "biall")
 #' 
 #' QTL.effects
 #' 
@@ -152,7 +152,7 @@
 #'
 
 
-QTL_genEffects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
+QTL_gen_effects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
                            VCOV = "h.err", ref.par = NULL, sum_zero = FALSE) {
   
   # 1. Check data format
@@ -200,7 +200,7 @@ QTL_genEffects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
     
   }
   
-  Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
+  Q.list <- lapply(X = Q.pos, FUN = inc_mat_QTL, mppData = mppData,
                   Q.eff = Q.eff)
   
   names(Q.list) <- paste0("Q", 1:length(Q.list))

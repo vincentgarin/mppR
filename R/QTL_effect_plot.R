@@ -130,20 +130,20 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
   
   # Estimation of the QTL effects of the given list for the 4 different models
   
-  QEff_cr <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+  QEff_cr <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
                             Q.eff = 'cr')
   
-  QEff_par <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+  QEff_par <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
                              Q.eff = 'par', ref.par = ref.par,
                              sum_zero = sum_zero)
   
-  QEff_anc <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+  QEff_anc <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
                              Q.eff = 'anc', ref.par = ref.par,
                              sum_zero = sum_zero)
   
   if(sum_zero){
     
-    QEff_biall <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+    QEff_biall <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
                                  Q.eff = 'biall')
     
     # recalculate to get only the single beta values for the minor allele
@@ -152,7 +152,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     mppData2$geno.par <- NULL
     mppData2$geno.par.clu <- NULL
     
-    QEff_biall2 <- QTL_genEffects(mppData = mppData2, trait = trait, QTL = QTL,
+    QEff_biall2 <- QTL_gen_effects(mppData = mppData2, trait = trait, QTL = QTL,
                                   Q.eff = 'biall')
     
     rm(mppData2)
@@ -180,7 +180,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     
   } else {
     
-    QEff_biall <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+    QEff_biall <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
                                  Q.eff = 'biall')
     
   }

@@ -114,7 +114,7 @@ MQE_R2 <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
   
   # function to produce different type of QTL incidence matricdes
   
-  Q.list <- mapply(FUN = IncMat_QTL, x = Q.pos, Q.eff = Q.eff,
+  Q.list <- mapply(FUN = inc_mat_QTL, x = Q.pos, Q.eff = Q.eff,
                    MoreArgs = list(mppData = mppData, order.MAF = TRUE),
                    SIMPLIFY = FALSE)
   

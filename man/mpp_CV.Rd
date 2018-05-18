@@ -127,7 +127,7 @@ training set.}
 selection and multi-QTL model determination (\code{\link{mpp_SIM}} and
 \code{\link{mpp_CIM}}). If \code{backward = TRUE}, the final list of QTLs is
 tested simultaneously using a backward elimination
-(\code{\link{mpp_BackElim}}).}
+(\code{\link{mpp_back_elim}}).}
 
 \item{Use the list of detected QTLs in the training set to calculate
 the proportion of genetic variance explained by all detected QTLs in the
@@ -201,7 +201,7 @@ and validation with independent samples. Genetics, 154(4), 1839-1849.
 }
 \seealso{
 \code{\link{mppData_form}},
-\code{\link{mpp_BackElim}},
+\code{\link{mpp_back_elim}},
 \code{\link{mpp_CIM}},
 \code{\link{mpp_perm}},
 \code{\link{mpp_SIM}},

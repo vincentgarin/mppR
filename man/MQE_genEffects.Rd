@@ -69,7 +69,7 @@ For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), the
 reference allele is defined per interconneted part. The most frequent
 parental (ancestral) allele is set as reference. Effects of the other alleles
 are estimated as deviation with respect to the reference. For more details
-about reference definition see \code{\link{QTL_genEffects}} and
+about reference definition see \code{\link{QTL_gen_effects}} and
 \code{\link{design_connectivity}}.
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects

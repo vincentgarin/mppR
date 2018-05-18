@@ -8,7 +8,7 @@ QTLModelCIM_MQE <- function(x, mppData, trait, cross.mat, Qeff.part,
   # 1. formation of the QTL incidence matrix
   ###########################################
   
-  QTL <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Qeff.part[x],
+  QTL <- inc_mat_QTL(x = x, mppData = mppData, Q.eff = Qeff.part[x],
                     order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements

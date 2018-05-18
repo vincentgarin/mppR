@@ -10,7 +10,7 @@ QTLModelSIM <- function(x, mppData, trait, cross.mat, Q.eff, VCOV,
   # 1. formation of the QTL incidence matrix
   ###########################################
   
-  QTL <- IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
+  QTL <- inc_mat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
   
   QTL.el <- dim(QTL)[2] # number of QTL elements
   

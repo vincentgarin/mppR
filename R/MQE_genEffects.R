@@ -20,7 +20,7 @@
 #' reference allele is defined per interconneted part. The most frequent
 #' parental (ancestral) allele is set as reference. Effects of the other alleles
 #' are estimated as deviation with respect to the reference. For more details
-#' about reference definition see \code{\link{QTL_genEffects}} and
+#' about reference definition see \code{\link{QTL_gen_effects}} and
 #' \code{\link{design_connectivity}}.
 #' 
 #' For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
@@ -148,7 +148,7 @@ MQE_genEffects <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
   
   # form a list of QTL incidence matrices with different type of QTL effect.
   
-  Q.list <- mapply(FUN = IncMat_QTL, x = Q.pos, Q.eff = Q.eff,
+  Q.list <- mapply(FUN = inc_mat_QTL, x = Q.pos, Q.eff = Q.eff,
                    MoreArgs = list(mppData = mppData, order.MAF = TRUE),
                    SIMPLIFY = FALSE)
   

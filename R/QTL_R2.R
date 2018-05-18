@@ -131,7 +131,7 @@ QTL_R2 <- function(mppData, trait = 1, QTL = NULL, Q.eff = "cr",
     
   }
   
-  Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData,
+  Q.list <- lapply(X = Q.pos, FUN = inc_mat_QTL, mppData = mppData,
                    Q.eff = Q.eff, order.MAF = TRUE)
   
   n.QTL <- length(Q.list)

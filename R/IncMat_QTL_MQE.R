@@ -9,11 +9,11 @@ IncMat_QTL_MQE <- function(x, mppData, mppData_bi, Q.eff, par.clu,
   
   if(Q.eff == "biall") {
     
-    IncMat_QTL(x = x, mppData = mppData_bi, Q.eff = Q.eff)
+    inc_mat_QTL(x = x, mppData = mppData_bi, Q.eff = Q.eff)
     
   } else {
     
-    IncMat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = order.MAF)
+    inc_mat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = order.MAF)
     
   }
   

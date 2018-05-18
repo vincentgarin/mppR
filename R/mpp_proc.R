@@ -21,9 +21,9 @@
 #' (\code{\link{mpp_CIM}}).}
 #' 
 #' \item{Optional backward elimination on the list of QTL
-#' candidates (\code{backward = TRUE}) (\code{\link{mpp_BackElim}}).}
+#' candidates (\code{backward = TRUE}) (\code{\link{mpp_back_elim}}).}
 #' 
-#' \item{Computation of the QTL genetic effects (\code{\link{QTL_genEffects}})
+#' \item{Computation of the QTL genetic effects (\code{\link{QTL_gen_effects}})
 #' and proportion of the phenotypic variation explained by the QTLs (R squared)
 #' (\code{\link{QTL_R2}}).}
 #' 
@@ -145,7 +145,7 @@
 #' For details see \code{\link{QTL_R2}} output section.}
 #' 
 #' \item{QTL.effects}{\code{List} of QTLs genetic effects. For details see
-#' \code{\link{QTL_genEffects}} output section.}
+#' \code{\link{QTL_gen_effects}} output section.}
 #' 
 #' \item{QTL.CI}{If \code{CI = TRUE}, confidence interval information of
 #' the QTLs.}
@@ -158,7 +158,7 @@
 #' \item{A QTL report (QTL_REPORT.txt) with: 1) the number of detected QTLs;
 #' 2) the global R squared statistics; 3) for each QTL, position information
 #' (plus confidence interval if \code{CI = TRUE}) and estimated QTL genetic
-#' effects per cross or parents (for details see \code{\link{QTL_genEffects}}).}
+#' effects per cross or parents (for details see \code{\link{QTL_gen_effects}}).}
 #' 
 #' \item{The SIM and CIM results in a text file (SIM.txt, CIM.txt).}
 #' 
@@ -188,14 +188,14 @@
 #' @seealso
 #' 
 #' \code{\link{mppData_form}},
-#' \code{\link{mpp_BackElim}},
+#' \code{\link{mpp_back_elim}},
 #' \code{\link{mpp_CIM}},
 #' \code{\link{mpp_perm}},
 #' \code{\link{mpp_SIM}},
 #' \code{\link{parent_cluster}},
 #' \code{\link{plot.QTLprof}},
 #' \code{\link{QTL_CI}},
-#' \code{\link{QTL_genEffects}},
+#' \code{\link{QTL_gen_effects}},
 #' \code{\link{QTL_R2}},
 #' \code{\link{USNAM_parClu}}
 #' 
@@ -393,7 +393,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
       
     }
     
-    QTL <- mpp_BackElim(mppData = mppData, trait = trait, QTL = QTL,
+    QTL <- mpp_back_elim(mppData = mppData, trait = trait, QTL = QTL,
                         Q.eff = Q.eff, VCOV = VCOV, alpha = alpha.bk)
     
     if (is.null(QTL)) { # test if QTL have been selected
@@ -450,7 +450,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
   }
   
-  QTL.effects <- QTL_genEffects(mppData = mppData, trait = trait, QTL = QTL,
+  QTL.effects <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
                                 Q.eff = Q.eff, VCOV = VCOV, ref.par = ref.par,
                                 sum_zero = sum_zero)
   

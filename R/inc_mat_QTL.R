@@ -1,5 +1,5 @@
 ##############
-# IncMat_QTL #
+# inc_mat_QTL #
 ##############
 
 #' QTL incidence matrix
@@ -41,20 +41,20 @@
 #' 
 #' data(mppData)
 #' 
-#' QTLmatCr <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "cr")
+#' QTLmatCr <- inc_mat_QTL(x = 2, mppData = mppData, Q.eff = "cr")
 #' 
-#' QTLmatPar <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "par")
+#' QTLmatPar <- inc_mat_QTL(x = 2, mppData = mppData, Q.eff = "par")
 #' 
-#' QTLmatAnc <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "anc")
+#' QTLmatAnc <- inc_mat_QTL(x = 2, mppData = mppData, Q.eff = "anc")
 #' 
-#' QTLmatBi <- IncMat_QTL(x = 2, mppData = mppData, Q.eff = "biall")
+#' QTLmatBi <- inc_mat_QTL(x = 2, mppData = mppData, Q.eff = "biall")
 #' 
 #' 
 #' @export
 #' 
 
 
-IncMat_QTL <- function(x, mppData, Q.eff, order.MAF = FALSE) {
+inc_mat_QTL <- function(x, mppData, Q.eff, order.MAF = FALSE) {
   
   pos <- unlist(mppData$map[x, c(2,3)])
   

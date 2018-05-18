@@ -54,7 +54,7 @@ mpp_CIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
   }
   
-  cof.list <- lapply(X = cof.pos, FUN = IncMat_QTL, mppData = mppData,
+  cof.list <- lapply(X = cof.pos, FUN = inc_mat_QTL, mppData = mppData,
                      Q.eff = Q.eff, order.MAF = TRUE)
   
   ### 2.4 Formation of the genome-wide and cofactors partition

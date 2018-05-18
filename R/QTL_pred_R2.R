@@ -135,7 +135,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
     if(!is.null(mppData.ts$geno.par.clu)) {mppData.ts$geno.par.clu <- NULL}
   }
   
-  effects <- QTL_genEffects(mppData = mppData.ts, trait = trait, QTL = QTL,
+  effects <- QTL_gen_effects(mppData = mppData.ts, trait = trait, QTL = QTL,
                             Q.eff = Q.eff, VCOV = VCOV)[[1]]
   
   # need to re-order the row of the effects according to the parent list
@@ -168,7 +168,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   
   if(Q.eff == "anc") Q.eff.part <- "par" else Q.eff.part <- Q.eff
   
-  Q.list <- lapply(X = Q.pos, FUN = IncMat_QTL, mppData = mppData.vs,
+  Q.list <- lapply(X = Q.pos, FUN = inc_mat_QTL, mppData = mppData.vs,
                    Q.eff = Q.eff.part)
   
   # 4. Predicted R squared computation cor(y.vs, X.vs * B.ts)^2

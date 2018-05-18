@@ -132,7 +132,7 @@ MQE_CIM <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
   cof.pos <- which(mppData$map[, 1] %in% cofactors)
   
   
-  cof.list <- mapply(FUN = IncMat_QTL, x = cof.pos, Q.eff = cof.Qeff,
+  cof.list <- mapply(FUN = inc_mat_QTL, x = cof.pos, Q.eff = cof.Qeff,
                      MoreArgs = list(mppData = mppData,order.MAF = TRUE),
                      SIMPLIFY = FALSE)
   
