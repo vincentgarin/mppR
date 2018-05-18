@@ -671,7 +671,7 @@ When all data elements are ready, the user can start the QTL analysis. In all fu
 
 \item If \code{CI = TRUE}, computation of QTL confidence intervals from a CIM- profile (excluding cofactors on the scanned chromosome). The confidence interval is based on a -log10($p$)~value drop-off value (\code{drop}).
 
-\item plot of the -log10($p$)~value CIM QTL profile (\code{plot_QTLprof()}) and if \code{plot.gen.eff = TRUE}, visualisation of the genome-wide significance of the QTL effect per cross or per parent (\code{plot_genEffects()}).
+\item plot of the -log10($p$)~value CIM QTL profile (\code{plot.QTLprof()}) and if \code{plot.gen.eff = TRUE}, visualisation of the genome-wide significance of the QTL effect per cross or per parent.
 
 \end{enumerate}
 
@@ -719,10 +719,10 @@ For the bi-allelic model (\ref{biall.mod}), the estimated genetic effect represe
 
 \subsubsection{Results visualisation}
 
-A QTL profile can be obtained by passing the \code{mpp_SIM()} or \code{mpp_CIM()} results to the \code{Qprof} argument of the function \code{plot_QTLprof()} (Figure~\ref{fig:3}). QTL or cofactors positions can also be plotted on the graph (dashed lines) using the argument \code{QTL}.
+A QTL profile can be obtained by passing the \code{mpp_SIM()} or \code{mpp_CIM()} results to the \code{x} argument of the function \code{plot.QTLprof()} (Figure~\ref{fig:3}). QTL or cofactors positions can also be plotted on the graph (dashed lines) using the argument \code{QTL}.
 
 <<QTL_profile>>=
-plot_QTLprof(Qprof = CIM, QTL = QTL, type = "l")
+plot(x = CIM, QTL = QTL, type = "l")
 @
 
 \begin{figure}[!ht]
@@ -731,10 +731,10 @@ plot_QTLprof(Qprof = CIM, QTL = QTL, type = "l")
 \label{fig:3}
 \end{figure}
 
-\code{Mpp_SIM()} or \code{mpp_CIM()} results obtained with \code{plot.gen.eff = TRUE} can also be passed to the function \code{plot_genEffects()} to obtain a visualisation of the genetic effect distribution along the genome (Figure~\ref{fig:4}). Once again, the positions passed to the \code{QTL} argument will be drawn on the graph.
+\code{Mpp_SIM()} or \code{mpp_CIM()} results obtained with \code{plot.gen.eff = TRUE} can also be passed to the function \code{plot.QTLprof()} with argument \code{gen.eff = TRUE} to obtain a visualisation of the genetic effect distribution along the genome (Figure~\ref{fig:4}). Once again, the positions passed to the \code{QTL} argument will be drawn on the graph.
 
 <<gen_eff_plot>>=
-plot_genEffects(mppData = mppData, Qprof = CIM, QTL = QTL, Q.eff = "anc")
+plot(x = CIM, gen.eff = TRUE, mppData = mppData, QTL = QTL, Q.eff = "anc")
 @
 
 \begin{figure}[!ht]

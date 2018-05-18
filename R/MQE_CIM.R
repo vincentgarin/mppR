@@ -74,7 +74,7 @@
 #' CIM <- MQE_CIM(mppData = mppData, Q.eff = "cr", cofactors = cofactors,
 #'                cof.Qeff = c("anc", "par", "biall"))
 #'
-#' plot_QTLprof(CIM)
+#' plot(x = CIM)
 #'                                
 #' @export
 #' 

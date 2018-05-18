@@ -36,7 +36,7 @@ cofactor position where it is not included in the model. Default = 20.}
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
-These results can be ploted with the function \code{\link{plot_genEffects}}
+These results can be ploted with the function \code{\link{plot.QTLprof}}
 to visualize a genome-wide decomposition of the genetic effects.
 \strong{This functionality is ony available for the cross-specific,
 parental and ancestral models.}
@@ -85,8 +85,8 @@ cofactors <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 CIM <- mpp_CIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 cofactors = cofactors, window = 20, plot.gen.eff = TRUE)
 
-plot_QTLprof(Qprof = CIM)
-plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = "cr")
+plot(x = CIM)
+plot(x = CIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
 
 # Bi-allelic model
 ##################
@@ -96,7 +96,7 @@ cofactors <- mppData$map[c(15, 63), 1]
 CIM <- mpp_CIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err",
 cofactors = cofactors, window = 20)
 
-plot_QTLprof(Qprof = CIM, type = "h")
+plot(x = CIM, type = "h")
                                
 }
 \seealso{

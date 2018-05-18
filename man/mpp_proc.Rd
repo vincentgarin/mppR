@@ -38,7 +38,7 @@ For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
-These results can be ploted with the function \code{\link{plot_genEffects}}
+These results can be ploted with the function \code{\link{plot.QTLprof}}
 to visualize a genome-wide decomposition of the genetic effects.
 \strong{This functionality is ony available for the cross-specific,
 parental and ancestral models.}
@@ -149,7 +149,7 @@ global adjusted and non-adjusted R squared statistics (QTL_genResults.txt).}
 lines representing the cofactors positions. If \code{plot.gen.eff = TRUE},
 plot of the genetic effects per cross or parents (gen_eff.pdf) with dashed
 lines representing the QTL positions. For more details see
-\code{\link{plot_QTLprof}} and \code{\link{plot_genEffects}}.}
+\code{\link{plot.QTLprof}}}
 
 }
 }
@@ -219,8 +219,7 @@ USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
 \code{\link{mpp_perm}},
 \code{\link{mpp_SIM}},
 \code{\link{parent_cluster}},
-\code{\link{plot_genEffects}},
-\code{\link{plot_QTLprof}},
+\code{\link{plot.QTLprof}},
 \code{\link{QTL_CI}},
 \code{\link{QTL_genEffects}},
 \code{\link{QTL_R2}},

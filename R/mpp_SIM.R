@@ -108,7 +108,7 @@
 #' 
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
-#' These results can be ploted with the function \code{\link{plot_genEffects}}
+#' These results can be ploted with the function \code{\link{plot.QTLprof}}
 #' to visualize a genome-wide decomposition of the genetic effects.
 #' \strong{This functionality is ony available for the cross-specific,
 #' parental and ancestral models.}
@@ -129,7 +129,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{plot_genEffects}}, \code{\link{USNAM_parClu}}
+#' \code{\link{plot.QTLprof}}, \code{\link{USNAM_parClu}}
 #' 
 #' @references
 #' 
@@ -183,8 +183,8 @@
 #' SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
 #' plot.gen.eff = TRUE)
 #' 
-#' plot_QTLprof(Qprof = SIM)  
-#' plot_genEffects(mppData = mppData, Qprof = SIM, Q.eff = "cr")
+#' plot(x = SIM)  
+#' plot(x = SIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
 #' 
 #' 
 #' # Bi-allelic model
@@ -192,7 +192,7 @@
 #' 
 #' SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err")
 #' 
-#' plot_QTLprof(Qprof = SIM, type = "h")
+#' plot(x = SIM, type = "h")
 #' 
 #' @export
 #' 

@@ -67,7 +67,7 @@
 #'
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
-#' These results can be ploted with the function \code{\link{plot_genEffects}}
+#' These results can be ploted with the function \code{\link{plot.QTLprof}}
 #' to visualize a genome-wide decomposition of the genetic effects.
 #' \strong{This functionality is ony available for the cross-specific,
 #' parental and ancestral models.}
@@ -178,7 +178,7 @@
 #' lines representing the cofactors positions. If \code{plot.gen.eff = TRUE},
 #' plot of the genetic effects per cross or parents (gen_eff.pdf) with dashed
 #' lines representing the QTL positions. For more details see
-#' \code{\link{plot_QTLprof}} and \code{\link{plot_genEffects}}.}
+#' \code{\link{plot.QTLprof}}}
 #' 
 #' }
 #'                   
@@ -193,8 +193,7 @@
 #' \code{\link{mpp_perm}},
 #' \code{\link{mpp_SIM}},
 #' \code{\link{parent_cluster}},
-#' \code{\link{plot_genEffects}},
-#' \code{\link{plot_QTLprof}},
+#' \code{\link{plot.QTLprof}},
 #' \code{\link{QTL_CI}},
 #' \code{\link{QTL_genEffects}},
 #' \code{\link{QTL_R2}},
@@ -522,7 +521,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
     pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
     
-    print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "h", main = main.cim,
+    print(plot(x = CIM, QTL = cofactors, type = "h", main = main.cim,
                        threshold = thre.QTL, text.size = text.size))
     
     dev.off()
@@ -534,7 +533,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
     
     
-    print(plot_QTLprof(Qprof = CIM, QTL = cofactors, type = "l", main = main.cim,
+    print(plot(x = CIM, QTL = cofactors, type = "l", main = main.cim,
                        threshold = thre.QTL, text.size = text.size))
     
     dev.off()
@@ -545,8 +544,8 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
       
       pdf(file.path(folder.loc, "gen_eff.pdf"), height = 10, width = 16)
       
-      print(plot_genEffects(mppData = mppData, Qprof = CIM, Q.eff = Q.eff,
-                            QTL = QTL, main = main.Qeff, text.size = text.size))
+      print(plot(x = CIM, gen.eff = TRUE, mppData = mppData,  Q.eff = Q.eff,
+                 QTL = QTL, main = main.Qeff, text.size = text.size))
       
       dev.off()
       
