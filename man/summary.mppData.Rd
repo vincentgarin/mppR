@@ -10,7 +10,7 @@
 \item{object}{An object of class \code{mppData}.
 See \code{\link{mppData_form}} for details.}
 
-\item{...}{further arguments passed to or from other methods.}
+\item{...}{Ignored.}
 }
 \description{
 \code{summary} for object of class \code{mppData}.

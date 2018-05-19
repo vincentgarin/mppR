@@ -44,7 +44,7 @@ constraint. Default = FALSE.}
 \value{
 Return:
 
-List with the following elements:
+Object of class \code{QeffRes} containing the following elements:
 
 \item{Qeff}{\code{List} of \code{data.frame} (one per QTL) containing the
 following information:
@@ -125,23 +125,22 @@ QTL <- QTL_select(SIM)
 # Cross-specific model
 
 QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "cr")
-QTL.effects
+summary(QTL.effects)
 
 # Parental model
 
 QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "par")
-QTL.effects
+summary(QTL.effects)
 
 # Ancestral model
 
 QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "anc")
-QTL.effects
+summary(QTL.effects)
 
 # Bi-allelic model
 
 QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "biall")
-
-QTL.effects
+summary(QTL.effects)
 
 }
 \references{
@@ -149,8 +148,7 @@ Weeks, D. L., & Williams, D. R. (1964). A note on the determination of
 connectedness in an N-way cross classification. Technometrics, 6(3), 319-324.
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{parent_cluster}},
-\code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
+\code{\link{QTL_select}}, \code{\link{summary.QeffRes}}
 }
 \author{
 Vincent Garin

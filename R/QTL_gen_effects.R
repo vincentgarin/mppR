@@ -80,7 +80,7 @@
 #' 
 #' @return Return:
 #' 
-#' List with the following elements:
+#' Object of class \code{QeffRes} containing the following elements:
 #'
 #' \item{Qeff}{\code{List} of \code{data.frame} (one per QTL) containing the
 #' following information:
@@ -110,8 +110,7 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
+#' @seealso \code{\link{QTL_select}}, \code{\link{summary.QeffRes}}
 #' 
 #' @references 
 #' 
@@ -130,23 +129,22 @@
 #' # Cross-specific model
 #' 
 #' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "cr")
-#' QTL.effects
+#' summary(QTL.effects)
 #' 
 #' # Parental model
 #' 
 #' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "par")
-#' QTL.effects
+#' summary(QTL.effects)
 #' 
 #' # Ancestral model
 #' 
 #' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "anc")
-#' QTL.effects
+#' summary(QTL.effects)
 #' 
 #' # Bi-allelic model
 #' 
 #' QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "biall")
-#' 
-#' QTL.effects
+#' summary(QTL.effects)
 #' 
 #' @export 
 #'
@@ -191,12 +189,12 @@ QTL_gen_effects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
   if(is.character(QTL)){
     
     Q.pos <- which(mppData$map[, 1] %in% QTL)
-    pos.info <- t(data.frame(mppData$map[Q.pos, c(2, 4)]))
+    pos.info <- t(data.frame(mppData$map[Q.pos, c(1, 2, 4)]))
     
   } else {
     
     Q.pos <- which(mppData$map[, 1] %in% QTL[, 1])
-    pos.info <- t(data.frame(QTL[, 2], QTL[, 4]))
+    pos.info <- t(data.frame(QTL[, 1], QTL[, 2], QTL[, 4]))
     
   }
   
@@ -268,7 +266,7 @@ QTL_gen_effects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
     table.QTL <- data.frame(Qeff_sign)
     colnames(pos.info) <- paste0("Q", 1:length(results))
     table.QTL <- rbind.data.frame(pos.info, table.QTL)
-    rownames(table.QTL) <- c("chr", "pos.cM", unique(mppData$cross.ind))
+    rownames(table.QTL) <- c("mk.names", "chr", "pos.cM", unique(mppData$cross.ind))
     
   } else if (Q.eff == "biall"){
     
@@ -280,11 +278,11 @@ QTL_gen_effects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
     
     if (is.null(mppData$geno.par)){
       
-      rownames(table.QTL) <- c("chr", "pos.cM", "Q.eff")
+      rownames(table.QTL) <- c("mk.names", "chr", "pos.cM", "Q.eff")
       
     } else {
       
-      rownames(table.QTL) <- c("chr", "pos.cM", mppData$parents)
+      rownames(table.QTL) <- c("mk.names", "chr", "pos.cM", mppData$parents)
       
     }
     
@@ -301,10 +299,14 @@ QTL_gen_effects <- function(mppData, trait = 1,QTL = NULL, Q.eff = "cr",
     table.QTL <- data.frame(Qeff_sign)
     colnames(pos.info) <- paste0("Q", 1:length(results))
     table.QTL <- rbind.data.frame(pos.info, table.QTL)
-    rownames(table.QTL) <- c("chr", "pos.cM", mppData$parents)
+    rownames(table.QTL) <- c("mk.names", "chr", "pos.cM", mppData$parents)
     
   }
   
-  return(list(Qeff = results, tab.Qeff = table.QTL))
+  QeffRes <- list(Qeff = results, tab.Qeff = table.QTL)
+  
+  class(QeffRes) <- c("QeffRes", "list")
+  
+  return(QeffRes)
   
 }

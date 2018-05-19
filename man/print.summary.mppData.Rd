@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{object of class \code{summary.mppData}}
 
-\item{...}{further arguments passed to or from other methods.}
+\item{...}{Ignored.}
 }
 \description{
 Print summary.mppData object

@@ -138,26 +138,7 @@
 #' 
 #' @export
 
-# library(mppR)
-# library(qtl)
-# data(mppData_init)
-# mppData <- QC.mppData(mppData_init) # Quality control
-# mppData <- IBS.mppData(mppData = mppData) # IBS processing
-# 
-# mppData = mppData
-# het.miss.par = TRUE
-# subcross.ind = NULL
-# par.per.subcross = NULL
-# type = 'RIL'
-# F.gen = NULL
-# BC.gen = NULL
-# type.mating = 'selfing'
-# error.prob = 1e-04
-# map.function = "haldane"
-# dir = 'H:/PhD/Test'
-# 
-# source('H:/PhD/R/package/mppR/R/check_format_class.R')
-# source('H:/PhD/R/package/mppR/R/check_IBD.R')
+
 
 IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
                         par.per.subcross = NULL, type, F.gen = NULL,

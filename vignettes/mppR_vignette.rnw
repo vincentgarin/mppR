@@ -710,8 +710,7 @@ CIM <- mpp_CIM(mppData = mppData, Q.eff = "anc", cofactors = cofactors,
 QTL <- QTL_select(Qprof = CIM)
 gen.eff <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "anc")
 
-gen.eff$Qeff$Q1
-
+summary(gen.eff, QTL = 1)
 @
 
 

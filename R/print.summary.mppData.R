@@ -6,7 +6,7 @@
 #' 
 #' @param x object of class \code{summary.mppData}
 #' 
-#' @param ... further arguments passed to or from other methods. 
+#' @param ... Ignored. 
 #' 
 #' @examples 
 #' 

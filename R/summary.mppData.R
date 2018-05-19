@@ -9,7 +9,7 @@
 #' @param object An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #' 
-#' @param ... further arguments passed to or from other methods.
+#' @param ... Ignored.
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{USNAM_mppData}},
 #' \code{\link{USNAM_mppData_bi}}
@@ -21,10 +21,6 @@
 #' 
 #' @export
 #' 
-
-# data(mppData)
-# summary(mppData)
-# object = mppData
 
 summary.mppData <- function(object, ...) {
   
