@@ -14,8 +14,11 @@
 \usepackage{bm}
 \usepackage{blkarray}
 \usepackage{graphicx}
+% \usepackage{natbib}
 \usepackage{threeparttable}
 \usepackage{Sweave}
+
+
 
 % Extra command
 
@@ -630,7 +633,7 @@ mppData_sub <- subset(x = mppData, mk.list = mppData$map[, 2] == 1,
 The function \code{pedigree_update.mppData()} can be used to complete the pedigree relationship. By default, \code{QC.mppData()} only uses the parental relationships specified in the \code{par.per.cross} argument. However, if pedigree relationship among parents are known, a more complete pedigree information can be provided to the \code{mppData} object. This completed pedigree information can be given via the \code{pedigree} argument. \code{pedigree} is a \code{data.frame} containing one row for each genotype and four columns specifying: 1) if the genotype is an "offspring" (last generation) or a "founder" (all other generations); 2) the genotype identifier; and 3-4) the parents 1 and 2. The row giving the pedigree of an individual must appear before any row where that individual appears as a parent. Let us assume for the example that parent CML103 and CML322 share a common parent (A1).
 
 <<pedigree_update.mppData>>=
-ped.old <- mppData$ped.mat # old pedigree information
+ped.old <- mppData[[4]] # old pedigree information
 founder.info <- data.frame(rep("founder", 2), c("CML103", "CML322"),
                            rep("A1", 2), c("A2", "A3"))
 colnames(founder.info) <- colnames(ped.old)

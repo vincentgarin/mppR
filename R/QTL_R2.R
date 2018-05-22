@@ -49,7 +49,7 @@
 #'
 #' @return Return:
 #'
-#' \code{List} containing the following objects:
+#' object of class \code{QR2Res} containing the following objects:
 #'
 #' \item{glb.R2 }{ Global R squared of all QTL terms.}
 #'
@@ -76,18 +76,16 @@
 #' trait loci determined from experimental data in maize using cross validation
 #' and validation with independent samples. Genetics, 154(4), 1839-1849.
 #'
-#' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
+#' @seealso \code{\link{QTL_select}}, \code{\link{summary.QR2Res}}
 #'
 #' @examples
 #'
 #' data(mppData)
 #' 
 #' SIM <- mpp_SIM(mppData)
-#' 
 #' QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
-#' 
-#' QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
+#' Q_R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
+#' summary(Q_R2)
 #' 
 #' 
 #' @export
@@ -150,7 +148,11 @@ QTL_R2 <- function(mppData, trait = 1, QTL = NULL, Q.eff = "cr",
   
   if(glb.only) {
     
-    return(list(glb.R2 = R2, glb.adj.R2 = R2.adj))
+    QR2Res <- list(glb.R2 = R2, glb.adj.R2 = R2.adj)
+    
+    class(QR2Res) <- c("QR2Res", "list")
+    
+    return(QR2Res)
     
   } else {
     
@@ -187,23 +189,31 @@ QTL_R2 <- function(mppData, trait = 1, QTL = NULL, Q.eff = "cr",
       names(R2_i.dif) <- names(R2_i.dif.adj) <- paste0("Q", 1:n.QTL)
       names(R2_i.sg) <- names(R2_i.sg.adj) <- paste0("Q", 1:n.QTL)
       
-      return(list(glb.R2 = R2,
+      QR2Res <- list(glb.R2 = R2,
                   glb.adj.R2 = R2.adj,
                   part.R2.diff = R2_i.dif,
                   part.adj.R2.diff = R2_i.dif.adj,
                   part.R2.sg = R2_i.sg,
-                  part.adj.R2.sg = R2_i.sg.adj))
+                  part.adj.R2.sg = R2_i.sg.adj)
+      
+      class(QR2Res) <- c("QR2Res", "list")
+      
+      return(QR2Res)
       
     } else {
       
       names(R2) <- names(R2.adj) <- "Q1"
       
-      return(list(glb.R2 = R2,
-                  glb.adj.R2 = R2.adj,
-                  part.R2.diff = R2,
-                  part.adj.R2.diff = R2.adj,
-                  part.R2.sg = R2,
-                  part.adj.R2.sg = R2.adj))
+      QR2Res <- list(glb.R2 = R2,
+                    glb.adj.R2 = R2.adj,
+                    part.R2.diff = R2,
+                    part.adj.R2.diff = R2.adj,
+                    part.R2.sg = R2,
+                    part.adj.R2.sg = R2.adj)
+      
+      class(QR2Res) <- c("QR2Res", "list")
+      
+      return(QR2Res)
     }
     
   }

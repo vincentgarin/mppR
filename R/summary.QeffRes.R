@@ -27,15 +27,6 @@
 #' @export
 #' 
 
-# data(mppData)
-# SIM <- mpp_SIM(mppData)
-# QTL <- QTL_select(SIM)
-# QTL.effects <- QTL_gen_effects(mppData = mppData, QTL = QTL, Q.eff = "cr")
-# summary(QTL.effects)
-# 
-# object <- QTL.effects
-# QTL = c(1, 3)
-
 summary.QeffRes <- function(object, QTL = NULL, ...) {
   
   stopifnot(inherits(object, "QeffRes"))

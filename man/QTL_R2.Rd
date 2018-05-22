@@ -28,7 +28,7 @@ global adjusted R squared will be returned. Default = FALSE.}
 \value{
 Return:
 
-\code{List} containing the following objects:
+object of class \code{QR2Res} containing the following objects:
 
 \item{glb.R2 }{ Global R squared of all QTL terms.}
 
@@ -76,10 +76,9 @@ of phenotypic information, and n.cr is the number of intercept (cross) terms.
 data(mppData)
 
 SIM <- mpp_SIM(mppData)
-
 QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
-
-QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
+Q_R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
+summary(Q_R2)
 
 
 }
@@ -90,8 +89,7 @@ trait loci determined from experimental data in maize using cross validation
 and validation with independent samples. Genetics, 154(4), 1839-1849.
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{parent_cluster}},
-\code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
+\code{\link{QTL_select}}, \code{\link{summary.QR2Res}}
 }
 \author{
 Vincent Garin
