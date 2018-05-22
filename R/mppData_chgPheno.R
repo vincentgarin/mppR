@@ -24,6 +24,8 @@
 #' 
 #' @examples
 #' 
+#' # This function is deprecated
+#' 
 #' # data(USNAM_mppData)
 #' # data(USNAM_pheno)
 #' 
