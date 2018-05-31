@@ -23,10 +23,10 @@
 #' using one letter per allele. For example, AA, CC, GG, etc. Missing values
 #' must be coded \code{NA}.}
 #' 
-#' @param map Three columns \code{data.frame} with: 1) marker or identifiers;
-#' 2) chromosome; 3) positions in centi-Morgan.\strong{
-#' The marker identifiers must be identical to the column names of the maker
-#' matrices (\code{geno.off} and \code{geno.par}).}
+#' @param map Three columns \code{data.frame} with: 1) \code{character} marker
+#' identifiers; 2) \code{numeric} chromosome; 3) \code{numeric} positions in
+#' centi-Morgan.\strong{The marker identifiers must be identical to the column
+#' names of the maker matrices (\code{geno.off} and \code{geno.par}).}
 #' 
 #' @param pheno \code{Numeric matrix} with one column per trait and rownames
 #' as genotpes identifiers. \strong{The genotypes identifiers must be identical
@@ -155,6 +155,26 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
     
   }
   
+  # test map format
+  
+  if(!is.character(map[, 1])){
+    
+    stop("The marker identifier in the map must be character.")
+    
+  }
+  
+  if(!is.numeric(map[, 2])){
+    
+    stop("The chromosome in the map must be numeric.")
+    
+  }
+  
+  if(!is.numeric(map[, 3])){
+    
+    stop("The genetic positions in the map must be numeric.")
+    
+  }
+  
   # test phenotype values
   
   if(!is.matrix(pheno)){stop('The pheno argument is not a matrix.')}
@@ -232,6 +252,30 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
                "rownames of the geno.par matrix"))
     
   }
+  
+  # check if the marker are grouped by chromosome and are in increasing position
+  
+  map <- map[order(map[, 2]), ]
+  
+  map_temp <- c()
+  
+  chr_id <- unique(map[, 2])
+  
+  for(i in 1:length(chr_id)){
+    
+    map_i <- map[map[, 2] == chr_id[i], ]
+    map_i_ord <- map_i[order(map_i[, 3]), ]
+    
+    map_temp <- rbind(map_temp, map_i_ord)
+    
+  }
+  
+  map <- map_temp
+  
+  # Re-order the marker matrix in case of
+  
+  geno.par <- geno.par[, map[, 1]]
+  geno.off <- geno.off[, map[, 1]]
   
   # Check the number of connected parts
   

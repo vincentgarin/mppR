@@ -24,10 +24,10 @@ names similar to the one used in \code{map}. Marker scores must be coded
 using one letter per allele. For example, AA, CC, GG, etc. Missing values
 must be coded \code{NA}.}}
 
-\item{map}{Three columns \code{data.frame} with: 1) marker or identifiers;
-2) chromosome; 3) positions in centi-Morgan.\strong{
-The marker identifiers must be identical to the column names of the maker
-matrices (\code{geno.off} and \code{geno.par}).}}
+\item{map}{Three columns \code{data.frame} with: 1) \code{character} marker
+identifiers; 2) \code{numeric} chromosome; 3) \code{numeric} positions in
+centi-Morgan.\strong{The marker identifiers must be identical to the column
+names of the maker matrices (\code{geno.off} and \code{geno.par}).}}
 
 \item{pheno}{\code{Numeric matrix} with one column per trait and rownames
 as genotpes identifiers. \strong{The genotypes identifiers must be identical

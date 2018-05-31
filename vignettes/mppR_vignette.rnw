@@ -479,7 +479,7 @@ geno.par <- USNAM_geno[1:6, ]
 
 \subsubsection{Map data}
 
-\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosome and map position given in centi-Morgan (cM). It has required format for the argument \code{map} in function \code{create.mppData()}. The list of markers must be identical to the column names of the \code{geno.off} and \code{geno.par} arguments.
+\code{USNAM\_map} is a three columns genetic map with marker indicator, chromosomes and map positions given in centi-Morgan (cM). It has required format for the argument \code{map} in function \code{create.mppData()}. The marker identifiers must be \code{character}. The chromosomes and genetic positions must be \code{numeric}. The list of markers must be column names of the \code{geno.off} and \code{geno.par} arguments.
 
 <<map_data>>=
 data("USNAM_map", package = "mppR")
