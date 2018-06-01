@@ -115,16 +115,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   
   # trait values
   
-  if(is.numeric(trait)){
-    
-    t_val <- mppData.vs$pheno[, trait]
-    
-  } else {
-    
-    trait.names <- colnames(mppData.vs$pheno)
-    t_val <- mppData.vs$pheno[, which(trait %in% trait.names)]
-    
-  }
+  t_val <- sel_trait(mppData = mppData, trait = trait)
   
   
   # 2. obtain the genetic effects (Betas)

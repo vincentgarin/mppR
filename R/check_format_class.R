@@ -48,13 +48,19 @@ check_trait <- function(trait, mppData){
 # peak the trait
 ################
 
-# if(is.numeric(trait)){
-#   
-#   t_val <- mppData$pheno[, trait]
-#   
-# } else {
-#   
-#   trait.names <- colnames(mppData$pheno)
-#   t_val <- mppData$pheno[, which(trait %in% trait.names)]
-#   
-# }
+sel_trait <- function(mppData, trait){
+  
+  if(is.numeric(trait)){
+    
+    t_val <- mppData$pheno[, trait]
+    
+  } else {
+    
+    trait.names <- colnames(mppData$pheno)
+    t_val <- mppData$pheno[, which(trait.names == trait)]
+    
+  }
+  
+  return(t_val)
+  
+}

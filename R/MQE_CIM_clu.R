@@ -22,16 +22,7 @@ MQE_CIM_clu <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
   
   ### 2.1 trait values
   
-  if(is.numeric(trait)){
-    
-    t_val <- mppData$pheno[, trait]
-    
-  } else {
-    
-    trait.names <- colnames(mppData$pheno)
-    t_val <- mppData$pheno[, which(trait %in% trait.names)]
-    
-  }
+  t_val <- sel_trait(mppData = mppData, trait = trait)
   
   ### 2.2 inverse of the pedigree matrix
   
