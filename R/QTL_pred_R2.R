@@ -115,7 +115,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   
   # trait values
   
-  t_val <- sel_trait(mppData = mppData, trait = trait)
+  t_val <- sel_trait(mppData = mppData.vs, trait = trait)
   
   
   # 2. obtain the genetic effects (Betas)

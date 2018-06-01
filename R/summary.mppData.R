@@ -43,7 +43,7 @@ summary.mppData <- function(object, ...) {
   
   ans$phenoName <- colnames(object$pheno)
   
-  miss_fct <- function(x){(1 - (sum(is.na(x))/ length(x)))*100 }
+  miss_fct <- function(x){ round((1 - (sum(is.na(x))/ length(x)))*100, 1) }
   
   ans$phenoPer <- apply(X = object$pheno, MARGIN = 2, FUN = miss_fct)
   
