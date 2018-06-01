@@ -37,7 +37,7 @@ check_trait <- function(trait, mppData){
     
     if (!(trait %in% trait.names)){
       
-      stop(paste("trait must be one of:", trait.names))
+      stop(paste("trait must be one of:", paste(trait.names, collapse = ', ')))
       
     }
     

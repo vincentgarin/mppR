@@ -59,6 +59,14 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
         
       }
       
+      if(mppData$status != 'complete'){
+        
+        stop(paste('The mppData object is not complete. You must use all processing',
+                   'functions first in the specified order: QC.mppData, IBS.mppData,',
+                   'IBD.mppData, and parent_cluster.mppData.'))
+        
+      }
+      
     }
     
   }

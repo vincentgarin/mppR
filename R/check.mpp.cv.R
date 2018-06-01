@@ -27,6 +27,14 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
     
   }
   
+  if(mppData$status != 'complete'){
+    
+    stop(paste('The mppData object is not complete. You must use all processing',
+               'functions first in the specified order: QC.mppData, IBS.mppData,',
+               'IBD.mppData, and parent_cluster.mppData.'))
+    
+  }
+  
   # 3. check the trait
   
   check_trait(trait = trait, mppData = mppData)
