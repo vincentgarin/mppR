@@ -2,50 +2,6 @@
 # QTL_CI #
 ##########
 
-<<<<<<< HEAD
-#' -log10(p-value) drop-off confidence interval
-#' 
-#' Computes a -log10(p-value) drop-off confidence interval for QTL positions.
-#' 
-#' @param QTL Object of class \code{QTLlist} representing a list of
-#' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker positions names.
-#' Default = NULL.
-#' 
-#' @param Qprof Object of class \code{QTLprof} returned by the function
-#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}. The CIM profile that is
-#' used should be calculated excluding cofactors from the tested chromosome.
-#' Such a profile can be obtained using a \code{window} larger than the longer
-#' chromosome.
-#' 
-#' @param drop \code{numeric} -log10(p-value) drop value at the limits of the
-#' interval. Default = 1.5.
-#' 
-#' @return Return:
-#' 
-#' \item{CI }{\code{data.frame} with the following columns: 1) QTL marker names; 2) chromosomes; 3) QTL positions in cM;
-#' 4) inferior marker names; 5) inferior positions in cM;
-#' 6) superior marker names; 7) superior positions in cM;
-#' 8) ranges in cM.}
-#' 
-#' @author Vincent Garin
-#' 
-#' @seealso \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}},
-#' \code{\link{QTL_select}}
-#' 
-#' @examples
-#' 
-#' data(mppData)
-#' 
-#' SIM <- mpp_SIM(mppData = mppData)
-#' 
-#' QTL <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
-#' 
-#' QTL_CI(QTL = QTL, Qprof = SIM, drop = 1.5)
-#' 
-#' @export
-#' 
-=======
 # -log10(p-value) drop-off confidence interval
 # 
 # Computes a -log10(p-value) drop-off confidence interval for QTL positions.
@@ -88,8 +44,7 @@
 # QTL_CI(QTL = QTL, Qprof = SIM, drop = 1.5)
 # 
 # @export
-# 
->>>>>>> Silencing many functions
+#
 
 
 QTL_CI <- function(QTL = NULL, Qprof, drop = 1.5) {
