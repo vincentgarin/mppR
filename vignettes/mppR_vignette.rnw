@@ -1,5 +1,5 @@
 %\documentclass[article, shortnames]{jss}
-\documentclass[nojss]{jss}
+\documentclass[nojss,shortnames]{jss}
 %\VignetteIndexEntry{\pkg{mppR}: An \proglang{R} Package for QTL Analysis in Multi-parent Populations using Linear Mixed Models}
 
 
@@ -8,17 +8,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % packages
-
+\usepackage{thumbpdf,lmodern}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
 \usepackage{blkarray}
-\usepackage{graphicx}
+%\usepackage{graphicx}
 % \usepackage{natbib}
-\usepackage{threeparttable}
-\usepackage{Sweave}
-
-
+% \usepackage{threeparttable}
+% \usepackage{Sweave}
 
 % Extra command
 
@@ -82,14 +80,14 @@
 
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+\SweaveOpts{engine=R, eps=FALSE, keep.source = TRUE}
 
 \section{Introduction}
 
 % Software package are cited \cite{}d
 
 
-Quantitative trait locus (QTL) analysis essentially consists in finding a relationship between DNA polymorphisms (e.g., SNPs) and phenotypic variation \citep{doerge2002mapping}. QTL detection methods greatly depends on the genetic properties of the population that is used. Historically, QTL detection has been performed in designed experimental populations involving two parental lines (bi-parental crosses). Several methods and software packages have been developed for QTL analysis for such populations, for a review see \citet{varshney2015analytical}. Multi-parent populations (MPPs) are an alternative type of population that can improve the chances of QTL detection while broadening the range of research questions that can be answered \citep{cavanagh2008mutations}. MPPs can be seen as a compromise between bi-parental crosses and association panels \citep{myles_2009}. Different types of MPPs have been developed including nested association mapping (NAM) populations \citep{mcmullen_2009}, diallels \citep{blanc_2006} and factorial designs \citep{bardol_2013}. More complicated MPPs can be created by intercrossing multiple founders followed by inbreeding, like in multi-parent advanced generation inter-cross (MAGIC) populations \citep{cavanagh2008mutations}. Here, we consider MPPs as a collection of genotypes that are derived by crosses between at least three different parents. In this paper, a MPP QTL analysis is akin to the joint analysis of such a population using a common marker map.
+Quantitative trait locus (QTL) analysis essentially consists in finding a relationship between DNA polymorphisms (e.g., SNPs) and phenotypic variation \citep{doerge_mapping:2002}. QTL detection methods greatly depends on the genetic properties of the population that is used. Historically, QTL detection has been performed in designed experimental populations involving two parental lines (bi-parental crosses). Several methods and software packages have been developed for QTL analysis for such populations, for a review see \citet{varshney2015analytical}. Multi-parent populations (MPPs) are an alternative type of population that can improve the chances of QTL detection while broadening the range of research questions that can be answered \citep{cavanagh2008mutations}. MPPs can be seen as a compromise between bi-parental crosses and association panels \citep{myles_2009}. Different types of MPPs have been developed including nested association mapping (NAM) populations \citep{mcmullen_2009}, diallels \citep{blanc_2006} and factorial designs \citep{bardol_2013}. More complicated MPPs can be created by intercrossing multiple founders followed by inbreeding, like in multi-parent advanced generation inter-cross (MAGIC) populations \citep{cavanagh2008mutations}. Here, we consider MPPs as a collection of genotypes that are derived by crosses between at least three different parents. In this paper, a MPP QTL analysis is akin to the joint analysis of such a population using a common marker map.
 
 
 The development of an appropriate statistical methodology taking MPP properties into consideration is a \textit{sine qua non} condition to fully exploit the potential of MPP genetic resources. The most critical question is how to account for genetic relatedness between the genotypes and how to integrate this information into the statistical model. A first simple option is to treat MPPs as an association mapping panel and to apply genome-wide association study (GWAS) QTL detection methods. 
@@ -540,7 +538,7 @@ The other models (cross-specific, parental, and ancestral) use IBD probabilities
 
 Then the computation of the IBD probabilities is done by calling the function \code{calc.genoprob()} of the \proglang{R}/\pkg{qtl} package \citep{broman_rqtl}. For that purpose a temporary csv file, which can be loaded by \proglang{R}/\pkg{qtl}, will be saved at the location specified in \code{dir}.
 
-The type of population must be specified in argument \cite{type}. Different population types are possible: F-type ("F"), back-cross ("BC"), backcross followed by selfing ("BCsFt"), double haploid ("DH"), and recombinant imbred lines ("RIL"). The number of F and BC generations can be specified using \code{F.gen} and \code{BC.gen}. The agument \code{type.mating} specifies if F and RIL populations were obtained by selfing or by sibling mating. DH and RIL populations are read as back-cross by R/qtl. For these two population types, heterozygous scores will be treated as missing values.
+The type of population must be specified in argument \code{type}. Different population types are possible: F-type ("F"), back-cross ("BC"), backcross followed by selfing ("BCsFt"), double haploid ("DH"), and recombinant imbred lines ("RIL"). The number of F and BC generations can be specified using \code{F.gen} and \code{BC.gen}. The agument \code{type.mating} specifies if F and RIL populations were obtained by selfing or by sibling mating. DH and RIL populations are read as back-cross by R/qtl. For these two population types, heterozygous scores will be treated as missing values.
 
 <<IBD.mppData>>=
 mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',

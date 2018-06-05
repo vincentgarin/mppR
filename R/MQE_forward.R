@@ -2,94 +2,6 @@
 # MQE_forward #
 ###############
 
-<<<<<<< HEAD
-#' Forward regression with different type of QTL effects
-#' 
-#' Determines a multi-QTL effect (MQE) model using a forward regression.
-#' 
-#' The included QTL position can have different type of QTL effects at different
-#' loci. At each step (new added position), the function compute QTL profiles
-#' using one type of QTL effect specified in \code{Q.eff} for the tested
-#' position. Let us assume that the user want to allow the QTL to have a
-#' parental, ancestral or bi-allelic effect. Therefore, the function will
-#' calculate three profiles. Then it will select in each profile the most
-#' significant position if a position is above the \code{threshold} value.
-#' The position and its QTL effect that increase the most the global adjusted R
-#' squared (\code{MQE_R2}) will be selected as the new QTL position and included
-#' in the list of cofactors. The function continues to iterate until no position
-#' is significant anymore.
-#' 
-#' \strong{WARNING!(1)} The computation of \code{MQE_forward()} function using
-#' mixed models (all models with \code{VCOV} different than \code{"h.err"})
-#' is technically possible but can be irrealistic in practice due to a reduced
-#' computer power. Since a mixed model is computed at each single position it
-#' can take a lot of time. From our estimation it can take between 20 to 50
-#' times more time than for the linear model (HRT). If the number of detected
-#' QTL is supposed to be small (until 5) it could still be feasible.
-#' 
-#' \strong{WARNING!(2)} The computation of random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-#' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
-#'
-#' @param mppData An object of class \code{mppData}
-#' 
-#' @param trait \code{Numerical} or \code{character} indicator to specify which
-#' trait of the \code{mppData} object should be used. Default = 1.
-#' 
-#' @param Q.eff \code{Character} vector of possible QTL effects the user want to
-#' test. Elements of Q.eff can be "cr", "par", "anc" or "biall". For details
-#' look at \code{\link{mpp_SIM}}.
-#'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
-#' 
-#' @param threshold \code{Numeric} value representing the -log10(p-value) threshold
-#' above which a position can be considered as significant. Default = 4.
-#' 
-#' @param window \code{Numeric} distance (cM) on the left and the right of a
-#' cofactor position where it is not included in the model. Default = 30.
-#' 
-#' @param n.cores \code{Numeric}. Specify here the number of cores you like to
-#' use. Default = 1.
-#' 
-#' @param verbose \code{Logical} value indicating if the steps of the
-#' MQE_forward should be printed. It will not affect the printing of the other
-#' functions called by \code{mpp_proc()}, especially the printing of
-#' \code{asreml()}. Default = TRUE.
-#' 
-#' 
-#' @return
-#' 
-#' \item{QTL.list }{\code{Data.frame} with six columns :
-#' 1) QTL marker names; 2) chromosomes;
-#' 3) interger position indicators on the chromosome;
-#' 4) positions in centi-Morgan; 5) -log10(p-values); and 6) type of
-#' QTL incidence matrix of the selected positions}
-#' 
-#' @author Vincent Garin
-#' 
-#' @seealso \code{\link{mpp_perm}},
-#' \code{\link{mpp_SIM}}, \code{\link{MQE_R2}}
-#'
-#' @examples
-#'
-#' data(mppData)
-#' 
-#' QTL <- MQE_forward(mppData = mppData, Q.eff = c("par", "anc", "biall"))
-#'
-#'
-#' @export
-#'
-=======
 # Forward regression with different type of QTL effects
 # 
 # Determines a multi-QTL effect (MQE) model using a forward regression.
@@ -176,7 +88,6 @@
 #
 # @export
 #
->>>>>>> Silencing many functions
 
 MQE_forward <- function(mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
                         threshold = 4, window = 30, n.cores = 1,
