@@ -79,8 +79,7 @@
 #' @author Vincent Garin
 #' 
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{QTL_R2}}, \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
+#' @seealso \code{\link{QTL_R2}}, \code{\link{QTL_select}}
 #' 
 #' @examples
 #' 

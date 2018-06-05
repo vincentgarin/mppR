@@ -64,9 +64,7 @@ MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = c("par", "anc", "biall"))
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-\code{\link{parent_cluster}},
-\code{\link{QTL_R2}}, \code{\link{USNAM_parClu}}
+\code{\link{mpp_SIM}}, \code{\link{QTL_R2}}
 }
 \author{
 Vincent Garin

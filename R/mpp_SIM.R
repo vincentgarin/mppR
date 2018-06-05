@@ -128,8 +128,7 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{plot.QTLprof}}, \code{\link{USNAM_parClu}}
+#' @seealso \code{\link{plot.QTLprof}}
 #' 
 #' @references
 #' 

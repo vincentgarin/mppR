@@ -164,12 +164,8 @@ MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mpp_perm}},
-\code{\link{mpp_SIM}},
-\code{\link{MQE_forward}}, \code{\link{MQE_BackElim}},
-\code{\link{MQE_genEffects}}, \code{\link{MQE_plot}}, \code{\link{MQE_R2}},
-\code{\link{parent_cluster}}, \code{\link{QTL_R2}},
-\code{\link{USNAM_parClu}}
+\code{\link{mpp_perm}}, \code{\link{mpp_SIM}},
+\code{\link{QTL_R2}}
 }
 \author{
 Vincent Garin

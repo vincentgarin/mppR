@@ -31,8 +31,6 @@
 #' major allele (largest frequency) and the two others the heterozygous scores.} 
 #' 
 #' @author Vincent Garin    
-#'       
-#' @seealso \code{\link{mppData_form}}
 #' 
 #' @examples
 #' 

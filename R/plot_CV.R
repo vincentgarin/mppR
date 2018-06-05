@@ -26,11 +26,11 @@
 #' 
 #' \dontrun{
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
 #' my.loc <- "C:/..."
 #' 
-#' CV <- mpp_CV(mppData = USNAM_mppData, her = .5, output.loc = my.loc, Rep = 3)
+#' CV <- mpp_CV(mppData = mppData, her = .5, output.loc = my.loc, Rep = 3)
 #' 
 #' plot_CV(CV.res = CV)
 #' 

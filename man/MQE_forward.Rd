@@ -87,10 +87,8 @@ QTL <- MQE_forward(mppData = mppData, Q.eff = c("par", "anc", "biall"))
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mpp_perm}},
-\code{\link{mpp_SIM}},
-\code{\link{MQE_R2}}, \code{\link{parent_cluster}},
-\code{\link{USNAM_parClu}}
+\code{\link{mpp_perm}},
+\code{\link{mpp_SIM}}, \code{\link{MQE_R2}}
 }
 \author{
 Vincent Garin

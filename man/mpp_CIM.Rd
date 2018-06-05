@@ -100,9 +100,7 @@ plot(x = CIM, type = "h")
                                
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-\code{\link{parent_cluster}}, \code{\link{QTL_select}},
-\code{\link{USNAM_parClu}}
+\code{\link{mpp_SIM}}, \code{\link{QTL_select}}
 }
 \author{
 Vincent Garin

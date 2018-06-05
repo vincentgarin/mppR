@@ -187,17 +187,13 @@
 #' 
 #' @seealso
 #' 
-#' \code{\link{mppData_form}},
 #' \code{\link{mpp_back_elim}},
 #' \code{\link{mpp_CIM}},
 #' \code{\link{mpp_perm}},
 #' \code{\link{mpp_SIM}},
-#' \code{\link{parent_cluster}},
 #' \code{\link{plot.QTLprof}},
-#' \code{\link{QTL_CI}},
 #' \code{\link{QTL_gen_effects}},
-#' \code{\link{QTL_R2}},
-#' \code{\link{USNAM_parClu}}
+#' \code{\link{QTL_R2}}
 #' 
 #' @examples
 #'  

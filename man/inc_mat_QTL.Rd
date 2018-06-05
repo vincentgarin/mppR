@@ -50,9 +50,7 @@ QTLmatBi <- inc_mat_QTL(x = 2, mppData = mppData, Q.eff = "biall")
 
 }
 \seealso{
-\code{\link{IncMat_cross}}, \code{\link{IncMat_parent}}, 
-\code{\link{mpp_SIM}}, \code{\link{parent_cluster}},
-\code{\link{USNAM_parClu}}
+\code{\link{mpp_SIM}},
 }
 \author{
 Vincent Garin

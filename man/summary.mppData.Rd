@@ -7,8 +7,7 @@
 \method{summary}{mppData}(object, ...)
 }
 \arguments{
-\item{object}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{object}{An object of class \code{mppData}.}
 
 \item{...}{Ignored.}
 }
@@ -20,8 +19,4 @@ See \code{\link{mppData_form}} for details.}
 data(mppData)
 summary(mppData)
 
-}
-\seealso{
-\code{\link{mppData_form}}, \code{\link{USNAM_mppData}},
-\code{\link{USNAM_mppData_bi}}
 }

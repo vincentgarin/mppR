@@ -95,8 +95,7 @@ QTL.eff <- MQE_genEffects(mppData = mppData, QTL = QTL[, 1],
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-\code{\link{parent_cluster}}, \code{\link{USNAM_parClu}}
+\code{\link{mpp_SIM}}
 }
 \author{
 Vincent Garin

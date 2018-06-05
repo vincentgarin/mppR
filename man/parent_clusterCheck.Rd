@@ -11,8 +11,7 @@ parent_clusterCheck(par.clu)
 genotypes clustering. The columns represent the parental lines and the rows
 the different markers or in between positions. At a particular
 position, parents with the same value are assumed to inherit from the same
-ancestor. for more details, see \code{\link{USNAM_parClu}} and
-\code{\link{parent_cluster}}}
+ancestor.}
 }
 \value{
 Return:
@@ -32,17 +31,7 @@ allele per parent.
 }
 \examples{
 
-data(USNAM_parClu)
-par.clu <- USNAM_parClu
 
-par.clu[c(20, 30), ] <- rep(1,6) # change a position to monomorphic
-
-parent_clusterCheck(par.clu = par.clu)
-
-
-}
-\seealso{
-\code{\link{parent_cluster}}, \code{\link{USNAM_parClu}}
 }
 \author{
 Vincent Garin
