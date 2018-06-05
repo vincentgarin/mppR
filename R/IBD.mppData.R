@@ -284,7 +284,7 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   # Export the data in a .csv file in the specified directory
   
   temp_dir <- file.path(dir, "temp_dir_mppData")
-  system(paste("mkdir", temp_dir))
+  dir.create(temp_dir)
   
   file.name <- file.path(temp_dir, "Cross_object.csv")
   
@@ -353,7 +353,7 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   
   # delete the temporary directory
   
-  system(paste("rm -rf", temp_dir))
+  unlink(x = temp_dir, recursive = TRUE)
   
   # 7. transform the map and geno.par
   ###################################
