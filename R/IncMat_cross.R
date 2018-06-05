@@ -2,29 +2,29 @@
 # IncMat_cross #
 ################
 
-#' Cross effect incidence matrix
-#' 
-#' Form a cross effect incidence matrix.
-#' 
-#' 
-#' @param cross.ind \code{Character} or \code{factor} vector specifying to
-#' which cross the genotypes belong.
-#' 
-#' @return Return:
-#' 
-#' \item{cross.mat}{Cross effect incidence matrix composed of 0 and 1 value
-#' indicating to which cross each genotype belongs.}
-#' 
-#' @author Vincent Garin
-#' 
-#' @examples
-#'
-#' data(mppData)
-#' 
-#' cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
-#'
-#' @export
-#'
+# Cross effect incidence matrix
+# 
+# Form a cross effect incidence matrix.
+# 
+# 
+# @param cross.ind \code{Character} or \code{factor} vector specifying to
+# which cross the genotypes belong.
+# 
+# @return Return:
+# 
+# \item{cross.mat}{Cross effect incidence matrix composed of 0 and 1 value
+# indicating to which cross each genotype belongs.}
+# 
+# @author Vincent Garin
+# 
+# @examples
+#
+# data(mppData)
+# 
+# cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
+#
+# @export
+#
 
 
 IncMat_cross <- function(cross.ind){

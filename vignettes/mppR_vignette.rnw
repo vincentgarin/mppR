@@ -763,7 +763,8 @@ For the parental and ancestral models, the effect must be interpreted as deviati
 
 \subsection{Cross-validation}
 
-The cross-validation procedure (\ref{CV}) can be performed by the function \code{mpp_CV()}. The arguments \code{Rep} and \code{k} represent the number of repetitions of the k-fold procedure. The heritability, allowing to express $R^{2}$ in terms of percentage of the explained genotypic variance, can be specified in \code{her}. By default \code{her = 1}, therefore the results are expressed in terms of phenotypic variation. The results of the CV procedure will be saved in a folder at \code{output.loc}. The different CV QTL profiles can be visualized using transparency plots with the function \code{plot_CV()} (Figure~\ref{fig:5}).
+The cross-validation procedure (\ref{CV}) can be performed by the function \code{mpp_CV()}. The arguments \code{Rep} and \code{k} represent the number of repetitions of the k-fold procedure. The heritability, allowing to express $R^{2}$ in terms of percentage of the explained genotypic variance, can be specified in \code{her}. By default \code{her = 1}, therefore the results are expressed in terms of phenotypic variation. The results of the CV procedure will be saved in a folder at \code{output.loc}. A transparency plot of the CV QTL profiles (Figure~\ref{fig:5})  will also be saved at \code{output.loc}.
+
 
 
 <<CV_proc>>=
@@ -772,7 +773,6 @@ set.seed(89341)
 CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
              Q.eff = "cr", her = 0.4, Rep = 2, k = 5, verbose = FALSE,
              output.loc = getwd())
-plot_CV(CV)
 @
 
 \begin{figure}[!ht]
