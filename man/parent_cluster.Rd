@@ -102,52 +102,11 @@ simultaneously, the clutering based on hidden Markov model is unavailable.
 Therefore the default method for clustering is \code{"threshold"}
 (Leroux et al. 2014).
 }
-\examples{
-
-\dontrun{
-
-library(clusthaplo)
-
-data(USNAM_geno)
-data(USNAM_mppData)
-data(USNAM_map)
-
-# Parents genotypes and map
-geno.par <- USNAM_geno[1:6, ]
-geno.par <- t(geno.par)
-map.par <- USNAM_map
-
-# Map obtained after mpp.data object formation and potential
-# inference of position in between existing markers
-map <- USNAM_mppData$map[, -3]
-
-
-par.clu <- parent_cluster(haplo.map = map.par, consensus.map = map,
-marker.data = geno.par, step.size = 1000, window = 25, plot = TRUE,
-plot.loc = getwd())
-
-
-par.clu$av.cl # Average number of inferred ancestral cluster along the genome
-
-# Collect the parent clustering results for the analysis
-
-par.clu <- par.clu$par.clu 
-
-SIM <- mpp_SIM(mppData = USNAM_mppData, Q.eff = "anc", par.clu = par.clu)
-plot_QTLprof(SIM)
-
-}
-
-
-}
 \references{
 Leroux, D., Rahmani, A., Jasson, S., Ventelon, M., Louis, F., Moreau, L.,
 & Mangin, B. (2014). Clusthaplo: a plug-in for MCQTL to enhance QTL detection
 using ancestral alleles in multi-cross design. Theoretical and Applied
 Genetics, 127(4), 921-933.
-}
-\seealso{
-\code{\link{parent_clusterCheck}}
 }
 \author{
 Vincent Garin

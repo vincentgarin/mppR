@@ -35,9 +35,9 @@
 #' 
 #' @examples
 #' 
-#' data(USNAM_mppData)
+#' data(mppData)
 #' 
-#' par_per_cross <- USNAM_mppData$par.per.cross
+#' par_per_cross <- mppData$par.per.cross
 #' 
 #' con.part <- design_connectivity(par_per_cross)
 #' 

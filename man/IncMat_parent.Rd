@@ -7,8 +7,7 @@
 IncMat_parent(mppData)
 }
 \arguments{
-\item{mppData}{An object of class \code{mppData}.
-See \code{\link{mppData_form}} for details.}
+\item{mppData}{An object of class \code{mppData}.}
 }
 \value{
 Return:

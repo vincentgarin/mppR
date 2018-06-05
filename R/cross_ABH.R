@@ -44,11 +44,6 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso
-#' 
-#' \code{\link{cross_ABH_het}}, \code{\link{mppData_form}},
-#' \code{\link{USNAM_genoABH}}  
-#' 
 #' @examples
 #' 
 #' # Genotypes

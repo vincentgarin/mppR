@@ -71,10 +71,6 @@ QTL <-  MQE_BackElim(mppData = mppData, QTL = QTL[, 1],
 
 
 }
-\seealso{
-\code{\link{mppData_form}}, \code{\link{parent_cluster}},
-\code{\link{USNAM_parClu}}
-}
 \author{
 Vincent Garin
 }

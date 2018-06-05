@@ -198,16 +198,11 @@ trait loci determined from experimental data in maize using cross validation
 and validation with independent samples. Genetics, 154(4), 1839-1849.
 }
 \seealso{
-\code{\link{mppData_form}},
 \code{\link{mpp_back_elim}},
 \code{\link{mpp_CIM}},
 \code{\link{mpp_perm}},
 \code{\link{mpp_SIM}},
-\code{\link{parent_cluster}},
-\code{\link{plot_CV}},
-\code{\link{QTL_R2}},
-\code{\link{QTL_pred_R2}},
-\code{\link{USNAM_parClu}}
+\code{\link{QTL_R2}}
 }
 \author{
 Vincent Garin

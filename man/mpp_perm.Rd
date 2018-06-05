@@ -99,9 +99,7 @@ Churchill, G. A., & Doerge, R. W. (1994). Empirical threshold values for
 quantitative trait mapping. Genetics, 138(3), 963-971.
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-\code{\link{parent_cluster}},
-\code{\link{USNAM_parClu}}
+\code{\link{mpp_SIM}}
 }
 \author{
 Vincent Garin

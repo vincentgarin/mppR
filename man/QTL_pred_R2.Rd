@@ -99,8 +99,7 @@ QTL_pred_R2(mppData.ts = mppData.ts, mppData.vs = mppData.vs, QTL = QTL)
 
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{parent_cluster}},
-\code{\link{QTL_R2}}, \code{\link{QTL_select}}, \code{\link{USNAM_parClu}}
+\code{\link{QTL_R2}}, \code{\link{QTL_select}}
 }
 \author{
 Vincent Garin
