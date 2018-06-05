@@ -2,44 +2,44 @@
 # QC_GenotypingError #
 ######################
 
-#' Detect genotyping errors
-#' 
-#' Check if markers have more than two alleles.
-#' 
-#' @param mk.mat \code{Character} marker scores \code{matrix} with genotypes as
-#' row and markers as column. \strong{Rows and columns names must be the genotype
-#' and marker identifiers respectively. Marker scores must be coded using one
-#' letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
-#' GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}
-#' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. Default = FALSE.
-#' 
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
-#' 
-#' @return Return:
-#' 
-#' \item{prob.mk}{\code{Character} vector containing the name of marker with
-#' more than two alleles.}
-#' 
-#' @author Vincent Garin
-#' 
-#' @seealso
-#' 
-#' \code{\link{QC_MAF}}, \code{\link{QC_missing}}
-#' 
-#' @examples
-#' 
-#' data(USNAM_geno)
-#' 
-#' mk.mat <- USNAM_geno
-#' mk.mat[1, 10] <- "TC" 
-#' QC_GenotypingError(mk.mat)
-#'
-#' @export
-#' 
-#' 
+# Detect genotyping errors
+# 
+# Check if markers have more than two alleles.
+# 
+# @param mk.mat \code{Character} marker scores \code{matrix} with genotypes as
+# row and markers as column. \strong{Rows and columns names must be the genotype
+# and marker identifiers respectively. Marker scores must be coded using one
+# letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
+# GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}
+# 
+# @param parallel \code{Logical} value specifying if the function should be
+# executed in parallel on multiple cores. Default = FALSE.
+# 
+# @param cluster Cluster object obtained with the function \code{makeCluster()}
+# from the parallel package. Default = NULL.
+# 
+# @return Return:
+# 
+# \item{prob.mk}{\code{Character} vector containing the name of marker with
+# more than two alleles.}
+# 
+# @author Vincent Garin
+# 
+# @seealso
+# 
+# \code{\link{QC_MAF}}, \code{\link{QC_missing}}
+# 
+# @examples
+# 
+# data(USNAM_geno)
+# 
+# mk.mat <- USNAM_geno
+# mk.mat[1, 10] <- "TC" 
+# QC_GenotypingError(mk.mat)
+#
+# @export
+# 
+# 
 
 QC_GenotypingError <- function(mk.mat, parallel = FALSE, cluster = NULL){
   

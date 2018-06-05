@@ -13,7 +13,7 @@
 #' is no more candidate position above the \code{threshold}.
 #' 
 #' @param Qprof Object of class \code{QTLprof} returned by the function 
-#' \code{\link{mpp_SIM}}, \code{\link{mpp_CIM}} or \code{\link{MQE_CIM}}. 
+#' \code{\link{mpp_SIM}} or \code{\link{mpp_CIM}}. 
 #' 
 #' @param threshold \code{Numeric} value representing -log10(p-value) threshold
 #' above which a position can be considered as a QTL candidate. Default = 3.

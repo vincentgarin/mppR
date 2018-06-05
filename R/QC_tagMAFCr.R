@@ -2,70 +2,70 @@
 # QC_tagMAFCr #
 ###############
 
-#' Tag problematic MAF
-#' 
-#' Detect markers with problematic minor allele frequency (MAF)
-#' within crosses. 
-#' 
-#' If \code{tag.mono = FALSE}, the within cross monomorphic markers are not
-#' considered as problematic.
-#' 
-#' @param MAF Object of class \code{mafRes} obtained with the function
-#' \code{\link{QC_MAF}} using a non null \code{cross.ind} argument.
-#' 
-#' @param MAF.lim \code{Numeric} vector with length equal to the number of
-#' crosses specifying the within cross MAF value bellow which a marker is tagged.
-#' Default = 0.05 for each cross.
-#' 
-#' @param tag.mono \code{Logical} value. If tag.mono = TRUE. Monomorphic
-#' markers within cross are also tagged as problematic. Default = FALSE.
-#' 
-#' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. Default = FALSE.
-#' 
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the \code{parallel} package. Default = NULL.   
-#' 
-#' @return Return:
-#'  
-#' \item{MAF.cr.ind}{\code{Logical} vector specifying if for at least one cross
-#' the MAF is bellow \code{MAF.lim} (without beeing monomorphic if
-#' \code{tag.mono = FALSE}).}
-#' 
-#' 
-#' @author Vincent Garin
-#' 
-#' @seealso
-#' 
-#' \code{\link{QC_MAF}}
-#' 
-#' @examples
-#' 
-#' data('USNAM_geno')
-#' 
-#' # obtain MAF object
-#' 
-#' cross.ind <- substr(rownames(USNAM_geno)[7:dim(USNAM_geno)[1]], 1, 4)
-#' 
-#' MAF <- QC_MAF(mk.mat = USNAM_geno[7:dim(USNAM_geno)[1], ],
-#'               cross.ind = cross.ind)
-#' 
-#' # Analyse MAF within crosses
-#' 
-#' MAF.cr.ind <- QC_tagMAFCr(MAF)
-#' 
-#' MAF$MAF.cr[, MAF.cr.ind] # Only a single marker has a MAF that is lower than
-#' # 0.05 but that is not monomorphic
-#' 
-#' MAF.cr.ind <- QC_tagMAFCr(MAF, tag.mono = TRUE)
-#' 
-#' sum(MAF.cr.ind) # 72 marker are tagged because they are monomorphic in at least
-#' # 1 cross, 1 because it MAF is bellow 0.05 in at least one cross without
-#' # being monomorphic in any cross.
-#'
-#' @export
-#' 
+# Tag problematic MAF
+# 
+# Detect markers with problematic minor allele frequency (MAF)
+# within crosses. 
+# 
+# If \code{tag.mono = FALSE}, the within cross monomorphic markers are not
+# considered as problematic.
+# 
+# @param MAF Object of class \code{mafRes} obtained with the function
+# \code{\link{QC_MAF}} using a non null \code{cross.ind} argument.
+# 
+# @param MAF.lim \code{Numeric} vector with length equal to the number of
+# crosses specifying the within cross MAF value bellow which a marker is tagged.
+# Default = 0.05 for each cross.
+# 
+# @param tag.mono \code{Logical} value. If tag.mono = TRUE. Monomorphic
+# markers within cross are also tagged as problematic. Default = FALSE.
+# 
+# 
+# @param parallel \code{Logical} value specifying if the function should be
+# executed in parallel on multiple cores. Default = FALSE.
+# 
+# @param cluster Cluster object obtained with the function \code{makeCluster()}
+# from the \code{parallel} package. Default = NULL.   
+# 
+# @return Return:
+#  
+# \item{MAF.cr.ind}{\code{Logical} vector specifying if for at least one cross
+# the MAF is bellow \code{MAF.lim} (without beeing monomorphic if
+# \code{tag.mono = FALSE}).}
+# 
+# 
+# @author Vincent Garin
+# 
+# @seealso
+# 
+# \code{\link{QC_MAF}}
+# 
+# @examples
+# 
+# data('USNAM_geno')
+# 
+# # obtain MAF object
+# 
+# cross.ind <- substr(rownames(USNAM_geno)[7:dim(USNAM_geno)[1]], 1, 4)
+# 
+# MAF <- QC_MAF(mk.mat = USNAM_geno[7:dim(USNAM_geno)[1], ],
+#               cross.ind = cross.ind)
+# 
+# # Analyse MAF within crosses
+# 
+# MAF.cr.ind <- QC_tagMAFCr(MAF)
+# 
+# MAF$MAF.cr[, MAF.cr.ind] # Only a single marker has a MAF that is lower than
+# # 0.05 but that is not monomorphic
+# 
+# MAF.cr.ind <- QC_tagMAFCr(MAF, tag.mono = TRUE)
+# 
+# sum(MAF.cr.ind) # 72 marker are tagged because they are monomorphic in at least
+# # 1 cross, 1 because it MAF is bellow 0.05 in at least one cross without
+# # being monomorphic in any cross.
+#
+# @export
+# 
 
 
 QC_tagMAFCr <- function(MAF, MAF.lim = NULL, tag.mono = FALSE, parallel = FALSE,

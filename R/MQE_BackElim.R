@@ -2,6 +2,7 @@
 # MQE_BackElim #
 ################
 
+<<<<<<< HEAD
 #' Backward elimination on multi-QTL effect candidates
 #' 
 #' Performs a backward elimination using a list of given QTLs positions. These
@@ -67,6 +68,73 @@
 #' 
 #' @export
 #' 
+=======
+# Backward elimination on multi-QTL effect candidates
+# 
+# Performs a backward elimination using a list of given QTLs positions. These
+# position can have different type of QTL effects (cross-specific, parental,
+# ancestral or bi-allelic).
+# 
+# The function starts with all QTL positions in the model and test the inclusion
+# of each position as the last in the model. If all position p-values are below
+# \code{alpha} the procedure stop. If not the position with the highest p-value
+# is remove and the procedure continue until there is no more unsignificant
+# position.
+# 
+# \strong{WARNING!} The computation of random pedigree models
+# (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+# due to singularities due to a strong correlation between the QTL term(s) and 
+# the polygenic term. This situation can appear in the parental model.
+# the error can also sometimes come from the \code{asreml()} function. From
+# our experience, in that case, trying to re-run the function one or two times
+# allow to obtain a result.
+# 
+# @param mppData An object of class \code{mppData}
+#
+# @param trait \code{Numerical} or \code{character} indicator to specify which
+# trait of the \code{mppData} object should be used. Default = 1.
+# 
+# @param QTL Vector of \code{character} markers or in between marker positions
+# names. Default = NULL.
+# 
+# @param Q.eff \code{Character} vector indicating for each QTL position the
+# type of QTL effect among: "cr", "par", "anc" and "biall". For details look
+# at \code{\link{mpp_SIM}}.
+#
+# @param VCOV \code{Character} expression defining the type of variance
+# covariance structure used: 1) "h.err" for an homogeneous variance residual term
+# (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
+# \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
+# (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
+# and 5) "ped_cr.err" for random pedigree and CSRT model.
+# For more details see \code{\link{mpp_SIM}}. Default = "h.err".
+# 
+# @param alpha \code{Numeric} value indicating the level of significance for
+# the backward elimination. Default = 0.05.
+# 
+# @return Return:
+# 
+# \item{QTL }{\code{Data.frame} of class \code{QTLlist} with six columns :
+# 1) QTL marker or in between position names; 2) chromosomes;
+# 3) interger position indicators on the chromosome;
+# 4) positions in centi-Morgan; 5) -log10(p-values), and 6) type of QTL effect.}
+#  
+# @author Vincent Garin
+# 
+# @examples
+# 
+# data(mppData)
+# 
+# SIM <- mpp_SIM(mppData = mppData)
+# QTL <- QTL_select(SIM)
+# 
+# QTL <-  MQE_BackElim(mppData = mppData, QTL = QTL[, 1],
+#                      Q.eff = c("anc", "par", "biall"))
+# 
+# 
+# @export
+# 
+>>>>>>> Silencing many functions
 
 
 MQE_BackElim <- function (mppData = NULL, trait = 1, QTL = NULL, Q.eff,

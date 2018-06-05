@@ -167,8 +167,7 @@
 #' 
 #' The results elements return as R object are also saved as text
 #' files at the specified output location (\code{output.loc}). A transparency
-#' plot of the CV results (plot.pdf) obtained with the function
-#' \code{\link{plot_CV}} is also saved.
+#' plot of the CV results (plot.pdf) is also saved.
 #' 
 #' 
 #' @author Vincent Garin

@@ -2,33 +2,33 @@
 # IncMat_parent #
 #################
 
-#' Skeleton of parental incidence matrices
-#' 
-#' Form the skeleton matrices used to form parental incidence
-#' matrices in parental effect models.
-#' 
-#' @param mppData An object of class \code{mppData}.
-#' 
-#' @return Return:
-#' 
-#' \code{List} with two matrices
-#' 
-#' \item{PA}{Incidence matrix specifying for each genotype which parent
-#' is the parent 1 or A}
-#' 
-#' \item{PB}{Incidence matrix specifying for each genotype which parent
-#' is the parent 2 or B}
-#' 
-#' @author Vincent Garin
-#' 
-#' @examples
-#' 
-#' data(mppData)
-#' 
-#' par.mat <- IncMat_parent(mppData)
-#' 
-#' @export
-#'    
+# Skeleton of parental incidence matrices
+# 
+# Form the skeleton matrices used to form parental incidence
+# matrices in parental effect models.
+# 
+# @param mppData An object of class \code{mppData}.
+# 
+# @return Return:
+# 
+# \code{List} with two matrices
+# 
+# \item{PA}{Incidence matrix specifying for each genotype which parent
+# is the parent 1 or A}
+# 
+# \item{PB}{Incidence matrix specifying for each genotype which parent
+# is the parent 2 or B}
+# 
+# @author Vincent Garin
+# 
+# @examples
+# 
+# data(mppData)
+# 
+# par.mat <- IncMat_parent(mppData)
+# 
+# @export
+#    
 
 
 IncMat_parent <- function(mppData){

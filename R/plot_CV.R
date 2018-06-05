@@ -2,43 +2,43 @@
 # plot_CV #
 ###########
 
-#' Plot cross-validation QTL profiles
-#' 
-#' Plot cross-validation (CV) QTL profiles using transparency. The
-#' black straight lines are proportional to the number of time a position has
-#' been detected during the entire CV process. Transparency plot are based on
-#' an idea by Pieter Jongsma (see reference).
-#' 
-#' @param CV.res Object returned by function \code{\link{mpp_CV}}.
-#' 
-#' @param main Title of the graph. Default = "CV QTL profiles".
-#' 
-#' @author Vincent Garin
-#' 
-#' 
-#' @references
-#'
-#' https://github.com/pieterjongsma/RProfilePlot
-#' 
-#' @seealso \code{\link{mpp_CV}}
-#' 
-#' @examples
-#' 
-#' \dontrun{
-#' 
-#' data(mppData)
-#' 
-#' my.loc <- "C:/..."
-#' 
-#' CV <- mpp_CV(mppData = mppData, her = .5, output.loc = my.loc, Rep = 3)
-#' 
-#' plot_CV(CV.res = CV)
-#' 
-#' }
-#' 
-#' 
-#' @export
-#'     
+# Plot cross-validation QTL profiles
+# 
+# Plot cross-validation (CV) QTL profiles using transparency. The
+# black straight lines are proportional to the number of time a position has
+# been detected during the entire CV process. Transparency plot are based on
+# an idea by Pieter Jongsma (see reference).
+# 
+# @param CV.res Object returned by function \code{\link{mpp_CV}}.
+# 
+# @param main Title of the graph. Default = "CV QTL profiles".
+# 
+# @author Vincent Garin
+# 
+# 
+# @references
+#
+# https://github.com/pieterjongsma/RProfilePlot
+# 
+# @seealso \code{\link{mpp_CV}}
+# 
+# @examples
+# 
+# \dontrun{
+# 
+# data(mppData)
+# 
+# my.loc <- "C:/..."
+# 
+# CV <- mpp_CV(mppData = mppData, her = .5, output.loc = my.loc, Rep = 3)
+# 
+# plot_CV(CV.res = CV)
+# 
+# }
+# 
+# 
+# @export
+#     
 
 
 plot_CV <- function(CV.res, main = "CV QTL profiles") {

@@ -2,6 +2,7 @@
 # MQE_R2 #
 ##########
 
+<<<<<<< HEAD
 #' Global and partial R squared for multi-QTL effects 
 #' 
 #' Computes the global and partial (adjusted) R squared of a list of QTLs
@@ -64,6 +65,70 @@
 #'
 #' @export
 #'
+=======
+# Global and partial R squared for multi-QTL effects 
+# 
+# Computes the global and partial (adjusted) R squared of a list of QTLs
+# including positions with different types of QTL effects. For example
+# position one is a parental effect, position two a bi-allelic QTL, etc.
+# The type of effect of the QTL position are specified in \code{Q.eff}.
+# 
+# The R squared computation is done using a linear model
+# corresponding to \code{VCOV = 'h.err'}. For more details about R squared
+# computation and adjustement look at function \code{\link{QTL_R2}}.
+#
+# @param mppData An object of class \code{mppData}.
+# 
+# @param trait \code{Numerical} or \code{character} indicator to specify which
+# trait of the \code{mppData} object should be used. Default = 1.
+# 
+# @param QTL Vector of \code{character} markers or in between marker positions
+# names. Default = NULL.
+# 
+# @param Q.eff \code{Character} vector indicating for each QTL position the
+# type of QTL effect among: "cr", "par", "anc" and "biall". For details look at
+# \code{\link{mpp_SIM}}.
+#
+# @param glb.only \code{Logical} value. If \code{glb.only = TRUE}, only
+# the global and global adjusted R squared will be returned. Default = FALSE.
+# 
+#
+# @return Return:
+#
+# List containing the following objects:
+#
+# \item{glb.R2 }{ Global R squared of all QTL terms.}
+#
+# \item{glb.adj.R2 }{ Global adjusted R squared of all QTL terms.}
+#
+# \item{part.R2.diff }{ Vector of partial R squared doing
+# the difference between the full model and a model minus the ith QTL.}
+# 
+# \item{part.adj.R2.diff }{ Vector of partial adjusted R squared doing
+# the difference between the full model and a model minus the ith QTL.}
+# 
+# \item{part.R2.sg }{ Vector of partial R squared using only the ith QTL.}
+# 
+# \item{part.adj.R2.sg }{ Vector of partial adjusted R squared using only the
+# ith QTL.}
+# 
+# 
+# @author Vincent Garin
+# 
+# @seealso \code{\link{mpp_SIM}}, \code{\link{QTL_R2}}
+#
+# @examples
+#
+# data(mppData)
+# 
+# SIM <- mpp_SIM(mppData = mppData)
+# QTL <- QTL_select(SIM)
+# 
+# MQE_R2(mppData = mppData, QTL = QTL[, 1], Q.eff = c("par", "anc", "biall"))
+#
+# @export
+#
+>>>>>>> Silencing many functions
 
 
 MQE_R2 <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,

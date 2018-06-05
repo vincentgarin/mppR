@@ -2,37 +2,37 @@
 # QC_minCrSize #
 ################
 
-#' Minimum cross size
-#' 
-#' Remove the crosses that do not have the minimum critical size.
-#' 
-#' @param mk.mat Marker score \code{matrix} or \code{data.frame} with genotype as
-#' row and markers as column.
-#' 
-#' @param cross.ind \code{Character} vector indicating to which cross each
-#' genotype belong.
-#' 
-#' @param n.lim \code{Numeric} value specifying the minimum cross size.
-#' Default = 15.   
-#' 
-#' @return Return:
-#' 
-#' \item{mk.mat.red}{Reduced marker \code{matrix} with too small crosses removed.}
-#' 
-#' @author Vincent Garin
-#' 
-#' @examples
-#' 
-#' data('USNAM_geno')
-#' 
-#' USNAM_geno.red <- USNAM_geno[-c(7:101), ] # remove 95 genotypes in the first cross
-#' 
-#' cross.ind <- substr(rownames(USNAM_geno.red), 1, 4)
-#' 
-#' mk.mat.red <- QC_minCrSize(mk.mat = USNAM_geno.red, cross.ind = cross.ind)
-#' 
-#' @export
-#' 
+# Minimum cross size
+# 
+# Remove the crosses that do not have the minimum critical size.
+# 
+# @param mk.mat Marker score \code{matrix} or \code{data.frame} with genotype as
+# row and markers as column.
+# 
+# @param cross.ind \code{Character} vector indicating to which cross each
+# genotype belong.
+# 
+# @param n.lim \code{Numeric} value specifying the minimum cross size.
+# Default = 15.   
+# 
+# @return Return:
+# 
+# \item{mk.mat.red}{Reduced marker \code{matrix} with too small crosses removed.}
+# 
+# @author Vincent Garin
+# 
+# @examples
+# 
+# data('USNAM_geno')
+# 
+# USNAM_geno.red <- USNAM_geno[-c(7:101), ] # remove 95 genotypes in the first cross
+# 
+# cross.ind <- substr(rownames(USNAM_geno.red), 1, 4)
+# 
+# mk.mat.red <- QC_minCrSize(mk.mat = USNAM_geno.red, cross.ind = cross.ind)
+# 
+# @export
+# 
 
 
 

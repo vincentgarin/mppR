@@ -2,34 +2,34 @@
 # toMapMaker #
 ##############
 
-#' Map into MapMaker format
-#' 
-#' Transform a map file with three columns (marker identifiers, chromosomes and
-#' positions in cM) into MapMaker format.
-#' 
-#' @param map Three columns \code{data.frame} with: 1) \code{character}
-#' marker identifiers; 2) \code{numeric} integer chromosome indicators
-#' (1, 2, 3,...); and 3) \code{numeric} positions in centi-Morgan.
-#' 
-#' @return Return:
-#' 
-#' \item{new.map}{Map with the MapMaker format: \code{list} of matrix with one
-#' element for each chromosome. Each single chromosome matrix is composed of four
-#' columns: 1) marker identifiers; 2) dist.to: one lagged difference
-#' positions in cM with Inf at first position; 3) dist.from: one lagged
-#' difference positions in cM with Inf at last position ; 4) locus: marker
-#' positions in cM.}
-#' 
-#' @author Vincent Garin
-#' 
-#' @examples
-#' 
-#' data(USNAM_map)
-#' 
-#' map_MapMaker <- toMapMaker(USNAM_map)
-#' 
-#' @export
-#' 
+# Map into MapMaker format
+# 
+# Transform a map file with three columns (marker identifiers, chromosomes and
+# positions in cM) into MapMaker format.
+# 
+# @param map Three columns \code{data.frame} with: 1) \code{character}
+# marker identifiers; 2) \code{numeric} integer chromosome indicators
+# (1, 2, 3,...); and 3) \code{numeric} positions in centi-Morgan.
+# 
+# @return Return:
+# 
+# \item{new.map}{Map with the MapMaker format: \code{list} of matrix with one
+# element for each chromosome. Each single chromosome matrix is composed of four
+# columns: 1) marker identifiers; 2) dist.to: one lagged difference
+# positions in cM with Inf at first position; 3) dist.from: one lagged
+# difference positions in cM with Inf at last position ; 4) locus: marker
+# positions in cM.}
+# 
+# @author Vincent Garin
+# 
+# @examples
+# 
+# data(USNAM_map)
+# 
+# map_MapMaker <- toMapMaker(USNAM_map)
+# 
+# @export
+# 
 
 
 toMapMaker <- function(map) {

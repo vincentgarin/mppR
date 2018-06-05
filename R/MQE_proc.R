@@ -14,21 +14,19 @@
 #' \enumerate{
 #' 
 #' \item{Forward regression to determine a MQE model with different
-#' possible assumptions for the QTL effect at different loci. The function use
-#' \code{\link{MQE_forward}}.}
+#' possible assumptions for the QTL effect at different loci. The function
+#' use.}
 #' 
 #' \item{Optional backward elimination (\code{backward = TRUE}) on the final
-#' list of detected QTLs (\code{\link{MQE_BackElim}}).} 
+#' list of detected QTLs.} 
 #' 
-#' \item{Estimation of the QTL genetic effects and R squared statistics
-#' (\code{\link{MQE_genEffects}} and \code{\link{MQE_R2}}).}
+#' \item{Estimation of the QTL genetic effects and R squared statistics.}
 #' 
 #' \item{Optional plot (\code{plot.MQE = TRUE}) of the last CIM run of the
-#' forward regression using the function \code{\link{MQE_plot}.}
+#' forward regression using the function.}
 #' 
 #' }
 #' 
-#' }
 #' 
 #' \strong{WARNING!(1)} The computation of \code{MQE_proc()} function using mixed
 #' models (all models with \code{VCOV} different than \code{"h.err"})
@@ -84,8 +82,8 @@
 #' the backward elimination. Default = 0.05.
 #' 
 #' @param plot.MQE \code{Logical} value. If \code{plot.MQE = TRUE},
-#' the function will plot the last run of the MQE model determination using
-#' \code{\link{MQE_plot}}. Default = FALSE.
+#' the function will plot the last run of the MQE model determination.
+#' Default = FALSE.
 #' 
 #' @param n.cores \code{Numeric}. Specify here the number of cores you like to
 #' use. Default = 1.
@@ -107,11 +105,9 @@
 #' \item{QTL}{\code{Data.frame} with QTL positions.}
 #' 
 #' \item{R2}{\code{list} containing R squared statistics of the QTL effects.
-#' for details see \code{\link{QTL_R2}} and \code{\link{MQE_R2}} output
-#' sections.}
+#' for details see \code{\link{QTL_R2}}.}
 #' 
-#' \item{QTL.effects}{\code{List} of genetic effects per QTL. For details see
-#' \code{\link{MQE_genEffects}} output section.}
+#' \item{QTL.effects}{\code{List} of genetic effects per QTL.}
 #' 
 #'
 #' Some output files are also saved at the location specified
@@ -121,19 +117,18 @@
 #' 
 #' \item{A QTL report (QTL_REPORT.txt) with: 1) the number of detected QTLs;
 #' 2) the global R squared statistics; 3) for each QTL, position information
-#'  and estimated QTL genetic effect per cross or parents (for details see
-#'  \code{\link{MQE_genEffects}}).}
+#'  and estimated QTL genetic effect per cross or parents.}
 #' 
 #' \item{The list of QTLs (QTL.txt).}
 #' 
 #' \item{The QTL R squared statistics (QTL_R2.txt) (for details see
-#' \code{\link{MQE_R2}} or \code{\link{QTL_R2}}).}
+#'  \code{\link{QTL_R2}}).}
 #' 
 #' \item{General results of the QTL detection process: Number of QTL and
 #' global adjusted and non-adjusted R squared statistics. (QTL_genResults.txt).}
 #' 
 #' \item{if \code{plot.MQE = TRUE}, a plot of the last QTL detection run profile
-#' (plot_MQE.pdf) obtained with the function \code{\link{MQE_plot}}.}
+#' (plot_MQE.pdf).}
 #' 
 #' 
 #' }
