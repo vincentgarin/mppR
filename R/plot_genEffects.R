@@ -54,7 +54,7 @@
 #' 
 #' @param QTL Optional argument. Object of class \code{QTLlist} representing a
 #' list of selected position obtained with the function \code{\link{QTL_select}}
-#' or vector of \code{character} marker or in between marker positions names.
+#' or vector of \code{character} marker positions names.
 #' These positions will be plotted on the graph. Default = NULL.
 #' 
 #' @param main Title of the graph. Default =  "QTL genetic effects plot".

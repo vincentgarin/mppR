@@ -30,7 +30,7 @@ For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
-vector of \code{character} marker or in between marker positions names.
+vector of \code{character} marker positions names.
 Default = NULL.}
 
 \item{her}{\code{Numeric} value between 0 and 1 representing the heritability

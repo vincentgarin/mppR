@@ -49,7 +49,7 @@
 #' 
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or in between marker positions names.
+#' vector of \code{character} marker positions names.
 #' 
 #' @param sum_zero Optional \code{Logical} value specifying if the QTL effect of
 #' a parental or an ancestral model should be caculated using the sum to zero

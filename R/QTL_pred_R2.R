@@ -54,7 +54,7 @@
 #' 
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or in between marker positions names.
+#' vector of \code{character} marker positions names.
 #' Default = NULL.
 #'
 #' @param her \code{Numeric} value between 0 and 1 representing the heritability

@@ -83,8 +83,7 @@
 #' 
 #' \code{List} with the following objects
 #' 
-#' \item{par.clu }{\code{Integer matrix} with rows repersenting marker or
-#' in between positions and column corresponding to the parents. At a single
+#' \item{par.clu }{\code{Integer matrix} with rows repersenting marker positions and column corresponding to the parents. At a single
 #' marker position, parents with the same value were clustered in the same
 #' ancestral group.}
 #' 

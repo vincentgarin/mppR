@@ -27,7 +27,7 @@
 #' @param trait \code{Numerical} or \code{character} indicator to specify which
 #' trait of the \code{mppData} object should be used. Default = 1.
 #' 
-#' @param QTL Vector of \code{character} markers or in between marker positions
+#' @param QTL Vector of \code{character} markers positions
 #' names. Default = NULL.
 #' 
 #' @param Q.eff \code{Character} vector indicating for each QTL position the
@@ -48,7 +48,7 @@
 #' @return Return:
 #' 
 #' \item{QTL }{\code{Data.frame} of class \code{QTLlist} with six columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
+#' 1) QTL marker names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; 5) -log10(p-values), and 6) type of QTL effect.}
 #'  

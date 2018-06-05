@@ -32,7 +32,7 @@
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #' 
-#' @param cofactors Vector of \code{character} marker or in between marker
+#' @param cofactors Vector of \code{character} marker
 #' positions names. Default = NULL.
 #' 
 #' @param cof.Qeff \code{Character} vector indicating for each cofactor position
@@ -53,7 +53,7 @@
 #' @return Return:
 #' 
 #' \item{CIM }{\code{Data.frame} of class \code{QTLprof} with five columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
+#' 1) QTL marker names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-values)}
 #' 

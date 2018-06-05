@@ -30,7 +30,7 @@
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or in between marker positions names.
+#' vector of \code{character} marker positions names.
 #' Default = NULL.
 #'
 #' @param Q.eff \code{Character} expression indicating the assumption concerning
@@ -52,7 +52,7 @@
 #' @return Return:
 #' 
 #' \item{QTL }{\code{Data.frame} of class \code{QTLlist} with five columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
+#' 1) QTL marker names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-values).}
 #' 

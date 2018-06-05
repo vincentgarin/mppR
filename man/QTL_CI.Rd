@@ -9,7 +9,7 @@ QTL_CI(QTL = NULL, Qprof, drop = 1.5)
 \arguments{
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
-vector of \code{character} marker or in between marker positions names.
+vector of \code{character} marker positions names.
 Default = NULL.}
 
 \item{Qprof}{Object of class \code{QTLprof} returned by the function
@@ -24,10 +24,9 @@ interval. Default = 1.5.}
 \value{
 Return:
 
-\item{CI }{\code{data.frame} with the following columns: 1) QTL marker or
-in between position names; 2) chromosomes; 3) QTL positions in cM;
-4) inferior marker or in between position names; 5) inferior positions in cM;
-6) superior marker or in between position names; 7) superior positions in cM;
+\item{CI }{\code{data.frame} with the following columns: 1) QTL marker names; 2) chromosomes; 3) QTL positions in cM;
+4) inferior marker names; 5) inferior positions in cM;
+6) superior marker names; 7) superior positions in cM;
 8) ranges in cM.}
 }
 \description{

@@ -39,7 +39,7 @@
 #' 
 #' @param cofactors Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
-#' vector of \code{character} marker or in between marker positions names.
+#' vector of \code{character} marker positions names.
 #' Default = NULL.
 #' 
 #' @param window \code{Numeric} distance (cM) on the left and the right of a
@@ -60,7 +60,7 @@
 #' @return Return:
 #' 
 #' \item{CIM }{\code{Data.frame} of class \code{QTLprof}. with five columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
+#' 1) QTL marker names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-val). And if
 #' \code{plot.gen.eff = TRUE}, p-values of the cross or parental QTL effects.}

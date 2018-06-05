@@ -39,7 +39,7 @@
 #' @param trait \code{Numerical} or \code{character} indicator to specify which
 #' trait of the \code{mppData} object should be used. Default = 1.
 #' 
-#' @param QTL Vector of \code{character} markers or in between marker positions
+#' @param QTL Vector of \code{character} markers positions
 #' names. Default = NULL.
 #' 
 #' @param Q.eff \code{Character} vector indicating for each QTL position the

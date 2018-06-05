@@ -69,7 +69,7 @@
 #' @return
 #' 
 #' \item{QTL.list }{\code{Data.frame} with six columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
+#' 1) QTL marker names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; 5) -log10(p-values); and 6) type of
 #' QTL incidence matrix of the selected positions}

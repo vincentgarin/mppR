@@ -14,7 +14,7 @@ trait of the \code{mppData} object should be used. Default = 1.}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
-vector of \code{character} marker or in between marker positions names.
+vector of \code{character} marker positions names.
 Default = NULL.}
 
 \item{Q.eff}{\code{Character} expression indicating the assumption concerning

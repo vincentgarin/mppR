@@ -27,7 +27,7 @@
 #' @return Return:
 #' 
 #' \item{QTL }{\code{Data.frame} of class \code{QTLlist} with five columns :
-#' 1) QTL marker or in between position names; 2) chromosomes;
+#' 1) QTL marker names; 2) chromosomes;
 #' 3) interger position indicators on the chromosome;
 #' 4) positions in centi-Morgan; and 5) -log10(p-values).}
 #' 
