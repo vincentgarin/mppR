@@ -2,6 +2,7 @@
 # MQE_genEffects #
 ##################
 
+<<<<<<< HEAD
 #' QTL genetic effects multi-QTL effect model
 #' 
 #' Compute a multi-QTL model with a list of QTL candidates (\code{QTL}) and return
@@ -93,6 +94,99 @@
 #'
 #' @export
 #'
+=======
+# QTL genetic effects multi-QTL effect model
+# 
+# Compute a multi-QTL model with a list of QTL candidates (\code{QTL}) and return
+# the decomposed QTL genetic effects per cross or per parents. The list of QTL
+# can be of different types (cross-specific, parental, ancestral or bi-allelic).
+# The type of QTL effects are specified in the vector \code{Q.eff}.
+# 
+# This function computes for each QTL position the genetic effects of the
+# cross, parental, ancestral or SNP allele components. For the cross-specific
+# model (\code{Q.eff = "cr"}), the genetics effects represent the substitution
+# effect of an single allele from the parent 2 (or B) with respect to an allele
+# coming from the parent 1 or A. All effects are given in absolute value with
+# the parent that cary the positive allele.
+# 
+# For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), the
+# reference allele is defined per interconneted part. The most frequent
+# parental (ancestral) allele is set as reference. Effects of the other alleles
+# are estimated as deviation with respect to the reference. For more details
+# about reference definition see \code{\link{QTL_gen_effects}} and
+# \code{\link{design_connectivity}}.
+# 
+# For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
+# represent the effects of a single allele copy of the least frequent allele.
+# 
+# \strong{WARNING!} The computation of random pedigree models
+# (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+# due to singularities due to a strong correlation between the QTL term(s) and 
+# the polygenic term. This situation can appear in the parental model.
+# the error can also sometimes come from the \code{asreml()} function. From
+# our experience, in that case, trying to re-run the function one or two times
+# allow to obtain a result.
+#
+# @param mppData An object of class \code{mppData}
+# 
+# @param trait \code{Numerical} or \code{character} indicator to specify which
+# trait of the \code{mppData} object should be used. Default = 1.
+# 
+# @param QTL Vector of \code{character} markers or in between marker positions
+# names. Default = NULL.
+# 
+# @param Q.eff \code{Character} vector indicating for each QTL position the
+# type of QTL effect among: "cr", "par", "anc" and "biall". For details look at
+# \code{\link{mpp_SIM}}.
+#
+# @param VCOV \code{Character} expression defining the type of variance
+# covariance structure used: 1) "h.err" for an homogeneous variance residual term
+# (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
+# \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
+# (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
+# and 5) "ped_cr.err" for random pedigree and CSRT model.
+# For more details see \code{\link{mpp_SIM}}. Default = "h.err".
+#
+# @return Return:
+#
+# \item{results}{\code{List} of \code{data.frame} (one per QTL) containing the
+# following information:
+# 
+# \enumerate{
+# 
+# \item{QTL genetic effects per cross or parent.}
+# \item{Standard error of the QTL effects.}
+# \item{Test statistics of the effects (t-test or Wald statistic).}
+# \item{P-value of the test statistics.}
+# \item{Significance of the QTL effects.}
+# \item{For cross-specific model, parent with the positive additive effects.}
+# \item{For parental and ancestral model, indicator of connected part of the
+# design and reference.}
+# \item{Allele scores of the parents if \code{geno.par} is non NULL
+# in the \code{mppData} object.}
+# 
+#   }
+# 
+# }
+# 
+#   
+# @author Vincent Garin
+# 
+# @seealso \code{\link{mpp_SIM}}
+#
+# @examples
+#
+# data(mppData)
+# 
+# SIM <- mpp_SIM(mppData = mppData)
+# QTL <- QTL_select(SIM)
+# 
+# QTL.eff <- MQE_genEffects(mppData = mppData, QTL = QTL[, 1],
+#                           Q.eff = c("anc", "par", "biall"))
+#
+# @export
+#
+>>>>>>> Silencing many functions
 
 
 MQE_genEffects <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,

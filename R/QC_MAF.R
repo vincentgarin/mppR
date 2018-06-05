@@ -2,59 +2,59 @@
 # QC_MAF #
 ##########
 
-#' Minor allele frequency
-#' 
-#' Compute minor allele frequency (MAF) at the whole population and
-#' within crosses if a cross indicator vector is provided to \code{cross.ind}.
-#' 
-#' @param mk.mat \code{Character} marker score \code{matrix} with genotypes as
-#' row and markers as column. \strong{Rows and columns names must be the genotype
-#' and marker identifiers respectively. Marker scores must be coded using one
-#' letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
-#' GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}
-#' 
-#' @param cross.ind \code{Character} vector indicating to which cross each
-#' genotype belongs. If \code{cross.ind = NULL}, the function do not consider cross
-#' subdivisions and only calculate MAF at the population level. Default = NULL.
-#' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. Default = FALSE.
-#' 
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.   
-#' 
-#' @return Return:
-#' 
-#' Object of class mafRes MAF containing the following element(s).
-#' If cross.ind = NULL
-#' 
-#' \item{MAF.pop}{Vector of marker allele MAF at the
-#' population level. \code{NA} if all markers scores are missing.}
-#' 
-#' If cross.ind is not NULL
-#' 
-#' \item{MAF.pop}{Vector of marker allele MAF at the
-#' population level. \code{NA} if all markers scores are missing.}
-#' 
-#' \item{MAF.cr}{\code{Matrix} of marker allele MAF within crosses.
-#' \code{NA} if all markers scores are missing.}
-#' 
-#' @author Vincent Garin
-#' 
-#' @seealso
-#' 
-#' \code{\link{QC_tagMAFCr}}
-#' 
-#' @examples
-#' 
-#' data(USNAM_geno)
-#' cross.ind <- substr(rownames(USNAM_geno)[7:dim(USNAM_geno)[1]], 1, 4)
-#' 
-#' MAF <- QC_MAF(mk.mat = USNAM_geno[7:dim(USNAM_geno)[1], ],
-#'              cross.ind = cross.ind)
-#'
-#' @export
-#' 
+# Minor allele frequency
+# 
+# Compute minor allele frequency (MAF) at the whole population and
+# within crosses if a cross indicator vector is provided to \code{cross.ind}.
+# 
+# @param mk.mat \code{Character} marker score \code{matrix} with genotypes as
+# row and markers as column. \strong{Rows and columns names must be the genotype
+# and marker identifiers respectively. Marker scores must be coded using one
+# letter per allele. For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT,
+# GA, GC, GT, TA, TC, TG. Missing values must be coded \code{NA}.}
+# 
+# @param cross.ind \code{Character} vector indicating to which cross each
+# genotype belongs. If \code{cross.ind = NULL}, the function do not consider cross
+# subdivisions and only calculate MAF at the population level. Default = NULL.
+# 
+# @param parallel \code{Logical} value specifying if the function should be
+# executed in parallel on multiple cores. Default = FALSE.
+# 
+# @param cluster Cluster object obtained with the function \code{makeCluster()}
+# from the parallel package. Default = NULL.   
+# 
+# @return Return:
+# 
+# Object of class mafRes MAF containing the following element(s).
+# If cross.ind = NULL
+# 
+# \item{MAF.pop}{Vector of marker allele MAF at the
+# population level. \code{NA} if all markers scores are missing.}
+# 
+# If cross.ind is not NULL
+# 
+# \item{MAF.pop}{Vector of marker allele MAF at the
+# population level. \code{NA} if all markers scores are missing.}
+# 
+# \item{MAF.cr}{\code{Matrix} of marker allele MAF within crosses.
+# \code{NA} if all markers scores are missing.}
+# 
+# @author Vincent Garin
+# 
+# @seealso
+# 
+# \code{\link{QC_tagMAFCr}}
+# 
+# @examples
+# 
+# data(USNAM_geno)
+# cross.ind <- substr(rownames(USNAM_geno)[7:dim(USNAM_geno)[1]], 1, 4)
+# 
+# MAF <- QC_MAF(mk.mat = USNAM_geno[7:dim(USNAM_geno)[1], ],
+#              cross.ind = cross.ind)
+#
+# @export
+# 
 
 
 QC_MAF <- function(mk.mat, cross.ind = NULL, parallel = FALSE,

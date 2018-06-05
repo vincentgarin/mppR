@@ -28,8 +28,7 @@
 #' (\code{\link{QTL_R2}}).}
 #' 
 #' \item{Optional QTL confidence interval computation from a CIM- profile
-#' (excluding cofactors on the scanned chromosome) (\code{argument CI=TRUE})
-#' (\code{\link{QTL_CI}}).}
+#' (excluding cofactors on the scanned chromosome) (\code{argument CI=TRUE}).}
 #' 
 #' }
 #' 

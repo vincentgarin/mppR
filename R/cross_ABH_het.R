@@ -3,83 +3,79 @@
 #################
 
 
-#' ABH assignment per cross with heterozygous or missing parents
-#' 
-#' Transform offspring genotype scores into A, B, H or NA (missing) according
-#' to the scores of parents 1 and 2 of each cross when parents have markers with
-#' heterozygous scores.
-#' 
-#' For marker without heterozygous parent scrores, the assignment rules is the
-#' same as in \code{\link{cross_ABH}}. If a parent score is heterozygous or
-#' missing, the assignment rules are the following. If the two parents are
-#' heterozygous or one parent is heterozygous and the other missing, the
-#' offspring get NA since the parental origin can not be inferred with certainty.
-#' If one parent is heterozygous or missing and the second parent is
-#' homozygous, the function looks at offspring segregating pattern to try to
-#' infer which allele was transmitted by the heterozygous parent. If this is
-#' possible we consider the heteroxzygous parent as homozygous for the
-#' transmitted allele and use this allele score for ABH assignment. 
-#' 
-#' @param par.sc \code{Character} marker scores \code{matrix} of the
-#' parents of the different cross. \strong{The rownames
-#' must be the parents identifiers and correspond to the one used in argument
-#' \code{par.par.cross}. Parent scores must be homozygous.
-#' Missing value must be coded NA.}
-#' 
-#' @param off.sc \code{Character} marker scores \code{matrix} of the
-#' offspring. \strong{The possible values must be: homozygous like parent 1 or 2,
-#' heterozygous or missing. Missing values must be coded NA.}
-#' 
-#' @param cross.ind \code{Character} vector with the same length as the number
-#' of offspring genotypes which specifies to which cross each offspring genotype
-#' belongs.
-#' 
-#' @param par.per.cross Three columns \code{Character matrix} specifying :
-#' 1) the cross indicators (\strong{The cross indicators must be  similar to
-#' the one used in \code{cross.ind} and appear in the same order}); 2) the
-#' parents 1 identifiers of the crosses; 3) the parents 2 identifiers of the
-#' crosses. \strong{The list of parent identifiers must be similar to the
-#' rownames of the argument \code{par.sc}}.
-#' 
-#' @return Return:
-#' 
-#' \item{geno.ABH}{\code{Character matrix} with ABH coding for the different
-#' genotypes of the population}
-#' 
-#' @author Vincent Garin
-#' 
-#' @seealso
-#' 
-#' \code{\link{cross_ABH}}
-#' 
-#' @examples
-#' 
-#' # Genotypes
-#' data("USNAM_geno")
-#' geno <- USNAM_geno
-#' 
-#' # Remove markers for which parents are monomorphic
-#' par.mono <- QC_MAF(mk.mat = geno[1:6, ])
-#' geno <- geno[, -which(par.mono == 0)]
-#' 
-#' # Parents scores
-#' par.sc <- geno[1:6, ]
-#' 
-#' # Offspring scores
-#' off.sc <- geno[7:506, ]
-#' 
-#' # Cross indicator
-#' cross.ind <- substr(rownames(geno)[7:506], 1, 4)
-#' 
-#' # Parent of the crosses matrix
-#' par.per.cross <- cbind(unique(cross.ind), rep("B73",5), rownames(par.sc)[-1])
-#' 
-#' geno.ABH <- cross_ABH_het(par.sc = par.sc, off.sc = off.sc,
-#'                           cross.ind = cross.ind,
-#'                           par.per.cross = par.per.cross)
-#'
-#' @export
-#' 
+# ABH assignment per cross with heterozygous or missing parents
+# 
+# Transform offspring genotype scores into A, B, H or NA (missing) according
+# to the scores of parents 1 and 2 of each cross when parents have markers with
+# heterozygous scores.
+# 
+# For marker without heterozygous parent scrores, the assignment rules is the
+# same as in \code{\link{cross_ABH}}. If a parent score is heterozygous or
+# missing, the assignment rules are the following. If the two parents are
+# heterozygous or one parent is heterozygous and the other missing, the
+# offspring get NA since the parental origin can not be inferred with certainty.
+# If one parent is heterozygous or missing and the second parent is
+# homozygous, the function looks at offspring segregating pattern to try to
+# infer which allele was transmitted by the heterozygous parent. If this is
+# possible we consider the heteroxzygous parent as homozygous for the
+# transmitted allele and use this allele score for ABH assignment.
+# 
+# @param par.sc \code{Character} marker scores \code{matrix} of the
+# parents of the different cross. \strong{The rownames
+# must be the parents identifiers and correspond to the one used in argument
+# \code{par.par.cross}. Parent scores must be homozygous.
+# Missing value must be coded NA.}
+# 
+# @param off.sc \code{Character} marker scores \code{matrix} of the
+# offspring. \strong{The possible values must be: homozygous like parent 1 or 2,
+# heterozygous or missing. Missing values must be coded NA.}
+# 
+# @param cross.ind \code{Character} vector with the same length as the number
+# of offspring genotypes which specifies to which cross each offspring genotype
+# belongs.
+# 
+# @param par.per.cross Three columns \code{Character matrix} specifying :
+# 1) the cross indicators (\strong{The cross indicators must be  similar to
+# the one used in \code{cross.ind} and appear in the same order}); 2) the
+# parents 1 identifiers of the crosses; 3) the parents 2 identifiers of the
+# crosses. \strong{The list of parent identifiers must be similar to the
+# rownames of the argument \code{par.sc}}.
+# 
+# @return Return:
+# 
+# \item{geno.ABH}{\code{Character matrix} with ABH coding for the different
+# genotypes of the population}
+# 
+# @author Vincent Garin
+# 
+# @examples
+# 
+# # Genotypes
+# data("USNAM_geno")
+# geno <- USNAM_geno
+# 
+# # Remove markers for which parents are monomorphic
+# par.mono <- QC_MAF(mk.mat = geno[1:6, ])
+# geno <- geno[, -which(par.mono == 0)]
+# 
+# # Parents scores
+# par.sc <- geno[1:6, ]
+# 
+# # Offspring scores
+# off.sc <- geno[7:506, ]
+# 
+# # Cross indicator
+# cross.ind <- substr(rownames(geno)[7:506], 1, 4)
+# 
+# # Parent of the crosses matrix
+# par.per.cross <- cbind(unique(cross.ind), rep("B73",5), rownames(par.sc)[-1])
+# 
+# geno.ABH <- cross_ABH_het(par.sc = par.sc, off.sc = off.sc,
+#                           cross.ind = cross.ind,
+#                           par.per.cross = par.per.cross)
+# 
+# @export
+
 
 
 cross_ABH_het <- function(par.sc, off.sc, cross.ind, par.per.cross) {

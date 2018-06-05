@@ -2,33 +2,33 @@
 # parent_clusterCheck #
 #######################
 
-#' Check the result of parent clustering
-#' 
-#' Detect marker or position for which all parents have been clustered into
-#' the same ancestral group (monomorphic). Rewrite these positions with one
-#' allele per parent.
-#' 
-#' @param par.clu \code{Interger matrix} representing the results of a parents
-#' genotypes clustering. The columns represent the parental lines and the rows
-#' the different markers or in between positions. At a particular
-#' position, parents with the same value are assumed to inherit from the same
-#' ancestor.
-#' 
-#' @return Return:
-#' 
-#' \code{List} containing the two following objects:
-#' 
-#' \item{par.clu}{Reorganised \code{par.clu} object with monomorphic position
-#' put back to the parental situation (1 allele per parent).}
-#' 
-#' \item{marker.prob}{Vector of marker(s) or in between positions where all
-#' parents where groupped into a single group}
-#' 
-#' @author Vincent Garin
-#' 
-#' 
-#' @export
-#' 
+# Check the result of parent clustering
+# 
+# Detect marker or position for which all parents have been clustered into
+# the same ancestral group (monomorphic). Rewrite these positions with one
+# allele per parent.
+# 
+# @param par.clu \code{Interger matrix} representing the results of a parents
+# genotypes clustering. The columns represent the parental lines and the rows
+# the different markers or in between positions. At a particular
+# position, parents with the same value are assumed to inherit from the same
+# ancestor.
+# 
+# @return Return:
+# 
+# \code{List} containing the two following objects:
+# 
+# \item{par.clu}{Reorganised \code{par.clu} object with monomorphic position
+# put back to the parental situation (1 allele per parent).}
+# 
+# \item{marker.prob}{Vector of marker(s) or in between positions where all
+# parents where groupped into a single group}
+# 
+# @author Vincent Garin
+# 
+# 
+# @export
+# 
 
 
 parent_clusterCheck <- function(par.clu){

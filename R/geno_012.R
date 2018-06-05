@@ -2,46 +2,46 @@
 # geno_012 #
 ############
 
-#' Marker scores into 0, 1, 2 format
-#'
-#' Transform genotype marker score into 0, 1, 2 format. The score represents the
-#' number of copies of the allele with the lowest marker allele frequency (MAF).
-#' 
-#' @param mk.mat \code{Character} genotype  marker score \code{matrix}.
-#' \strong{Marker scores must be coded using one letter for each allele.
-#' For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG.
-#' Missing values must be coded NA.}
-#' 
-#' @param parallel \code{Logical} value specifying if the function should be
-#' executed in parallel on multiple cores. To run function in parallel user must
-#' provide cluster in the \code{cluster} argument. Default = FALSE.
-#' 
-#' @param cluster Cluster object obtained with the function \code{makeCluster()}
-#' from the parallel package. Default = NULL.
-#'   
-#' @return Return:
-#' 
-#' \code{List} with two matrices
-#' 
-#' \item{geno012}{Marker \code{matrix} with marker scores coded as 0, 1, 2
-#' corresponding to the number of copies of the least frequent SNP allele.}
-#' 
-#' \item{all.ref}{\code{matrix} with reference allele scores. The first row
-#' represents the minor allele (lowest frequency), the second the one represent the
-#' major allele (largest frequency) and the two others the heterozygous scores.} 
-#' 
-#' @author Vincent Garin    
-#' 
-#' @examples
-#' 
-#' data(USNAM_geno)
-#' 
-#' data <- geno_012(mk.mat = USNAM_geno)
-#' 
-#' data_012 <- data[[1]]
-#' 
-#' @export
-#'           
+# Marker scores into 0, 1, 2 format
+#
+# Transform genotype marker score into 0, 1, 2 format. The score represents the
+# number of copies of the allele with the lowest marker allele frequency (MAF).
+# 
+# @param mk.mat \code{Character} genotype  marker score \code{matrix}.
+# \strong{Marker scores must be coded using one letter for each allele.
+# For example, AA, CC, GG, TT, AC, AG, AT, CA, CG, CT, GA, GC, GT, TA, TC, TG.
+# Missing values must be coded NA.}
+# 
+# @param parallel \code{Logical} value specifying if the function should be
+# executed in parallel on multiple cores. To run function in parallel user must
+# provide cluster in the \code{cluster} argument. Default = FALSE.
+# 
+# @param cluster Cluster object obtained with the function \code{makeCluster()}
+# from the parallel package. Default = NULL.
+#   
+# @return Return:
+# 
+# \code{List} with two matrices
+# 
+# \item{geno012}{Marker \code{matrix} with marker scores coded as 0, 1, 2
+# corresponding to the number of copies of the least frequent SNP allele.}
+# 
+# \item{all.ref}{\code{matrix} with reference allele scores. The first row
+# represents the minor allele (lowest frequency), the second the one represent the
+# major allele (largest frequency) and the two others the heterozygous scores.} 
+# 
+# @author Vincent Garin    
+# 
+# @examples
+# 
+# data(USNAM_geno)
+# 
+# data <- geno_012(mk.mat = USNAM_geno)
+# 
+# data_012 <- data[[1]]
+# 
+# @export
+#           
 
 
 geno_012 <- function(mk.mat, parallel = FALSE, cluster = NULL) {

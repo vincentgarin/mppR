@@ -41,7 +41,7 @@
 #'
 
 
-CV_partition <- function(cross.ind, k =5) {
+CV_partition <- function(cross.ind, k = 5) {
   
   # 1. define a general indices
   #############################
