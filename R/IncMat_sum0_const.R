@@ -80,14 +80,22 @@ IncMat_sum0_const <- function(mppData, Q.eff, Q.list, Q.pos, cross.mat, trait){
   
   # for the matrix of constraint
   
-  const <- rep(paste0('c', 1:tot_con), time = len_con_part)
-  const <- factor(x = const, levels = unique(const))
-  const_mat <- model.matrix( ~ const - 1, data = const)
-  
-  Qind <- rep(paste0('Q', 1:n_QTL), time = Qind)
-  Qind <- factor(x = Qind, levels = unique(Qind))
-  
-  const_mat <- split(x = data.frame(const_mat), f = Qind)
+  if(tot_con == 1){
+    
+    const_mat <- list(rep(1, len_con_part))
+    
+  } else {
+    
+    const <- rep(paste0('c', 1:tot_con), time = len_con_part)
+    const <- factor(x = const, levels = unique(const))
+    const_mat <- model.matrix( ~ const - 1, data = const)
+    
+    Qind <- rep(paste0('Q', 1:n_QTL), time = Qind)
+    Qind <- factor(x = Qind, levels = unique(Qind))
+    
+    const_mat <- split(x = data.frame(const_mat), f = Qind)
+    
+  }
   
   
   # loop over the QTL incidence matrices to add the constraint to the QTL mat

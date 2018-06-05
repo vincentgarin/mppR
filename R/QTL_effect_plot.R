@@ -275,7 +275,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
   
   # ancestral code
   
-  par_clu_QTL <- mppData$par.clu[Q_info[, 1], ]
+  par_clu_QTL <- mppData$par.clu[Q_info[, 1], , drop = FALSE]
   
   anc_code <- c()
   
