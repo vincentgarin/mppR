@@ -44,9 +44,6 @@ data <- geno_012(mk.mat = USNAM_geno)
 data_012 <- data[[1]]
 
 }
-\seealso{
-\code{\link{mppData_form}}
-}
 \author{
 Vincent Garin
 }

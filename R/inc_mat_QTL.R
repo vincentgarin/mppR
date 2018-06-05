@@ -33,9 +33,7 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{IncMat_cross}}, \code{\link{IncMat_parent}}, 
-#' \code{\link{mpp_SIM}}, \code{\link{parent_cluster}},
-#' \code{\link{USNAM_parClu}}
+#' @seealso \code{\link{mpp_SIM}},
 #'
 #' @examples
 #' 

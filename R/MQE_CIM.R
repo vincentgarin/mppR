@@ -60,8 +60,7 @@
 #' @author Vincent Garin
 #' 
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-#' \code{\link{parent_cluster}}, \code{\link{QTL_select}}
+#' @seealso \code{\link{mpp_SIM}}, \code{\link{QTL_select}}
 #' 
 #' 
 #' @examples

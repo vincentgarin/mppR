@@ -7,12 +7,8 @@
 #' \code{summary} for object of class \code{mppData}.
 #' 
 #' @param object An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
 #' 
 #' @param ... Ignored.
-#' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{USNAM_mppData}},
-#' \code{\link{USNAM_mppData_bi}}
 #' 
 #' @examples
 #' 

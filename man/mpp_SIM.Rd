@@ -196,8 +196,7 @@ Wurschum, T., Liu, W., Gowda, M., Maurer, H. P., Fischer, S., Schechert, A.,
 association mapping. Heredity, 108(3), 332-340.
 }
 \seealso{
-\code{\link{mppData_form}}, \code{\link{parent_cluster}},
-\code{\link{plot.QTLprof}}, \code{\link{USNAM_parClu}}
+\code{\link{plot.QTLprof}}
 }
 \author{
 Vincent Garin

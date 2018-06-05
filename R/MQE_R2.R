@@ -51,9 +51,7 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{mpp_SIM}},
-#' \code{\link{parent_cluster}},
-#' \code{\link{QTL_R2}}, \code{\link{USNAM_parClu}}
+#' @seealso \code{\link{mpp_SIM}}, \code{\link{QTL_R2}}
 #'
 #' @examples
 #'

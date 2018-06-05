@@ -8,7 +8,6 @@
 #' matrices in parental effect models.
 #' 
 #' @param mppData An object of class \code{mppData}.
-#' See \code{\link{mppData_form}} for details.
 #' 
 #' @return Return:
 #' 

@@ -54,9 +54,6 @@
 #'  
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{USNAM_parClu}}
-#' 
 #' @examples
 #' 
 #' data(mppData)
