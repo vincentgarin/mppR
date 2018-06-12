@@ -30,7 +30,7 @@
         Marcos Malosetti\\Wageningen University \And
     }
     
-\title{\pkg{mppR}: An \proglang{R} Package for QTL Analysis in Multi-parent Populations using Linear Mixed Models}
+\title{\pkg{mppR}: An \proglang{R} Package for QTL Analysis in Multi-parent Populations}
 
 %% for pretty printing and a nice hypersummary also set:
 \Plainauthor{Vincent Garin, Valentin Wimmer, Marcos Malosetti, Fred van Eeuwijk } %% comma-separated
@@ -473,7 +473,7 @@ For the next part of the illustration, we assume that the \code{geno.off}, \code
 
 The initial step is the processing of the raw data to gather all required data in a single \code{mppData} object. The functions \code{create.mppData()}, \code{QC.mppData()}, \code{IBS.mppData()}, \code{IBD.mppData()}, and \code{parent_cluster.mppData()} must be called in the defined sequence to form a complete \code{mppData} object. Any deviation from this sequence will be signaled by an error message.
 
-\subsubsection{create a \code{mppData} object}
+\subsubsection{create a mppData object}
 
 The function \code{create.mppData()} creates a unified \code{mppData} object containing all raw data sources.
 
@@ -643,7 +643,7 @@ When all data elements are ready, the user can start the QTL analysis. In all fu
 <<mpp_proc>>=
 QTL_proc <- mpp_proc(pop.name = "USNAM", trait.name = "ULA", trait = "ULA",
                      mppData = mppData, Q.eff = "anc",
-                     plot.gen.eff = TRUE, N.cim = 2, thre.cof = 3,
+                     plot.gen.eff = TRUE, N.cim = 1, thre.cof = 3,
                      win.cof = 20, window = 20, thre.QTL = 3,
                      win.QTL = 20, CI = TRUE, drop = 1.5,
                      verbose = FALSE, output.loc = getwd())
@@ -657,8 +657,8 @@ A multi-QTL effects model~\ref{MQE} can be determined using \code{MQE_proc()}. T
 
 <<MQE>>=
 MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-                Q.eff = c("par", "anc", "biall"), window = 20,
-                plot.MQE = TRUE, verbose = FALSE, output.loc = getwd())
+                Q.eff = c("par", "biall"), window = 20, verbose = FALSE,
+                output.loc = getwd())
 @
 
 \subsection{QTL effects estimation}
@@ -723,7 +723,7 @@ The cross-validation procedure (\ref{CV}) can be performed by the function \code
 set.seed(89341)
 
 CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-             Q.eff = "cr", her = 0.4, Rep = 2, k = 5, verbose = FALSE,
+             Q.eff = "cr", her = 0.4, Rep = 1, k = 3, verbose = FALSE,
              output.loc = getwd())
 @
 
