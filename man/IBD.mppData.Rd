@@ -6,8 +6,7 @@
 \usage{
 IBD.mppData(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   par.per.subcross = NULL, type, F.gen = NULL, BC.gen = NULL,
-  type.mating = NULL, error.prob = 1e-04, map.function = "haldane",
-  dir = getwd())
+  type.mating = NULL, error.prob = 1e-04, map.function = "haldane")
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}. the \code{mppData} must
@@ -54,10 +53,6 @@ Default = 0.0001.}
 \item{map.function}{\code{Character} expression specifying the type of map
 function used to infer the IBD probabilities. possibility to choose
 between "haldane", "kosambi","c-f","morgan". Default = "haldane".}
-
-\item{dir}{Path where a folder will be created to store intermediate files.
-The folder will be deleted after. By default, the function uses the current
-working directory.}
 }
 \value{
 an increased \code{mppData} object containing the the same elements
@@ -119,12 +114,9 @@ data(mppData_init)
 mppData <- QC.mppData(mppData_init)
 mppData <- IBS.mppData(mppData = mppData)
 
-\dontrun{
-
 mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
-                       type.mating = 'selfing', dir = getwd())
+                       type.mating = 'selfing')
 
-}           
 
 }
 \references{

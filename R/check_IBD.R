@@ -7,7 +7,7 @@
 # genotype imputation.
 
 check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
-                      type, F.gen, BC.gen, type.mating, map.function, dir){
+                      type, F.gen, BC.gen, type.mating, map.function){
   
   # 1. check mppData format
   #########################
@@ -196,14 +196,6 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
   if(!(map.function %in% c('haldane', 'kosambi', 'c-f', 'morgan'))){
     
     stop("type.mating must be one of: 'haldane', 'kosambi', 'c-f', 'morgan'.")
-    
-  }
-  
-  # dir
-  
-  if(!file.exists(dir)){
-    
-    stop("The path specified in the argument dir is not valid.")
     
   }
   

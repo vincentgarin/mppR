@@ -90,17 +90,20 @@
 #' 
 #' @examples
 #' 
-#' library(clusthaplo)
 #' data(mppData_init)
 #' 
 #' mppData <- QC.mppData(mppData_init)
 #' mppData <- IBS.mppData(mppData = mppData)
 #' 
-#' \dontrun{
+#' 
 #' 
 #' mppData <- IBD.mppData(mppData = mppData, type = 'RIL',
 #'                        type.mating = 'selfing')
 #'                        
+#' \dontrun{
+#'                                                 
+#' library(clusthaplo)
+#'                         
 #' mppData <- parent_cluster.mppData(mppData = mppData, window = 25, K = 10,
 #'                                   plot = FALSE)                        
 #' 

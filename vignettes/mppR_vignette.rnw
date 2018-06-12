@@ -592,7 +592,7 @@ The type of population must be specified in argument \cite{type}. Different popu
 
 <<IBD.mppData>>=
 mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
-                       type.mating = 'selfing', dir = getwd())
+                       type.mating = 'selfing')
 @
 
 \subsubsection{Parent clustering}

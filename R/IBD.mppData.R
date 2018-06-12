@@ -89,10 +89,6 @@
 #' function used to infer the IBD probabilities. possibility to choose
 #' between "haldane", "kosambi","c-f","morgan". Default = "haldane".
 #' 
-#' @param dir Path where a folder will be created to store intermediate files.
-#' The folder will be deleted after. By default, the function uses the current
-#' working directory.
-#' 
 #' 
 #' @return
 #' 
@@ -129,12 +125,9 @@
 #' mppData <- QC.mppData(mppData_init)
 #' mppData <- IBS.mppData(mppData = mppData)
 #' 
-#' \dontrun{
-#' 
 #' mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
-#'                        type.mating = 'selfing', dir = getwd())
+#'                        type.mating = 'selfing')
 #' 
-#' }           
 #' 
 #' @export
 
@@ -143,8 +136,7 @@
 IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
                         par.per.subcross = NULL, type, F.gen = NULL,
                         BC.gen = NULL, type.mating = NULL,
-                        error.prob = 1e-04, map.function = "haldane",
-                        dir = getwd()){
+                        error.prob = 1e-04, map.function = "haldane"){
   
   # 1. check the format of the data
   #################################
@@ -152,7 +144,7 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   check_IBD(mppData = mppData, het.miss.par = het.miss.par,
             subcross.ind = subcross.ind, par.per.subcross = par.per.subcross,
             type = type, F.gen = F.gen, BC.gen = BC.gen,
-            type.mating = type.mating, map.function = map.function, dir = dir)
+            type.mating = type.mating, map.function = map.function)
   
   
   # 2. Restore the necessary objects from the mppData object
@@ -219,42 +211,42 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   # 4. Convert data into ABH format
   #################################
   
+  
+  # check if a cross was completely removed. Then remove it from the
+  # par.per.cross argument.
+  
+  if(!is.null(subcross.ind)){
     
-    # check if a cross was completely removed. Then remove it from the
-    # par.per.cross argument.
+    cr.list <- unique(subcross.ind)
+    par.per.cross.ABH <- par.per.subcross[par.per.subcross[, 1] %in% cr.list, ]
+    cross.ind.ABH <- subcross.ind
     
-    if(!is.null(subcross.ind)){
-      
-      cr.list <- unique(subcross.ind)
-      par.per.cross.ABH <- par.per.subcross[par.per.subcross[, 1] %in% cr.list, ]
-      cross.ind.ABH <- subcross.ind
-      
-    } else {
-      
-      par.per.cross.ABH <- par.per.cross 
-      cross.ind.ABH <- cross.ind
-      
-    }
+  } else {
     
-    ### 11.1 case with heterozygous markers scores.
+    par.per.cross.ABH <- par.per.cross 
+    cross.ind.ABH <- cross.ind
     
-    if(het.miss.par){
-      
-      # ABH assignement with heterogeneous parents
-      
-      geno.off <- cross_ABH_het(par.sc = geno.par, off.sc = geno.off,
-                                cross.ind = cross.ind.ABH,
-                                par.per.cross = par.per.cross.ABH)
-      
-      
-    } else {
-      
-      geno.off <- cross_ABH(par.sc = geno.par, off.sc = geno.off,
-                            cross.ind = cross.ind.ABH,
-                            par.per.cross = par.per.cross.ABH)
-      
-    }
+  }
+  
+  ### 11.1 case with heterozygous markers scores.
+  
+  if(het.miss.par){
     
+    # ABH assignement with heterogeneous parents
+    
+    geno.off <- cross_ABH_het(par.sc = geno.par, off.sc = geno.off,
+                              cross.ind = cross.ind.ABH,
+                              par.per.cross = par.per.cross.ABH)
+    
+    
+  } else {
+    
+    geno.off <- cross_ABH(par.sc = geno.par, off.sc = geno.off,
+                          cross.ind = cross.ind.ABH,
+                          par.per.cross = par.per.cross.ABH)
+    
+  }
+  
   
   # 5. Form the cross object 
   ##########################
@@ -281,27 +273,24 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   trait.aug <- rbind(empty_mat, pheno)
   geno.aug <- cbind(trait.aug, geno.aug)
   
-  # Export the data in a .csv file in the specified directory
+  # Export the data in a .csv file in a temporary file.
   
-  temp_dir <- file.path(dir, "temp_dir_mppData")
-  dir.create(temp_dir)
+  tmp <- tempfile(fileext = "Cross_object.csv")
   
-  file.name <- file.path(temp_dir, "Cross_object.csv")
-  
-  write.csv(geno.aug, file = file.name, row.names = FALSE)
+  write.csv(geno.aug, file = tmp, row.names = FALSE)
   
   # form a R/qtl cross object reading the data using the specifiec type of
   # population
   
   if (type == "F") {
     
-    cross.object <- read.cross("csv", , file.name, F.gen = F.gen, 
+    cross.object <- read.cross("csv", , tmp, F.gen = F.gen, 
                                crosstype = "bcsft")
     
     
   } else if (type == "BC") {
     
-    cross.object <- read.cross("csv", , file.name, BC.gen = BC.gen, 
+    cross.object <- read.cross("csv", , tmp, BC.gen = BC.gen, 
                                crosstype = "bcsft")
     
     
@@ -309,7 +298,7 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
     
     # need to read the object as a backcross
     
-    cross.object <- read.cross("csv", file = file.name, genotypes = c("A", "B"),
+    cross.object <- read.cross("csv", file = tmp, genotypes = c("A", "B"),
                                alleles = c("A", "B"))
     
     # then convert it following the type of mating
@@ -330,14 +319,14 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
     
     # need to read the object as a backcross
     
-    cross.object <- read.cross("csv", file = file.name, genotypes = c("A", "B"),
+    cross.object <- read.cross("csv", file = tmp, genotypes = c("A", "B"),
                                alleles = c("A", "B"))
     
     class(cross.object)[1] <- "dh"
     
   } else if (type == "BCsFt"){
     
-    cross.object <- read.cross("csv", , file.name, F.gen = F.gen,
+    cross.object <- read.cross("csv", , tmp, F.gen = F.gen,
                                BC.gen = BC.gen, crosstype = "bcsft")
     
   }
@@ -353,7 +342,7 @@ IBD.mppData <- function(mppData, het.miss.par = TRUE, subcross.ind = NULL,
   
   # delete the temporary directory
   
-  unlink(x = temp_dir, recursive = TRUE)
+  unlink(tmp)
   
   # 7. transform the map and geno.par
   ###################################
