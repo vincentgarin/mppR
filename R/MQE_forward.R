@@ -199,7 +199,7 @@ MQE_forward <- function(mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
   
   # form eventual pedigree term
   
-  formPedMatInv(mppData = mppData, VCOV = VCOV)
+  # formPedMatInv(mppData = mppData, VCOV = VCOV)
 
   # initialize list of selected QTL and list of type of effects.
   
@@ -235,7 +235,7 @@ MQE_forward <- function(mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
     Q.eff_i <- Q.eff[i]
     
     SIM <- mpp_SIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff_i,
-                       VCOV = VCOV, parallel = parallel, cluster = cluster)
+                        parallel = parallel, cluster = cluster)
     
     # store the candidate position
     
@@ -319,7 +319,7 @@ MQE_forward <- function(mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
       Q.eff_i <- Q.eff[i]
       
       log10.pval <- MQE_CIM_clu(mppData = mppData, trait = trait,
-                                Q.eff = Q.eff_i, VCOV = VCOV,
+                                Q.eff = Q.eff_i,
                             cofactors = QTL.list, cof.Qeff = QTL.eff,
                             parallel = parallel, cluster = cluster)
       

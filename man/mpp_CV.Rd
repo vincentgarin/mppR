@@ -5,10 +5,10 @@
 \title{MPP cross-validation}
 \usage{
 mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData, trait = 1,
-  her = 1, Rep = 10, k = 5, Q.eff = "cr", VCOV = "h.err",
-  thre.cof = 3, win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3,
-  win.QTL = 20, backward = TRUE, alpha.bk = 0.05, n.cores = 1,
-  verbose = TRUE, output.loc = getwd())
+  her = 1, Rep = 10, k = 5, Q.eff = "cr", thre.cof = 3,
+  win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
+  backward = TRUE, alpha.bk = 0.05, n.cores = 1, verbose = TRUE,
+  output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -36,14 +36,6 @@ cross partition of the population. Default = 5.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{thre.cof}{\code{Numeric} value representing the -log10(p-value)
 threshold above which a position can be peaked as a cofactor. Default = 3.}
@@ -160,21 +152,6 @@ The bias between p.ts and p.vs is calculated as bias = 1 - (p.vs/p.ts).
 }
 
 }
-
-\strong{WARNING!(1)} The computation of \code{mpp_CV()} function using mixed
-models (all models with \code{VCOV} different than \code{"h.err"}) is
-technically possible but can be irrealistic in practice due to a reduced
-computer power. Since a mixed model is computed at each single position it
-can take a lot of time. From our estimation it can take between 20 to 50
-times more time than for the linear model (HRT).
-
-\strong{WARNING!(2)} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
 }
 \examples{
 

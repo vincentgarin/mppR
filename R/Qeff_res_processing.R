@@ -45,14 +45,14 @@ Qeff_res_processing <- function(model, mppData, cross.mat, Q.list, QTL,
     
   } else {
     
-    index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
-    
-    w.table <- asreml::wald(model)
-    w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
-    
-    results <- cbind(rev(model$coefficients$fixed)[index],
-                     rev(sqrt(model$vcoeff$fixed))[index], w.stat)
-    results <- as.matrix(results)
+    # index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
+    # 
+    # w.table <- asreml::wald(model)
+    # w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
+    # 
+    # results <- cbind(rev(model$coefficients$fixed)[index],
+    #                  rev(sqrt(model$vcoeff$fixed))[index], w.stat)
+    # results <- as.matrix(results)
     
     if(Q.eff == "biall"){ rownames(results) <- paste0("Q", 1:n.QTL) }
     

@@ -4,8 +4,8 @@
 \alias{mpp_CIM}
 \title{MPP composite interval maping}
 \usage{
-mpp_CIM(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
-  cofactors = NULL, window = 20, plot.gen.eff = FALSE, n.cores = 1)
+mpp_CIM(mppData, trait = 1, Q.eff = "cr", cofactors = NULL, window = 20,
+  plot.gen.eff = FALSE, n.cores = 1)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}
@@ -17,14 +17,6 @@ trait of the \code{mppData} object should be used. Default = 1.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{cofactors}{Object of class \code{QTLlist} representing a list of
 selected position obtained with the function \code{\link{QTL_select}} or
@@ -62,14 +54,6 @@ genetic positions for control.
 For more details about the different models, see documentation of the
 function \code{\link{mpp_SIM}}. The function returns a -log10(p-value) QTL
 profile.
-
-\strong{WARNING!} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
 }
 \examples{
 
@@ -78,12 +62,12 @@ allow to obtain a result.
 
 data(mppData)
 
-SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err")
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr")
 
 cofactors <- QTL_select(Qprof = SIM, threshold = 3, window = 20)
 
-CIM <- mpp_CIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
-cofactors = cofactors, window = 20, plot.gen.eff = TRUE)
+CIM <- mpp_CIM(mppData = mppData, Q.eff = "cr", cofactors = cofactors,
+               window = 20, plot.gen.eff = TRUE)
 
 plot(x = CIM)
 plot(x = CIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
@@ -93,8 +77,8 @@ plot(x = CIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
 
 cofactors <- mppData$map[c(15, 63), 1]
 
-CIM <- mpp_CIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err",
-cofactors = cofactors, window = 20)
+CIM <- mpp_CIM(mppData = mppData, Q.eff = "biall", cofactors = cofactors,
+               window = 20)
 
 plot(x = CIM, type = "h")
                                

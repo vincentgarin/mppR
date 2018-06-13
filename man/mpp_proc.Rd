@@ -5,10 +5,10 @@
 \title{MPP QTL analysis}
 \usage{
 mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, trait = 1,
-  Q.eff = "cr", VCOV = "h.err", plot.gen.eff = FALSE, thre.cof = 3,
-  win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-  backward = TRUE, alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE,
-  CI = FALSE, drop = 1.5, text.size = 18, n.cores = 1, verbose = TRUE,
+  Q.eff = "cr", plot.gen.eff = FALSE, thre.cof = 3, win.cof = 50,
+  N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20, backward = TRUE,
+  alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE, CI = FALSE,
+  drop = 1.5, text.size = 18, n.cores = 1, verbose = TRUE,
   output.loc = getwd())
 }
 \arguments{
@@ -27,14 +27,6 @@ trait of the \code{mppData} object should be used. Default = 1.}
 the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
 effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
 effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
@@ -158,10 +150,9 @@ Multi-parent population QTL analysis.
 }
 \details{
 The function run a full MPP QTL detection using models with different possible
-assumptions concerning the number of alleles at the QTL position and the
-variance covariance structure (VCOV) of the model. For more details about
-the different models, see documentation of the function \code{\link{mpp_SIM}}.
-The procedure is the following:
+assumptions concerning the number of alleles at the QTL position. For more
+details about the different models, see documentation of the function
+\code{\link{mpp_SIM}}. The procedure is the following:
 
 \enumerate{
 
@@ -182,14 +173,6 @@ and proportion of the phenotypic variation explained by the QTLs (R squared)
 (excluding cofactors on the scanned chromosome) (\code{argument CI=TRUE}).}
 
 }
-
-\strong{WARNING!} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
 }
 \examples{
  

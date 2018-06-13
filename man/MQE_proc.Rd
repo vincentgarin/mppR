@@ -5,9 +5,9 @@
 \title{Multi-QTL effect MPP analysis}
 \usage{
 MQE_proc(pop.name = "MPP_MQE", trait.name = "trait1", mppData = NULL,
-  trait = 1, Q.eff, VCOV = "h.err", threshold = 4, window = 30,
-  backward = TRUE, alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1,
-  verbose = TRUE, output.loc = getwd())
+  trait = 1, Q.eff, threshold = 4, window = 30, backward = TRUE,
+  alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1, verbose = TRUE,
+  output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -24,14 +24,6 @@ trait of the \code{mppData} object should be used. Default = 1.}
 \item{Q.eff}{\code{Character} vector of possible QTL effects the user want to
 test. Elements of \code{Q.eff} can be "cr", "par", "anc" or "biall".
 For details look at \code{\link{mpp_SIM}}.}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{threshold}{\code{Numeric} value representing the -log10(p-value)
 threshold above which a position can be considered as significant.
@@ -124,22 +116,6 @@ list of detected QTLs.}
 forward regression using the function.}
 
 }
-
-\strong{WARNING!(1)} The computation of \code{MQE_proc()} function using mixed
-models (all models with \code{VCOV} different than \code{"h.err"})
-is technically possible but can be irrealistic
-in practice due to a reduced computer power. Since a mixed model is computed at
-each single position it can take a lot of time. From our estimation it can take
-between 20 to 50 times more time than for linear models. If the number of
-detected QTL is supposed to be small (until 5) it could still be feasible.
-
-\strong{WARNING!(2)} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
 }
 \examples{
 

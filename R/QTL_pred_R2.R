@@ -23,14 +23,6 @@
 #' Partial R squared statistics are also calculated for each individual position.
 #' The partial R squared are computed by making the difference between the
 #' global R squared and the R squared computed without the ith position.
-#' 
-#' \strong{WARNING!} The computation of random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-#' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
 #'
 #' @param mppData.ts An object of class \code{mppData} for the training set.
 #' 
@@ -43,14 +35,6 @@
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #' 
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected position obtained with the function \code{\link{QTL_select}} or
@@ -101,13 +85,14 @@
 
 
 QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
-                        VCOV = "h.err", QTL = NULL, her = 1) {
+                        QTL = NULL, her = 1) {
   
   # 1. test data format
   #####################
   
   check.model.comp(Q.eff = Q.eff, trait = trait, VCOV = VCOV, QTL = QTL,
                    mppData.ts = mppData.ts, fct = "R2_pred")
+
   
   if(is.character(QTL)){ n.QTL <- length(QTL) } else { n.QTL <- dim(QTL)[1] }
   
@@ -125,7 +110,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   }
   
   effects <- QTL_gen_effects(mppData = mppData.ts, trait = trait, QTL = QTL,
-                            Q.eff = Q.eff, VCOV = VCOV)[[1]]
+                            Q.eff = Q.eff)[[1]]
   
   # need to re-order the row of the effects according to the parent list
   

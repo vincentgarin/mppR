@@ -4,8 +4,8 @@
 \alias{mpp_perm}
 \title{QTL significance threshold by permutation}
 \usage{
-mpp_perm(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err", N = 1000,
-  q.val = 0.95, verbose = TRUE, n.cores = 1)
+mpp_perm(mppData, trait = 1, Q.eff = "cr", N = 1000, q.val = 0.95,
+  verbose = TRUE, n.cores = 1)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}
@@ -17,14 +17,6 @@ trait of the \code{mppData} object should be used. Default = 1.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{N}{Number of permutations. Default = 1000.}
 
@@ -64,22 +56,6 @@ highest -log10(p-val). These values can be used to build a null distribution
 for the QTL significance thershold. Quantile values can be determined from
 the previous distribution. For more details about the different possible
 models and their assumptions see \code{\link{mpp_SIM}} documentation.
-
-\strong{WARNING!(1)} The computation of \code{mpp_perm()} function using mixed
-models (all models with \code{VCOV} different than \code{"h.err"})
-is technically possible but can be irrealistic in practice due to a reduced
-computer power. Since a mixed model is computed at each single position it
-can take a lot of time. From our estimation it can take between 20 to 50
-times more time than for the linear model (HRT). We advice to compute
-threshold with the HRT (linear) model and use it for the mixed model as well.
-
-\strong{WARNING!(2)} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
 }
 \examples{
 
@@ -87,8 +63,7 @@ allow to obtain a result.
 
 data(mppData)
 
-Perm <- mpp_perm(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
-                       N = 100)
+Perm <- mpp_perm(mppData = mppData, Q.eff = "cr", N = 100)
 
 }
 

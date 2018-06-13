@@ -50,12 +50,11 @@ Computes the global and partial (adjusted) R squared of a  list of QTLs using
 a linear model.
 }
 \details{
-The function computes R squared statistics using a linear model. This model
-correspond to a model where \code{VCOV = "h.err"} (for details see
-\code{\link{mpp_SIM}}). The extra variance explained by a full model
-containing the QTL terms with respect to a reduced model containing only the
-cross intercept terms and uses the ratio between the residual sum of square
-of these two models: R2 = 1-(RSS(f))/(RSS(r)).
+The function computes R squared statistics using a linear model. The extra
+variance explained by a full model containing the QTL terms with respect
+to a reduced model containing only the cross intercept terms and uses the
+ratio between the residual sum of square of these two models:
+R2 = 1-(RSS(f))/(RSS(r)).
 
 Partial R squared for each individual QTL position can also be calculated.
 Two types of partial R squared are returned. The first one
