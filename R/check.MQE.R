@@ -76,17 +76,17 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
     }
     
     
-    if (VCOV != "h.err"){
-      
-      test <- requireNamespace(package = 'asreml', quietly = TRUE)
-      
-      if(!test){
-        
-        stop("you must have access to the asreml package to use this type of 'VCOV'")
-        
-      }
-      
-    }
+    # if (VCOV != "h.err"){
+    #   
+    #   test <- requireNamespace(package = 'asreml', quietly = TRUE)
+    #   
+    #   if(!test){
+    #     
+    #     stop("you must have access to the asreml package to use this type of 'VCOV'")
+    #     
+    #   }
+    #   
+    # }
     
   }
   

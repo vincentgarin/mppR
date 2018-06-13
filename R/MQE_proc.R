@@ -28,22 +28,6 @@
 #' }
 #' 
 #' 
-#' \strong{WARNING!(1)} The computation of \code{MQE_proc()} function using mixed
-#' models (all models with \code{VCOV} different than \code{"h.err"})
-#' is technically possible but can be irrealistic
-#' in practice due to a reduced computer power. Since a mixed model is computed at
-#' each single position it can take a lot of time. From our estimation it can take
-#' between 20 to 50 times more time than for linear models. If the number of
-#' detected QTL is supposed to be small (until 5) it could still be feasible.
-#' 
-#' \strong{WARNING!(2)} The computation of random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-#' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
-#' 
 #' @param pop.name \code{Character} name of the studied population.
 #' Default = "MPP_MQE".
 #' 
@@ -59,13 +43,6 @@
 #' test. Elements of \code{Q.eff} can be "cr", "par", "anc" or "biall".
 #' For details look at \code{\link{mpp_SIM}}.
 #'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #' 
 #' @param threshold \code{Numeric} value representing the -log10(p-value)
 #' threshold above which a position can be considered as significant.
@@ -159,7 +136,7 @@
 
 
 MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
-                     mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
+                     mppData = NULL, trait = 1, Q.eff,
                      threshold = 4, window = 30, backward = TRUE,
                      alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1,
                      verbose = TRUE, output.loc = getwd()) {
@@ -168,7 +145,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   #################################
   
   check.MQE(mppData = mppData, trait = trait, Q.eff = Q.eff,
-            VCOV = VCOV, n.cores = n.cores, output.loc = output.loc,
+            VCOV = 'h.err', n.cores = n.cores, output.loc = output.loc,
             fct = "proc")
   
   
@@ -178,7 +155,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   # create a directory to store the results of the QTL analysis
   
   folder.loc <- file.path(output.loc, paste("MQE", pop.name, trait.name,
-                                            VCOV, sep = "_"))
+                                            sep = "_"))
   
   dir.create(folder.loc)
   
@@ -195,7 +172,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   }
     
     QTL <- MQE_forward(mppData = mppData, trait = trait, Q.eff = Q.eff,
-                       VCOV = VCOV, threshold = threshold, window = window,
+                       VCOV = 'h.err', threshold = threshold, window = window,
                        n.cores = n.cores, verbose = verbose)
     
     if(is.null(QTL)){
@@ -219,7 +196,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
         }
         
         QTL <- MQE_BackElim(mppData = mppData, trait = trait, QTL = QTL[, 1],
-                            Q.eff = QTL[, 5], VCOV = VCOV, alpha = alpha.bk)
+                            Q.eff = QTL[, 5], VCOV = 'h.err', alpha = alpha.bk)
         
         if (is.null(QTL)) { # test if QTL have been selected
           
@@ -250,7 +227,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       
       QTL_effect <- MQE_genEffects(mppData = mppData, trait = trait,
                                    QTL = QTL[, 1], Q.eff = QTL[, 5],
-                                   VCOV = VCOV)
+                                   VCOV = 'h.err')
       
       R2 <- MQE_R2(mppData = mppData, trait = trait, QTL = QTL[, 1],
                    Q.eff = QTL[, 5], glb.only = FALSE)
@@ -281,11 +258,11 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
           
         }
         
-        CIM <- MQE_CIM(mppData = mppData, trait = trait, VCOV = VCOV,
+        CIM <- MQE_CIM(mppData = mppData, trait = trait, VCOV = 'h.err',
                        cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
                        chg.Qeff = TRUE, window = window, n.cores = n.cores)
         
-        main.plot <- paste("MQE", pop.name, trait.name, VCOV)
+        main.plot <- paste("MQE", pop.name, trait.name)
         
         pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
         
@@ -312,7 +289,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       # QTL report
       
       QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
-                 main = paste(pop.name, trait.name, VCOV), QTL.info = QTL,
+                 main = paste(pop.name, trait.name), QTL.info = QTL,
                  QTL.effects = QTL_effect, R2 = R2)
       
       # save general results

@@ -4,8 +4,8 @@
 \alias{mpp_SIM}
 \title{MPP Simple Interval Maping}
 \usage{
-mpp_SIM(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
-  plot.gen.eff = FALSE, n.cores = 1)
+mpp_SIM(mppData, trait = 1, Q.eff = "cr", plot.gen.eff = FALSE,
+  n.cores = 1)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}
@@ -17,14 +17,6 @@ trait of the \code{mppData} object should be used. Default = 1.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-Default = "h.err".}
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
@@ -51,15 +43,13 @@ Computes single QTL models along the genome using different models.
 }
 \details{
 The implemented models vary according to the number of alleles assumed at the
-QTL position and their origin. Models also assume different variance
-covariance structures (VCOV). Four assumptions for the QTL effect and four
-for the VCOV give a grid of 16 different models.
+QTL position and their origin. Four assumptions for the QTL effect are
+possible.
 
 Concerning the type of QTL effect, the first option is a cross-specific QTL
 effects model (\code{Q.eff = "cr"}). In this model, the QTL effects are
 assumed to be nested within cross which leads to the estimation of one
-parameter per cross. Computed with an homogoenous residual variance term
-(\code{VCOV = "h.err"}), the cross-specific model corresponds to the
+parameter per cross. The cross-specific model corresponds to the
 disconnected model described in Blanc et al. 2006.
 
 A second possibility is the parental model (\code{Q.eff = "par"}). The
@@ -96,41 +86,8 @@ Bi-allelic genetic predictor are a single vector with value 0, 1 or 2
 corresponding to the number of allele copy of the least frequent SNP allele.
 Relatedness between lines is therefore defined via identical by state (IBS)
 measurement. This model corresponds to models used for association mapping.
-For example, if (\code{VCOV = "h.err"}), it is similar to model B in
-Wurschum et al. (2012) or association mapping model in Liu et al. (2012).
-
-The second dimension relates to the form of the variance covariance structure.
-The first assumption is an homogeneous variance residual term model (HRT). It
-corresponds to the classical linear model assumption of independence of the
-residual terms. It can be calculated using the \code{lm()} function
-(\code{VCOV = "h.err"}) or by REML using \code{asreml()}
-(\code{VCOV = "h.err.as"}).
-
-The second assumption is a cross-specific variance residual terms model
-(CSRT) where one residual variance component is estimated per cross 
-(\code{VCOV = "cr.err"}). This VCOV allows to take into consideration
-potential heterogeneity of residual variance that could exist between crosses.
-Such a difference can be due to different levels of polygenic effect
-(undetected QTLs).
-
-The third and fourth VCOV model the polygenic effect directly by adding a
-pedigree term to the model. The variance covariance structure
-associated with this random term is the matrix of inbreeding coefficients
-based on pedigree information (G). It is calculated using the function
-\code{asreml.Ainverse()}. This function uses the method developped by
-Meuwissen and Luo (1992). The third possibility is to use the random pedigree
-model with HRT (\code{VCOV = "pedigree"}). The fourth option includes the
-random pedigree term plus CSRT (\code{VCOV = "ped_cr.err"}). All model except
-(\code{VCOV = "h.err"}) are fitted using REML via the \code{asreml()} function
-from the \code{ASReml-R} package (Butler et al., 2009).
-
-\strong{WARNING!} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
+For example, it is similar to model B in Wurschum et al. (2012) or
+association mapping model in Liu et al. (2012).
 }
 \examples{
 
@@ -140,8 +97,7 @@ allow to obtain a result.
 
 data(mppData)
 
-SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
-plot.gen.eff = TRUE)
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", plot.gen.eff = TRUE)
 
 plot(x = SIM)  
 plot(x = SIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
@@ -150,7 +106,7 @@ plot(x = SIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
 # Bi-allelic model
 ##################
 
-SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err")
+SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall")
 
 plot(x = SIM, type = "h")
 

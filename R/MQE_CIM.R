@@ -176,7 +176,7 @@ MQE_CIM <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
   
   ### 2.2 inverse of the pedigree matrix
   
-  formPedMatInv(mppData = mppData, VCOV = VCOV)
+  # formPedMatInv(mppData = mppData, VCOV = VCOV)
   
   ### 2.3 cross matrix (cross intercept)
   

@@ -208,7 +208,7 @@ MQE_genEffects <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
   
   ### 2.2 inverse of the pedigree matrix
   
-  formPedMatInv(mppData = mppData, VCOV = VCOV)
+  # formPedMatInv(mppData = mppData, VCOV = VCOV)
   
   ### 2.3 cross matrix (cross intercept)
   
@@ -292,24 +292,24 @@ MQE_genEffects <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
   } else {
     
     
-    index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
-    
-    w.table <- asreml::wald(model)
-    w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
-    
-    results <- cbind(rev(model$coefficients$fixed)[index],
-                     rev(sqrt(model$vcoeff$fixed))[index], w.stat)
-    colnames(results) <- paste0("v", 1:4)
-    
-    # add sign stars
-    
-    Sign <- sapply(results[, 4], FUN = sign.star)
-    results <- data.frame(results, Sign, stringsAsFactors = FALSE)
-    
-    # split the results per QTLs
-    
-    Q.res <- split(x = results,
-                   f = factor(Q.ind, levels = paste0("Q", 1:n.QTL)))
+    # index <- substr(names(rev(model$coefficients$fixed)), 1, 1) == "Q"
+    # 
+    # w.table <- asreml::wald(model)
+    # w.stat <- w.table[substr(rownames(w.table), 1, 1) == "Q", c(3, 4)]
+    # 
+    # results <- cbind(rev(model$coefficients$fixed)[index],
+    #                  rev(sqrt(model$vcoeff$fixed))[index], w.stat)
+    # colnames(results) <- paste0("v", 1:4)
+    # 
+    # # add sign stars
+    # 
+    # Sign <- sapply(results[, 4], FUN = sign.star)
+    # results <- data.frame(results, Sign, stringsAsFactors = FALSE)
+    # 
+    # # split the results per QTLs
+    # 
+    # Q.res <- split(x = results,
+    #                f = factor(Q.ind, levels = paste0("Q", 1:n.QTL)))
     
   }
   

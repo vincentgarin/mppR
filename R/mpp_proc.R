@@ -7,10 +7,9 @@
 #' Multi-parent population QTL analysis.
 #' 
 #' The function run a full MPP QTL detection using models with different possible
-#' assumptions concerning the number of alleles at the QTL position and the
-#' variance covariance structure (VCOV) of the model. For more details about
-#' the different models, see documentation of the function \code{\link{mpp_SIM}}.
-#' The procedure is the following:
+#' assumptions concerning the number of alleles at the QTL position. For more
+#' details about the different models, see documentation of the function
+#' \code{\link{mpp_SIM}}. The procedure is the following:
 #' 
 #' \enumerate{
 #' 
@@ -32,14 +31,6 @@
 #' 
 #' }
 #' 
-#' \strong{WARNING!} The computation of random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-#' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
-#' 
 #' @param pop.name \code{Character} name of the studied population.
 #' Default = "MPP".
 #' 
@@ -55,14 +46,6 @@
 #' the QTL effect: 1) "cr" for cross-specific effects; 2) "par" parental
 #' effects; 3) "anc" for an ancestral effects; 4) "biall" for a bi-allelic
 #' effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #'
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
@@ -218,20 +201,19 @@
 
 
 mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
-                     trait = 1, Q.eff = "cr", VCOV = "h.err",
-                     plot.gen.eff = FALSE, thre.cof = 3, win.cof = 50,
-                     N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-                     backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
-                     sum_zero = FALSE, CI = FALSE, drop = 1.5, text.size = 18,
-                     n.cores = 1, verbose = TRUE,
-                     output.loc = getwd()) {
+                     trait = 1, Q.eff = "cr", plot.gen.eff = FALSE,
+                     thre.cof = 3, win.cof = 50, N.cim = 1, window = 20,
+                     thre.QTL = 3, win.QTL = 20, backward = TRUE,
+                     alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE,
+                     CI = FALSE, drop = 1.5, text.size = 18, n.cores = 1,
+                     verbose = TRUE, output.loc = getwd()) {
   
   
   # 1. Check the validity of the parameters that have been introduced
   ###################################################################
   
-  check.mpp.proc(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
-                 plot.gen.eff = plot.gen.eff, ref.par = ref.par,
+  check.mpp.proc(mppData = mppData, trait = trait, Q.eff = Q.eff,
+                 VCOV = 'h.err', plot.gen.eff = plot.gen.eff, ref.par = ref.par,
                  sum_zero = sum_zero, n.cores = n.cores,
                  output.loc = output.loc)
   
@@ -242,7 +224,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   # create a directory to store the results of the QTL analysis
   
   folder.loc <- file.path(output.loc, paste("QTLan", pop.name, trait.name,
-                                            Q.eff, VCOV, sep = "_"))
+                                            Q.eff, sep = "_"))
   
   dir.create(folder.loc)
   
@@ -272,7 +254,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     
   }
   
-  SIM <- mpp_SIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
+  SIM <- mpp_SIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
                      plot.gen.eff = plot.gen.eff, parallel = parallel,
                      cluster = cluster)
   
@@ -309,7 +291,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   }
   
   CIM <- mpp_CIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
-                 VCOV = VCOV, cofactors = cofactors, window = window,
+                cofactors = cofactors, window = window,
                  plot.gen.eff = plot.gen.eff, parallel = parallel,
                  cluster = cluster)
   
@@ -341,7 +323,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
         }
         
         CIM <- mpp_CIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
-                       VCOV = VCOV, cofactors = cofactors, window = window,
+                       cofactors = cofactors, window = window,
                        plot.gen.eff = plot.gen.eff, parallel = parallel,
                        cluster = cluster)
         
@@ -388,7 +370,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     }
     
     QTL <- mpp_back_elim(mppData = mppData, trait = trait, QTL = QTL,
-                        Q.eff = Q.eff, VCOV = VCOV, alpha = alpha.bk)
+                        Q.eff = Q.eff, alpha = alpha.bk)
     
     if (is.null(QTL)) { # test if QTL have been selected
       
@@ -445,7 +427,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   }
   
   QTL.effects <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
-                                Q.eff = Q.eff, VCOV = VCOV, ref.par = ref.par,
+                                Q.eff = Q.eff, ref.par = ref.par,
                                 sum_zero = sum_zero)
   
   # 8. CIM- and confidence interval computation
@@ -469,7 +451,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
     step.size <- max(tapply(X = map[, 4], INDEX = chr.fact, FUN = max)) + 100 
     
     CIM.m <- mpp_CIM_clu(mppData = mppData, trait = trait, Q.eff = Q.eff,
-                     VCOV = VCOV, cofactors = cofactors, window = step.size,
+                    cofactors = cofactors, window = step.size,
                      plot.gen.eff = FALSE, parallel = parallel,
                      cluster = cluster)
     
@@ -508,8 +490,8 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   ### 9.2: Plots
   
   
-  main.cim <- paste("CIM", pop.name, trait.name, Q.eff, VCOV)
-  main.Qeff <- paste("QTL gen. effects", pop.name, trait.name, Q.eff, VCOV)
+  main.cim <- paste("CIM", pop.name, trait.name, Q.eff)
+  main.Qeff <- paste("QTL gen. effects", pop.name, trait.name, Q.eff)
   
   if (Q.eff == "biall") {
     
@@ -555,7 +537,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   } else {QTL.info <-  QTL[, c(1, 2, 4, 5)]}
   
   QTL_report(out.file = file.path(folder.loc, "QTL_REPORT.txt"),
-             main = paste(pop.name, trait.name, Q.eff, VCOV), QTL.info = QTL.info,
+             main = paste(pop.name, trait.name, Q.eff), QTL.info = QTL.info,
              QTL.effects = QTL.effects[[1]], R2 = R2)
   
   

@@ -50,28 +50,28 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   # 6. test if the asreml function is present for the compuation of the
   # mixed models
   
-  
-  if (VCOV != "h.err"){
-    
-    test <- requireNamespace(package = 'asreml', quietly = TRUE)
-    
-    if(!test){
-      
-      stop("to use this type of 'VCOV', you must have access to the asreml package")
-      
-    }
-    
-    message(paste("MESSAGE: Cross-validation",
-                  "using mixed models is technically possible but can take",
-                  "a hugh amount of time! Due to limited computer power, we",
-                  "advice to only use the linear model (VCOV = 'h.err')."))
-    
-    text <- paste("Press [enter] to continue. If after you still want to stop",
-                  "the process, Press Esc.")
-    
-    readline(prompt = text)
-    
-  }
+  # if (VCOV != "h.err"){
+  #   
+  #   test <- requireNamespace(package = 'asreml', quietly = TRUE)
+  #   
+  #   if(!test){
+  #     
+  #     stop(paste("To use this type of VCOV, you must have access to the asreml",
+  #                "function from the asreml-R package."))
+  #     
+  #   }
+  #   
+  #   message(paste("MESSAGE: Cross-validation",
+  #                 "using mixed models is technically possible but can take",
+  #                 "a hugh amount of time! Due to limited computer power, we",
+  #                 "advice to only use the linear model (VCOV = 'h.err')."))
+  #   
+  #   text <- paste("Press [enter] to continue. If after you still want to stop",
+  #                 "the process, Press Esc.")
+  #   
+  #   readline(prompt = text)
+  #   
+  # }
   
   # 7. Consistency for parallelization.
   

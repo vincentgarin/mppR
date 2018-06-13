@@ -5,7 +5,7 @@
 \title{QTL genetic effects}
 \usage{
 QTL_gen_effects(mppData, trait = 1, QTL = NULL, Q.eff = "cr",
-  VCOV = "h.err", ref.par = NULL, sum_zero = FALSE)
+  ref.par = NULL, sum_zero = FALSE)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}
@@ -22,14 +22,6 @@ Default = NULL.}
 the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 for ancestral; 4) "biall" for a bi-allelic. For more details see
 \code{\link{mpp_SIM}}. Default = "cr".}
-
-\item{VCOV}{\code{Character} expression defining the type of variance
-covariance structure used: 1) "h.err" for an homogeneous variance residual term
-(HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-\code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-(CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-and 5) "ped_cr.err" for random pedigree and CSRT model.
-For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
 
 \item{ref.par}{Optional \code{Character} expression defining the parental
 allele that will be used as reference for the parental model. For the
@@ -98,20 +90,10 @@ of a unique connected part.
 For the parental and ancestral model it is also possible to estimate the QTL
 effects using a sum to zero constraint \code{sum_zero = TRUE}. In that case,
 the effects of the different parental (ancestral) allele will represent the
-deviation with respect to the average trait value. This option is only
-available for the parental and ancestral model with homogeneous residual
-term \code{VCOV = 'h.err'}.
+deviation with respect to the average trait value.
 
 For the bi-allelic model (\code{Q.eff = "biall"}), the genetic effects
 represent the effects of a single allele copy of the least frequent allele.
-
-\strong{WARNING!} The computation of random pedigree models
-(\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-due to singularities due to a strong correlation between the QTL term(s) and 
-the polygenic term. This situation can appear in the parental model.
-the error can also sometimes come from the \code{asreml()} function. From
-our experience, in that case, trying to re-run the function one or two times
-allow to obtain a result.
 }
 \examples{
 

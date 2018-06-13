@@ -7,15 +7,13 @@
 #' Computes single QTL models along the genome using different models.
 #' 
 #' The implemented models vary according to the number of alleles assumed at the
-#' QTL position and their origin. Models also assume different variance
-#' covariance structures (VCOV). Four assumptions for the QTL effect and four
-#' for the VCOV give a grid of 16 different models.
+#' QTL position and their origin. Four assumptions for the QTL effect are
+#' possible.
 #' 
 #' Concerning the type of QTL effect, the first option is a cross-specific QTL
 #' effects model (\code{Q.eff = "cr"}). In this model, the QTL effects are
 #' assumed to be nested within cross which leads to the estimation of one
-#' parameter per cross. Computed with an homogoenous residual variance term
-#' (\code{VCOV = "h.err"}), the cross-specific model corresponds to the
+#' parameter per cross. The cross-specific model corresponds to the
 #' disconnected model described in Blanc et al. 2006.
 #' 
 #' A second possibility is the parental model (\code{Q.eff = "par"}). The
@@ -52,41 +50,8 @@
 #' corresponding to the number of allele copy of the least frequent SNP allele.
 #' Relatedness between lines is therefore defined via identical by state (IBS)
 #' measurement. This model corresponds to models used for association mapping.
-#' For example, if (\code{VCOV = "h.err"}), it is similar to model B in
-#' Wurschum et al. (2012) or association mapping model in Liu et al. (2012).
-#' 
-#' The second dimension relates to the form of the variance covariance structure.
-#' The first assumption is an homogeneous variance residual term model (HRT). It
-#' corresponds to the classical linear model assumption of independence of the
-#' residual terms. It can be calculated using the \code{lm()} function
-#' (\code{VCOV = "h.err"}) or by REML using \code{asreml()}
-#' (\code{VCOV = "h.err.as"}).
-#' 
-#' The second assumption is a cross-specific variance residual terms model
-#' (CSRT) where one residual variance component is estimated per cross 
-#' (\code{VCOV = "cr.err"}). This VCOV allows to take into consideration
-#' potential heterogeneity of residual variance that could exist between crosses.
-#' Such a difference can be due to different levels of polygenic effect
-#' (undetected QTLs).
-#' 
-#' The third and fourth VCOV model the polygenic effect directly by adding a
-#' pedigree term to the model. The variance covariance structure
-#' associated with this random term is the matrix of inbreeding coefficients
-#' based on pedigree information (G). It is calculated using the function
-#' \code{asreml.Ainverse()}. This function uses the method developped by
-#' Meuwissen and Luo (1992). The third possibility is to use the random pedigree
-#' model with HRT (\code{VCOV = "pedigree"}). The fourth option includes the
-#' random pedigree term plus CSRT (\code{VCOV = "ped_cr.err"}). All model except
-#' (\code{VCOV = "h.err"}) are fitted using REML via the \code{asreml()} function
-#' from the \code{ASReml-R} package (Butler et al., 2009).
-#' 
-#' \strong{WARNING!} The computation of random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
-#' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
+#' For example, it is similar to model B in Wurschum et al. (2012) or
+#' association mapping model in Liu et al. (2012).
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' 
@@ -97,14 +62,6 @@
 #' the QTL effects: 1) "cr" for cross-specific; 2) "par" for parental; 3) "anc"
 #' for ancestral; 4) "biall" for a bi-allelic. For more details see
 #' \code{\link{mpp_SIM}}. Default = "cr".
-#'
-#' @param VCOV \code{Character} expression defining the type of variance
-#' covariance structure used: 1) "h.err" for an homogeneous variance residual term
-#' (HRT) linear model; 2) "h.err.as" for a HRT model fitted by REML using
-#' \code{ASReml-R}; 3) "cr.err" for a cross-specific variance residual terms
-#' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
-#' and 5) "ped_cr.err" for random pedigree and CSRT model.
-#' Default = "h.err".
 #' 
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
@@ -179,8 +136,7 @@
 #' 
 #' data(mppData)
 #' 
-#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", VCOV = "h.err",
-#' plot.gen.eff = TRUE)
+#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "cr", plot.gen.eff = TRUE)
 #' 
 #' plot(x = SIM)  
 #' plot(x = SIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr")
@@ -189,7 +145,7 @@
 #' # Bi-allelic model
 #' ##################
 #' 
-#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall", VCOV = "h.err")
+#' SIM <- mpp_SIM(mppData = mppData, Q.eff = "biall")
 #' 
 #' plot(x = SIM, type = "h")
 #' 
@@ -197,14 +153,15 @@
 #' 
 
 
-mpp_SIM <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err", 
+mpp_SIM <- function(mppData, trait = 1, Q.eff = "cr",
                     plot.gen.eff = FALSE, n.cores = 1) {
   
   # 1. Check data format and arguments
   ####################################
   
-  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
-                   plot.gen.eff = plot.gen.eff, n.cores = n.cores, fct = "SIM")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff,
+                   VCOV = 'h.err', plot.gen.eff = plot.gen.eff,
+                   n.cores = n.cores, fct = "SIM")
   
   # 2. Form required elements for the analysis
   ############################################
@@ -215,7 +172,7 @@ mpp_SIM <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
   
   ### 2.2 inverse of the pedigree matrix
   
-  formPedMatInv(mppData = mppData, VCOV = VCOV)
+  # formPedMatInv(mppData = mppData, VCOV = VCOV)
   
   ### 2.3 cross matrix (cross intercept)
   
@@ -244,21 +201,21 @@ mpp_SIM <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelSIM,
                           mppData = mppData, trait = t_val,
-                          cross.mat = cross.mat, Q.eff = Q.eff, VCOV = VCOV,
+                          cross.mat = cross.mat, Q.eff = Q.eff, VCOV = 'h.err',
                           plot.gen.eff = plot.gen.eff)
     
   } else {
     
     log.pval <- lapply(X = vect.pos, FUN = QTLModelSIM,
                        mppData = mppData, trait = t_val, cross.mat = cross.mat,
-                      Q.eff = Q.eff, VCOV = VCOV, plot.gen.eff = plot.gen.eff)
+                      Q.eff = Q.eff, VCOV = 'h.err', plot.gen.eff = plot.gen.eff)
     
   }
   
   if(n.cores > 1){stopCluster(cluster)}
   
   log.pval <- t(data.frame(log.pval))
-  if(plot.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
+  if(plot.gen.eff){log.pval[is.na(log.pval)] <- 1}
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value
   log.pval[is.na(log.pval[, 1]), 1] <- 0
   
