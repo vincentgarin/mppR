@@ -12,7 +12,7 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
   
   if(!is_mppData(mppData)){
     
-    stop('the mppData provided provided is not a mppData object.')
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
@@ -20,10 +20,10 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
   
   if(mppData$status != 'QC'){
     
-    stop(paste('You have to process the mppData objects in a strict order:',
-               'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
-               'parent_cluster.mppData(). You can only use IBS.mppData()',
-               'after performing create.mppData() and QC.mppData().'))
+    stop("you have to process 'mppData' in a strict order: ",
+         "create.mppData, QC.mppData, IBS.mppData, IBD.mppData, ",
+         "parent_cluster.mppData. You can only use IBD.mppData ",
+         "after create.mppData, QC.mppData, and IBS.mppData")
     
   }
   
@@ -32,9 +32,10 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
     if(!(impute.type %in% c("random","family","beagle","beagleAfterFamily",
                             "beagleNoRand", "beagleAfterFamilyNoRand","fix"))){
       
-      stop(paste("The impute.type is not correct. Please use one of:",
-                 "'random', 'family', 'beagle', 'beagleAfterFamily',",
-                 "'beagleNoRand', 'beagleAfterFamilyNoRand', 'fix'."))
+      stop("'impute.type' must be ", dQuote("random"), ', ', dQuote("family"), ', ',
+           dQuote("beagle"), ', ', dQuote("beagleAfterFamily"), ', ',
+           dQuote("beagleNoRand"), dQuote("beagleAfterFamilyNoRand"),
+           'or ', dQuote("fix"))
       
     }
     
@@ -45,29 +46,25 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
       
       if(!("package:synbreed" %in% search())){
         
-        stop(paste("To be able to use Beagle for imputation, please load the",
-                   "package synbreed using library(synbreed)."))
+        stop("to make imputation using Beagle please load package synbreed")
         
       }
       
       if(is.null(map_bp)){
         
-        stop(paste("to use imputation with Beagle you must provide marker bp",
-                   "position via the argument map_pb."))
+        stop("'map_pb' is not provided")
         
       }
       
       if(!identical(map_bp[, 1], colnames(mppData$geno.off))){
         
-        stop(paste("The marker indicators of map_bp should be identical to the",
-                   "the marker indicators of geno.off (colnames(geno.off))."))
+        stop("the marker indicators of 'map_bp' and 'geno.off' are not identical")
         
       }
       
       if(!(is.character(map_bp[, 2]) || is.numeric(map_bp[, 2]))){
         
-        stop(paste("The chromosome indicator of map_bp (2nd col) should be",
-                   "character or numeric."))
+        stop("the chromosome indicator of 'map_bp' must be character or numeric")
         
       }
       
@@ -78,8 +75,7 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
     
     if((impute.type == "fix") & (is.null(replace.value))){
       
-      stop(paste("To use the impute.type = 'fix', you must also provide a value",
-                 "the replace.value argument."))
+      stop("'replace.value' is not provided")
       
     }
     
@@ -87,13 +83,13 @@ check_IBS <- function(mppData, impute, impute.type, map_bp, replace.value){
       
       if(!is.numeric(replace.value)){
         
-        stop("replace.value must be a numerical value 0, 1 or 2.")
+        stop("'replace.value' must be numeric")
         
       }
       
       if (!(replace.value %in% c(0, 1, 2))){
         
-        stop("replace.value must be 0, 1 or 2.")
+        stop("'replace.value' must be 0, 1 or 2")
         
       }
       

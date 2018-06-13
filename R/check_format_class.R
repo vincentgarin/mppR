@@ -14,7 +14,7 @@ check_trait <- function(trait, mppData){
   
   if(!(is.character(trait) || is.numeric(trait))){
     
-    stop("The trait object must be either numeric or character.")
+    stop("'trait' must be numeric or character")
     
   }
   
@@ -24,8 +24,8 @@ check_trait <- function(trait, mppData){
     
     if(!((0 < trait) && (trait <=nb.trait))){
       
-      stop(paste("The trait indicator should be between 1 and", nb.trait,
-                 "the total number of traits in the mppData object"))
+      stop("trait must be between 1 and ", nb.trait,
+           " the total number of traits in 'mppData'")
       
     }
     
@@ -37,7 +37,9 @@ check_trait <- function(trait, mppData){
     
     if (!(trait %in% trait.names)){
       
-      stop(paste("trait must be one of:", paste(trait.names, collapse = ', ')))
+      t_nms <- paste(trait.names, collapse = ', ')
+      
+      stop("'trait' must be one of: ", t_nms)
       
     }
     

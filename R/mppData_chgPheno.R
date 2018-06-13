@@ -34,12 +34,15 @@
 
 mppData_chgPheno <- function(mppData, trait){
   
-  stopifnot(inherits(mppData, "mppData"))
+  if(!is_mppData(mppData)) {
+    
+    stop("'mppData' must be of class ", dQuote("mppData"))
+    
+  }
   
   if(!identical(trait[, 1], mppData$geno.id )) {
     
-    stop("The genotypes  identifiers of the mppData object and the new trait
-         values are not the same")
+    stop("the genotypes identifiers of 'mppData' and 'trait' are not identical")
     
   }
   

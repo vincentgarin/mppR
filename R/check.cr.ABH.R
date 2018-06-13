@@ -13,15 +13,13 @@ check.cr.ABH <- function(par.sc, off.sc, cross.ind, par.per.cross){
   
   if(!is.character(par.sc)){
     
-    stop("The matrix of parent score par.sc argument is not
-         character matrix.")
+    stop("'par.sc' argument is not character")
     
   }
   
   if(!is.character(off.sc)){
     
-    stop("The matrix of offspring score off.sc argument is not
-         character matrix.")
+    stop("'off.sc' is not character")
     
   }
   
@@ -29,7 +27,7 @@ check.cr.ABH <- function(par.sc, off.sc, cross.ind, par.per.cross){
   
   if(!is.character(cross.ind)){
     
-    stop("The cross.ind vector is not character vector.")
+    stop("'cross.ind' is not character")
     
   }
   
@@ -37,8 +35,7 @@ check.cr.ABH <- function(par.sc, off.sc, cross.ind, par.per.cross){
   
   if(length(cross.ind) != dim(off.sc)[1]){
     
-    stop("The length of the cross.ind vector does not correspond
-         to the number of genotype present in the genotype matrix.")
+    stop("'cross.ind' length is not equal to the number of genotype in 'off.sc'")
     
   }
   
@@ -46,7 +43,7 @@ check.cr.ABH <- function(par.sc, off.sc, cross.ind, par.per.cross){
   
   if(!is.character(par.per.cross)){
     
-    stop("The par.per.cross matrix is not a character matrix.")
+    stop("'par.per.cross' is not character")
     
   }
   
@@ -62,7 +59,7 @@ check.cr.ABH <- function(par.sc, off.sc, cross.ind, par.per.cross){
   
   if (!identical(unique(cross.ind), par.per.cross[, 1])){
     
-    stop("The cross identifiers used in cross.ind and in par.per.cross differ")
+    stop("the cross identifiers in 'cross.ind' and in 'par.per.cross' differ")
     
   }
   
@@ -74,19 +71,29 @@ check.cr.ABH <- function(par.sc, off.sc, cross.ind, par.per.cross){
   
   if(sum(!(parents %in% rownames(par.sc)))>0){
     
-    list.par <- paste(parents[!(parents %in% rownames(par.sc))])
+    list.par <- parents[!(parents %in% rownames(par.sc))]
+    pbpar <- paste(list.par, collapse = ", ")
     
-    stop("The following parents indicators: ", list.par, " (is) are present in
-         par.per.cross object but not in the rownames of the par.sc matrix.")
+    message <- sprintf(ngettext(length(list.par),
+                                "parent %s is used in 'par.per.cross' but not in 'par.sc'",
+                                "parents %s are used in 'par.per.cross' but not in 'par.sc'"),
+                       pbpar)
+    
+    stop(message)
     
   }
   
   if(sum(!(rownames(par.sc) %in% parents))>0){
     
-    list.par <- paste(rownames(par.sc)[!(rownames(par.sc) %in% parents)])
+    list.par <- rownames(par.sc)[!(rownames(par.sc) %in% parents)]
+    pbpar <- paste(list.par, collapse = ", ")
     
-    stop("The following parents indicators: ", list.par, " (is) are present in
-          the rownames of the par.sc matrix but not in par.per.cross object.")
+    message <- sprintf(ngettext(length(list.par),
+                                "parent %s is used in 'par.sc' but not in 'parents'",
+                                "parents %s are used in 'par.sc' but not in 'parents'"),
+                       pbpar)
+    
+    stop(message)
     
   }
   

@@ -108,33 +108,33 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   
   # Test if one object is missing
   
-  if(is.null(geno.off)){stop('Argument geno.off is not provided.')}
+  if(is.null(geno.off)){stop("'geno.off' is not provided")}
   
-  if(is.null(geno.par)){stop('Argument geno.par is not provided.')}
+  if(is.null(geno.par)){stop("'geno.par' is not provided")}
   
-  if(is.null(map)){stop('Argument map is not provided.')}
+  if(is.null(map)){stop("'map' is not provided")}
   
-  if(is.null(pheno)){stop('Argument pheno is not provided.')}
+  if(is.null(pheno)){stop("'pheno' is not provided")}
   
-  if(is.null(cross.ind)){stop('Argument cross.ind is not provided.')}
+  if(is.null(cross.ind)){stop("'cross.ind' is not provided")}
   
-  if(is.null(par.per.cross)){stop('Argument par.per.cross is not provided.')}
+  if(is.null(par.per.cross)){stop("'par.per.cross' is not provided")}
   
   # test format of the marker matrices (geno.off, geno.par)
   
-  if(!is.matrix(geno.off)){ stop("The geno.off argument is not a matrix.") }
+  if(!is.matrix(geno.off)){ stop("'geno.off' is not a matrix") }
   
   if(!is.character(geno.off)){
     
-    stop("The geno.off argument is not a character matrix.")
+    stop("'geno.off' is not character")
     
   }
   
-  if(!is.matrix(geno.par)){ stop("The geno.par argument is not a matrix.") }
+  if(!is.matrix(geno.par)){ stop("'geno.par' is not a matrix") }
   
   if(!is.character(geno.par)){
     
-    stop("The geno.par argument is not a character matrix.")
+    stop("'geno.par' is not character")
     
   }
   
@@ -143,15 +143,13 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   
   if(!identical(colnames(geno.off), map[, 1])){
     
-    stop(paste("The marker identifier of the offspring marker matrix (geno.off)",
-               "and the list of marker (map[, 1]) are not the same."))
+    stop("the marker identifiers in 'geno.off' and 'map' are not the same")
     
   }
   
   if(!identical(colnames(geno.par), map[, 1])){
     
-    stop(paste("The marker identifier of the parent marker matrix (geno.par)",
-               "and the list of marker (map[, 1]) are not the same."))
+    stop("the marker identifiers in 'geno.par' and 'map' are not the same")
     
   }
   
@@ -159,36 +157,35 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   
   if(!is.character(map[, 1])){
     
-    stop("The marker identifier in the map must be character.")
+    stop("the marker identifier in 'map' must be character")
     
   }
   
   if(!is.numeric(map[, 2])){
     
-    stop("The chromosome in the map must be numeric.")
+    stop("the chromosome in 'map' must be numeric")
     
   }
   
   if(!is.numeric(map[, 3])){
     
-    stop("The genetic positions in the map must be numeric.")
+    stop("the genetic positions in 'map' must be numeric")
     
   }
   
   # test phenotype values
   
-  if(!is.matrix(pheno)){stop('The pheno argument is not a matrix.')}
+  if(!is.matrix(pheno)){stop(" 'pheno' is not a matrix")}
   
-  if(!is.numeric(pheno)){stop('The pheno argument is not a numeric matrix.')}
+  if(!is.numeric(pheno)){stop(" 'pheno' is not numeric")}
   
   # test if the list of genotype is the same between the offspring marker matrix
   # and the phenotypic values.
   
   if(!identical(rownames(geno.off), rownames(pheno))){
     
-    stop(paste("The genotype identifiers of the offspring marker matrix",
-               "(geno.off) and the list of genotypes (rownames(pheno)) are not",
-               "the same."))
+    stop("the genotype identifiers of 'geno.off' and 'pheno' are not identical")
+               
     
   }
   
@@ -205,21 +202,20 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   
   if(length(cross.ind) != dim(geno.off)[1]){
     
-    stop(paste("The cross indicator vector (cross.ind) length does not have",
-               "the same length as the genotype list (dim(geno.off)[1])"))
+    stop("'cross.ind' length is not equal to the number of genotype in 'geno.off'")
   }
   
   # test par.per.cross
   
   if(!is.matrix(par.per.cross)){
     
-    stop("The par.per.cross argument is not a matrix.")
+    stop("'par.per.cross' is not a matrix")
     
   }
   
   if(!is.character(par.per.cross)){
     
-    stop("The par.per.cross argument is not a character matrix.")
+    stop("'par.per.cross' is not character")
     
   }
   
@@ -233,8 +229,7 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   
   if (!identical(unique(cross.ind), par.per.cross[, 1])){
     
-    stop(paste("The cross identifiers used in cross.ind and",
-               "in par.per.cross are different."))
+    stop("the cross identifiers in 'cross.ind' and 'par.per.cross' are not identical")
     
   }
   
@@ -245,11 +240,15 @@ create.mppData <- function(geno.off = NULL, geno.par = NULL, map = NULL,
   
   if(sum(!(parents %in% rownames(geno.par)))>0){
     
-    list.par <- paste(parents[!(parents %in% rownames(geno.par))])
+    list.par <- parents[!(parents %in% rownames(geno.par))]
+    pbpar <- paste(list.par, collapse = ", ")
     
-    stop(paste("The following parents indicators:", list.par,
-               "(is) are present in par.per.cross object but not in the",
-               "rownames of the geno.par matrix"))
+    message <- sprintf(ngettext(length(list.par),
+                                "parent %s is used in 'par.per.cross' but not in 'geno.par'",
+                                "parents %s are used in 'par.per.cross' but not in 'geno.par'"),
+                       pbpar)
+    
+    stop(message)
     
   }
   

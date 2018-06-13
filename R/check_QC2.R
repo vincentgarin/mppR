@@ -13,8 +13,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(!is_mppData(mppData)){
     
-    stop(paste('the mppData provided provided is not a mppData object.',
-               'Please use function create.mppData().'))
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
@@ -22,10 +21,10 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(mppData$status != 'init'){
     
-    stop(paste('You have to process the mppData objects in a strict order:',
-               'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
-               'parent_cluster.mppData(). You can only use QC.mppData() right',
-               'after create.mppData().'))
+    stop("you have to process 'mppData' in a strict order: ",
+         "create.mppData, QC.mppData, IBS.mppData, IBD.mppData, ",
+         "parent_cluster.mppData. You can only use QC.mppData ",
+         "after create.mppData")
     
   }
   
@@ -34,7 +33,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(all(n.lim > table(mppData$cross.ind))){
     
-    stop('The number of individual per cross is below n.lim in all crosses.')
+    stop("the number of individual per cross is below 'n.lim' in all crosses")
     
   }
   
@@ -48,7 +47,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(!t1){
     
-    stop("MAF.pop.lim can only take value between 0 and 1.")
+    stop("'MAF.pop.lim' can only take values between 0 and 1")
     
   }
   
@@ -59,7 +58,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(!t2){
     
-    stop("mk.miss can only take value between 0 and 1.")
+    stop("'mk.miss' can only take values between 0 and 1")
     
   }
   
@@ -67,7 +66,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(!t3){
     
-    stop("gen.miss can only take value between 0 and 1.")
+    stop("'gen.miss' can only take values between 0 and 1")
     
   }
   
@@ -81,7 +80,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
     
     if(length(MAF.cr.lim) != mppData$n.cr){
       
-      stop("MAF.cr.lim must contain one value per cross.")
+      stop("'MAF.cr.lim' must contain one value per cross")
       
     }
     
@@ -89,7 +88,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
     
     if(test){
       
-      stop("MAF.cr.lim can only contain values between 0 and 1.")
+      stop("'MAF.cr.lim' can only contain values between 0 and 1")
       
     }
     
@@ -102,13 +101,13 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
     
     if(length(MAF.cr.lim2) !=1 ){
       
-      stop('MAF.cr.lim2 can only contain a single value between 0 and 1.')
+      stop("'MAF.cr.lim2' can only contain a single value between 0 and 1")
       
     }
     
     if(!((MAF.cr.lim2 > 0) & (MAF.cr.lim2 < 1))) {
       
-      stop('MAF.cr.lim2 can only contain a value between 0 and 1.')
+      stop("'MAF.cr.lim2' can only contain a value between 0 and 1")
       
     }
     
@@ -119,7 +118,7 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
   
   if(!is.numeric(n.cores)){
     
-    stop('The number of cores must be a numeric value.')
+    stop("'n.cores must be numeric")
     
   }
 

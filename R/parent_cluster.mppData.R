@@ -122,7 +122,7 @@ parent_cluster.mppData <- function(mppData, w1 = "kernel.exp",
   
   if(!is_mppData(mppData)){
     
-    stop('the mppData provided provided is not a mppData object.')
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
@@ -130,11 +130,10 @@ parent_cluster.mppData <- function(mppData, w1 = "kernel.exp",
   
   if(!(mppData$status %in% c('IBD', 'complete'))){
     
-    stop(paste('You have to process the mppData objects in a strict order:',
-               'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
-               'parent_cluster.mppData(). You can only use parent_cluster.mppData()',
-               'after performing create.mppData(), QC.mppData(),',
-               'IBS.mppData(), and IBD.mppData().'))
+    stop("you have to process 'mppData' in a strict order: ",
+         "create.mppData, QC.mppData, IBS.mppData, IBD.mppData, ",
+         "parent_cluster.mppData. You can only use parent_cluster.mppData ",
+         "after create.mppData, QC.mppData, IBS.mppData, and IBD.mppData")
     
   }
   
