@@ -168,7 +168,7 @@ IBS.mppData <- function(mppData, impute = FALSE, impute.type = "random",
         
       } else { # Cases with Beagle
         
-        message("The imputation using Beagle can take several minutes!")
+        message("the imputation using Beagle can take several minutes")
         
         map_gp <- map_bp[map_bp[, 1] %in% map[, 1], 2:3]
         map.unit <- "bp"
@@ -214,9 +214,9 @@ IBS.mppData <- function(mppData, impute = FALSE, impute.type = "random",
       
       if(is.null(gp.imp)){
         
-        if(map.unit == "cM"){ warning("The missing values imputation failed!")
+        if(map.unit == "cM"){ warning("the missing values imputation failed")
           
-        } else{ warning("The missing values imputation using Beagle failed!") }
+        } else{ warning("the missing values imputation using Beagle failed") }
         
       } else {
         

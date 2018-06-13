@@ -118,7 +118,7 @@ QTL_select <- function(Qprof, threshold = 3, window = 50, verbose = TRUE) {
   if(is.null(QTL)){
     
     if(verbose){
-      message("No position has been selected as QTL candidate.")
+      message("no position has been selected as QTL candidate")
     }
     
     return(QTL)

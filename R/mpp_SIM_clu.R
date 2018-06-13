@@ -81,18 +81,17 @@ mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
     if (sum(SIM$log10pval) == 0){
       
-      message("The computation of the QTL models failled for all positions.
-              This could be due to problem in asreml function.")
+      warning("the computation of the QTL model failled for all positions")
       
     } else {
       
       list.pos <- mppData$map[(SIM$log10pval == 0), 1]
       
-      text <- paste("The computation of the QTL model failed for the following",
-                    "positions: ", paste(list.pos, collapse = ", "),
-                    ". This could be due to singularities or function issues.")
+      prob_pos <- paste(list.pos, collapse = ", ")
       
-      message(text)
+      message("the computation of the QTL model failed for the following ",
+              "positions: ", prob_pos,
+              ". This could be due to singularities or function issues")
       
     }
     

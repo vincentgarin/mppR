@@ -215,19 +215,17 @@ MQE_CIM <- function(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
     
     if (sum(CIM$log10pval) == 0){
       
-      warning("The computation of the QTL models failled for all positions.
-              This could be due to problem in asreml() function.")
+      warning("the computation of the QTL model failled for all positions")
       
     } else {
       
       list.pos <- mppData$map[(CIM$log10pval == 0), 1]
       
-      end.mess <- ". This could be due to singularities or function issue."
+      prob_pos <- paste(list.pos, collapse = ", ")
       
-      text <- paste("The computation of the QTL model failed for the following positions: ",
-                    paste(list.pos, collapse = ", "), end.mess)
-      
-      warning(text)
+      message("the computation of the QTL model failed for the following ",
+              "positions: ", prob_pos,
+              ". This could be due to singularities or function issues")
       
     }
     

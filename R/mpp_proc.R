@@ -293,7 +293,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   if (is.null(cofactors)) { # test if cofactors have been selected
     
-    message("No QTL/cofactor position detected based on the SIM profile.")
+    message("no QTL/cofactor position detected based on the SIM profile")
     
     return(NULL)
     
@@ -330,8 +330,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
       
       if (is.null(cofactors)) { # test if cofactors have been selected
         
-        mes.text <- paste("No cofactor position detected in CIM profile nb", i)
-        message(mes.text)
+        message("no QTL position detected in CIM profile nb ", i)
         
         return(NULL)
         
@@ -373,7 +372,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
   
   if (is.null(QTL)) { # test if QTL have been selected
     
-    message("No QTL position detected based on the (last) CIM profile.")
+    message("no QTL position detected based on the CIM profile")
     return(NULL)
     
   }
