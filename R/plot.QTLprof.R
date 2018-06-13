@@ -125,10 +125,10 @@ plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
       } else{
         
         if(!((is.matrix(QTL)) & (dim(QTL)[2] == 2) & (is.numeric(QTL)))){
-          
+
           stop("'QTL' must be a two columns numeric matrix with ",
                      "chromosome, and marker position")
-          
+
         }
         
         pos.Q <- data.frame(QTL)
