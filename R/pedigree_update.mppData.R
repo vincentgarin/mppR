@@ -58,19 +58,22 @@
 pedigree_update.mppData <- function(mppData, pedigree){
   
   
-  stopifnot(inherits(mppData, "mppData"))
+  if(!is_mppData(mppData)){
+    
+    stop("'mppData' must be of class ", dQuote("mppData"))
+    
+  }
   
   if(mppData$status == 'init'){
     
-    stop('The mppData object must at least have been processed with QC.mppData().')
+    stop("'mppData' must at least have been processed with QC.mppData")
     
   }
   
   if(!identical(as.character(pedigree[pedigree[, 1] == "offspring", 2]),
                 mppData$geno.id )) {
     
-    stop("The genotypes  identifiers of the mppData object and the offspring
-         pedigree information are not the same")
+    stop("the offspring genotypes identifiers of 'mppData' and 'pedigree' are not identical")
     
   }
   
@@ -82,13 +85,15 @@ pedigree_update.mppData <- function(mppData, pedigree){
   
   if(!all(new.geno %in% old.geno)) {
     
-    prob_geno <- new.geno[!(new.geno %in% old.geno)]
+    wrong.geno <- new.geno[!(new.geno %in% old.geno)]
+    pbgeno <- paste(wrong.geno, collapse = ", ")
     
-    mess <- paste('the folowing founder genotype(s):',
-                  paste(prob_geno, collapse = ", "), 'is/are not present',
-                  'in the old pedigree.')
+    message <- sprintf(ngettext(length(wrong.geno),
+                                "'pedigree' genotype %s is not present in 'mppData'",
+                                "'pedigree' genotypes %s are not present in 'mppData'"),
+                       pbgeno)
     
-    stop(mess)
+    stop(message)
     
   }
   

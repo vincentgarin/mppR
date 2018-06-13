@@ -15,7 +15,7 @@ check.mppData <- function(geno, geno.par = NULL, type, type.mating, BC.gen,
   
   if (!(is.matrix(geno))){
     
-    stop("The marker matrix (geno) is not a matrix.")  
+    stop("'geno' is not a matrix")  
     
   }
   

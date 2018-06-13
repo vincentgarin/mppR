@@ -45,7 +45,7 @@ par_clu_chg.mppData <- function(mppData, par.clu){
   
   if(!is_mppData(mppData)){
     
-    stop('the mppData provided provided is not a mppData object.')
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
@@ -53,8 +53,7 @@ par_clu_chg.mppData <- function(mppData, par.clu){
   
   if(mppData$status != 'complete'){
     
-    stop(paste('The mppData object must have been processed with',
-               'parent_cluster.mppData().'))
+    stop("'mppData' must have been processed with parent_cluster.mppData")
     
   }
   
@@ -62,13 +61,13 @@ par_clu_chg.mppData <- function(mppData, par.clu){
   
   if(!is.matrix(par.clu)){
     
-    stop("The par.clu argument is not a matrix.")
+    stop("'par.clu' argument is not a matrix")
     
   }
   
   if(!is.integer(par.clu)){
     
-    stop("The par.clu argument is not and integer matrix.")
+    stop("'par.clu' is not integer")
     
   }
   
@@ -78,13 +77,15 @@ par_clu_chg.mppData <- function(mppData, par.clu){
   
   if(!all(new_par %in% mppData$parents)) {
     
-    prob_par <- new_par[!(new_par %in% mppData$parents)]
+    wrong.par <- new_par[!(new_par %in% mppData$parents)]
+    pbpar <- paste(wrong.par, collapse = ", ")
     
-    mess <- paste('the folowing parent(s):',
-                  paste(prob_par, collapse = ", "), 'is/are not present',
-                  'in the old par.clu object.')
+    message <- sprintf(ngettext(length(wrong.par),
+                                "the following parent %s is present in the old 'par.clu'",
+                                "the following parents %s are not present in the old 'par.clu'"),
+                       pbpar)
     
-    stop(mess)
+    stop(message)
     
   }
   
@@ -92,8 +93,7 @@ par_clu_chg.mppData <- function(mppData, par.clu){
   
   if(!identical(rownames(par.clu), mppData$map[, 1])){
     
-    stop(paste('The marker of the par.clu argument are not the',
-               'same as the one in mppData.'))
+    stop("the markers of 'par.clu' and 'mppData' are not identical")
     
   }
   
