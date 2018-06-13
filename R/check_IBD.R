@@ -14,7 +14,7 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
   
   if(!is_mppData(mppData)){
     
-    stop('the mppData provided provided is not a mppData object.')
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
@@ -27,6 +27,11 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
                'parent_cluster.mppData(). You can only use IBD.mppData()',
                'after performing create.mppData(), QC.mppData(), and',
                'IBS.mppData()'))
+    
+    stop("you have to process 'mppData' in a strict order: ",
+               "create.mppData, QC.mppData, IBS.mppData, IBD.mppData, ",
+               "parent_cluster.mppData. You can only use IBD.mppData ",
+               "after create.mppData, QC.mppData(), and IBS.mppData")
     
   }
   
@@ -48,13 +53,12 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
     
     if(length(het.mk) > 0){
       
-      message <- paste("The following markers:",
-                       paste(colnames(geno.par)[het.mk], collapse = ", "),
-                       "are heterozygous for at least one parent. In order",
-                       "to proceed to the ABH assignement either remove them",
-                       "or use option het.miss.par = TRUE.")
+      pb_mk <- paste(colnames(geno.par)[het.mk], collapse = ", ")
       
-      stop(message)
+      stop("The following markers: ", pb_mk,
+           " are heterozygous for at least one parent. In order ",
+          "to perform the ABH assignement either remove them ",
+          "or use het.miss.par = TRUE")
       
     }
     
@@ -66,26 +70,26 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
     
     if((!is.null(subcross.ind)) && (is.null(par.per.subcross))){
       
-      stop("You must also provide the par.per.subcross argument.")
+      stop("'par.per.subcross' is not provided")
       
     }
     
     if((!is.null(par.per.subcross)) && (is.null(subcross.ind))){
       
-      stop("You must also provide the subcross.ind argument.")
+      stop("'subcross.ind' is not provided")
       
     }
     
     
     if(!is.matrix(par.per.subcross)){
       
-      stop("The par.per.subcross argument is not a matrix.")
+      stop("'par.per.subcross' is not a matrix")
       
     }
     
     if(!is.character(par.per.subcross)){
       
-      stop("The par.per.subcross argument is not a character matrix.")
+      stop("'par.per.subcross' is not a character matrix")
       
     }
     
@@ -99,23 +103,27 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
     
     if (!identical(unique(subcross.ind), par.per.subcross[, 1])){
       
-      stop(paste("The subcross identifiers used in subcross.ind and",
-                 "in par.per.subcross differ"))
+      stop("subcross identifiers used in 'subcross.ind' and 'par.per.subcross' ",
+           "are not identical")
       
     }
     
     # test the similarity of parents list between par.per.subcross and
     # rownames(geno.par)
     
-    parents <- union(par.per.subcross[,2], par.per.subcross[,3])
+    parents <- union(par.per.subcross[, 2], par.per.subcross[, 3])
     
-    if(sum(!(parents %in% rownames(geno.par)))>0){
+    if(sum(!(parents %in% rownames(geno.par))) > 0){
       
-      list.par <- paste(parents[!(parents %in% rownames(geno.par))])
+      list.par <- parents[!(parents %in% rownames(geno.par))]
+      pbpar <- paste(list.par, collapse = ", ")
       
-      stop(paste("The following parents indicators:", list.par,
-                 "(is) are present in par.per.subcross object but not in the",
-                 "rownames of the geno.par matrix"))
+      message <- sprintf(ngettext(length(list.par),
+                                  "parent %s is used in 'par.per.subcross' but not in 'geno.par'",
+                                  "parents %s are used in 'par.per.subcross' but not in 'geno.par'"),
+                         pbpar)
+      
+      stop(message)
       
     }
     
@@ -129,11 +137,8 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
   
   if (!(type %in% c("F", "BC", "RIL", "DH", "BCsFt"))) {
     
-    info <- paste("The type of population specified in the argument type:",
-                  type, "is not allowed.",
-                  "Please use 'F', 'BC','RIL','DH' or 'BCsFt'.")
-    
-    stop(info)
+    stop("'type' must be ", dQuote("F"), ', ', dQuote("BC"), ', ',
+         dQuote("RIL"), ', ', dQuote("DH"), ' or ', dQuote("BCsFt"))
     
   }
   
@@ -143,7 +148,7 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
     
     if(is.null(F.gen)){
       
-      stop("The number of generation (F.gen) is not specified.") }
+      stop("'F.gen' is not specified") }
     
   }
   
@@ -151,23 +156,21 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
     
     if(is.null(BC.gen)){
       
-      stop("The number of generation (BC.gen) is not specified.") }
+      stop("'BC.gen' is not specified") }
     
   }
   
   if (type == "BCsFt"){
     
-    if(is.null(BC.gen)|| is.null(F.gen)){
-      
-      stop("The number of generation (BC.gen or F.gen) is/are not specified.") }
+    if(is.null(F.gen)){ stop("'F.gen' is not specified") }
+    if(is.null(BC.gen)){stop("'BC.gen' is not specified") }
     
   }
   
   
-  
   if((type == "RIL") && is.null(type.mating)){
     
-    stop("The type of mating (argument type.mating) must be provided.")
+    stop("'type.mating' is missing")
     
   }
   
@@ -175,11 +178,11 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
   
   if(!is.null(type.mating)){
     
-    if(!is.character(type.mating)){stop('type.mating must be a character string.')}
+    if(!is.character(type.mating)){stop("'type.mating' must be character")}
     
     if(!(type.mating %in% c('selfing', 'sib.mat'))){
       
-      stop("type.mating must be either 'selfing' or 'sib.mat'.")
+      stop("'type.mating' must be ", dQuote("selfing"), ' or ', dQuote("sib.mat"))
       
     }
     
@@ -189,13 +192,14 @@ check_IBD <- function(mppData, het.miss.par, subcross.ind, par.per.subcross,
   
   if(!is.character(map.function)){
     
-    stop('map.function must be a character string.')
+    stop("'map.function' must be character")
     
   }
   
   if(!(map.function %in% c('haldane', 'kosambi', 'c-f', 'morgan'))){
     
-    stop("type.mating must be one of: 'haldane', 'kosambi', 'c-f', 'morgan'.")
+    stop("'map.function' must be ", dQuote("haldane"), ', ', dQuote("kosambi"), ', ',
+         dQuote("c-f"), ' or ', dQuote("morgan"))
     
   }
   

@@ -50,7 +50,7 @@ QC_missing <- function(mk.mat, threshold = 0.1, MARGIN = 2) {
   
   if (!(is.matrix(mk.mat))){
     
-    stop("the marker matrix (mk.mat) is not a matrix")  
+    stop("'mk.mat' is not a matrix")  
     
   }
   
@@ -58,7 +58,7 @@ QC_missing <- function(mk.mat, threshold = 0.1, MARGIN = 2) {
   
   if (!(is.character(mk.mat))){
     
-    stop("the marker matrix (mk.mat) is not a character matrix")  
+    stop("'mk.mat' is not a character matrix")  
     
   }
   

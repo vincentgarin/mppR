@@ -124,8 +124,7 @@ QC_MAF <- function(mk.mat, cross.ind = NULL, parallel = FALSE,
     
     if(length(cross.ind) != dim(mk.mat)[1]){
       
-      stop("The cross indicator vector (cross.ind) length does not have the same
-           length as the genotype list (dim(mk.mat)[1])")
+      stop("'cross.ind' length is not the same as the number of genotype in 'mk.mat'")
     }
     
     ### 3.2 MAF at population level

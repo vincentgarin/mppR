@@ -49,21 +49,21 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
     
     if(is.null(mppData)){
       
-      stop("no data have been provided for the mppData argument.")
+      stop("'mppData' is not provided")
       
     } else {
       
       if(!inherits(mppData, "mppData")) {
         
-        stop("The data object provided (argument mppData) is not of class mppData.")
+        stop("'mppData' must be of class ", dQuote("mppData"))
         
       }
       
       if(mppData$status != 'complete'){
         
-        stop(paste('The mppData object is not complete. You must use all processing',
-                   'functions first in the specified order: QC.mppData, IBS.mppData,',
-                   'IBD.mppData, and parent_cluster.mppData.'))
+        stop("'mppData' is not complete. Use first all processing ",
+             "functions in the specified order: QC.mppData, IBS.mppData, ",
+             "IBD.mppData, and parent_cluster.mppData")
         
       }
       
@@ -83,7 +83,8 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
   
   if (!(Q.eff %in% c("cr", "par", "anc", "biall"))){
     
-    stop("The Q.eff argument must be : 'cr', 'par', 'anc' or 'biall'")
+    stop("'Q.eff' must be ", dQuote("cr"), ', ', dQuote("par"), ', ',
+         dQuote("anc"), ' or ', dQuote("biall"))
     
   }
   
@@ -98,8 +99,9 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
     
     if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
       
-      stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
-                 "'pedigree' or 'ped_cr.err'."))
+      stop("'VCOV' must be ", dQuote("h.err"), ', ', dQuote("h.err.as"), ', ',
+           dQuote("cr.err"), ', ', dQuote("pedigree"), ' or ',
+           dQuote("ped_cr.err"))
       
     }
     
@@ -144,7 +146,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
   
   if ((n.cores > 1) && (VCOV != "h.err")){
     
-    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
+    stop("parallelization is only possible for 'VCOV' = ", dQuote("h.err")) 
     
     
   }
@@ -160,9 +162,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
     
     if((Q.eff == "biall") && plot.gen.eff) {
       
-      stop(paste("The estimation of the decomposed QTL effect",
-                 "(plot.gen.eff = TRUE) per cross or parents can not be performed for",
-                 "the bi-allelic model"))
+      stop("the estimation using 'plot.gen.eff' = TRUE is not available for the bi-allelic model")
       
     }
     
@@ -170,7 +170,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
       
       if(is.null(cofactors)) {
         
-        stop("No cofactors have been introduced.")
+        stop("'cofactors' is not provided")
         
       }
       
@@ -187,7 +187,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
     
     if(is.null(QTL)){
       
-      stop("No QTL position has been specified for the QTL argument")
+      stop("'QTL' does not contain any QTL position")
       
     }
     
@@ -196,9 +196,12 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
       if(sum(!(QTL %in% mppData$map[, 1])) != 0){
         
         wrong.QTL <- QTL[!(QTL %in% mppData$map[, 1])]
-        message <- paste("The following QTL positions:",
-                         paste(wrong.QTL, collapse = ", "),
-                         "are not present in the QTL profile (Qprof).")
+        
+        pbQTL <- paste(wrong.QTL, collapse = ", ")
+        message <- sprintf(ngettext(length(wrong.QTL),
+                                    "'QTL' position %s is not present in 'mppData'",
+                                    "'QTL' positions %s are not present in 'mppData'"),
+                           pbQTL)
         
         stop(message)
         
@@ -206,14 +209,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
       
     } else { # the list of QTL is not character test if QTLlist format
       
-      if (!inherits(QTL, "QTLlist")){
-        
-        stop(paste("The format of the argument QTL is not valid.",
-                   "Use either a object obtained from the function QTL_select",
-                   "or a character vector of markers or in between marker",
-                   "positions indicator."))
-        
-      }
+      stopifnot(inherits(QTL, "QTLlist"))
       
     }
     
@@ -228,8 +224,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
         
         if(length(ref.par) !=1){
           
-          stop(paste("You can only specify one reference parent (ref.par) for",
-                     "the estimation of the QTL effects."))
+          stop("'ref.par' must be of length 1")
                
         }
         
@@ -238,9 +233,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
         
         if(nb.con.part > 1){
           
-          stop(paste("You can only use the ref.par argument if your MPP design",
-                     "is composed of a single connected part",
-                     "(check with design_connectivity(mppData$par.per.cross))."))
+          stop("'ref.par' can only be used if the MPP has a unique connected part")
           
         }
         
@@ -248,9 +241,9 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
         
         if(!(ref.par %in% mppData$parents)){
           
-          stop(paste("The reference parent you specified in ref.par is not",
-                     "contained in the list of parents. Please use one of:",
-                     paste(mppData$parents, collapse = ", ")))
+          par_list <- paste(mppData$parents, collapse = ", ")
+          
+          stop("'ref.par' must be one of: ", par_list)
           
         }
         
@@ -262,16 +255,16 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
         
         if(!(Q.eff %in% c('par', 'anc'))){
           
-          stop(paste('You can only use the sum to zero constraint for the',
-                     'parental (Q.eff = "par") or the ancestral (Q.eff = "anc")',
-                     'models.'))
+          stop("you can only use the sum to zero constraint for the parental ",
+               "or the ancestral model")
           
         }
         
         if(VCOV != 'h.err'){
           
-          stop(paste('You can only use the sum to zero constraint with the',
-                     'homogeneous error term model (VCOV = "h.err").'))
+          
+          stop("you can only use the sum to zero constraint for the ",
+               "homogeneous error term model")
           
         }
         

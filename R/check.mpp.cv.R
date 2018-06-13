@@ -14,7 +14,7 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   
   if(!file.exists(output.loc)){
     
-    stop("The path specified in the argument output.loc is not valid.")
+    stop("'output.loc' is not a valid path")
     
   }
   
@@ -23,15 +23,15 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   
   if(!inherits(mppData, "mppData")) {
     
-    stop("The data object provided (argument mppData) is not of class mppData.")
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
   if(mppData$status != 'complete'){
     
-    stop(paste('The mppData object is not complete. You must use all processing',
-               'functions first in the specified order: QC.mppData, IBS.mppData,',
-               'IBD.mppData, and parent_cluster.mppData.'))
+    stop("'mppData' is not complete. Use first all processing ",
+         "functions in the specified order: QC.mppData, IBS.mppData, ",
+         "IBD.mppData, and parent_cluster.mppData")
     
   }
   
@@ -44,7 +44,8 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   
   if (!(Q.eff %in% c("cr", "par", "anc", "biall"))){
     
-    stop("The Q.eff argument must be : 'cr', 'par', 'anc' or 'biall'")
+    stop("'Q.eff' must be ", dQuote("cr"), ', ', dQuote("par"), ', ',
+         dQuote("anc"), ' or ', dQuote("biall"))
     
   }
   
@@ -53,8 +54,9 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   
   if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
     
-    stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
-               "'pedigree' or 'ped_cr.err'."))
+    stop("'VCOV' must be ", dQuote("h.err"), ', ', dQuote("h.err.as"), ', ',
+         dQuote("cr.err"), ', ', dQuote("pedigree"), ' or ',
+         dQuote("ped_cr.err"))
     
   }
   
@@ -90,7 +92,7 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   
   if ((n.cores > 1) && (VCOV != "h.err")){
     
-    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
+    stop("parallelization is only possible for 'VCOV' = ", dQuote("h.err")) 
       
     
   }
@@ -100,9 +102,9 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
   
   if((length(her) != 1) & (length(her) != mppData$n.cr)){
     
-    stop(paste("the her argument must either be of lenght one representing the",
-                "average heritability over cross or of length n.cr representing",
-                "the within cross heritabilities"))
+    stop("'her' must either be of length one representing the ",
+         "average heritability over cross or a vector with one heritability ",
+         "value per cross")
     
   }
   

@@ -13,7 +13,7 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   
   if(!file.exists(output.loc)){
     
-    stop("The path specified in the argument output.loc is not valid.")
+    stop("'output.loc' is not a valid path")
     
   }
   
@@ -22,15 +22,15 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   
   if(!inherits(mppData, "mppData")) {
     
-    stop("The data object provided (argument mppData) is not of class mppData.")
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
   if(mppData$status != 'complete'){
     
-    stop(paste('The mppData object is not complete. You must use all processing',
-               'functions first in the specified order: QC.mppData, IBS.mppData,',
-               'IBD.mppData, and parent_cluster.mppData.'))
+    stop("'mppData' is not complete. Use first all processing ",
+         "functions in the specified order: QC.mppData, IBS.mppData, ",
+         "IBD.mppData, and parent_cluster.mppData")
     
   }
   
@@ -43,7 +43,8 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   
   if (!(Q.eff %in% c("cr", "par", "anc", "biall"))){
     
-    stop("The Q.eff argument must be : 'cr', 'par', 'anc' or 'biall'.")
+    stop("'Q.eff' must be ", dQuote("cr"), ', ', dQuote("par"), ', ',
+         dQuote("anc"), ' or ', dQuote("biall"))
     
   }
   
@@ -52,8 +53,9 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   
   if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
     
-    stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
-               "'pedigree' or 'ped_cr.err'."))
+    stop("'VCOV' must be ", dQuote("h.err"), ', ', dQuote("h.err.as"), ', ',
+         dQuote("cr.err"), ', ', dQuote("pedigree"), ' or ',
+         dQuote("ped_cr.err"))
     
   }
   
@@ -80,7 +82,7 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   
   if ((n.cores > 1) && (VCOV != "h.err")){
     
-    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
+    stop("parallelization is only possible for 'VCOV' = ", dQuote("h.err"))  
     
     
   }
@@ -91,8 +93,8 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
     
     if((Q.eff == "biall") && plot.gen.eff) {
       
-      stop("The estimation of the decomposed QTL effect (plot.gen.eff = TRUE)
-           per cross or parents can not be performed for the bi-allelic model")
+      stop("the estimation using 'plot.gen.eff' = TRUE is not available for the bi-allelic model")
+      
       
     }
   
@@ -104,8 +106,7 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
     
     if(length(ref.par) !=1){
       
-      stop(paste("You can only specify one reference parent (ref.par) for",
-                 "the estimation of the QTL effects."))
+      stop("'ref.par' must be of length 1")
       
     }
     
@@ -114,9 +115,7 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
     
     if(nb.con.part > 1){
       
-      stop(paste("You can only use the ref.par argument if your MPP design",
-                 "is composed of a single connected part",
-                 "(check with design_connectivity(mppData$par.per.cross))."))
+      stop("'ref.par' can only be used if the MPP has a unique connected part")
       
     }
     
@@ -124,9 +123,9 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
     
     if(!(ref.par %in% mppData$parents)){
       
-      stop(paste("The reference parent you specified in ref.par is not",
-                 "contained in the list of parents. Please use one of:",
-                 paste(mppData$parents, collapse = ", ")))
+      par_list <- paste(mppData$parents, collapse = ", ")
+      
+      stop("'ref.par' must be one of: ", par_list)
       
     }
     
@@ -140,16 +139,15 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
       
       if(!(Q.eff %in% c('par', 'anc'))){
         
-        stop(paste('You can only use the sum to zero constraint for the',
-                   'parental (Q.eff = "par") or the ancestral (Q.eff = "anc")',
-                   'models.'))
+        stop("you can only use the sum to zero constraint for the parental ",
+             "or the ancestral model")
         
       }
       
       if(VCOV != 'h.err'){
         
-        stop(paste('You can only use the sum to zero constraint with the',
-                   'homogeneous error term model (VCOV = "h.err").'))
+        stop("you can only use the sum to zero constraint for the ",
+             "homogeneous error term model")
         
       }
       

@@ -55,34 +55,11 @@ QTL_CI <- function(QTL = NULL, Qprof, drop = 1.5) {
   
   if(is.null(QTL)){
     
-    stop("No QTL position has been specified for the QTL argument")
+    stop("no QTL position has been specified in 'QTL'")
     
   }
   
-  if(is.character(QTL)) {
-    
-    if(sum(!(QTL %in% Qprof[, 1])) != 0){
-      
-      wrong.QTL <- QTL[!(QTL %in% Qprof[, 1])]
-      message <- paste("The following QTL positions:",
-                       paste(wrong.QTL, collapse = ", "),
-                       "are not present in the QTL profile (Qprof).")
-      
-      stop(message)
-      
-    }
-    
-  } else { # the list of QTL is not character test if QTLlist format
-    
-    if (!inherits(QTL, "QTLlist")){
-      
-      stop("The format of the argument QTL is not valid. Use either a object
-           obtained from the function QTL_select or a character vector of
-           marker or in between marker position indicator.")
-      
-    }
-    
-  }
+  
   
   ### end test data format
   

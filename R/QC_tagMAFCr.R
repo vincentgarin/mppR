@@ -77,13 +77,12 @@ QC_tagMAFCr <- function(MAF, MAF.lim = NULL, tag.mono = FALSE, parallel = FALSE,
   
   if(!is(MAF, "mafRes")) {
     
-    stop("the MAF object is not an object of calss mafRes. Use function
-         QC_MAF() to get such an object")
+    stop("'MAF' must be of class ", dQuote("mafRes"))
     
     if(length(MAF) !=2 ){
       
-      stop("The MAF object does not contain the MAF matrix per cross. Use
-           QC_MAF() with non Null cross.ind argument. to get such an object.")
+      stop("'MAF' does not contain the within cross MAF. ",
+           "Use QC_MAF() with 'cross.ind' to get such an object")
       
     }
     

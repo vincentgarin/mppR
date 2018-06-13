@@ -42,8 +42,7 @@ QC_minCrSize <- function(mk.mat, cross.ind, n.lim = 15) {
   
   if(length(cross.ind) != dim(mk.mat)[1]){
     
-    stop("The cross indicator vector (cross.ind) length does not have the same
-         length as the genotype list (dim(mk.mat)[1])")
+    stop("'cross.ind' length is not equal to the number of genotypes in 'mk.mat'")
   }
   
   ### 2. remove the too small crosse

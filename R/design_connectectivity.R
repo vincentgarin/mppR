@@ -52,12 +52,12 @@ design_connectivity <- function(par_per_cross, plot_des = TRUE,
   
   if(!is.matrix(par_per_cross)){
     
-    stop("The par_per_cross argument is not a matrix")
+    stop("'par_per_cross' is not a matrix")
   }
   
   if(!is.character(par_per_cross)){
     
-    stop("The par_per_cross argument is not a character matrix")
+    stop("'par_per_cross' is not a character matrix")
     
   }
   
@@ -65,7 +65,7 @@ design_connectivity <- function(par_per_cross, plot_des = TRUE,
     
     if(!file.exists(output_loc)){
       
-      stop("The path specified in the argument output_loc is not valid.")
+      stop("'output_loc' is not a valid path")
       
     }
     

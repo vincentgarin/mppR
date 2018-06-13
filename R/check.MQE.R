@@ -26,21 +26,21 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
   
   if(is.null(mppData)) {
     
-    stop("You must provide a mppData object in argument mppData.")
+    stop("'mppData' is not provided")
     
   }
   
   if(!inherits(mppData, "mppData")) {
     
-    stop("The object provided in mppData is not of class mppData.")
+    stop("'mppData' must be of class ", dQuote("mppData"))
     
   }
   
   if(mppData$status != 'complete'){
     
-    stop(paste('The mppData object is not complete. You must use all processing',
-               'functions first in the specified order: QC.mppData, IBS.mppData,',
-               'IBD.mppData, and parent_cluster.mppData.'))
+    stop("'mppData' is not complete. Use first all processing ",
+               "functions in the specified order: QC.mppData, IBS.mppData, ",
+               "IBD.mppData, and parent_cluster.mppData")
     
   }
   
@@ -55,7 +55,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
   if((fct == "proc") | (fct == "forward")){
     
     if (length(Q.eff) <= 1) {
-      message("You should provide at least 2 type of QTL effect for the argument Q.eff.")
+      message("you should provide at least 2 type of QTL effect for 'Q.eff'")
     }
     
   }
@@ -66,11 +66,12 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
   if(sum(!test.Qeff) != 0 ){
     
     wrong.Qeff <- Q.eff[!test.Qeff]
-    
-    message <- paste("The following QTL effects indicators:",
-                     paste(wrong.Qeff, collapse = ", "),
-                     "are not valid. Please use : 'cr', 'par', 'anc' or 'biall'")
-    
+    pbQeff <- paste(wrong.Qeff, collapse = ", ")
+    message <- sprintf(ngettext(length(wrong.Qeff),
+                                "'Q.eff' element %s is not valid. Only cr, par, anc or biall are allowed",
+                                "'Q.eff' elements %s are not valid. Only cr, par, anc or biall are allowed"),
+                                pbQeff)
+      
     stop(message)
     
   }
@@ -86,8 +87,9 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
     
     if (!(VCOV %in% c("h.err", "h.err.as", "cr.err", "pedigree", "ped_cr.err"))){
       
-      stop(paste("The VCOV argument must be : 'h.err', 'h.err.as', 'cr.err',",
-                 "'pedigree' or 'ped_cr.err'."))
+      stop("'VCOV' must be ", dQuote("h.err"), ', ', dQuote("h.err.as"), ', ',
+           dQuote("cr.err"), ', ', dQuote("pedigree"), ' or ',
+           dQuote("ped_cr.err"))
       
     }
     
@@ -130,7 +132,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
   
   if ((n.cores > 1) && (VCOV != "h.err")){
     
-    stop("Parallelization is only allowed for VCOV = 'h.err'.") 
+    stop("parallelization is only possible for 'VCOV' = ", dQuote("h.err")) 
     
     
   }
@@ -147,7 +149,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
     
     if(is.null(QTL)){
       
-      stop("No QTL position has been specified for the QTL argument.")
+      stop("'QTL' does not contain any QTL position")
       
     }
     
@@ -156,9 +158,12 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
       if(sum(!(QTL %in% mppData$map[, 1])) != 0){
         
         wrong.QTL <- QTL[!(QTL %in% mppData$map[, 1])]
-        message <- paste("The following QTL positions:",
-                         paste(wrong.QTL, collapse = ", "),
-                         "are not present in the QTL profile (Qprof).")
+        
+        pbQTL <- paste(wrong.QTL, collapse = ", ")
+        message <- sprintf(ngettext(length(wrong.QTL),
+                                    "'QTL' position %s is not present in 'Qprof'",
+                                    "'QTL' positions %s are not present in 'Qprof'"),
+                           pbQTL)
         
         stop(message)
         
@@ -166,7 +171,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
       
     } else {
       
-      stop("The QTL argument is not a list of character.")
+      stop("'QTL' is not character")
       
     }
     
@@ -176,7 +181,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
     
     if(is.null(cofactors)){
       
-      stop("No cofactors have been provided.")
+      stop("'cofactors' is not provided")
       
     }
     
@@ -186,7 +191,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
     
     if(!file.exists(output.loc)){
       
-      stop("The path specified in the argument output.loc is not valid.")
+      stop("'output.loc' is not a valid path")
       
     }
     

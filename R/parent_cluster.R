@@ -159,7 +159,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   if(!test){
     
-    stop("To use this function, you must load the package clusthaplo")
+    stop("the clusthaplo library is not available")
     
   }
   
@@ -169,7 +169,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   if ( sum((diff(consensus.map[, 3]) == 0) * 1) > 0) {
     
-    stop("Some marker of the consensus.map are at the same position")
+    stop("some markers of 'consensus.map' are at the same position")
     
   }
   
@@ -272,9 +272,9 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
     } else {
       
       
-      stop(paste("clusthaplo produce results for less position than the number",
-                 "of the consensus map. Some marker of the consensus map have",
-                 "potentially the same position."))
+      stop("clusthaplo produces results for less positions than ones in ",
+                 "'consensus map'. Some markers of the consensus map have ",
+                 "potentially the same position")
       
     }
     
