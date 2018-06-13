@@ -6,14 +6,14 @@
 # mpp_SIM function. The only difference is that it keep the possibility to
 # pass to the function a cluster object that is already defined.
 
-mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err", 
+mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", 
                     plot.gen.eff = FALSE, parallel = FALSE, cluster = NULL) {
   
   # 1. Check data format and arguments
   ####################################
   
-  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff, VCOV = VCOV,
-                   plot.gen.eff = plot.gen.eff, fct = "SIM")
+  check.model.comp(mppData = mppData, trait = trait, Q.eff = Q.eff,
+                   VCOV = 'h.err', plot.gen.eff = plot.gen.eff, fct = "SIM")
   
   # 2. Form required elements for the analysis
   ############################################
@@ -24,7 +24,7 @@ mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
   
   ### 2.2 inverse of the pedigree matrix
   
-  formPedMatInv(mppData = mppData, VCOV = VCOV)
+  # formPedMatInv(mppData = mppData, VCOV = VCOV)
   
   ### 2.3 cross matrix (cross intercept)
   
@@ -40,19 +40,19 @@ mpp_SIM_clu <- function(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = QTLModelSIM,
                           mppData = mppData, trait = t_val,
                           cross.mat = cross.mat,
-                          Q.eff = Q.eff, VCOV = VCOV,
+                          Q.eff = Q.eff, VCOV = 'h.err',
                           plot.gen.eff = plot.gen.eff)
     
   } else {
     
     log.pval <- lapply(X = vect.pos, FUN = QTLModelSIM,
                        mppData = mppData, trait = t_val, cross.mat = cross.mat,
-                       Q.eff = Q.eff, VCOV = VCOV, plot.gen.eff = plot.gen.eff)
+                       Q.eff = Q.eff, VCOV = 'h.err', plot.gen.eff = plot.gen.eff)
     
   }
   
   log.pval <- t(data.frame(log.pval))
-  if(plot.gen.eff & (VCOV == "h.err")){log.pval[is.na(log.pval)] <- 1}
+  if(plot.gen.eff){log.pval[is.na(log.pval)] <- 1}
   log.pval[, 1] <- check.inf(x = log.pval[, 1]) # check if there are -/+ Inf value
   log.pval[is.na(log.pval[, 1]), 1] <- 0
   

@@ -50,18 +50,19 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   # mixed models
   
     
-    if (VCOV != "h.err"){
-      
-      test <- requireNamespace(package = 'asreml', quietly = TRUE)
-      
-      if(!test){
-        
-        stop("to use this type of 'VCOV', you must have access to the asreml package")
-        
-        
-      }
-      
-    }
+    # if (VCOV != "h.err"){
+    #   
+    #   test <- requireNamespace(package = 'asreml', quietly = TRUE)
+    #   
+    #   if(!test){
+    #     
+    #     stop(paste("To use this type of VCOV, you must have access to the asreml",
+    #                "function from the asreml-R package."))
+    #     
+    #   }
+    #   
+    # }
+
     
   
   # 7. Consistency for parallelization.

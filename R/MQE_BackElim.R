@@ -155,7 +155,7 @@ MQE_BackElim <- function (mppData = NULL, trait = 1, QTL = NULL, Q.eff,
   
   ### 2.2 inverse of the pedigree matrix
   
-  formPedMatInv(mppData = mppData, VCOV = VCOV)
+  # formPedMatInv(mppData = mppData, VCOV = VCOV)
   
   ### 2.3 cross matrix (cross intercept)
   
