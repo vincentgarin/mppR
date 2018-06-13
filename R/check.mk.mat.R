@@ -12,7 +12,7 @@ check.mk.mat <- function(mk.mat){
   
   if (!(is.matrix(mk.mat))){
   
-    stop("The marker matrix (mk.mat) is not a matrix.")  
+    stop("'mk.mat' is not a matrix")  
     
   }
   
@@ -20,7 +20,7 @@ check.mk.mat <- function(mk.mat){
   
   if (!(is.character(mk.mat))){
     
-    stop("The marker matrix (mk.mat) is not a character matrix.")  
+    stop("'mk.mat' is not character")  
     
   }
   
@@ -34,11 +34,14 @@ check.mk.mat <- function(mk.mat){
     
     if (sum(test.format) > 0) {
       
-      info <- paste("The following marker score(s):",
-                    paste(mk.scores[which(test.format)], collapse = ", "),
-                    "are not allowed")
+      pbmk <- paste(mk.scores[which(test.format)], collapse = ", ")
       
-      stop(info) 
+      message <- sprintf(ngettext(length(test.format),
+                                  "The following marker score %s is not allowed",
+                                  "The following marker scores %s are not allowed"),
+                         pbmk)
+      
+      stop(message) 
       
     }    
   

@@ -68,15 +68,19 @@ subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
   # 1. Check data.format and arguments
   ####################################
   
-  stopifnot(is_mppData(x))
+  if(!is_mppData(x)) {
+    
+    stop("'mppData' must be of class ", dQuote("mppData"))
+    
+  }
   
   if(x$status != 'complete'){
     
-    stop(paste('You have to process the mppData objects in a strict order:',
-               'create.mppData(), QC.mppData(), IBS.mppData(), IBD.mppData(),',
-               'parent_cluster.mppData(). You can only use subset.mppData()',
-               'after performing create.mppData(), QC.mppData(),',
-               'IBS.mppData(), IBD.mppData(), and parent_cluster.mppData.'))
+    stop("you have to process 'mppData' in a strict order: ",
+         "create.mppData, QC.mppData, IBS.mppData, IBD.mppData, ",
+         "parent_cluster.mppData. You can only use subset.mppData ",
+         "after create.mppData, QC.mppData, and IBS.mppData, IBD.mppData, ",
+         "and parent_cluster.mppData")
     
   }
   

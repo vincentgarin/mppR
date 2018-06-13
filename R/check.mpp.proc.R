@@ -69,8 +69,8 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
       
       if(!test){
         
-        stop(paste("To use this type of VCOV, you must have access to the asreml",
-                   "function from the asreml-R package."))
+        stop("to use this type of 'VCOV', you must have access to the asreml package")
+        
         
       }
       

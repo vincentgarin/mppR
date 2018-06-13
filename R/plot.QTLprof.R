@@ -105,7 +105,7 @@ plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
                          text.size = 18, ...)
 {
   
-  if(!inherits(x, "QTLprof")){stop('x is not of class QTLprof')}
+  if(!inherits(x, "QTLprof")){stop("'x' is not of class ", dQuote("QTLprof"))}
   
   if(!gen.eff){ # Regular QTL profile.
     
@@ -126,8 +126,8 @@ plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
         
         if(!((is.matrix(QTL)) & (dim(QTL)[2] == 2) & (is.numeric(QTL)))){
           
-          stop(paste("The QTL argument must be a two column numeric matrix with",
-                     "chromosome, and marker position."))
+          stop("'QTL' must be a two columns numeric matrix with ",
+                     "chromosome, and marker position")
           
         }
         
@@ -216,7 +216,8 @@ plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
     
     if(!(Q.eff %in% c("cr", "par", "anc"))){
       
-      stop("The Q.eff argument must take value: 'cr', 'par', 'anc'.")
+      stop("'Q.eff' must be ", dQuote("cr"), ', ', dQuote("par"), ', ',
+           dQuote("anc"), ' or ', dQuote("biall"))
       
     }
     
@@ -224,8 +225,8 @@ plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
     
     if(n.eff == 0) {
       
-      stop("The x object does not contain any QTL p-value information.
-           It was probably not obtained using plot.gen.eff = TRUE")
+      stop("'x' does not contain any QTL p-value information. ",
+           "Use plot.gen.eff = TRUE, when you compute the QTL profile")
       
     }
     
@@ -287,6 +288,7 @@ plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
     if(!is.null(QTL)){
       
       stopifnot(inherits(QTL, "QTLlist"))
+      
       pos.Q <- QTL[, c(2, 4)]
       
     }

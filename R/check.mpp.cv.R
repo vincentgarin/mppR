@@ -70,8 +70,7 @@ check.mpp.cv <- function(mppData, trait, Q.eff, VCOV, n.cores = 1, output.loc,
     
     if(!test){
       
-      stop(paste("To use this type of VCOV, you must have access to the asreml",
-                 "function from the asreml-R package."))
+      stop("to use this type of 'VCOV', you must have access to the asreml package")
       
     }
     

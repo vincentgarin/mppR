@@ -232,9 +232,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
         
         if (is.null(QTL)) { # test if QTL have been selected
           
-          stop(paste("No QTL position stayed in the model after the backward",
-                     "elimination. This is probably due to an error in the",
-                     "computation of the model in asreml() function."))
+          stop("no QTL position stayed in the model after the backward elimination")
           
         }
         
