@@ -100,8 +100,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
       
       if(!test){
         
-        stop(paste("To use this type of VCOV, you must have access to the asreml",
-                   "function from the asreml-R package."))
+        stop("you must have access to the asreml package to use this type of 'VCOV'")
         
       }
       
