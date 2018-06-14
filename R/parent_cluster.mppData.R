@@ -5,20 +5,42 @@
 #' Parent clustering for \code{mppData} objects
 #' 
 #' Local clustering of the parental lines done by the R package clushaplo
-#' (Leroux et al. 2014).
+#' (Leroux et al. 2014) or by providing own parent clustering data.
 #' 
-#' This function is a wrapper for \code{clusthaplo} R package functions.
-#' It can only be run after \code{clusthaplo} has been installed.
-#' Clusthaplo can be found there:
-#' \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
-#' visualisation of ancestral haplotype blocks can be obtained setting
-#' \code{plot = TRUE}. The plots will be saved at the location specified
+#' This function integrate the parent clustering information to the mppData
+#' object. The parent clustering is necessary to compute the ancestral model.
+#' If the parent clustering step is skipped, the ancestral model can not be
+#' used but the other models (cross-specific, parental, and bi-allelic) can
+#' still be computed.
+#' 
+#' The parent clustering can be performed using the R package
+#' clusthaplo using \code{method = "clusthaplo"}. Clusthaplo can be found there:
+#' \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. Using
+#' clusthaplo, a visualisation of ancestral haplotype blocks can be obtained
+#' setting \code{plot = TRUE}. The plots will be saved at the location specified
 #' in \code{plot.loc}.
+#' 
+#' An alternative (\code{method = "given"}), is to provide your own parent
+#' clustering information via the argument \code{par.clu}.
 #' 
 #' @param mppData  An object of class \code{mppData}. the \code{mppData} must
 #' have been processed using: \code{\link{create.mppData}},
 #' \code{\link{QC.mppData}}, \code{\link{IBS.mppData}},
 #' and \code{\link{IBD.mppData}}.
+#' 
+#' @param method \code{Character} expression. If (\code{method = "clusthaplo"}),
+#' the clustering is done using the R package clusthaplo.
+#' If (\code{method = "given"}), the user must provide the parent clustering
+#' information using \code{par.clu}. Default = NULL.
+#' 
+#' @param par.clu Optional argument if (\code{method = "given"}).
+#' \code{Interger matrix} representing the results of a
+#' parents genotypes clustering. The columns represent the parental lines and
+#' the rows the markers. The columns names must be the same as the parents
+#' list of the mppData object. The rownames must be the same as the map marker
+#' list of the mppData object. At a particular position, parents with the same
+#' value are assumed to inherit from the same ancestor. for more details,
+#' see \code{\link{par_clu}}. Default = NULL.
 #' 
 #' @param w1 The w1 weight function in the Li&Jyang similarity score.
 #' Possible values are "kernel.const", "kernel.exp", "kernel.gauss",
@@ -91,33 +113,36 @@
 #' @examples
 #' 
 #' data(mppData_init)
+#' data(par_clu)
 #' 
 #' mppData <- QC.mppData(mppData_init)
 #' mppData <- IBS.mppData(mppData = mppData)
 #' 
-#' 
-#' 
 #' mppData <- IBD.mppData(mppData = mppData, type = 'RIL',
 #'                        type.mating = 'selfing')
+#'                        
+#' mppData <- parent_cluster.mppData(mppData = mppData, method = "given",
+#'                                   par.clu  = par_clu)                         
 #'                        
 #' \dontrun{
 #'                                                 
 #' library(clusthaplo)
 #'                         
-#' mppData <- parent_cluster.mppData(mppData = mppData, window = 25, K = 10,
-#'                                   plot = FALSE)                        
+#' mppData <- parent_cluster.mppData(mppData = mppData, method = "clusthaplo",
+#'                                   window = 25, K = 10, plot = FALSE)                        
 #' 
-#' }           
+#' }
 #' 
 #' @export
 
-parent_cluster.mppData <- function(mppData, w1 = "kernel.exp",
-                                   w2 = "kernel.unif", window, K = 10,
-                                   simulation.type = "equi", simulation.Ng = 50, 
-                                   simulation.Nrep = 3, threshold.quantile = 95,
-                                   plot = TRUE, plot.loc = getwd()){
+parent_cluster.mppData <- function(mppData, method = NULL, par.clu = NULL,
+                                   w1 = "kernel.exp", w2 = "kernel.unif",
+                                   window, K = 10, simulation.type = "equi",
+                                   simulation.Ng = 50,  simulation.Nrep = 3,
+                                   threshold.quantile = 95, plot = TRUE,
+                                   plot.loc = getwd()){
   
-  # 1. check the format of the data
+  # check the format of the data
   #################################
   
   if(!is_mppData(mppData)){
@@ -137,62 +162,161 @@ parent_cluster.mppData <- function(mppData, w1 = "kernel.exp",
     
   }
   
-  # the check of the other argument is done in parent_cluster function
+  # check method
   
+  if (is.null(method)){
+    
+    stop("'method' is not provided")
+    
+  }
   
-  # 2. Restore the necessary objects from the mppData object
-  ##########################################################
+  if(!(method %in% c("clusthaplo", "given"))){
+    
+    stop("'method' must be ", dQuote("clusthaplo"), ' or ', dQuote("given"))
+    
+  }
   
-  haplo.map <- mppData$haplo.map
-  consensus.map <- mppData$map[, -3]
-  map <- mppData$map
-  marker.data <- t(mppData$geno.par.clu)
-  parents <- mppData$parents
+  if (method == "clusthaplo") {
+    
+    # Test if clusthaplo is available
+    #################################
+    
+    test <- requireNamespace(package = 'clusthaplo', quietly = TRUE)
+    
+    if(!test){
+      
+      stop("the clusthaplo library is not available")
+      
+    }
+    
+    # Restore the necessary objects from the mppData object
+    ########################################################
+    
+    haplo.map <- mppData$haplo.map
+    consensus.map <- mppData$map[, -3]
+    map <- mppData$map
+    marker.data <- t(mppData$geno.par.clu)
+    parents <- mppData$parents
+    
+    # cluster the parents
+    #####################
+    
+    # For the step size, determine the value of the largest chromsome
+    
+    chr.fact <- factor(x = map[, 2], levels = unique(map[, 2]))
+    
+    step.size <- max(tapply(X = map[, 4], INDEX = chr.fact, FUN = max)) + 100 
+    
+    p_clu <- parent_cluster(haplo.map = haplo.map, consensus.map = consensus.map,
+                            marker.data = marker.data, na.strings = NA,
+                            w1 = w1, w2 = w2, step.size = step.size,
+                            window = window, K = K,
+                            simulation.type = simulation.type,
+                            simulation.Ng = simulation.Ng,
+                            simulation.Nrep = simulation.Nrep,
+                            threshold.quantile = threshold.quantile, plot = plot,
+                            plot.loc = plot.loc)
+    
+    # Check the monomorphic positions
+    #################################
+    
+    par.clu <- parent_clusterCheck(par.clu = p_clu[[1]])
+    
+    # put the column order as the parents
+    
+    p_c <- par.clu[[1]]
+    p_c <- p_c[, parents]
+    
+    # Fill the mppData object
+    ##########################
+    
+    mppData$par.clu <- p_c
+    
+    mppData$n.anc <- p_clu[[2]]
+    
+    mppData$mono.anc <- par.clu[[2]]
+    
+    mppData$status <- 'complete'
+    
+    mppData$geno.off <- NULL
+    
+    class(mppData) <- c("mppData", "list")
+    
+    return(mppData)
+    
+    
+  } else { # method = "given"
+    
+    if(!is.matrix(par.clu)){
+      
+      stop("'par.clu' argument is not a matrix")
+      
+    }
+    
+    if(!is.integer(par.clu)){
+      
+      stop("'par.clu' is not integer")
+      
+    }
+    
+    # list parent
+    
+    new_par <- colnames(par.clu)
+    
+    if(!all(new_par %in% mppData$parents)) {
+      
+      wrong.par <- new_par[!(new_par %in% mppData$parents)]
+      pbpar <- paste(wrong.par, collapse = ", ")
+      
+      message <- sprintf(ngettext(length(wrong.par),
+                                  "the following parent %s is not present in 'mppData'",
+                                  "the following parents %s are not present in 'mppData'"),
+                         pbpar)
+      
+      stop(message)
+      
+    }
+    
+    # list markers
+    
+    if(!identical(rownames(par.clu), mppData$map[, 1])){
+      
+      stop("the markers of 'par.clu' and 'mppData' are not identical")
+      
+    }
+    
+    # Check monomorphism in par.clu
+    ###############################
+    
+    par.clu <- par.clu[, mppData$parents]
+    
+    par_clu <- parent_clusterCheck(par.clu = par.clu)
+    
+    # Calculate the number of ancestral cluster
+    ###########################################
+    
+    nb.cl <- apply(X = par_clu[[1]], MARGIN = 1,
+                   FUN = function(x) length(unique(x)))
+    
+    av.cl <- mean(nb.cl)
+    
+    mppData$par.clu <- par_clu[[1]]
+    
+    mppData$n.anc <- av.cl
+    
+    mppData$mono.anc <- par_clu[[2]]
+    
+    mppData$status <- 'complete'
+    
+    mppData$geno.off <- NULL
+    
+    class(mppData) <- c("mppData", "list")
+    
+    return(mppData)
+    
+    
+    
+  }
   
-  # 3. cluster the parents
-  ########################
-  
-  # For the step size, determine the value of the largest chromsome
-  
-  chr.fact <- factor(x = map[, 2], levels = unique(map[, 2]))
-  
-  step.size <- max(tapply(X = map[, 4], INDEX = chr.fact, FUN = max)) + 100 
-  
-  p_clu <- parent_cluster(haplo.map = haplo.map, consensus.map = consensus.map,
-                          marker.data = marker.data, na.strings = NA,
-                          w1 = w1, w2 = w2, step.size = step.size,
-                          window = window, K = K,
-                          simulation.type = simulation.type,
-                          simulation.Ng = simulation.Ng,
-                          simulation.Nrep = simulation.Nrep,
-                          threshold.quantile = threshold.quantile, plot = plot,
-                          plot.loc = plot.loc)
-  
-  # 4. Check the monomorphic positions
-  ####################################
-  
-  par.clu <- parent_clusterCheck(par.clu = p_clu[[1]])
-  
-  # put the column order as the parents
-  
-  p_c <- par.clu[[1]]
-  p_c <- p_c[, parents]
- 
-  # 5. fill the mppData object
-  #############################
-  
-  mppData$par.clu <- p_c
-  
-  mppData$n.anc <- p_clu[[2]]
-  
-  mppData$mono.anc <- par.clu[[2]]
-  
-  mppData$status <- 'complete'
-  
-  mppData$geno.off <- NULL
-  
-  class(mppData) <- c("mppData", "list")
-  
-  return(mppData)
   
 }

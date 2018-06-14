@@ -81,7 +81,7 @@ par_clu_chg.mppData <- function(mppData, par.clu){
     pbpar <- paste(wrong.par, collapse = ", ")
     
     message <- sprintf(ngettext(length(wrong.par),
-                                "the following parent %s is present in the old 'par.clu'",
+                                "the following parent %s is not present in the old 'par.clu'",
                                 "the following parents %s are not present in the old 'par.clu'"),
                        pbpar)
     

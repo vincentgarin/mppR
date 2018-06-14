@@ -597,19 +597,31 @@ mppData <- IBD.mppData(mppData = mppData, het.miss.par = TRUE, type = 'RIL',
 
 \subsubsection{Parent clustering}
   
-The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster.mppData()}. This function calls functions from the \proglang{R} package \pkg{clusthaplo}, which can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. \code{parent_cluster.mppData()} performs the clustering using the \code{"threshold"} method. \code{window} specifies the size of the window around the marker. The marker falling into this window will be used for the local clustering. The value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} starts to use the general kinship coefficient. A visualization of the clustering results can be obtained using \code{plot = TRUE}. In that case, the plots will be saved in a folder at the location specified in \code{plot.loc}. The funcion store the average number of ancetral group along the genome in \code{mppData$n.anc}.
+The final step of data processing is to group parental lines for the ancestral model via the function \code{parent_cluster.mppData()}. The clustering of the parental lines is necessary to calculate the ancestral model. If the parent clustering is skipped, the other models (cross-specific, parental, bi-allelic) can still be computed.
 
-<<parent_clustering>>=
+The parental clustering can be realized calling the \proglang{R} package \pkg{clusthaplo} (\code{method = "clusthaplo"}). \pkg{clusthaplo} can be downloaded there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. In that case, \code{parent_cluster.mppData()} performs the clustering using the \code{"threshold"} method. \code{window} specifies the size of the window around the marker. The marker falling into this window will be used for the local clustering. The value specified in argument \code{K} is the minimum number of markers that should be present in the computation window. Below \code{K}, \pkg{clusthaplo} starts to use the general kinship coefficient. A visualization of the clustering results can be obtained using \code{plot = TRUE}. In that case, the plots will be saved in a folder at the location specified in \code{plot.loc}. The funcion store the average number of ancetral group along the genome in \code{mppData$n.anc}.
+
+<<parent_clustering, eval=FALSE, echo=TRUE>>=
 library("clusthaplo")
 set.seed(68769)
 
-mppData <- parent_cluster.mppData(mppData = mppData, K = 10, window = 25,
-                                  plot = FALSE)
+mppData <- parent_cluster.mppData(mppData = mppData, method = "clusthaplo",
+                                  K = 10, window = 25, plot = FALSE)
 
 mppData$n.anc
 @
 
-When the \code{mppData} object is complete,  summary can be obtained calling the generic function \code{summary()}.
+An alternative (\code{method = "given"}), is to provide your own parent clustering information via the argument \code{par.clu}. \code{par.clu} must be an \code{interger matrix} where the columns represent the parental lines and the rows the markers. The columns names must be the same as the parents list of the \code{mppData} object. The rownames must be the same as the map marker list of the \code{mppData} object. At a particular position, parents with the same value are assumed to inherit from the same ancestor.
+
+<<parent_clustering2>>=
+data("par_clu", package = "mppR")
+
+mppData <- parent_cluster.mppData(mppData = mppData, method = "given",
+                                  par.clu  = par_clu)
+
+@
+
+A summary of the \code{mppData} objects can be obtained calling the generic function \code{summary()}.
 
 <<summary_mppData>>=
 summary(mppData)

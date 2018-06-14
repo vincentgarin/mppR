@@ -4,16 +4,30 @@
 \alias{parent_cluster.mppData}
 \title{Parent clustering for \code{mppData} objects}
 \usage{
-parent_cluster.mppData(mppData, w1 = "kernel.exp", w2 = "kernel.unif",
-  window, K = 10, simulation.type = "equi", simulation.Ng = 50,
-  simulation.Nrep = 3, threshold.quantile = 95, plot = TRUE,
-  plot.loc = getwd())
+parent_cluster.mppData(mppData, method = NULL, par.clu = NULL,
+  w1 = "kernel.exp", w2 = "kernel.unif", window, K = 10,
+  simulation.type = "equi", simulation.Ng = 50, simulation.Nrep = 3,
+  threshold.quantile = 95, plot = TRUE, plot.loc = getwd())
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}. the \code{mppData} must
 have been processed using: \code{\link{create.mppData}},
 \code{\link{QC.mppData}}, \code{\link{IBS.mppData}},
 and \code{\link{IBD.mppData}}.}
+
+\item{method}{\code{Character} expression. If (\code{method = "clusthaplo"}),
+the clustering is done using the R package clusthaplo.
+If (\code{method = "given"}), the user must provide the parent clustering
+information using \code{par.clu}. Default = NULL.}
+
+\item{par.clu}{Optional argument if (\code{method = "given"}).
+\code{Interger matrix} representing the results of a
+parents genotypes clustering. The columns represent the parental lines and
+the rows the markers. The columns names must be the same as the parents
+list of the mppData object. The rownames must be the same as the map marker
+list of the mppData object. At a particular position, parents with the same
+value are assumed to inherit from the same ancestor. for more details,
+see \code{\link{par_clu}}. Default = NULL.}
 
 \item{w1}{The w1 weight function in the Li&Jyang similarity score.
 Possible values are "kernel.const", "kernel.exp", "kernel.gauss",
@@ -67,37 +81,47 @@ with the same value were clustered in the same ancestral group.}
 }
 \description{
 Local clustering of the parental lines done by the R package clushaplo
-(Leroux et al. 2014).
+(Leroux et al. 2014) or by providing own parent clustering data.
 }
 \details{
-This function is a wrapper for \code{clusthaplo} R package functions.
-It can only be run after \code{clusthaplo} has been installed.
-Clusthaplo can be found there:
-\url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. A
-visualisation of ancestral haplotype blocks can be obtained setting
-\code{plot = TRUE}. The plots will be saved at the location specified
+This function integrate the parent clustering information to the mppData
+object. The parent clustering is necessary to compute the ancestral model.
+If the parent clustering step is skipped, the ancestral model can not be
+used but the other models (cross-specific, parental, and bi-allelic) can
+still be computed.
+
+The parent clustering can be performed using the R package
+clusthaplo using \code{method = "clusthaplo"}. Clusthaplo can be found there:
+\url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. Using
+clusthaplo, a visualisation of ancestral haplotype blocks can be obtained
+setting \code{plot = TRUE}. The plots will be saved at the location specified
 in \code{plot.loc}.
+
+An alternative (\code{method = "given"}), is to provide your own parent
+clustering information via the argument \code{par.clu}.
 }
 \examples{
 
 data(mppData_init)
+data(par_clu)
 
 mppData <- QC.mppData(mppData_init)
 mppData <- IBS.mppData(mppData = mppData)
 
-
-
 mppData <- IBD.mppData(mppData = mppData, type = 'RIL',
                        type.mating = 'selfing')
+                       
+mppData <- parent_cluster.mppData(mppData = mppData, method = "given",
+                                  par.clu  = par_clu)                         
                        
 \dontrun{
                                                 
 library(clusthaplo)
                         
-mppData <- parent_cluster.mppData(mppData = mppData, window = 25, K = 10,
-                                  plot = FALSE)                        
+mppData <- parent_cluster.mppData(mppData = mppData, method = "clusthaplo",
+                                  window = 25, K = 10, plot = FALSE)                        
 
-}           
+}
 
 }
 \references{
