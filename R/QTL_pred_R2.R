@@ -108,8 +108,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   #####################
   
   check.model.comp(Q.eff = Q.eff, trait = trait, VCOV = VCOV, QTL = QTL,
-                   mppData.ts = mppData.ts, mppData.vs = mppData.vs,
-                   fct = "R2_pred")
+                   mppData.ts = mppData.ts, fct = "R2_pred")
   
   if(is.character(QTL)){ n.QTL <- length(QTL) } else { n.QTL <- dim(QTL)[1] }
   

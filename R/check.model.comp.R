@@ -31,8 +31,6 @@
 
 # mppData.ts mppData object of the training set
 
-# mppData.vs mppData object of the validation set
-
 # fct specify which type of function to allow specific tests.
 
 
@@ -40,7 +38,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
                              plot.gen.eff = FALSE, n.cores = 1,
                              cofactors = NULL, QTL = NULL, ref.par = NULL,
                              sum_zero = NULL, mppData.ts = NULL,
-                             mppData.vs = NULL, fct = "XXX"){
+                             fct = "XXX"){
   
   # 1. check mppData format
   #########################
