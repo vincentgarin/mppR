@@ -68,21 +68,7 @@ subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
   # 1. Check data.format and arguments
   ####################################
   
-  if(!is_mppData(x)) {
-    
-    stop("'mppData' must be of class ", dQuote("mppData"))
-    
-  }
-  
-  if(x$status != 'complete'){
-    
-    stop("you have to process 'mppData' in a strict order: ",
-         "create.mppData, QC.mppData, IBS.mppData, IBD.mppData, ",
-         "parent_cluster.mppData. You can only use subset.mppData ",
-         "after create.mppData, QC.mppData, and IBS.mppData, IBD.mppData, ",
-         "and parent_cluster.mppData")
-    
-  }
+  check_mppData(mppData = mppData)
   
   # user must at least specify one argument (mk.list or gen.list)
   
@@ -198,8 +184,12 @@ subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
     
     # par.clu
     
-    x$par.clu <- x$par.clu[rownames(x$par.clu) %in% mk.list, ,
-                    drop = FALSE]
+    if(!is.null(x$par.clu)){
+      
+      x$par.clu <- x$par.clu[rownames(x$par.clu) %in% mk.list, ,
+                             drop = FALSE]
+      
+    }
     
     # map
     
@@ -283,12 +273,16 @@ subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
     
     # check the par.clu
     
-    par.clu <- x$par.clu
-    par.clu <- par.clu[, x$parents]
-    
-    par.clu <- parent_clusterCheck(par.clu = par.clu)[[1]]
-    
-    x$par.clu <- par.clu
+    if(!is.null(x$par.clu)){
+      
+      par.clu <- x$par.clu
+      par.clu <- par.clu[, x$parents]
+      
+      par.clu <- parent_clusterCheck(par.clu = par.clu)[[1]]
+      
+      x$par.clu <- par.clu
+      
+    }
   
     class(x) <- c("mppData", "list")
     

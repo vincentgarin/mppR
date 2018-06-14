@@ -24,25 +24,7 @@ check.MQE <- function(mppData = NULL, trait, Q.eff, VCOV, cofactors = NULL,
   # 1. check mppData format
   #########################
   
-  if(is.null(mppData)) {
-    
-    stop("'mppData' is not provided")
-    
-  }
-  
-  if(!inherits(mppData, "mppData")) {
-    
-    stop("'mppData' must be of class ", dQuote("mppData"))
-    
-  }
-  
-  if(mppData$status != 'complete'){
-    
-    stop("'mppData' is not complete. Use first all processing ",
-               "functions in the specified order: QC.mppData, IBS.mppData, ",
-               "IBD.mppData, and parent_cluster.mppData")
-    
-  }
+  check_mppData(mppData = mppData, Q.eff = Q.eff)
   
   # 2. check trait
   ################

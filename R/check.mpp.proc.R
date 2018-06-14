@@ -19,20 +19,7 @@ check.mpp.proc <- function(mppData, trait, Q.eff, VCOV, plot.gen.eff = FALSE,
   
   # 2. check mppData format
   
-  
-  if(!inherits(mppData, "mppData")) {
-    
-    stop("'mppData' must be of class ", dQuote("mppData"))
-    
-  }
-  
-  if(mppData$status != 'complete'){
-    
-    stop("'mppData' is not complete. Use first all processing ",
-         "functions in the specified order: QC.mppData, IBS.mppData, ",
-         "IBD.mppData, and parent_cluster.mppData")
-    
-  }
+  check_mppData(mppData = mppData, Q.eff = Q.eff)
   
   # 3. check trait format
   

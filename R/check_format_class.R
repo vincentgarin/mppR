@@ -9,6 +9,7 @@ is_mppData <- function(x){
 }
 
 # check trait
+#############
 
 check_trait <- function(trait, mppData){
   
@@ -64,5 +65,50 @@ sel_trait <- function(mppData, trait){
   }
   
   return(t_val)
+  
+}
+
+# check mppData
+###############
+
+# function to check that the mppData has a correct format
+# check that if the user want to compute the ancestral model
+# the parent clustering object is provided
+
+check_mppData <- function(mppData, Q.eff = NULL){
+  
+  if(!is_mppData(mppData)) {
+    
+    stop("'mppData' must be of class ", dQuote("mppData"))
+    
+  }
+  
+  # check mppData is processed at least up to IBD
+  
+  if((mppData$status != 'IBD') && (mppData$status != 'complete')){
+    
+    stop("'mppData' is not complete. Use first all processing ",
+         "functions in the specified order: QC.mppData, IBS.mppData, ",
+         "IBD.mppData, and optionally parent_cluster.mppData for the ancestral ",
+         "model")
+    
+  }
+  
+  if(!is.null(Q.eff)){
+    
+    if("anc" %in% Q.eff){
+      
+      if(mppData$status != 'complete'){
+        
+        stop("'mppData' do not contains the parent clustering information ",
+             "necessary for the ancestral model.",
+             "to add this information use parent_cluster.mppData")
+        
+      }
+      
+      
+    }
+    
+  }
   
 }

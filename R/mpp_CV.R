@@ -204,8 +204,6 @@
 #' CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 #' her = .5, output.loc = my.loc)
 #' 
-#' plot_CV(CV.res = CV)
-#' 
 #' }
 #' 
 #' @export

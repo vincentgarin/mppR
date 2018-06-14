@@ -51,19 +51,7 @@ check.model.comp <- function(mppData = NULL, trait, Q.eff, VCOV,
       
     } else {
       
-      if(!inherits(mppData, "mppData")) {
-        
-        stop("'mppData' must be of class ", dQuote("mppData"))
-        
-      }
-      
-      if(mppData$status != 'complete'){
-        
-        stop("'mppData' is not complete. Use first all processing ",
-             "functions in the specified order: QC.mppData, IBS.mppData, ",
-             "IBD.mppData, and parent_cluster.mppData")
-        
-      }
+      check_mppData(mppData = mppData, Q.eff = Q.eff)
       
     }
     
