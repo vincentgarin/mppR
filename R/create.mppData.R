@@ -84,7 +84,6 @@
 #'                           par.per.cross = par.per.cross)
 #'                           
 #' @import ggplot2
-#' @import nlme
 #' @import parallel
 #' @import qtl
 #' @import methods

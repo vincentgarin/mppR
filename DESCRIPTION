@@ -1,21 +1,27 @@
 Package: mppR
-Type: Package
-Title: Multi-parent population QTL analysis
-Version: 1.1.5
-Date: 2018-07-03
-Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb,
-    dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
-Maintainer: Vincent Garin <vincent.garin@wur.nl>
-Description: Process data from multi-parent populations (MPP) QTL
-    experiment, perform QTL detection, and visualize the results.
-License: GPL (>=2)
+Type:Package
+Version: 1.1.4
+Date: 2018-06-14
+Title: Multi-Parent Population QTL Analysis
+Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
+             email = "vincent.garin@wur.nl"),
+             person("Valentin", "Wimmer", role = c("aut")),
+             person("Dietrich", "Borchardt", role = c("ctb", "dtc")),
+             person("Fred", "van Eeuwijk", role = c("ctb", "ths")),
+             person("Marcos", "Malosetti", role = c("ctb", "ths")))
+Description: Analysis of experimental multi-parent populations (MPPs) to detect
+             regions of the genome (called quantitative trait loci, QTLs)
+             influencing phenotypic traits. The MPPs must be composed of crosses
+             between a set of at least three parents (e.g. factorial design,
+             diallel, or nested association mapping). The functions covers data
+             processing, QTL detection, and results visualization.
+License: GPL-3
 Imports:
     cowplot,
     ggplot2,
     graphics,
     grDevices,
     methods,
-    nlme,
     parallel,
     qtl,
     RColorBrewer,
@@ -23,7 +29,7 @@ Imports:
     utils,
     igraph
 Depends:
-    R(>= 2.10.0)
+    R(>= 3.3.0)
 Suggests:
     clusthaplo,
     synbreed
