@@ -1,8 +1,8 @@
 Package: mppR
 Type: Package
 Title: Multi-parent population QTL analysis
-Version: 1.1.3
-Date: 2018-06-01
+Version: 1.1.4
+Date: 2018-06-14
 Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb,
     dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
 Maintainer: Vincent Garin <vincent.garin@wur.nl>
