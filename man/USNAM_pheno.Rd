@@ -17,7 +17,7 @@
   
 }
 \source{
-  http://www.panzea.org/lit/data_sets.html
+  \url{http://www.panzea.org}
 }
 \references{
   McMullen, M. D., Kresovich, S., Villeda, H. S., Bradbury, P., Li, H., Sun, Q.,

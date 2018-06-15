@@ -2,7 +2,7 @@
 % Please edit documentation in R/subset.mppData.R
 \name{subset.mppData}
 \alias{subset.mppData}
-\title{Subset mppData object}
+\title{Subset \code{mppData} object}
 \usage{
 \method{subset}{mppData}(x, mk.list = NULL, gen.list = NULL, ...)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.QeffRes.R
 \name{summary.QeffRes}
 \alias{summary.QeffRes}
-\title{Summary of QeffRes object}
+\title{Summary of \code{QeffRes} object}
 \usage{
 \method{summary}{QeffRes}(object, QTL = NULL, ...)
 }
