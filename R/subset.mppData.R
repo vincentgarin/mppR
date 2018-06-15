@@ -68,7 +68,7 @@ subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
   # 1. Check data.format and arguments
   ####################################
   
-  check_mppData(mppData = mppData)
+  check_mppData(mppData = x)
   
   # user must at least specify one argument (mk.list or gen.list)
   
