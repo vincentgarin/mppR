@@ -14,3 +14,7 @@ devtools::install_github("vincentgarin/mppR")
 ## Usage
 
 [vignette of the package](docs/mppR_vignette.pdf)
+
+# Travis
+
+[![Travis-CI Build Status](https://travis-ci.org/vincentgarin/mppR.svg?branch=master,mppR_CRAN)](https://travis-ci.org/vincentgarin/mppR)
