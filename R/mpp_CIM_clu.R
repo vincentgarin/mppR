@@ -25,10 +25,6 @@ mpp_CIM_clu <- function(mppData, trait = 1, Q.eff = "cr",
   
   t_val <- sel_trait(mppData = mppData, trait = trait)
   
-  ### 2.1 inverse of the pedigree matrix
-  
-  # formPedMatInv(mppData = mppData, VCOV = VCOV)
-  
   ### 2.2 cross matrix (cross intercept)
   
   cross.mat <- IncMat_cross(cross.ind = mppData$cross.ind)
