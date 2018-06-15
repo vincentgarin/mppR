@@ -9,11 +9,11 @@ Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
              person("Dietrich", "Borchardt", role = c("ctb", "dtc")),
              person("Fred", "van Eeuwijk", role = c("ctb", "ths")),
              person("Marcos", "Malosetti", role = c("ctb", "ths")))
-Description: Analysis of experimental multi-parent populations (MPPs) to detect
+Description: Analysis of experimental multi-parent populations to detect
              regions of the genome (called quantitative trait loci, QTLs)
-             influencing phenotypic traits. The MPPs must be composed of crosses
+             influencing phenotypic traits. The population must be composed of crosses
              between a set of at least three parents (e.g. factorial design,
-             diallel, or nested association mapping). The functions covers data
+             'diallel', or nested association mapping). The functions covers data
              processing, QTL detection, and results visualization.
 License: GPL-3
 Imports:
