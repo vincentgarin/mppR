@@ -579,10 +579,6 @@ summary(mppData)
 
 \subsection{mppData manipulation}
 
-Two functions allow to manipulate and modify the \code{mppData objects}: \code{subset.mppData()}, and \code{par_clu_chg.mppData()}.
-
-\subsubsection{mppData subset}
-
 Subsets from \code{mppData} objects can be obtained using the generic fuction \code{subset()}. The \code{mppData} objects can be subsetted by markers (\code{mk.list}) and/or by genotypes (\code{gen.list}).
 
 <<subset_mppData>>=
@@ -590,17 +586,6 @@ mppData_sub <- subset(x = mppData, mk.list = mppData$map[, 2] == 1,
                       gen.list = sample(mppData$geno.id, 200))
 @
 
-\subsubsection{Change mppData parent clustering}
-
-The user can change the parent clustering information of a \code{mppData} object using the function \code{par_clu_chg.mppData()}. For example, if he wants to cluster the parents using another software than \pkg{clusthaplo}. The new parent cluster information must be provided in argument \code{par.clu}.
-
-<<par_clu_chg.mppData>>=
-data(mppData)
-data("par_clu", package = "mppR")
-
-mppData <- par_clu_chg.mppData(mppData = mppData, par.clu = par_clu)
- 
-@
 
 \subsection{QTL analysis}
   
