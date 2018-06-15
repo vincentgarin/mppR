@@ -1,6 +1,6 @@
 Package: mppR
 Type:Package
-Version: 1.1.5
+Version: 1.1.6
 Date: 2018-06-15
 Title: Multi-Parent Population QTL Analysis
 Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
@@ -17,20 +17,18 @@ Description: Analysis of experimental multi-parent populations (MPPs) to detect
              processing, QTL detection, and results visualization.
 License: GPL-3
 Imports:
-    cowplot,
     ggplot2,
     graphics,
     grDevices,
     methods,
     parallel,
     qtl,
-    RColorBrewer,
     stats,
     synbreed,
     utils,
     igraph
 Depends:
-    R(>= 3.3.0)
+    R(>= 3.1.0)
 Suggests:
     clusthaplo
 RoxygenNote: 6.0.1
