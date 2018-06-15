@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.mppData.R
 \name{summary.mppData}
 \alias{summary.mppData}
-\title{Summary of mppData object}
+\title{Summary of \code{mppData} object}
 \usage{
 \method{summary}{mppData}(object, ...)
 }

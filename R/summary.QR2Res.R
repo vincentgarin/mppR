@@ -2,7 +2,7 @@
 # summary.QR2Res #
 ##################
 
-#' Summary of QR2Res object
+#' Summary of \code{QR2Res} object
 #' 
 #' \code{summary} for object of class \code{QR2Res}.
 #' 

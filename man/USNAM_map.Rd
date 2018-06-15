@@ -17,7 +17,7 @@
   population (McCullen et al., 2009). The data are available on www.panzea.org.
 }
 \source{
-  http://www.panzea.org/lit/data_sets.html#phenos
+  \url{http://www.panzea.org}
 }
 \references{
   McMullen, M. D., Kresovich, S., Villeda, H. S., Bradbury, P., Li, H., Sun,

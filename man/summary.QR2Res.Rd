@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.QR2Res.R
 \name{summary.QR2Res}
 \alias{summary.QR2Res}
-\title{Summary of QR2Res object}
+\title{Summary of \code{QR2Res} object}
 \usage{
 \method{summary}{QR2Res}(object, ...)
 }

@@ -2,7 +2,7 @@
 # subset.mppData #
 ##################
 
-#' Subset mppData object
+#' Subset \code{mppData} object
 #' 
 #' Pull out a specified set of markers and/or genotypes from a \code{mppData}
 #' object.
