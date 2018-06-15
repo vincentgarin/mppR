@@ -90,7 +90,7 @@ QTL_pred_R2 <- function(mppData.ts, mppData.vs, trait = 1, Q.eff = "cr",
   # 1. test data format
   #####################
   
-  check.model.comp(Q.eff = Q.eff, trait = trait, VCOV = VCOV, QTL = QTL,
+  check.model.comp(Q.eff = Q.eff, trait = trait, VCOV = "h.err", QTL = QTL,
                    mppData.ts = mppData.ts, fct = "R2_pred")
 
   
