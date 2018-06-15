@@ -102,9 +102,6 @@ mpp_CIM <- function(mppData, trait = 1, Q.eff = "cr", cofactors = NULL,
   
   t_val <- sel_trait(mppData = mppData, trait = trait)
   
-  ### 2.1 inverse of the pedigree matrix
-  
-  # formPedMatInv(mppData = mppData, VCOV = VCOV)
   
   ### 2.2 cross matrix (cross intercept)
   

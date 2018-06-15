@@ -107,10 +107,6 @@ MQE_forward <- function(mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
            glb.only = TRUE)[[2]]
     
   }
-  
-  # form eventual pedigree term
-  
-  # formPedMatInv(mppData = mppData, VCOV = VCOV)
 
   # initialize list of selected QTL and list of type of effects.
   
