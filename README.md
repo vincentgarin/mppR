@@ -1,4 +1,16 @@
-# mppR
-R package for multi-parent populations QTL analysis
+mppR: Multi-Parent Population QTL Analysis
 
-Start collaborative development of mppR on GitHUB (14/09/2015)
+## Overview
+
+mppR is an R package to perform QTL analysis of experimental multi-parent populations to detect. The population must be composed of crosses between a set of at least three parents (e.g. factorial design, 'diallel', or nested association mapping). The functions covers data processing, QTL detection, and results visualization.
+
+## Installation
+
+```
+devtools::install_github("vincentgarin/mppR")
+
+```
+
+## Usage
+
+[vignette of the package](docs/mppR_vignette.pdf)
