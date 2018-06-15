@@ -2,7 +2,7 @@
 # summary.mppData #
 ###################
 
-#' Summary of mppData object
+#' Summary of \code{mppData} object
 #' 
 #' \code{summary} for object of class \code{mppData}.
 #' 

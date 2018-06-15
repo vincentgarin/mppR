@@ -2,7 +2,7 @@
 # summary.QeffRes #
 ###################
 
-#' Summary of QeffRes object
+#' Summary of \code{QeffRes} object
 #' 
 #' \code{summary} for object of class \code{QeffRes}.
 #' 
