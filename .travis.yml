@@ -2,4 +2,6 @@
 
 language: R
 sudo: false
+use_bioc: true
+bioc_required: true
 cache: packages
