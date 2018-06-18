@@ -1,0 +1,8 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.git$
+^\.gitignore$
+^crancomments\.md$
+^docs/mppR_vignette\.pdf$
+^NEWS\.md$
+^\.travis\.yml$
