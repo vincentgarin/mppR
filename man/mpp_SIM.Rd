@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpp_SIM.R
 \name{mpp_SIM}
 \alias{mpp_SIM}
-\title{MPP Simple Interval Maping}
+\title{MPP Simple Interval Mapping}
 \usage{
 mpp_SIM(mppData, trait = 1, Q.eff = "cr", plot.gen.eff = FALSE,
   n.cores = 1)
@@ -20,7 +20,7 @@ for ancestral; 4) "biall" for a bi-allelic. For more details see
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
-These results can be ploted with the function \code{\link{plot.QTLprof}}
+These results can be plotted with the function \code{\link{plot.QTLprof}}
 to visualize a genome-wide decomposition of the genetic effects.
 \strong{This functionality is ony available for the cross-specific,
 parental and ancestral models.}
@@ -61,7 +61,7 @@ are shared between crosses.
 
 In a connected MPP (\code{\link{design_connectivity}}), if np - 1 < nc, where
 np is the number of parents and nc the number of crosses, the parental model
-should be more powerfull than the cross-specific model because it estimate
+should be more powerful than the cross-specific model because it estimate
 a reduced number of QTL parameters. This gain in power will be only true if
 the assumption of constant parental effect through crosses holds. Calculated
 with HRT assumption, the parental model corresponds to the connected model
@@ -81,7 +81,7 @@ The HRT ancestral model correspond to the linkage desequilibrium
 linkage analysis (LDLA) models used by Bardol et al. (2013) or
 Giraud et al. (2014).
 
-The final posibility is the bi-allelic model (\code{Q.eff = "biall"}).
+The final possibility is the bi-allelic model (\code{Q.eff = "biall"}).
 Bi-allelic genetic predictor are a single vector with value 0, 1 or 2
 corresponding to the number of allele copy of the least frequent SNP allele.
 Relatedness between lines is therefore defined via identical by state (IBS)
@@ -112,9 +112,6 @@ plot(x = SIM, type = "h")
 
 }
 \references{
-Butler D. G., Cullis B. R., Gilmour A. R., Gogel B. J. (2009) ASReml-R
-reference manual.
-
 Bardol, N., Ventelon, M., Mangin, B., Jasson, S., Loywick, V., Couton, F., ...
 & Moreau, L. (2013). Combined linkage and linkage disequilibrium QTL mapping 
 in multiple families of maize (Zea mays L.) line crosses highlights

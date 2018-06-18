@@ -19,7 +19,7 @@ for ancestral; 4) "biall" for a bi-allelic. For more details see
 
 \item{order.MAF}{\code{Logical} value specifying if the QTL incidence matrix
 should be ordered by allele frequency for a parental and ancestral QTL
-incidence matrix. The colum will be ordred from the least to the most frequent
+incidence matrix. The column will be ordered from the least to the most frequent
 allele. Default = FALSE.}
 }
 \value{

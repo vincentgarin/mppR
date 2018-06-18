@@ -30,7 +30,7 @@ centi-Morgan.\strong{The marker identifiers must be identical to the column
 names of the maker matrices (\code{geno.off} and \code{geno.par}).}}
 
 \item{pheno}{\code{Numeric matrix} with one column per trait and rownames
-as genotpes identifiers. \strong{The genotypes identifiers must be identical
+as genotypes identifiers. \strong{The genotypes identifiers must be identical
 to the rownames of the offspring marker matrix (\code{geno.off}).}}
 
 \item{cross.ind}{\code{Character} vector indicating to which cross each

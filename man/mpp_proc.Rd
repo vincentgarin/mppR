@@ -30,7 +30,7 @@ effects. For more details see \code{\link{mpp_SIM}}. Default = "cr".}
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
-These results can be ploted with the function \code{\link{plot.QTLprof}}
+These results can be plotted with the function \code{\link{plot.QTLprof}}
 to visualize a genome-wide decomposition of the genetic effects.
 \strong{This functionality is ony available for the cross-specific,
 parental and ancestral models.}
@@ -63,13 +63,13 @@ the backward elimination. Terms with p-values above this value will
 iteratively be removed. Default = 0.05.}
 
 \item{ref.par}{Optional \code{Character} expression defining the parental
-allele that will be used as reference to ocmpute QTL effects for the parental
+allele that will be used as reference to compute QTL effects for the parental
 model. For the ancestral model, the ancestral class containing the reference
 parent will be set as reference. \strong{This option can only be used if
 the MPP design is composed of a unique connected part}. Default = NULL.}
 
 \item{sum_zero}{Optional \code{Logical} value specifying if the QTL effect of
-a parental or an ancestral model should be caculated using the sum to zero
+a parental or an ancestral model should be calculated using the sum to zero
 constraint. Default = FALSE.}
 
 \item{CI}{\code{Logical} value. If \code{CI = TRUE}, the function will
