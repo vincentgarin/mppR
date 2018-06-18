@@ -2,7 +2,7 @@
 ^\.Rproj\.user$
 ^\.git$
 ^\.gitignore$
-^crancomments\.md$
+^cran-comments\.md$
 ^docs/mppR_vignette\.pdf$
 ^NEWS\.md$
 ^\.travis\.yml$
