@@ -2,7 +2,7 @@
 # mpp_CIM #
 ###########
 
-#' MPP composite interval maping
+#' MPP Composite Interval Mapping
 #' 
 #' Compute QTL models along the genome using cofactors representing other
 #' genetic positions for control.
@@ -31,9 +31,9 @@
 #' 
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
-#' These results can be ploted with the function \code{\link{plot.QTLprof}}
+#' These results can be plotted with the function \code{\link{plot.QTLprof}}
 #' to visualize a genome-wide decomposition of the genetic effects.
-#' \strong{This functionality is ony available for the cross-specific,
+#' \strong{This functionality is only available for the cross-specific,
 #' parental and ancestral models.}
 #' Default value = FALSE.
 #' 

@@ -59,7 +59,7 @@
 #' population level comprised between 0 and 1. Default = 0.1.
 #' 
 #' @param gen.miss \code{Numeric} maximum genotype missing rate at the whole
-#' population level comprisxed between 0 and 1. Default = 0.25.
+#' population level comprised between 0 and 1. Default = 0.25.
 #' 
 #' @param n.lim \code{Numeric} value specifying the minimum cross size.
 #' Default = 15.

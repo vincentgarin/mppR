@@ -17,7 +17,7 @@
 #' repetition, the kth subset is used as validation set, the rest goes into the
 #' training set.}
 #' 
-#' \item{For the kth repetition, utilisation of the training set for cofactor
+#' \item{For the kth repetition, utilization of the training set for cofactor
 #' selection and multi-QTL model determination (\code{\link{mpp_SIM}} and
 #' \code{\link{mpp_CIM}}). If \code{backward = TRUE}, the final list of QTLs is
 #' tested simultaneously using a backward elimination
@@ -111,7 +111,7 @@
 #' @param n.cores \code{Numeric}. Specify here the number of cores you like to
 #' use. Default = 1.
 #'
-#' @param verbose \code{Logical} value indicating if the progressiong of the CV
+#' @param verbose \code{Logical} value indicating if the progresses of the CV
 #' should be printed. It will not affect the printing of the other functions
 #' called by \code{mpp_CV()}, especially the printing of \code{asreml()}.
 #' Default = TRUE.

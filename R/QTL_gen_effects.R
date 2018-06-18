@@ -12,7 +12,7 @@
 #' model (\code{Q.eff = "cr"}), the genetics effects represent the substitution
 #' effect of an single allele from the parent 2 (or B) with respect to an allele
 #' coming from the parent 1 or A. All effects are given in absolute value with
-#' the parent that cary the positive allele.
+#' the parent that carries the positive allele.
 #' 
 #' For the parental and the ancestral model (\code{Q.eff = "par" or "anc"}), it
 #' is possible to estimate maximum n-1 parental or ancestral alleles per
@@ -56,7 +56,7 @@
 #' composed of a unique connected part}. Default = NULL.
 #' 
 #' @param sum_zero Optional \code{Logical} value specifying if the QTL effect of
-#' a parental or an ancestral model should be caculated using the sum to zero
+#' a parental or an ancestral model should be calculated using the sum to zero
 #' constraint. Default = FALSE.
 #' 
 #' 
