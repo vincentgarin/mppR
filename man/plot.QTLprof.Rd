@@ -55,7 +55,7 @@ effects plots (\code{gen.eff = TRUE}). To plot the genome-wide genetic
 effects, the SIM and CIM QTL profile must have been computed with
 \code{plot.gen.eff = TRUE}.
 
-The genome-wide genetic effects plots is a visualisation of the significance
+The genome-wide genetic effects plots is a visualization of the significance
 of the QTL effect per cross or per parents along the genome. For a
 cross-specific QTL profile (\code{Q.eff = "cr"}): Red color means
 that the allele coming from parent A(1) increases the phenotypic value and
@@ -66,7 +66,7 @@ For a parental (\code{Q.eff = "par"}) or an ancestral model
 (\code{Q.eff = "anc"}), the results are given per parents. The significance
 of the effect must be interpreted as a deviation with respect to the
 reference of each connected part. The reference allele is always defined as
-the most frequent one. Red (Blue) colour means a signicative negative
+the most frequent one. Red (Blue) colour means a significant negative
 (positive) effect with respect to the reference of the connected part.
 
 The reference parental allele can change at each position according to the
