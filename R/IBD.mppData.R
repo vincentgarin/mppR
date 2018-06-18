@@ -37,7 +37,7 @@
 #' population types are possible: F-type ('F'), back-cross ('BC'), backcross
 #' followed by selfing ('BCsFt'), double haploid ('DH'), and recombinant imbred
 #' lines ('RIL'). The number of F and BC generations can be specified using
-#' \code{F.gen} and \code{BC.gen}. The agument \code{type.mating} specifies if
+#' \code{F.gen} and \code{BC.gen}. The argument \code{type.mating} specifies if
 #' F and RIL populations were obtained by selfing or by sibling mating.
 #' 
 #' DH and RIL populations are read as back-cross by R/qtl. For these two
@@ -61,8 +61,8 @@
 #' of the sub-crosses; 3) the parents 2 identifiers of the sub-crosses.
 #' Default = NULL.
 #' 
-#' @param type \code{Character} indicator for the type of population analysed:
-#' type = "F" for Fn (F cross n gernerations); type = "BC" for BCn (backcross
+#' @param type \code{Character} indicator for the type of population analyzed:
+#' type = "F" for Fn (F cross n generations); type = "BC" for BCn (backcross
 #' n generations); type = "BCsFt" for backcross followed by selfing;
 #' type = "DH" for double haploids; and type = "RIL"
 #' for recombinant inbred lines. For RIL type specify if the population was
@@ -98,7 +98,7 @@
 #' 
 #' \item{geno.IBD}{A R/qtl \code{cross.object} containing the IBD probabilities.}
 #' 
-#' \item{n.zigo}{\code{Numeric} value Indicating the number of differenct
+#' \item{n.zigo}{\code{Numeric} value Indicating the number of different
 #' genotypes: 2 (AA/BB) or 3 (AA/AB/BB)}
 #' 
 #' \item{type}{\code{Character} expression indicating the type of population.}
