@@ -11,7 +11,7 @@
 #' Performs N permutations of the trait data and
 #' computes each time a genome-wide QTL profile. For every run, it stores the
 #' highest -log10(p-val). These values can be used to build a null distribution
-#' for the QTL significance thershold. Quantile values can be determined from
+#' for the QTL significance threshold. Quantile values can be determined from
 #' the previous distribution. For more details about the different possible
 #' models and their assumptions see \code{\link{mpp_SIM}} documentation.
 #'
@@ -27,7 +27,7 @@
 #' 
 #' @param N Number of permutations. Default = 1000.
 #' 
-#' @param q.val Single \code{numeric} valu or vector of desired quantiles from
+#' @param q.val Single \code{numeric} value or vector of desired quantiles from
 #' the null distribution. Default = 0.95.
 #' 
 #' @param verbose \code{Logical} value indicating if progression of the function

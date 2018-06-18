@@ -16,7 +16,7 @@
 #' The parent clustering can be performed using the R package
 #' clusthaplo using \code{method = "clusthaplo"}. Clusthaplo can be found there:
 #' \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. Using
-#' clusthaplo, a visualisation of ancestral haplotype blocks can be obtained
+#' clusthaplo, a visualization of ancestral haplotype blocks can be obtained
 #' setting \code{plot = TRUE}. The plots will be saved at the location specified
 #' in \code{plot.loc}.
 #' 
