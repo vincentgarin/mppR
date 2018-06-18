@@ -20,7 +20,7 @@ for ancestral; 4) "biall" for a bi-allelic. For more details see
 
 \item{N}{Number of permutations. Default = 1000.}
 
-\item{q.val}{Single \code{numeric} valu or vector of desired quantiles from
+\item{q.val}{Single \code{numeric} value or vector of desired quantiles from
 the null distribution. Default = 0.95.}
 
 \item{verbose}{\code{Logical} value indicating if progression of the function
@@ -53,7 +53,7 @@ threshold for a MPP QTL analysis using permutation test
 Performs N permutations of the trait data and
 computes each time a genome-wide QTL profile. For every run, it stores the
 highest -log10(p-val). These values can be used to build a null distribution
-for the QTL significance thershold. Quantile values can be determined from
+for the QTL significance threshold. Quantile values can be determined from
 the previous distribution. For more details about the different possible
 models and their assumptions see \code{\link{mpp_SIM}} documentation.
 }

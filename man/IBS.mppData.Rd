@@ -58,7 +58,7 @@ scores.}
 \description{
 Transform the genotype marker matrix of a \code{mppData} object into
 Identical by state (IBS) 0, 1, 2 format. The IBS score represent the number
-of copies of the minor allele. The 0, 1, 2 coding can be preceeded by a
+of copies of the minor allele. The 0, 1, 2 coding can be preceded by a
 marker imputation (\code{impute = TRUE}) to fill the missing values. The
 imputation of the missing values is performed using the \code{codeGeno()}
 function from synbreed (Wimmer et al., 2012).

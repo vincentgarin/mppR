@@ -33,7 +33,7 @@ Selection of QTL candidate positions.
 \details{
 The function select QTL positions that are above the given
 \code{threshold} per chromosome. Once a position has been selected, and
-exlusion \code{window} is set around that position. Positions falling into
+exclusion \code{window} is set around that position. Positions falling into
 that region will not be candidate anymore. The search continue until there
 is no more candidate position above the \code{threshold}.
 }

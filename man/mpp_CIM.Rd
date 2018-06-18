@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpp_CIM.R
 \name{mpp_CIM}
 \alias{mpp_CIM}
-\title{MPP composite interval maping}
+\title{MPP Composite Interval Mapping}
 \usage{
 mpp_CIM(mppData, trait = 1, Q.eff = "cr", cofactors = NULL, window = 20,
   plot.gen.eff = FALSE, n.cores = 1)
@@ -28,9 +28,9 @@ cofactor position where it is not included in the model. Default = 20.}
 
 \item{plot.gen.eff}{\code{Logical} value. If \code{plot.gen.eff = TRUE},
 the function will save the decomposed genetic effects per cross/parent.
-These results can be ploted with the function \code{\link{plot.QTLprof}}
+These results can be plotted with the function \code{\link{plot.QTLprof}}
 to visualize a genome-wide decomposition of the genetic effects.
-\strong{This functionality is ony available for the cross-specific,
+\strong{This functionality is only available for the cross-specific,
 parental and ancestral models.}
 Default value = FALSE.}
 
