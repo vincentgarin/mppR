@@ -1,6 +1,6 @@
 Package: mppR
 Type:Package
-Version: 1.1.8
+Version: 1.1.9
 Date: 2018-06-15
 Title: Multi-Parent Population QTL Analysis
 Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
@@ -30,7 +30,6 @@ Imports:
 Depends:
     R(>= 3.1.0)
 Suggests:
-    clusthaplo,
     synbreed
 RoxygenNote: 6.0.1
 URL: https://github.com/vincentgarin/mppR

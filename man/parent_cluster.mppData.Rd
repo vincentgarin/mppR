@@ -4,10 +4,7 @@
 \alias{parent_cluster.mppData}
 \title{Parent clustering for \code{mppData} objects}
 \usage{
-parent_cluster.mppData(mppData, method = NULL, par.clu = NULL,
-  w1 = "kernel.exp", w2 = "kernel.unif", window, K = 10,
-  simulation.type = "equi", simulation.Ng = 50, simulation.Nrep = 3,
-  threshold.quantile = 95, plot = TRUE, plot.loc = getwd())
+parent_cluster.mppData(mppData, par.clu = NULL)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}. the \code{mppData} must
@@ -15,59 +12,16 @@ have been processed using: \code{\link{create.mppData}},
 \code{\link{QC.mppData}}, \code{\link{IBS.mppData}},
 and \code{\link{IBD.mppData}}.}
 
-\item{method}{\code{Character} expression. If (\code{method = "clusthaplo"}),
-the clustering is done using the R package clusthaplo.
-If (\code{method = "given"}), the user must provide the parent clustering
-information using \code{par.clu}. Default = NULL.}
-
-\item{par.clu}{Optional argument if (\code{method = "given"}).
-\code{Interger matrix} representing the results of a
+\item{par.clu}{\code{Interger matrix} representing the results of a
 parents genotypes clustering. The columns represent the parental lines and
 the rows the markers. The columns names must be the same as the parents
 list of the mppData object. The rownames must be the same as the map marker
 list of the mppData object. At a particular position, parents with the same
 value are assumed to inherit from the same ancestor. for more details,
 see \code{\link{par_clu}}. Default = NULL.}
-
-\item{w1}{The w1 weight function in the Li&Jyang similarity score.
-Possible values are "kernel.const", "kernel.exp", "kernel.gauss",
-"kernel.unif", "kernel.laplace" or "kernel.null". Default = "kernel.exp".}
-
-\item{w2}{The w2 weight function in the Li&Jyang similarity score.
-Possible values are "kernel.const", "kernel.exp", "kernel.gauss",
-"kernel.unif", "kernel.laplace" or "kernel.null". Default = "kernel.unif".}
-
-\item{window}{\code{Numeric} value for the size of the window used for
-clustering in centi-Morgan. The clustering procedure is done for the position
-that is in the centre of the window taking marker scores within the window
-into consideration.}
-
-\item{K}{A positive integer representing the number of markers in a window
-below which the kinship data will be used. Default = 10.}
-
-\item{simulation.type}{The type of simulation used for the training.
-One of "equi" or "mosaic". Default = "equi".}
-
-\item{simulation.Ng}{The number of intermediary generations to simulate
-for the training (only relevant for "mosaic"). Default = 50.}
-
-\item{simulation.Nrep}{The number of replicates to simulate for the training.
-Default = 3.}
-
-\item{threshold.quantile}{The quantile to use to select the threshold
-automatically. It must be a plain integer xx with 80 <= xx <= 100.
-Default = 95.}
-
-\item{plot}{\code{Logical} value indicating if the plot of the clustering
-results must be saved at the location specified in argument \code{plot.loc}.
-Default = TRUE.}
-
-\item{plot.loc}{Path where a folder will be created to save the plot of
-the clustering results. By default the function uses the current working
-directory.}
 }
 \value{
-an increased \code{mppData} object containing the the same elements
+An increased \code{mppData} object containing the the same elements
 as the \code{mppData} object provided as argument and the
 following new elements:
 
@@ -80,25 +34,34 @@ with the same value were clustered in the same ancestral group.}
 \item{mono.anc}{Positions for which the ancestral clustering was monomorphic.}
 }
 \description{
-Local clustering of the parental lines done by the R package clushaplo
-(Leroux et al. 2014) or by providing own parent clustering data.
-}
-\details{
-This function integrate the parent clustering information to the mppData
+Integrate the parent clustering information to the mppData
 object. The parent clustering is necessary to compute the ancestral model.
 If the parent clustering step is skipped, the ancestral model can not be
 used but the other models (cross-specific, parental, and bi-allelic) can
 still be computed.
+}
+\details{
+At a single marker position, two parents can be grouped into a similar
+ancestral classes if we assume that they receive there allele from a common
+ancetor. The parent clustering information (\code{par.clu}) describe parental
+relatedness and which parent belong to which ancestral group. For example,
+at marker i, we could have five parents (pA, pB, pC, pD, pE) and the following
+clustering information (1, 2, 1, 2, 3). This means that pA and pC received
+their allele from the same ancetor (A1). pB and pD also have a shared
+ancestor (A2) who is different from (A1). And pE was not included in any
+group and can be seen as an indepedent ancestral group (A3).
+
+The parent clustering information is provided via \code{par.clu}. It is an
+\code{interger matrix} with markers in row and parents in columns.
+At a particular marker position, parents with the same value are assumed to
+inherit from the same ancestor. for more details, see \code{\link{par_clu}}.
 
 The parent clustering can be performed using the R package
-clusthaplo using \code{method = "clusthaplo"}. Clusthaplo can be found there:
-\url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}. Using
-clusthaplo, a visualization of ancestral haplotype blocks can be obtained
-setting \code{plot = TRUE}. The plots will be saved at the location specified
-in \code{plot.loc}.
-
-An alternative (\code{method = "given"}), is to provide your own parent
-clustering information via the argument \code{par.clu}.
+'clusthaplo' that can be found there:
+\url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}.
+The 'clusthaplo' option is not integrated in this version of mppR. However,
+a version of mppR with function calling clusthaplo can be found on github
+\url{https://github.com/vincentgarin/mppR} (branch mppR_clusthaplo).
 }
 \examples{
 
@@ -111,28 +74,13 @@ mppData <- IBS.mppData(mppData = mppData)
 mppData <- IBD.mppData(mppData = mppData, type = 'RIL',
                        type.mating = 'selfing')
                        
-mppData <- parent_cluster.mppData(mppData = mppData, method = "given",
-                                  par.clu  = par_clu)                         
+mppData <- parent_cluster.mppData(mppData = mppData, par.clu  = par_clu)                         
                        
-\dontrun{
-                                                
-library(clusthaplo)
-                        
-mppData <- parent_cluster.mppData(mppData = mppData, method = "clusthaplo",
-                                  window = 25, K = 10, plot = FALSE)                        
 
-}
-
-}
-\references{
-Leroux, D., Rahmani, A., Jasson, S., Ventelon, M., Louis, F., Moreau, L.,
-& Mangin, B. (2014). Clusthaplo: a plug-in for MCQTL to enhance QTL detection
-using ancestral alleles in multi-cross design. Theoretical and Applied
-Genetics, 127(4), 921-933.
 }
 \seealso{
 \code{\link{create.mppData}}, \code{\link{QC.mppData}},
-\code{\link{IBS.mppData}}, \code{\link{IBD.mppData}}
+\code{\link{IBS.mppData}}, \code{\link{IBD.mppData}}, \code{\link{par_clu}}
 }
 \author{
 Vincent Garin
