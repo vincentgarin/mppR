@@ -1,3 +1,9 @@
+## Resubmission
+In submission mppR 1.1.8. I was asked to remove the dependency to the package
+clusthaplo.
+
+* I removed all calls to clusthaplo and removed the suggested package.
+
 ## Test environments
 * win-builder(devel and release)
 * ubuntu 16.04, R 3.4.4
