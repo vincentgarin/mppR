@@ -553,8 +553,9 @@ At a single marker position, two parents can be grouped into a similar ancestral
 
 The parent clustering information is provided via \code{par.clu}. It is an \code{interger matrix} with markers in row and parents in columns. At a particular marker position, parents with the same value are assumed to inherit from the same ancestor.
 
-The parent clustering can be performed using the R package 'clusthaplo' that can be found there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}.
-The 'clusthaplo' option is not integrated in this version of mppR. However, a version of mppR with function calling clusthaplo can be found on github \url{https://github.com/vincentgarin/mppR} (branch mppR_clusthaplo).
+The parent clustering can be performed using the R package \pkg{clusthaplo} that can be found there: \url{https://cran.r-project.org/src/contrib/Archive/clusthaplo/}.
+The clusthaplo option is not integrated in this version of mppR. However, a version of mppR with function calling clusthaplo can be found on github \url{https://github.com/vincentgarin/mppR}.
+
 
 <<parent_clustering2>>=
 data("par_clu", package = "mppR")
@@ -568,6 +569,7 @@ A summary of the \code{mppData} objects can be obtained calling the generic func
 <<summary_mppData>>=
 summary(mppData)
 @
+
 
 \subsection{mppData manipulation}
 
