@@ -67,9 +67,7 @@ iteratively be removed. Default = 0.05.}
 use. Default = 1.}
 
 \item{verbose}{\code{Logical} value indicating if the progresses of the CV
-should be printed. It will not affect the printing of the other functions
-called by \code{mpp_CV()}, especially the printing of \code{asreml()}.
-Default = TRUE.}
+should be printed. Default = TRUE.}
 
 \item{output.loc}{Path where a folder will be created to save the results.
 By default the function uses the current working directory.}
@@ -155,16 +153,12 @@ The bias between p.ts and p.vs is calculated as bias = 1 - (p.vs/p.ts).
 }
 \examples{
 
-\dontrun{
-
 data(mppData)
 
-my.loc <- "C:/..."
+my.loc <- tempdir()
 
 CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-her = .5, output.loc = my.loc)
-
-}
+her = .4, Rep = 1, k = 3, verbose = FALSE, output.loc = my.loc)
 
 }
 \references{

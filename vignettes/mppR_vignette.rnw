@@ -611,7 +611,7 @@ QTL_proc <- mpp_proc(pop.name = "USNAM", trait.name = "ULA", trait = "ULA",
                      plot.gen.eff = TRUE, N.cim = 1, thre.cof = 3,
                      win.cof = 20, window = 20, thre.QTL = 3,
                      win.QTL = 20, CI = TRUE, drop = 1.5,
-                     verbose = FALSE, output.loc = getwd())
+                     verbose = FALSE, output.loc = tempdir())
 @
 
 The results of \code{mpp_proc()} are returned as a list of \proglang{R} objects. These results are also saved in different files at the location specified in argument \code{output.loc}. The created folder contains a report (QTL\_REPORT.txt) with a summary of results such as the number of detected QTL, the global $R^{2}$, and for each QTL the estimated genetic effects per cross or parent.
@@ -620,10 +620,10 @@ The results of \code{mpp_proc()} are returned as a list of \proglang{R} objects.
 
 A multi-QTL effects model~\ref{MQE} can be determined using \code{MQE_proc()}. The user has to specify the types of tested QTL effects in the argument \code{Q.eff}. The \code{window} argument specifies the distance on both sides of an already detected QTL position where the search will be forbidden. A backward elimination on the final list of detected QTLs can be performed using (\code{backward = TRUE}). The results of the last MQE CIM run can be plotted using the function \code{MQE_plot()}. This \code{MQE_plot()} will colour the QTL positions corresponding to the type of QTL effect assumed at the position. This will be automatically done by \code{MQE_proc()} if \code{plot.MQE = TRUE}. The plot (plot\_MQE.pdf) will be saved with the other results at \code{output.loc}.
 
-<<MQE>>=
+<<MQE, eval=FALSE, print=TRUE>>=
 MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-                Q.eff = c("par", "biall"), window = 20, verbose = FALSE,
-                output.loc = getwd())
+                Q.eff = c("par", "anc", "biall"), window = 20, verbose = FALSE,
+                output.loc = tempdir())
 @
 
 \subsection{QTL effects estimation}
@@ -689,7 +689,7 @@ set.seed(89341)
 
 CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
              Q.eff = "cr", her = 0.4, Rep = 1, k = 3, verbose = FALSE,
-             output.loc = getwd())
+             output.loc = tempdir())
 @
 
 \begin{figure}[!ht]
