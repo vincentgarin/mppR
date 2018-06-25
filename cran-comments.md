@@ -1,4 +1,11 @@
 ## Resubmission
+In submission mppR 1.1.9, I was asked to: 1) add a reference in DESCRIPTION; 2) change dontrun{} for donttest for example < 5s; 3) and remove default writting of user filespace.
+
+* 1) I added a reference in DESCRIPTION.
+* 2) I removed all dontrun{}. All examples are < 5s and can be run by the user.
+* 3) I removed default writting of user filespace in MQE_proc, mpp_proc, and mpp_CV by removing getwd() as default for output.loc. I used tempdir() for directory specification in the examples/vignettes. 
+
+## Resubmission
 In submission mppR 1.1.8. I was asked to remove the dependency to the package
 clusthaplo.
 
