@@ -59,13 +59,9 @@ models and their assumptions see \code{\link{mpp_SIM}} documentation.
 }
 \examples{
 
-\dontrun{
-
 data(mppData)
 
-Perm <- mpp_perm(mppData = mppData, Q.eff = "cr", N = 100)
-
-}
+Perm <- mpp_perm(mppData = mppData, Q.eff = "cr", N = 5)
 
 
 }

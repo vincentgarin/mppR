@@ -106,8 +106,7 @@
 #' use. Default = 1.
 #' 
 #' @param verbose \code{Logical} value indicating if the steps of mpp_proc should
-#' be printed. It will not affect the printing of the other functions called by
-#' \code{mpp_proc()}, especially the printing of \code{asreml()}. Default = TRUE.
+#' be printed. Default = TRUE.
 #'
 #' @param output.loc Path where a folder will be created to save the results.
 #' By default the function uses the current working directory.
@@ -179,21 +178,19 @@
 #' 
 #' @examples
 #'  
-#' \dontrun{
 #' 
 #' data(mppData)
 #' 
 #' # Specify a location where your results will be saved
-#' my.loc <- "C:/.../..."
+#' my.loc <- tempdir()
 #' 
 #' # Cross-specific model
 #' 
 #' USNAM_cr <- mpp_proc(pop.name = "USNAM", trait.name = "ULA",
 #'                      mppData = mppData, plot.gen.eff = TRUE, CI = TRUE,
-#'                      output.loc = my.loc)
+#'                      verbose = FALSE, output.loc = my.loc)
 #' 
 #' 
-#' }
 #' 
 #' 
 #' @export
