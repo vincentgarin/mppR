@@ -165,6 +165,7 @@
 #' 
 #' data(mppData)
 #' 
+#' # Specify a location where your results will be saved
 #' my.loc <- tempdir()
 #' 
 #' CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
