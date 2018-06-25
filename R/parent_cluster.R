@@ -77,8 +77,7 @@
 # Default = TRUE.
 # 
 # @param plot.loc Path where a folder will be created to save the plot of
-# the clustering results. By default the function uses the current working
-# directory.
+# the clustering results.
 # 
 # @return Return:
 # 
@@ -114,7 +113,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
                            window, K = 10, simulation.type = "equi",
                            simulation.Ng = 50, 
                            simulation.Nrep = 3, threshold.quantile = 95,
-                           plot = TRUE, plot.loc = getwd()) {
+                           plot = TRUE, plot.loc) {
   
   # 1. check data format
   ######################

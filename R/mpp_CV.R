@@ -115,7 +115,6 @@
 #' should be printed. Default = TRUE.
 #'
 #' @param output.loc Path where a folder will be created to save the results.
-#' By default the function uses the current working directory.
 #' 
 #'    
 #' @return 
@@ -180,7 +179,7 @@ mpp_CV <- function(pop.name = "MPP_CV", trait.name = "trait1",
                    thre.cof = 3, win.cof = 50, N.cim = 1, window = 20,
                    thre.QTL = 3, win.QTL = 20, backward = TRUE,
                    alpha.bk = 0.05, n.cores = 1, verbose = TRUE,
-                   output.loc = getwd())
+                   output.loc)
 {
   
   # 1. Check the validity of the parameters that have been introduced
