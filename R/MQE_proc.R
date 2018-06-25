@@ -69,7 +69,6 @@
 #' be printed. Default = TRUE.
 #' 
 #' @param output.loc Path where a folder will be created to save the results.
-#' By default the function uses the current working directory.
 #' 
 #' @return Return:
 #'
@@ -133,7 +132,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                      mppData = NULL, trait = 1, Q.eff,
                      threshold = 4, window = 30, backward = TRUE,
                      alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1,
-                     verbose = TRUE, output.loc = getwd()) {
+                     verbose = TRUE, output.loc) {
   
   # 1. check the format of the data
   #################################

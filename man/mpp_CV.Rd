@@ -8,7 +8,7 @@ mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData, trait = 1,
   her = 1, Rep = 10, k = 5, Q.eff = "cr", thre.cof = 3,
   win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
   backward = TRUE, alpha.bk = 0.05, n.cores = 1, verbose = TRUE,
-  output.loc = getwd())
+  output.loc)
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -69,8 +69,7 @@ use. Default = 1.}
 \item{verbose}{\code{Logical} value indicating if the progresses of the CV
 should be printed. Default = TRUE.}
 
-\item{output.loc}{Path where a folder will be created to save the results.
-By default the function uses the current working directory.}
+\item{output.loc}{Path where a folder will be created to save the results.}
 }
 \value{
 \code{List} containing the following results items:

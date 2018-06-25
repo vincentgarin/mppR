@@ -83,7 +83,9 @@
 #' 
 #' @export
 
+
 parent_cluster.mppData <- function(mppData, par.clu = NULL){
+
   
   # check the format of the data
   #################################
