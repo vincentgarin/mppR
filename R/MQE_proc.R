@@ -120,7 +120,8 @@
 #' my.loc <- tempdir()
 #' 
 #' MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-#'                 Q.eff = c("par", "biall"), output.loc = my.loc)
+#'                 Q.eff = c("par", "biall"), verbose = FALSE,
+#'                 output.loc = my.loc)
 #'                  
 #' 
 #' @export

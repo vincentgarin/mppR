@@ -154,6 +154,7 @@ The bias between p.ts and p.vs is calculated as bias = 1 - (p.vs/p.ts).
 
 data(mppData)
 
+# Specify a location where your results will be saved
 my.loc <- tempdir()
 
 CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
