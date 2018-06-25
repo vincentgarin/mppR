@@ -109,7 +109,6 @@
 #' be printed. Default = TRUE.
 #'
 #' @param output.loc Path where a folder will be created to save the results.
-#' By default the function uses the current working directory.
 #' 
 #' 
 #' @return Return:
@@ -203,7 +202,7 @@ mpp_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData,
                      thre.QTL = 3, win.QTL = 20, backward = TRUE,
                      alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE,
                      CI = FALSE, drop = 1.5, text.size = 18, n.cores = 1,
-                     verbose = TRUE, output.loc = getwd()) {
+                     verbose = TRUE, output.loc) {
   
   
   # 1. Check the validity of the parameters that have been introduced

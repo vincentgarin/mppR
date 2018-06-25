@@ -7,7 +7,7 @@
 parent_cluster.mppData(mppData, method = NULL, par.clu = NULL,
   w1 = "kernel.exp", w2 = "kernel.unif", window, K = 10,
   simulation.type = "equi", simulation.Ng = 50, simulation.Nrep = 3,
-  threshold.quantile = 95, plot = TRUE, plot.loc = getwd())
+  threshold.quantile = 95, plot = TRUE, plot.loc)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}. the \code{mppData} must
@@ -63,8 +63,7 @@ results must be saved at the location specified in argument \code{plot.loc}.
 Default = TRUE.}
 
 \item{plot.loc}{Path where a folder will be created to save the plot of
-the clustering results. By default the function uses the current working
-directory.}
+the clustering results.}
 }
 \value{
 an increased \code{mppData} object containing the the same elements

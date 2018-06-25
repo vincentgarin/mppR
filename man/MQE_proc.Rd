@@ -7,7 +7,7 @@
 MQE_proc(pop.name = "MPP_MQE", trait.name = "trait1", mppData = NULL,
   trait = 1, Q.eff, threshold = 4, window = 30, backward = TRUE,
   alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1, verbose = TRUE,
-  output.loc = getwd())
+  output.loc)
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -49,8 +49,7 @@ use. Default = 1.}
 \item{verbose}{\code{Logical} value indicating if the steps of MQE_proc should
 be printed. Default = TRUE.}
 
-\item{output.loc}{Path where a folder will be created to save the results.
-By default the function uses the current working directory.}
+\item{output.loc}{Path where a folder will be created to save the results.}
 }
 \value{
 Return:
@@ -123,7 +122,7 @@ data(mppData)
 my.loc <- tempdir()
 
 MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
-                Q.eff = c("par", "anc", "biall"), output.loc = my.loc)
+                Q.eff = c("par", "biall"), output.loc = my.loc)
                  
 
 }

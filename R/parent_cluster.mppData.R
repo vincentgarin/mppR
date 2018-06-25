@@ -76,8 +76,7 @@
 #' Default = TRUE.
 #' 
 #' @param plot.loc Path where a folder will be created to save the plot of
-#' the clustering results. By default the function uses the current working
-#' directory.
+#' the clustering results.
 #' 
 #' 
 #' 
@@ -140,7 +139,7 @@ parent_cluster.mppData <- function(mppData, method = NULL, par.clu = NULL,
                                    window, K = 10, simulation.type = "equi",
                                    simulation.Ng = 50,  simulation.Nrep = 3,
                                    threshold.quantile = 95, plot = TRUE,
-                                   plot.loc = getwd()){
+                                   plot.loc){
   
   # check the format of the data
   #################################
