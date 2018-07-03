@@ -910,10 +910,10 @@ QC_proc <- function(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
       rownames(map_gp) <- map[, 1]
       
       
-      gp <- create.gpData(geno = geno.off, map = map_gp, family = family,
+      gp <- synbreed::create.gpData(geno = geno.off, map = map_gp, family = family,
                           map.unit = map.unit)
       
-      gp.imp <- tryCatch(expr = codeGeno(gpData = gp, impute = TRUE,
+      gp.imp <- tryCatch(expr = synbreed::codeGeno(gpData = gp, impute = TRUE,
                                          impute.type = impute.type,
                                          replace.value = replace.value, maf = 0,
                                          nmiss = 1, label.heter = label.heter,
