@@ -1,7 +1,7 @@
 Package: mppR
 Type:Package
-Version: 1.1.11
-Date: 2018-07-03
+Version: 1.1.11.9000
+Date: 2018-07-04
 Title: Multi-Parent Population QTL Analysis
 Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
              email = "vincent.garin@wur.nl"),
