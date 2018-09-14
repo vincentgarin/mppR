@@ -19,7 +19,6 @@ list of the mppData object. The rownames must be the same as the map marker
 list of the mppData object. At a particular position, parents with the same
 value are assumed to inherit from the same ancestor. for more details,
 see \code{\link{par_clu}}. Default = NULL.}
-
 }
 \value{
 An increased \code{mppData} object containing the the same elements
