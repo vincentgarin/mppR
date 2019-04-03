@@ -105,7 +105,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
                             ref.par = NULL, trait.lab = 'trait', text.size = 16,
                             output.loc = getwd(), plot_label = 'Qeff_tab'){
   
-  if(!is.null(ref.par)){ sum_zero = FALSE }
+  if(!is.null(ref.par)){ sum_zero <- FALSE }
   
   if(is.character(QTL)){
     
@@ -131,20 +131,21 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
   # Estimation of the QTL effects of the given list for the 4 different models
   
   QEff_cr <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
-                            Q.eff = 'cr')
+                             Q.eff = 'cr')
   
   QEff_par <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
-                             Q.eff = 'par', ref.par = ref.par,
-                             sum_zero = sum_zero)
+                              Q.eff = 'par', ref.par = ref.par,
+                              sum_zero = sum_zero)
+  
   
   QEff_anc <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
-                             Q.eff = 'anc', ref.par = ref.par,
-                             sum_zero = sum_zero)
+                              Q.eff = 'anc', ref.par = ref.par,
+                              sum_zero = sum_zero)
   
   if(sum_zero){
     
     QEff_biall <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
-                                 Q.eff = 'biall')
+                                  Q.eff = 'biall')
     
     # recalculate to get only the single beta values for the minor allele
     
@@ -153,7 +154,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     mppData2$geno.par.clu <- NULL
     
     QEff_biall2 <- QTL_gen_effects(mppData = mppData2, trait = trait, QTL = QTL,
-                                  Q.eff = 'biall')
+                                   Q.eff = 'biall')
     
     rm(mppData2)
     
@@ -181,23 +182,43 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
   } else {
     
     QEff_biall <- QTL_gen_effects(mppData = mppData, trait = trait, QTL = QTL,
-                                 Q.eff = 'biall')
+                                  Q.eff = 'biall')
     
   }
-  
-  
   
   
   # Form the table of QTL effects
   ###############################
   
+  # organise the par.per.cross info per connected parts
+  
+  ppc_temp <- mppData$par.per.cross
+  
+  c_group <- design_connectivity(ppc_temp, plot_des = FALSE)
+  
+  par_gr <- c(unlist(c_group))
+  group_id <- rep(1:length(c_group), lapply(c_group, length))
+  names(group_id) <- par_gr
+  
+  cr_gr <- group_id[ppc_temp[, 2]]
+  
+  ppc_temp <- cbind(ppc_temp, cr_gr)
+  ppc_temp <- ppc_temp[order(ppc_temp[,4]), ]
+  
   n_cr <- mppData$n.cr
   
-  cr_ind <- mppData$par.per.cross[, 1]
+  cr_ind <- ppc_temp[, 1]
   cr_ind <- rep(cr_ind, each = 2)
   
-  par_A <- mppData$par.per.cross[, 2]
-  par_B <- mppData$par.per.cross[, 3]
+  # change the order of the cr-sp effect to be org by conn part
+  
+  r_nm_i <- substr(rownames(QEff_cr$Qeff[[1]]), 5,
+                   nchar(rownames(QEff_cr$Qeff[[1]])))
+  
+  ord_cr_eff <- match(r_nm_i, ppc_temp[, 1])
+  
+  par_A <- ppc_temp[, 2]
+  par_B <- ppc_temp[, 3]
   
   par_ind <- rep('', 2*n_cr)
   par_ind[seq(from = 1, to = (2*n_cr), by = 2)] <- par_A
@@ -209,7 +230,13 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     
     # cr
     
-    add_ind <- (QEff_cr$Qeff[[i]]$Add.parent == mppData$par.per.cross[, 3]) * 1
+    # change the order of the cr-sp effect to be org by conn part
+    
+    Qeff_cr_i <- QEff_cr$Qeff[[i]]
+    
+    Qeff_cr_i <- Qeff_cr_i[ord_cr_eff, ]
+    
+    add_ind <- (Qeff_cr_i$Add.parent == ppc_temp[, 3]) * 1
     
     add_ind2 <- c()
     
@@ -223,9 +250,9 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
       
     }
     
-    add_eff_cr <- rep(QEff_cr$Qeff[[i]]$Effect, each = 2)
+    add_eff_cr <- rep(Qeff_cr_i$Effect, each = 2)
     add_eff_cr <- add_eff_cr * add_ind2
-    p_val_cr <- rep(QEff_cr$Qeff[[i]]$`p-value`, each = 2)
+    p_val_cr <- rep(Qeff_cr_i$`p-value`, each = 2)
     
     # par
     
@@ -254,10 +281,22 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     add_eff_biall <- add_eff_biall[par_ind]
     p_val_biall <- p_val_biall[par_ind]
     
+    # con part indicators
     
-    df <- data.frame(cr_ind, par_ind, add_eff_cr, p_val_cr, add_eff_par, p_val_par,
-                     add_eff_anc, p_val_anc, add_eff_biall, p_val_biall,
-                     stringsAsFactors = FALSE)
+    c_part_par <- QEff_par$Qeff[[i]]$Con.part
+    names(c_part_par) <- rownames(QEff_par$Qeff[[i]])
+    c_part_par <- substr(c_part_par[par_ind], 2, nchar(c_part_par[par_ind]))
+    c_part_par <- as.numeric(c_part_par)
+    
+    c_part_anc <- QEff_anc$Qeff[[i]]$Con.part
+    names(c_part_anc) <- rownames(QEff_anc$Qeff[[i]])
+    c_part_anc <- substr(c_part_anc[par_ind], 2, nchar(c_part_anc[par_ind]))
+    c_part_anc <- as.numeric(c_part_anc)
+    
+    
+    df <- data.frame(cr_ind, par_ind, c_part_par, c_part_anc, add_eff_cr,
+                     p_val_cr, add_eff_par, p_val_par, add_eff_anc, p_val_anc,
+                     add_eff_biall, p_val_biall, stringsAsFactors = FALSE)
     
     Qeff_tab[[i]] <- df
     
@@ -293,36 +332,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     
   }
   
-  # Bi-allelic code
   
-  # bi_code <- c()
-  # 
-  # gen_par <- mppData$geno.par
-  # 
-  # SNP_QTL <- gen_par[gen_par[, 1] %in% Q_info[, 1], 5:dim(gen_par)[2], ]
-  # 
-  # SNP_QTL_ref <- mppData$allele.ref[, Q_info[, 1]]
-  # 
-  # 
-  # for(i in 1:n_QTL){
-  #   
-  #   SNP_QTLi <- unlist(SNP_QTL[i, ])
-  #   
-  #   bi_code_i <- SNP_QTLi[par_ind]
-  #   
-  #   SNP_QTL_refi <- SNP_QTL_ref[, i]
-  #   
-  #   all_ref <- c(1, 3, 2, 2)
-  #   names(all_ref) <- SNP_QTL_refi
-  #   
-  #   bi_code_i <- all_ref[bi_code_i]
-  #   
-  #   bi_code <- cbind(bi_code, bi_code_i)
-  #   
-  # }
-  #
-  # rownames(anc_code) <- rownames(bi_code) <-  par_ind
-  # colnames(anc_code) <- colnames(bi_code) <- paste0('Q', 1:n_QTL)
   
   rownames(anc_code) <-  par_ind
   colnames(anc_code) <- paste0('Q', 1:n_QTL)
@@ -426,23 +436,7 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
             strip.text.x =  element_text(size=text.size),
             legend.title = element_text(size=(text.size)))
     
-    # bi-allelic colour
     
-    # z <- bi_code[, i]
-    # z <- factor(z, levels = sort(unique(z)))
-    # cols <- c("1" = "black", "2" = "grey", "3" = "white")
-    # ind <- rep("SNP id", length(par_ind))
-    # 
-    # data <- data.frame(x = x, y = y, z = z, ind = ind)
-    # 
-    # col_bi <- ggplot(data, aes(x, y, z = z)) +
-    #   facet_wrap(nrow = 1, ~ ind, scales = "free_x") + geom_tile(aes(fill = z)) +
-    #   scale_fill_manual(values = cols) + theme(legend.position='none') +
-    #   theme_bw() +  xlab("") + ylab(y.lab) + theme(legend.position='none') +
-    #   theme(axis.text.y = element_blank(),
-    #         axis.text.x = element_blank(),
-    #         axis.title.x = element_text(size = text.size),
-    #         strip.text.x =  element_text(size=text.size))
     
     # QTL effect table
     
@@ -459,11 +453,30 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     data <- data.frame(cr_par_ind, y, x, model, effect_add, pval, LOD,
                        stringsAsFactors = FALSE)
     
+    # determine the horizontal lines to separate the con parts
+    
+    par_c_lim <- which(rev(!(diff(Q_eff_k$c_part_par) == 0))) + 0.5
+    anc_c_lim <- which(rev(!(diff(Q_eff_k$c_part_anc) == 0))) + 0.5
+    
+    if(!(length(par_c_lim)==0)){
+      hline_par <- data.frame(z = par_c_lim, model = rep('par',length(par_c_lim)))
+    } else {hline_par <- data.frame(z = 0, model = 'par')}
+    
+    if(!(length(anc_c_lim)==0)){
+      hline_anc <- data.frame(z = anc_c_lim, model = rep('anc',length(anc_c_lim)))
+    } else {hline_anc <- data.frame(z = 0, model = 'anc')}
+    
+    
     p <- ggplot(data,aes(x=x,y=y, xmin=0.75, xmax=1.25 ,ymax=(2*n_cr),ymin=1,
                          size=LOD, color=effect_add)) +
       facet_wrap(nrow = 1, ~ model, scales = "free_x") +
       geom_point() + scale_size_continuous(range = c(0, 10)) +
       scale_colour_gradient2(low="red", high="blue", mid="white") +
+      
+      geom_hline(aes(yintercept = z), hline_par) +
+      geom_hline(aes(yintercept = z), hline_anc) +
+      
+      
       theme_bw() +  xlab("") + ylab("") + ggtitle(graph_title) +
       theme(axis.text.y = element_blank(),
             axis.text.x = element_blank(),
@@ -475,7 +488,8 @@ QTL_effect_plot <- function(mppData, trait = 1, QTL, sum_zero = TRUE,
     #                 rel_widths = c(0.2, 0.07, 0.07, 0.66)))
     
     print(cowplot::plot_grid(col_par, col_anc, p, ncol = 3,
-                    rel_widths = c(0.23, 0.07, 0.7)))
+                             rel_widths = c(0.23, 0.07, 0.7)))
+    
     
   }
   
