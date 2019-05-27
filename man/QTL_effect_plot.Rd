@@ -4,9 +4,9 @@
 \alias{QTL_effect_plot}
 \title{Plot QTL effect accross model}
 \usage{
-QTL_effect_plot(mppData, trait = 1, QTL, sum_zero = TRUE, ref.par = NULL,
-  trait.lab = "trait", text.size = 16, output.loc = getwd(),
-  plot_label = "Qeff_tab")
+QTL_effect_plot(mppData, trait = 1, QTL, sum_zero = TRUE,
+  ref.par = NULL, trait.lab = "trait", text.size = 16,
+  output.loc = getwd(), plot_label = "Qeff_tab")
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}

@@ -4,7 +4,8 @@
 \alias{MQE_R2}
 \title{Global and partial R squared for multi-QTL effects}
 \usage{
-MQE_R2(mppData = NULL, trait = 1, QTL = NULL, Q.eff, glb.only = FALSE)
+MQE_R2(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
+  glb.only = FALSE)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}

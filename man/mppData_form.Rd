@@ -4,10 +4,11 @@
 \alias{mppData_form}
 \title{Data for MPP QTL analysis}
 \usage{
-mppData_form(geno.off, geno.par = NULL, IBS = FALSE, IBS.format = "ATCG",
-  type, F.gen = NULL, BC.gen = NULL, type.mating = NULL, map, trait,
-  cross.ind, par.per.cross, step = 10000, error.prob = 1e-04,
-  map.function = "haldane", stepwidth = "max", dir = getwd())
+mppData_form(geno.off, geno.par = NULL, IBS = FALSE,
+  IBS.format = "ATCG", type, F.gen = NULL, BC.gen = NULL,
+  type.mating = NULL, map, trait, cross.ind, par.per.cross,
+  step = 10000, error.prob = 1e-04, map.function = "haldane",
+  stepwidth = "max", dir = getwd())
 }
 \arguments{
 \item{geno.off}{\code{Character} or \code{Numeric matrix} representing

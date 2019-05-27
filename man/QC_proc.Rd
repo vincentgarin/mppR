@@ -8,9 +8,9 @@ QC_proc(geno.off, geno.par, map, trait, cross.ind, par.per.cross,
   subcross.ind = NULL, par.per.subcross = NULL, n.lim = 15,
   MAF.pop.lim = 0.05, MAF.cr.lim = NULL, MAF.cr.miss = TRUE,
   mk.miss = 0.1, gen.miss = 0.25, ABH = TRUE, het_miss_par = FALSE,
-  verbose = TRUE, impute = FALSE, impute.type = "random", map_bp = NULL,
-  replace.value = NULL, label.heter = "alleleCoding", parallel = FALSE,
-  cluster = NULL)
+  verbose = TRUE, impute = FALSE, impute.type = "random",
+  map_bp = NULL, replace.value = NULL, label.heter = "alleleCoding",
+  parallel = FALSE, cluster = NULL)
 }
 \arguments{
 \item{geno.off}{\code{Character} marker score \code{matrix} of the offspring

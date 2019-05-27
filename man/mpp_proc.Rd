@@ -6,10 +6,10 @@
 \usage{
 mpp_proc(pop.name = "MPP", trait.name = "trait1", mppData, trait = 1,
   Q.eff = "cr", VCOV = "h.err", plot.gen.eff = FALSE, thre.cof = 3,
-  win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3, win.QTL = 20,
-  backward = TRUE, alpha.bk = 0.05, ref.par = NULL, sum_zero = FALSE,
-  CI = FALSE, drop = 1.5, text.size = 18, n.cores = 1, verbose = TRUE,
-  output.loc = getwd())
+  win.cof = 50, N.cim = 1, window = 20, thre.QTL = 3,
+  win.QTL = 20, backward = TRUE, alpha.bk = 0.05, ref.par = NULL,
+  sum_zero = FALSE, CI = FALSE, drop = 1.5, text.size = 18,
+  n.cores = 1, verbose = TRUE, output.loc = getwd())
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
