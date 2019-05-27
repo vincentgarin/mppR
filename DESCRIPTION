@@ -27,7 +27,9 @@ Depends:
 Suggests:
     asreml,
     clusthaplo,
-    synbreed
-RoxygenNote: 6.0.1
+    synbreed,
+    testthat
+RoxygenNote: 6.1.1
+Encoding: UTF-8
 URL: https://github.com/vincentgarin/mppR
 BugReports: https://github.com/vincentgarin/mppR/issues
