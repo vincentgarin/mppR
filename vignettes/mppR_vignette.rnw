@@ -14,7 +14,7 @@
 \usepackage{bm}
 \usepackage{blkarray}
 \usepackage{graphicx}
-% \usepackage{natbib}
+\usepackage{natbib}
 \usepackage{threeparttable}
 \usepackage{Sweave}
 
@@ -63,11 +63,7 @@
 %% in the following format:
 
 \Address{Vincent Garin \\
-	Biometris \\
-	Wageningen University and research Center
-	P.O Box 100, 6700AC Wageningen, The Netherlands.\\
-	E-mail: \email{vincent.garin@wur.nl}\\
-	Telephone : +31/317/483-574
+	E-mail: \email{vincent.garin6@gmail.com}\\
 }
 
 %% It is also possible to add a telephone and fax number
