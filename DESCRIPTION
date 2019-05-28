@@ -1,5 +1,5 @@
 Package: mppR
-Type:Package
+Type: Package
 Version: 1.1.11.9000
 Date: 2018-07-04
 Title: Multi-Parent Population QTL Analysis
@@ -31,7 +31,9 @@ Imports:
 Depends:
     R(>= 3.1.0)
 Suggests:
-    synbreed
-RoxygenNote: 6.0.1
+    synbreed,
+    testthat
+RoxygenNote: 6.1.1
+Encoding: UTF-8
 URL: https://github.com/vincentgarin/mppR
 BugReports: https://github.com/vincentgarin/mppR/issues
