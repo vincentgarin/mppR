@@ -674,6 +674,12 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   
   n.cr <- dim(par.per.cross)[1]
   
+  if(n.cr < 2){
+    
+    stop('The QC reduced your MPP to less than 2 crosses. You must modify your QC parameters to have at least 2 crosses in your MPP.')
+    
+  }
+  
   # 13. re-form the mppData object with the new elements
   ######################################################
   
