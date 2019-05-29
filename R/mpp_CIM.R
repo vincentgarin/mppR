@@ -14,10 +14,9 @@
 #' \strong{WARNING!} The computation of random pedigree models
 #' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
 #' due to singularities due to a strong correlation between the QTL term(s) and 
-#' the polygenic term. This situation can appear in the parental model.
-#' the error can also sometimes come from the \code{asreml()} function. From
-#' our experience, in that case, trying to re-run the function one or two times
-#' allow to obtain a result.
+#' the polygenic term. This situation can appear in the parental model. From
+#' our experience, trying to re-run the function one or two times
+#' allows generally to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' 

@@ -5,7 +5,7 @@ Version: 1.1.51
 Date: 2018-07-03
 Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb,
     dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
-Maintainer: Vincent Garin <vincent.garin@wur.nl>
+Maintainer: Vincent Garin <vincent.garin6@gmail.com>
 Description: Process data from multi-parent populations (MPP) QTL
     experiment, perform QTL detection, and visualize the results.
 License: GPL (>=2)

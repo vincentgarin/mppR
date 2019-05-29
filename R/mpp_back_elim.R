@@ -14,14 +14,12 @@
 #' is remove and the procedure continue until there is no more unsignificant
 #' position.
 #' 
-#' \strong{WARNING!} The estimation of the random pedigree models
-#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can be unstable. Sometimes the
-#' \code{asreml()} function fails to produce a results and returns the following
-#' message: \strong{\code{GIV matrix not positive definite: Singular pivots}}.
-#' So far we were not able to identify the reason of this problem and to
-#' reproduce this error because it seems to happen randomly. From our
-#' experience, trying to re-run the function one or two times should allow
-#' to obtain a result.
+#' \strong{WARNING!} The computation of random pedigree models
+#' (\code{VCOV = "pedigree" and "ped_cr.err"}) can sometimes fail. This could be
+#' due to singularities due to a strong correlation between the QTL term(s) and 
+#' the polygenic term. This situation can appear in the parental model. From
+#' our experience, trying to re-run the function one or two times
+#' allows generally to obtain a result.
 #' 
 #' @param mppData An object of class \code{mppData}.
 #' 
