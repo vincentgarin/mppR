@@ -1,47 +1,35 @@
-## Resubmission
-In submission mppR 1.1.9, I was asked to: 1) add a reference in DESCRIPTION; 2) change dontrun{} for donttest for example < 5s; 3) and remove default writting of user filespace.
+## package update 1.2.0
 
-* 1) I added a reference in DESCRIPTION.
-* 2) I removed all dontrun{}. All examples are < 5s and can be run by the user.
-* 3) I removed default writting of user filespace in MQE_proc, mpp_proc, and mpp_CV by removing getwd() as default for output.loc. I used tempdir() for directory specification in the examples/vignettes. 
+Change of e-mail address because the old one will soon not function anymore due to a change of institution.
 
-## Resubmission
-In submission mppR 1.1.8. I was asked to remove the dependency to the package
-clusthaplo.
+Fixation of bugs affecting the presentation of the results
 
-* I removed all calls to clusthaplo and removed the suggested package.
+Modifications of the documentation
 
 ## Test environments
 * win-builder(devel and release)
-* ubuntu 16.04, R 3.4.4
-* ubuntu 14.04 (on travis-ci), R 3.5.0
+* ubuntu (on travis-ci), R 3.6.0
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There were 2 NOTEs
+There was 1 NOTE
 
 * checking CRAN incoming feasibility ... NOTE
-  
-  New submission
+Maintainer: 'Vincent Garin <vincent.garin6@gmail.com>'
 
-  Possibly mis-spelled words in DESCRIPTION:
-    QTLs (13:69)
+New maintainer:
+  Vincent Garin <vincent.garin6@gmail.com>
+Old maintainer(s):
+  Vincent Garin <vincent.garin@wur.nl>
 
-  Quantitative trait loci (QTLs) standard abreviaion. E.g. r/qtl package.
-  
-* checking package dependencies ... NOTE
-  
-  Package suggested but not available for checking: 'clusthaplo'
+I changed the e-mail address because the old one will not be valid anymore because I will change of institution.
 
-  the function parent_cluster.mppData call the CRAN archived package 'clusthaplo'
-  https://cran.r-project.org/src/contrib/Archive/clusthaplo/clusthaplo_1.2.tar.gz
-  
-  As an alternative, the user can provide a matrix with the parent clustering
-  values calculated with another method of his/her choice.
+No reverse dependency
 
 ## Vignette
-The vignette is built on Maintainer machine.
+The vignette is built on maintainer machine.
 
 ## Other
-* I read the CRAN Repository Policy Version $Revision: 3874 $ 
+
+I read the CRAN policy repository Version $Revision: 4050 $ 

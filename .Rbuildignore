@@ -4,5 +4,4 @@
 ^\.gitignore$
 ^cran-comments\.md$
 ^docs/mppR_vignette\.pdf$
-^NEWS\.md$
 ^\.travis\.yml$
