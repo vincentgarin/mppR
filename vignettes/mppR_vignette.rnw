@@ -76,7 +76,7 @@
 
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+%\SweaveOpts{concordance=TRUE}
 \SweaveOpts{engine=R, eps=FALSE, keep.source = TRUE}
 
 \section{Introduction}
@@ -109,7 +109,7 @@ This manual is organized as follows. Section~\ref{sec:2} describes the statistic
 \pkg{mppR} allows to analyse any type of MPP design with minimally two crosses between at least three different parents. In such designs, the possibility to estimate QTL parameters (identifiability) is linked to the notion of connectivity of the design. It is always possible to estimate one effect per cross. Therefore, the number crosses ($n_{c}$) constitutes the largest number of QTL effects that can be estimated. The estimation of parental and ancestral effects is linked to the connectivity of the MPP design \citep{rebai_2000}. Taking for example the parental alleles, it is possible to estimate $n_{p} - 1 \leq  n_{c}$ parental alleles per connected part of the design. Design connectivity can be defined using graph theory \citep{weeks_1964}. Following graph theory, an MPP design can be represented by a graph where parents (alleles) are vertices or nodes and crosses are edges or lines (Figure \ref{fig:1}). A connected graph, is a graph where there exists a walk from any node $i$ to any other node $j$. For example, the MPP design in Figure (\ref{fig:1}) is composed of two connected parts. Ideally, MPP QTL analysis should be run using only connected populations. The joint analysis of an MPP composed of several disjunct but internally connected parts is still possible. In that case, connectedness could follow from the sharing of a common ancestor by two parents of the design. For example if parents $P_{B}$ and $P_{E}$ of the MPP design of Figure (\ref{fig:1}) would receive their allele from the same ancestor, the MPP design would consist of a single connected part. For a bi-allelic model we assume that the design is fully connected. In any case, even if disconnected parts are analysed jointly, a minimal level of connection will be assumed by assuming that cofactors are shared in the whole population.
 
 \begin{figure}[!ht]
-	\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/connectivity_example.jpg}
+	\includegraphics[width=1\textwidth]{figures/connectivity_example.jpg}
 	\caption{Example of a MPP design represented as a graph}
 	\label{fig:1}
 \end{figure}
@@ -390,7 +390,7 @@ A cross-validation (CV) approach can be used to evaluate the performance of the 
 
 
 \begin{figure}[!ht]
-	\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/Workflow2.jpg}
+	\includegraphics[width=1\textwidth]{figures/Workflow2.jpg}
 	\caption{mppR workflow.}
 	\label{fig:2}
 \end{figure}
@@ -653,7 +653,7 @@ plot(x = CIM, QTL = QTL, type = "l")
 @
 
 \begin{figure}[!ht]
-\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/QTL_profile.pdf}
+\includegraphics[width=1\textwidth]{figures/QTL_profile.pdf}
 \caption{CIM QTL profile from an ancestral model using HRT. The cofactors positions are represented by vertical dashed lines.}
 \label{fig:3}
 \end{figure}
@@ -665,7 +665,7 @@ plot(x = CIM, gen.eff = TRUE, mppData = mppData, QTL = QTL, Q.eff = "anc")
 @
 
 \begin{figure}[!ht]
-\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/gen_eff.pdf}
+\includegraphics[width=1\textwidth]{figures/gen_eff.pdf}
 \caption{Visualisation genome-wide genetic effect significance from a CIM ancestral model using HRT. The vertical dashed lines represent the detected QTL positions.}
 \label{fig:4}
 \end{figure}
@@ -689,7 +689,7 @@ CV <- mpp_CV(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 @
 
 \begin{figure}[!ht]
-\includegraphics[width=1\textwidth,natwidth=610,natheight=642]{figures/plot_CV.pdf}
+\includegraphics[width=1\textwidth]{figures/plot_CV.pdf}
 \caption{Transparency plot of CV results representing an overlay of QTL profiles. The black bars are proportional to the number of times a position was detected as QTL.}
 \label{fig:5}
 \end{figure}
