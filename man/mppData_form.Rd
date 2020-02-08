@@ -179,8 +179,7 @@ The second type of \code{mppData} objects (\code{IBS = TRUE}) uses identical
 by state (IBS) genetic predictors for bi-allelic model. In such case,
 genotype marker score are transformed into 0, 1, 2 format representing
 the copy number of the least frequent allele. For IBS \code{mppData} objects,
-the user can provide imputed data for the argument \code{geno.off}. Marker
-score imputation can be done using \code{\link{QC_proc}}. The markers scores
+the user can provide imputed data for the argument \code{geno.off}. The markers scores
 can be provided to \code{geno.off} using letters (1 letter per allele)
 setting (\code{IBS.format = "ATCG"}) or already in 0, 1, 2 format
 (\code{IBS.format = "012"}). \code{\link{USNAM_mppData_bi}} is

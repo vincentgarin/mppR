@@ -570,11 +570,11 @@ mppData <- QC.mppData(mppData = mppData, n.lim = 15, MAF.pop.lim = 0.05,
 
 \subsubsection{IBS processing}
 
-To compute a bi-allelic model, the user needs to convert genotype data into IBS format using \code{IBS.mppData()}. This function transforms genotype scores into 0, 1, 2 coding where the score represents the number of minor allele copies. The user can also perform imputation of the missing values (\code{impute = TRUE}). Different options are available, some of them rely on the \code{codeGeno()} function from the package \pkg{synbreed} \citep{wimmer2012synbreed}.
+To compute a bi-allelic model, the user needs to convert genotype data into IBS format using \code{IBS.mppData()}. This function transforms genotype scores into 0, 1, 2 coding where the score represents the number of minor allele copies.
+%The user can also perform imputation of the missing values (\code{impute = TRUE}). Different options are available, some of them rely on the \code{codeGeno()} function from the package \pkg{synbreed} \citep{wimmer2012synbreed}.
 
 <<IBS.mppData>>=
-mppData <- IBS.mppData(mppData = mppData, impute = TRUE,
-                       impute.type = 'random')
+mppData <- IBS.mppData(mppData = mppData)
 
 @
 
