@@ -1,3 +1,14 @@
+## package update 1.2.1
+
+Changes due to the fact that package ‘synbreed’ was removed from the CRAN repository. I removed the part of my code depending on synbreed.
+
+## Test environments
+* Local machine (Windows 10), R 3.6.2
+* R-hub builder (Debian Linux, R-devel, GCC)
+
+## R CMD check results
+There were no ERRORs, WARNINGs, or NOTES
+
 ## package update 1.2.0
 
 Change of e-mail address because the old one will soon not function anymore due to a change of institution.

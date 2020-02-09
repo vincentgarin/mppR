@@ -1,6 +1,6 @@
 Package: mppR
 Type: Package
-Version: 1.2.0.9000
+Version: 1.2.1
 Date: 2019-05-31
 Title: Multi-Parent Population QTL Analysis
 Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
@@ -31,7 +31,6 @@ Imports:
 Depends:
     R(>= 3.1.0)
 Suggests:
-    synbreed,
     testthat
 RoxygenNote: 6.1.1
 Encoding: UTF-8
