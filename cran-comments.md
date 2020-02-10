@@ -5,6 +5,7 @@ Changes due to the fact that package ‘synbreed’ was removed from the CRAN re
 ## Test environments
 * Local machine (Windows 10), R 3.6.2
 * R-hub builder (Debian Linux, R-devel, GCC)
+* win-builder (release, devel)
 
 ## R CMD check results
 There were no ERRORs, WARNINGs, or NOTES
