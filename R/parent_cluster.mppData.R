@@ -232,7 +232,9 @@ parent_cluster.mppData <- function(mppData, method = NULL, par.clu = NULL,
     
     mppData$par.clu <- p_c
     
-    mppData$n.anc <- p_clu[[2]]
+    nb.cl <- apply(X = p_c, MARGIN = 1, FUN = function(x) length(unique(x)))
+    
+    mppData$n.anc <- mean(nb.cl)
     
     mppData$mono.anc <- par.clu[[2]]
     
