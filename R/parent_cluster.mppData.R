@@ -246,9 +246,9 @@ parent_cluster.mppData <- function(mppData, method = NULL, par.clu = NULL,
     nb.cl <- apply(X = p_c, MARGIN = 1, FUN = function(x) length(unique(x)))
     
     mppData$n.anc <- mean(nb.cl)
-    
+
     mppData$n.anc.clusthaplo <- p_clu[[2]]
-    
+
     mppData$mono.anc <- par.clu[[2]]
     
     mppData$status <- 'complete'
