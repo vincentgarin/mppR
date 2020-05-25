@@ -52,6 +52,12 @@
 #' (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
+#' 
+#' @param ref.par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. For the
+#' ancestral model, the ancestral class containing the reference parent will be
+#' set as reference. \strong{This option can only be used if the MPP design is
+#' composed of a unique connected part}. Default = NULL.
 #'
 #' @return Return:
 #'
@@ -96,7 +102,7 @@
 
 
 MQE_genEffects <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
-                           VCOV = "h.err"){
+                           VCOV = "h.err", ref.par = NULL){
   
   # 1. check the data format
   ##########################
@@ -142,10 +148,21 @@ MQE_genEffects <- function(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
                    MoreArgs = list(mppData = mppData, order.MAF = TRUE),
                    SIMPLIFY = FALSE)
   
+  # define the vector for reference parent
+  
+  n.QTL <- length(Q.list)
+  
+  if(!is.null(ref.par)){
+    
+    ref_par_l <- vector(mode = 'list', length = n.QTL)
+    ref_par_l[Q.eff %in% c('par', 'anc')] <- ref.par
+    
+  } else {ref_par_l <- vector(mode = 'list', length = n.QTL)}
+  
   # order the QTL incidence matrices
   
   order.Qmat <- mapply(FUN = IncMat_QTL_MAF, QTL = Q.list,
-                       Q.eff_i = Q.eff, Q.pos_i = Q.pos,
+                       Q.eff_i = Q.eff, Q.pos_i = Q.pos, ref.par = ref_par_l,
                        MoreArgs = list(mppData = mppData),
                        SIMPLIFY = FALSE)
   

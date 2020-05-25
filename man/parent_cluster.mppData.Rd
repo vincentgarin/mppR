@@ -4,10 +4,21 @@
 \alias{parent_cluster.mppData}
 \title{Parent clustering for \code{mppData} objects}
 \usage{
-parent_cluster.mppData(mppData, method = NULL, par.clu = NULL,
-  w1 = "kernel.exp", w2 = "kernel.unif", window, K = 10,
-  simulation.type = "equi", simulation.Ng = 50, simulation.Nrep = 3,
-  threshold.quantile = 95, plot = TRUE, plot.loc = getwd())
+parent_cluster.mppData(
+  mppData,
+  method = NULL,
+  par.clu = NULL,
+  w1 = "kernel.exp",
+  w2 = "kernel.unif",
+  window,
+  K = 10,
+  simulation.type = "equi",
+  simulation.Ng = 50,
+  simulation.Nrep = 3,
+  threshold.quantile = 95,
+  plot = TRUE,
+  plot.loc = getwd()
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}. the \code{mppData} must
@@ -75,7 +86,14 @@ following new elements:
 columns corresponding to the parents. At a single marker position, parents
 with the same value were clustered in the same ancestral group.}
 
-\item{n.anc}{Average number of ancestral clusters along the genome.}
+\item{n.anc.clusthaplo}{Average number of ancestral cluster along the
+genome detected by clusthaplo. Before monomorphic ancestral positions
+(all parents in the same cluster) were set back to one allele per parent.
+This number is more representative of the parental allelic diversity
+than n.anc.}
+
+\item{n.anc}{Average number of ancestral clusters along the genome.
+After monomorphic positions have been set back to one cluster per parent.}
 
 \item{mono.anc}{Positions for which the ancestral clustering was monomorphic.}
 }
@@ -99,6 +117,10 @@ in \code{plot.loc}.
 
 An alternative (\code{method = "given"}), is to provide your own parent
 clustering information via the argument \code{par.clu}.
+
+The marker positions that are considered as monomorphic given the parent
+clutering information are set back as one effect per parent to still
+allow the computation of the marker effect at those positions later.
 }
 \examples{
 

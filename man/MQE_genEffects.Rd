@@ -4,8 +4,14 @@
 \alias{MQE_genEffects}
 \title{QTL genetic effects multi-QTL effect model}
 \usage{
-MQE_genEffects(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
-  VCOV = "h.err")
+MQE_genEffects(
+  mppData = NULL,
+  trait = 1,
+  QTL = NULL,
+  Q.eff,
+  VCOV = "h.err",
+  ref.par = NULL
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}}
@@ -27,6 +33,12 @@ covariance structure used: 1) "h.err" for an homogeneous variance residual term
 (CSRT) model; 4) "pedigree" for a random pedigree term and HRT model;
 and 5) "ped_cr.err" for random pedigree and CSRT model.
 For more details see \code{\link{mpp_SIM}}. Default = "h.err".}
+
+\item{ref.par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. For the
+ancestral model, the ancestral class containing the reference parent will be
+set as reference. \strong{This option can only be used if the MPP design is
+composed of a unique connected part}. Default = NULL.}
 }
 \value{
 Return:

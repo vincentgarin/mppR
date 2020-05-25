@@ -4,12 +4,28 @@
 \alias{mpp_CV}
 \title{MPP cross-validation}
 \usage{
-mpp_CV(pop.name = "MPP_CV", trait.name = "trait1", mppData,
-  trait = 1, her = 1, Rep = 10, k = 5, Q.eff = "cr",
-  VCOV = "h.err", thre.cof = 3, win.cof = 50, N.cim = 1,
-  window = 20, thre.QTL = 3, win.QTL = 20, backward = TRUE,
-  alpha.bk = 0.05, n.cores = 1, verbose = TRUE,
-  output.loc = getwd())
+mpp_CV(
+  pop.name = "MPP_CV",
+  trait.name = "trait1",
+  mppData,
+  trait = 1,
+  her = 1,
+  Rep = 10,
+  k = 5,
+  Q.eff = "cr",
+  VCOV = "h.err",
+  thre.cof = 3,
+  win.cof = 50,
+  N.cim = 1,
+  window = 20,
+  thre.QTL = 3,
+  win.QTL = 20,
+  backward = TRUE,
+  alpha.bk = 0.05,
+  n.cores = 1,
+  verbose = TRUE,
+  output.loc = getwd()
+)
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -159,7 +175,7 @@ predicted R squared are also calculated using the difference between the
 predicted R squared using all QTL and the predicted R squared without QTL i.
 The bias between p.ts and p.vs is calculated as bias = 1 - (p.vs/p.ts).
 
-}
+  }
 
 }
 

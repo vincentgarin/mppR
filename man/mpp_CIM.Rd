@@ -4,8 +4,16 @@
 \alias{mpp_CIM}
 \title{MPP composite interval maping}
 \usage{
-mpp_CIM(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
-  cofactors = NULL, window = 20, plot.gen.eff = FALSE, n.cores = 1)
+mpp_CIM(
+  mppData,
+  trait = 1,
+  Q.eff = "cr",
+  VCOV = "h.err",
+  cofactors = NULL,
+  window = 20,
+  plot.gen.eff = FALSE,
+  n.cores = 1
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}

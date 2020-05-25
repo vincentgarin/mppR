@@ -4,8 +4,16 @@
 \alias{MQE_forward}
 \title{Forward regression with different type of QTL effects}
 \usage{
-MQE_forward(mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
-  threshold = 4, window = 30, n.cores = 1, verbose = TRUE)
+MQE_forward(
+  mppData = NULL,
+  trait = 1,
+  Q.eff,
+  VCOV = "h.err",
+  threshold = 4,
+  window = 30,
+  n.cores = 1,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}}

@@ -4,11 +4,23 @@
 \alias{parent_cluster}
 \title{Clustering of parental lines}
 \usage{
-parent_cluster(haplo.map, consensus.map, marker.data, na.strings = NA,
-  w1 = "kernel.exp", w2 = "kernel.unif", step.size = 10000, window,
-  K = 10, simulation.type = "equi", simulation.Ng = 50,
-  simulation.Nrep = 3, threshold.quantile = 95, plot = TRUE,
-  plot.loc = getwd())
+parent_cluster(
+  haplo.map,
+  consensus.map,
+  marker.data,
+  na.strings = NA,
+  w1 = "kernel.exp",
+  w2 = "kernel.unif",
+  step.size = 10000,
+  window,
+  K = 10,
+  simulation.type = "equi",
+  simulation.Ng = 50,
+  simulation.Nrep = 3,
+  threshold.quantile = 95,
+  plot = TRUE,
+  plot.loc = getwd()
+)
 }
 \arguments{
 \item{haplo.map}{Three columns \code{data.frame} with: 1)

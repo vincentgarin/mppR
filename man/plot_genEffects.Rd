@@ -4,8 +4,14 @@
 \alias{plot_genEffects}
 \title{plot of QTL genetic effects}
 \usage{
-plot_genEffects(mppData, Qprof, Q.eff, QTL = NULL,
-  main = "QTL genetic effects plot", text.size = 18)
+plot_genEffects(
+  mppData,
+  Qprof,
+  Q.eff,
+  QTL = NULL,
+  main = "QTL genetic effects plot",
+  text.size = 18
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.
@@ -35,7 +41,7 @@ per parents using the package ggplot2.
 }
 \details{
 It uses the results of a SIM or CIM profile from a
-cross-specific, parental and ancestral model.
+cross-specific, parental and ancestral model. 
 
 Plot the significance of the cross-specific or parental components of the QTL
 effects using the results of a SIM or CIM profiles from a cross-specific,

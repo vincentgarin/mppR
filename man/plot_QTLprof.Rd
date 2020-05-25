@@ -4,8 +4,14 @@
 \alias{plot_QTLprof}
 \title{plot QTL profile}
 \usage{
-plot_QTLprof(Qprof, QTL = NULL, type = "l", main = "QTL profile",
-  threshold = 3, text.size = 18)
+plot_QTLprof(
+  Qprof,
+  QTL = NULL,
+  type = "l",
+  main = "QTL profile",
+  threshold = 3,
+  text.size = 18
+)
 }
 \arguments{
 \item{Qprof}{Object of class \code{QTLprof} returned by the function

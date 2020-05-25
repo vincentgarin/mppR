@@ -68,6 +68,13 @@
 #' and 5) "ped_cr.err" for random pedigree and CSRT model.
 #' For more details see \code{\link{mpp_SIM}}. Default = "h.err".
 #' 
+#' @param ref.par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference to calculate the allelic effects of 
+#' the parental model. For the ancestral model, the ancestral class containing
+#' the reference parent will be set as reference. \strong{This option can only
+#' be used if the MPP design is composed of a unique connected part}.
+#' Default = NULL.
+#' 
 #' @param threshold \code{Numeric} value representing the -log10(p-value)
 #' threshold above which a position can be considered as significant.
 #' Default = 4.
@@ -85,6 +92,13 @@
 #' @param plot.MQE \code{Logical} value. If \code{plot.MQE = TRUE},
 #' the function will plot the last run of the MQE model determination using
 #' \code{\link{MQE_plot}}. Default = FALSE.
+#' 
+#' @param CI \code{Logical} value. If \code{CI = TRUE}, the function will
+#' compute a -log10(pval) drop confidence interval for each QTL using
+#' the QTL profile of the last iteration. Default = FALSE.
+#' 
+#' @param drop \code{Numeric} -log10(p-value) drop value at the limits of the
+#' interval. Default = 1.5.
 #' 
 #' @param n.cores \code{Numeric}. Specify here the number of cores you like to
 #' use. Default = 1.
@@ -112,6 +126,9 @@
 #' \item{QTL.effects}{\code{List} of genetic effects per QTL. For details see
 #' \code{\link{MQE_genEffects}} output section.}
 #' 
+#' \item{QTL.CI}{If \code{CI = TRUE}, confidence interval information of
+#' the QTLs.}
+#' 
 #'
 #' Some output files are also saved at the location specified
 #' (\code{output.loc}):
@@ -133,6 +150,8 @@
 #' 
 #' \item{if \code{plot.MQE = TRUE}, a plot of the last QTL detection run profile
 #' (plot_MQE.pdf) obtained with the function \code{\link{MQE_plot}}.}
+#' 
+#' \item{If \code{CI = TRUE}, the QTL confidence intervals (QTL_CI.txt).}
 #' 
 #' 
 #' }
@@ -168,9 +187,10 @@
 
 MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                      mppData = NULL, trait = 1, Q.eff, VCOV = "h.err",
-                     threshold = 4, window = 30, backward = TRUE,
-                     alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1,
-                     verbose = TRUE, output.loc = getwd()) {
+                     ref.par = NULL, threshold = 4, window = 30,
+                     backward = TRUE, alpha.bk = 0.05, plot.MQE = FALSE,
+                     CI = FALSE, drop = 1.5, n.cores = 1, verbose = TRUE,
+                     output.loc = getwd()) {
   
   # 1. check the format of the data
   #################################
@@ -258,7 +278,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       
       QTL_effect <- MQE_genEffects(mppData = mppData, trait = trait,
                                    QTL = QTL[, 1], Q.eff = QTL[, 5],
-                                   VCOV = VCOV)
+                                   VCOV = VCOV, ref.par = ref.par)
       
       R2 <- MQE_R2(mppData = mppData, trait = trait, QTL = QTL[, 1],
                    Q.eff = QTL[, 5], glb.only = FALSE)
@@ -275,15 +295,15 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
                   quote = FALSE, sep = "\t", row.names = FALSE)
       
-      # 5. Optional plot
-      ##################
+      # 5. Optional plot and/or CI
+      ############################
       
-      if(plot.MQE){
+      if(plot.MQE | CI){
         
         if(verbose){
           
           cat("\n")
-          cat("Plot MQE last run profile")
+          cat("MQE last run profile")
           cat("\n")
           cat("\n")
           
@@ -293,14 +313,27 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                        cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
                        chg.Qeff = TRUE, window = window, n.cores = n.cores)
         
-        main.plot <- paste("MQE", pop.name, trait.name, VCOV)
+        if(plot.MQE){
+          
+          main.plot <- paste("MQE", pop.name, trait.name, VCOV)
+          
+          pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
+          
+          print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
+                         threshold = threshold, main = main.plot))
+          
+          dev.off()
+          
+        }
         
-        pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
-        
-        print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
-                       threshold = threshold, main = main.plot))
-        
-        dev.off()
+        if (CI){
+          
+          QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM, drop = drop)
+          
+          write.table(QTL.CI, file = file.path(folder.loc, "QTL_CI.txt"),
+                      quote = FALSE, sep = "\t", row.names = FALSE)
+          
+        } else { QTL.CI <- NULL}
         
       }
       
@@ -336,7 +369,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       # form the R object to be returned
       
       results <- list(n.QTL = dim(QTL)[1], QTL = QTL, R2 = R2,
-                      QTL.effects = QTL_effect)
+                      QTL.effects = QTL_effect, QTL.CI = QTL.CI)
       
       return(results)
       

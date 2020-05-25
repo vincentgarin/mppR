@@ -4,8 +4,13 @@
 \alias{QC_tagMAFCr}
 \title{Tag problematic MAF}
 \usage{
-QC_tagMAFCr(MAF, MAF.lim = NULL, tag.mono = FALSE, parallel = FALSE,
-  cluster = NULL)
+QC_tagMAFCr(
+  MAF,
+  MAF.lim = NULL,
+  tag.mono = FALSE,
+  parallel = FALSE,
+  cluster = NULL
+)
 }
 \arguments{
 \item{MAF}{Object of class \code{mafRes} obtained with the function

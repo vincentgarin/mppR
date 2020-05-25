@@ -4,9 +4,17 @@
 \alias{MQE_CIM}
 \title{Composite interval maping for MQE model}
 \usage{
-MQE_CIM(mppData = NULL, trait = 1, Q.eff = "cr", VCOV = "h.err",
-  cofactors = NULL, cof.Qeff, chg.Qeff = FALSE, window = 20,
-  n.cores = 1)
+MQE_CIM(
+  mppData = NULL,
+  trait = 1,
+  Q.eff = "cr",
+  VCOV = "h.err",
+  cofactors = NULL,
+  cof.Qeff,
+  chg.Qeff = FALSE,
+  window = 20,
+  n.cores = 1
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}

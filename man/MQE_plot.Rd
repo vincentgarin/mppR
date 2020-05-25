@@ -4,8 +4,14 @@
 \alias{MQE_plot}
 \title{MQE model QTL profile}
 \usage{
-MQE_plot(mppData, Qprof, QTL, window = 30, threshold = 3,
-  main = "MQE QTL profile")
+MQE_plot(
+  mppData,
+  Qprof,
+  QTL,
+  window = 30,
+  threshold = 3,
+  main = "MQE QTL profile"
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}}

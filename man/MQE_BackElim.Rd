@@ -4,8 +4,14 @@
 \alias{MQE_BackElim}
 \title{Backward elimination on multi-QTL effect candidates}
 \usage{
-MQE_BackElim(mppData = NULL, trait = 1, QTL = NULL, Q.eff,
-  VCOV = "h.err", alpha = 0.05)
+MQE_BackElim(
+  mppData = NULL,
+  trait = 1,
+  QTL = NULL,
+  Q.eff,
+  VCOV = "h.err",
+  alpha = 0.05
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}}

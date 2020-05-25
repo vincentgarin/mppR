@@ -4,8 +4,14 @@
 \alias{mpp_SIM}
 \title{MPP Simple Interval Maping}
 \usage{
-mpp_SIM(mppData, trait = 1, Q.eff = "cr", VCOV = "h.err",
-  plot.gen.eff = FALSE, n.cores = 1)
+mpp_SIM(
+  mppData,
+  trait = 1,
+  Q.eff = "cr",
+  VCOV = "h.err",
+  plot.gen.eff = FALSE,
+  n.cores = 1
+)
 }
 \arguments{
 \item{mppData}{An object of class \code{mppData}.}
