@@ -335,7 +335,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
           
         } else { QTL.CI <- NULL}
         
-      }
+      } else {QTL.CI <- NULL}
       
       # 6. results processing
       #######################
