@@ -2,10 +2,25 @@ Package: mppR
 Type: Package
 Title: Multi-parent population QTL analysis
 Version: 1.2.3.9001
-Date: 2019-06-04
-Author: Vincent Garin [aut, cre], Valentin Wimmer [aut], Dietrich Borchard [ctb,
-    dtc], Fred van Eeuwijk [ctb, ths], Marcos Malosetti[ctb, ths]
-Maintainer: Vincent Garin <vincent.garin6@gmail.com>
+Date: 2020-03-24
+Authors@R:
+    c(person(   given = "Vincent",
+                family = "Garin",
+                role = c("aut", "cre"),
+                email = "vincent.garin6@gmail.com",
+                comment = c(ORCID = "0000-0002-5571-1841")),
+        person(given = "Valentin",
+                family = "Wimmer",
+                role = c("aut")),
+        person(given = "Valentin",
+                family = "Wimmer",
+                role = c("ctb", "dtc")),
+        person(given = "Fred",
+                family = "van Eeuwijk",
+                role = c("ctb", "ths")),
+        person(given = "Marcos",
+                family = "Malosetti",
+                role = c("ctb", "ths")))
 Description: Process data from multi-parent populations (MPP) QTL
     experiment, perform QTL detection, and visualize the results.
 License: GPL (>=2)
