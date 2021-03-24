@@ -42,7 +42,13 @@
 #' @param Q.eff \code{Character} vector of possible QTL effects the user want to
 #' test. Elements of \code{Q.eff} can be "cr", "par", "anc" or "biall".
 #' For details look at \code{\link{mpp_SIM}}.
-#'
+#' 
+#' @param ref.par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference to calculate the allelic effects of 
+#' the parental model. For the ancestral model, the ancestral class containing
+#' the reference parent will be set as reference. \strong{This option can only
+#' be used if the MPP design is composed of a unique connected part}.
+#' Default = NULL.
 #' 
 #' @param threshold \code{Numeric} value representing the -log10(p-value)
 #' threshold above which a position can be considered as significant.
@@ -61,6 +67,13 @@
 #' @param plot.MQE \code{Logical} value. If \code{plot.MQE = TRUE},
 #' the function will plot the last run of the MQE model determination.
 #' Default = FALSE.
+#' 
+#' @param CI \code{Logical} value. If \code{CI = TRUE}, the function will
+#' compute a -log10(pval) drop confidence interval for each QTL using
+#' the QTL profile of the last iteration. Default = FALSE.
+#' 
+#' @param drop \code{Numeric} -log10(p-value) drop value at the limits of the
+#' interval. Default = 1.5.
 #' 
 #' @param n.cores \code{Numeric}. Specify here the number of cores you like to
 #' use. Default = 1.
@@ -83,6 +96,9 @@
 #' 
 #' \item{QTL.effects}{\code{List} of genetic effects per QTL.}
 #' 
+#' \item{QTL.CI}{If \code{CI = TRUE}, confidence interval information of
+#' the QTLs.}
+#' 
 #'
 #' Some output files are also saved at the location specified
 #' (\code{output.loc}):
@@ -104,13 +120,11 @@
 #' \item{if \code{plot.MQE = TRUE}, a plot of the last QTL detection run profile
 #' (plot_MQE.pdf).}
 #' 
-#' 
 #' }
 #'
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mpp_perm}}, \code{\link{mpp_SIM}},
-#' \code{\link{QTL_R2}}
+#' @seealso \code{\link{mpp_SIM}}, \code{\link{MQE_gen_effects}}
 #' 
 #' @examples
 #' 
@@ -130,10 +144,10 @@
 
 
 MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
-                     mppData = NULL, trait = 1, Q.eff,
+                     mppData = NULL, trait = 1, Q.eff, ref.par = NULL,
                      threshold = 4, window = 30, backward = TRUE,
-                     alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1,
-                     verbose = TRUE, output.loc) {
+                     alpha.bk = 0.05, plot.MQE = FALSE, CI = FALSE, drop = 1.5,
+                     n.cores = 1, verbose = TRUE, output.loc) {
   
   # 1. check the format of the data
   #################################
@@ -141,6 +155,25 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
   check.MQE(mppData = mppData, trait = trait, Q.eff = Q.eff,
             VCOV = 'h.err', n.cores = n.cores, output.loc = output.loc,
             fct = "proc")
+  
+  if(!is.null(ref.par)){
+    
+    n_con_part <- length(design_connectivity(mppData$par.per.cross, plot_des = FALSE))
+    
+    if(n_con_part > 1){
+      
+      stop('ref.par option can only be used with design contaning a single interconnected part. See design_connectivity()')
+    }
+    
+    if(!(ref.par %in% mppData$parents)){
+      
+      mes <- paste('ref.par must be one of:', paste(mppData$parents, collapse = ', '))
+      
+      stop(mes)
+      
+    }
+    
+  }
   
   
   # 2. Create a directory to store the results
@@ -219,9 +252,8 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
         
       }  
       
-      QTL_effect <- MQE_genEffects(mppData = mppData, trait = trait,
-                                   QTL = QTL[, 1], Q.eff = QTL[, 5],
-                                   VCOV = 'h.err')
+      QTL_effect <- MQE_gen_effects(mppData = mppData, trait = trait,
+                                   QTL = QTL[, 1], Q.eff = QTL[, 5])
       
       R2 <- MQE_R2(mppData = mppData, trait = trait, QTL = QTL[, 1],
                    Q.eff = QTL[, 5], glb.only = FALSE)
@@ -238,15 +270,15 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       write.table(QTL.R2, file = paste0(folder.loc, "/", "QTL_R2.txt"),
                   quote = FALSE, sep = "\t", row.names = FALSE)
       
-      # 5. Optional plot
-      ##################
+      # 5. Optional plot and/or CI
+      ############################
       
-      if(plot.MQE){
+      if(plot.MQE | CI){
         
         if(verbose){
           
           cat("\n")
-          cat("Plot MQE last run profile")
+          cat("MQE last run profile")
           cat("\n")
           cat("\n")
           
@@ -256,16 +288,29 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                        cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
                        chg.Qeff = TRUE, window = window, n.cores = n.cores)
         
-        main.plot <- paste("MQE", pop.name, trait.name)
+        if(plot.MQE){
+          
+          main.plot <- paste("MQE", pop.name, trait.name)
+          
+          pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
+          
+          print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
+                         threshold = threshold, main = main.plot))
+          
+          dev.off()
+          
+        }
         
-        pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
+        if (CI){
+          
+          QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM, drop = drop)
+          
+          write.table(QTL.CI, file = file.path(folder.loc, "QTL_CI.txt"),
+                      quote = FALSE, sep = "\t", row.names = FALSE)
+          
+        } else { QTL.CI <- NULL}
         
-        print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
-                       threshold = threshold, main = main.plot))
-        
-        dev.off()
-        
-      }
+      } else {QTL.CI <- NULL}
       
       # 6. results processing
       #######################
@@ -299,7 +344,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       # form the R object to be returned
       
       results <- list(n.QTL = dim(QTL)[1], QTL = QTL, R2 = R2,
-                      QTL.effects = QTL_effect)
+                      QTL.effects = QTL_effect, QTL.CI = QTL.CI)
       
       return(results)
       

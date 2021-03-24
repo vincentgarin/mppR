@@ -10,11 +10,14 @@ MQE_proc(
   mppData = NULL,
   trait = 1,
   Q.eff,
+  ref.par = NULL,
   threshold = 4,
   window = 30,
   backward = TRUE,
   alpha.bk = 0.05,
   plot.MQE = FALSE,
+  CI = FALSE,
+  drop = 1.5,
   n.cores = 1,
   verbose = TRUE,
   output.loc
@@ -36,6 +39,13 @@ trait of the \code{mppData} object should be used. Default = 1.}
 test. Elements of \code{Q.eff} can be "cr", "par", "anc" or "biall".
 For details look at \code{\link{mpp_SIM}}.}
 
+\item{ref.par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference to calculate the allelic effects of 
+the parental model. For the ancestral model, the ancestral class containing
+the reference parent will be set as reference. \strong{This option can only
+be used if the MPP design is composed of a unique connected part}.
+Default = NULL.}
+
 \item{threshold}{\code{Numeric} value representing the -log10(p-value)
 threshold above which a position can be considered as significant.
 Default = 4.}
@@ -53,6 +63,13 @@ the backward elimination. Default = 0.05.}
 \item{plot.MQE}{\code{Logical} value. If \code{plot.MQE = TRUE},
 the function will plot the last run of the MQE model determination.
 Default = FALSE.}
+
+\item{CI}{\code{Logical} value. If \code{CI = TRUE}, the function will
+compute a -log10(pval) drop confidence interval for each QTL using
+the QTL profile of the last iteration. Default = FALSE.}
+
+\item{drop}{\code{Numeric} -log10(p-value) drop value at the limits of the
+interval. Default = 1.5.}
 
 \item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
 use. Default = 1.}
@@ -76,6 +93,9 @@ for details see \code{\link{QTL_R2}}.}
 
 \item{QTL.effects}{\code{List} of genetic effects per QTL.}
 
+\item{QTL.CI}{If \code{CI = TRUE}, confidence interval information of
+the QTLs.}
+
 
 Some output files are also saved at the location specified
 (\code{output.loc}):
@@ -96,7 +116,6 @@ global adjusted and non-adjusted R squared statistics. (QTL_genResults.txt).}
 
 \item{if \code{plot.MQE = TRUE}, a plot of the last QTL detection run profile
 (plot_MQE.pdf).}
-
 
 }
 }
@@ -139,8 +158,7 @@ MQE <- MQE_proc(pop.name = "USNAM", trait.name = "ULA", mppData = mppData,
 
 }
 \seealso{
-\code{\link{mpp_perm}}, \code{\link{mpp_SIM}},
-\code{\link{QTL_R2}}
+\code{\link{mpp_SIM}}, \code{\link{MQE_gen_effects}}
 }
 \author{
 Vincent Garin
