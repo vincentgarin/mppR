@@ -13,6 +13,9 @@ QC.mppData(
   MAF.cr.lim = NULL,
   MAF.cr.miss = TRUE,
   MAF.cr.lim2 = NULL,
+  set_geno_err_to_NA = FALSE,
+  reference_allele = NULL,
+  skip_p_mono_rem = FALSE,
   verbose = TRUE,
   n.cores = 1
 )
@@ -47,6 +50,21 @@ Default = TRUE.}
 \item{MAF.cr.lim2}{\code{Numeric}. Alternative option for marker MAF
 filtering. Only markers segregating with a MAF larger than \code{MAF.cr.lim2}
 in at least one cross will be kept for the analysis. Default = NULL.}
+
+\item{set_geno_err_to_NA}{Optional \code{Logical} parameter indicating if the
+detected genotyping errors, for example A/T when reference marker alleles
+are expected to be A/C, should be replaced by NA. For that purpose,
+the function will use the reference allele list given in 'reference_allele'.
+Default = FALSE.}
+
+\item{reference_allele}{Optional, two column \code{data.frame} containing
+the reference allele for each markers to be used if
+\code{set_geno_err_to_NA = TRUE}. Column 1: marker names identical as
+in the map. Column 2: reference marker score in format A/T, A/C, A/G, etc.
+Default = NULL.}
+
+\item{skip_p_mono_rem}{Optional \code{Logical} value indicating if the
+markers with monomorphic parents should not be removed. Default = FALSE.}
 
 \item{verbose}{\code{Logical} value indicating if the steps of the QC should
 be printed. Default = TRUE.}

@@ -82,6 +82,21 @@
 #' filtering. Only markers segregating with a MAF larger than \code{MAF.cr.lim2}
 #' in at least one cross will be kept for the analysis. Default = NULL.
 #' 
+#' @param set_geno_err_to_NA Optional \code{Logical} parameter indicating if the
+#' detected genotyping errors, for example A/T when reference marker alleles
+#' are expected to be A/C, should be replaced by NA. For that purpose,
+#' the function will use the reference allele list given in 'reference_allele'.
+#' Default = FALSE.
+#' 
+#' @param reference_allele Optional, two column \code{data.frame} containing
+#' the reference allele for each markers to be used if
+#' \code{set_geno_err_to_NA = TRUE}. Column 1: marker names identical as
+#' in the map. Column 2: reference marker score in format A/T, A/C, A/G, etc.
+#' Default = NULL.
+#' 
+#' @param skip_p_mono_rem Optional \code{Logical} value indicating if the
+#' markers with monomorphic parents should not be removed. Default = FALSE.
+#' 
 #' @param verbose \code{Logical} value indicating if the steps of the QC should
 #' be printed. Default = TRUE.
 #' 
@@ -137,8 +152,9 @@
 
 QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
                        MAF.pop.lim = 0.05, MAF.cr.lim = NULL,
-                       MAF.cr.miss = TRUE, MAF.cr.lim2 = NULL, verbose = TRUE,
-                       n.cores = 1){
+                       MAF.cr.miss = TRUE, MAF.cr.lim2 = NULL,
+                       set_geno_err_to_NA = FALSE, reference_allele = NULL,
+                       skip_p_mono_rem = FALSE, verbose = TRUE, n.cores = 1){
   
   
   # 1. check the format of the data
@@ -146,7 +162,10 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   
   check_QC2(mppData = mppData, n.lim = n.lim, MAF.pop.lim = MAF.pop.lim,
             mk.miss = mk.miss, gen.miss = gen.miss, MAF.cr.lim = MAF.cr.lim,
-            MAF.cr.lim2 = MAF.cr.lim2, n.cores)
+            MAF.cr.lim2 = MAF.cr.lim2, n.cores,
+            set_geno_err_to_NA = set_geno_err_to_NA,
+            reference_allele = reference_allele)
+  
   
   # 2. Restore the necessary objects from the mppData object
   ##########################################################
@@ -188,56 +207,77 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   prob.mk <- QC_GenotypingError(mk.mat = rbind(geno.par, geno.off),
                                 parallel = parallel, cluster = cluster)
   
-  if(is.null(prob.mk)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk)}
-  
-  if(!is.null(prob.mk)){
+  if(set_geno_err_to_NA){
     
-    prob.mk.list <- c(prob.mk.list, prob.mk)
+    mk_mat <- replace_prob_mk(geno.off, geno.par, prob.mk, reference_allele)
+    geno.off <- mk_mat$geno.off
+    geno.par <- mk_mat$geno.par
+    rm(mk_mat)
     
-    ind.prob <- which(colnames(geno.off) %in% prob.mk)
-    geno.par <- geno.par[, -ind.prob]
-    geno.off <- geno.off[, -ind.prob]
-    nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
+  } else{
+    
+    if(is.null(prob.mk)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk)}
+    
+    if(!is.null(prob.mk)){
+      
+      prob.mk.list <- c(prob.mk.list, prob.mk)
+      
+      ind.prob <- which(colnames(geno.off) %in% prob.mk)
+      geno.par <- geno.par[, -ind.prob]
+      geno.off <- geno.off[, -ind.prob]
+      nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
+      
+    }
+    
+    if(verbose){
+      
+      cat("\n")
+      cat(paste("Check genotyping error                        :",
+                rem.mk_i, "markers removed", "\n"))
+      
+    }
     
   }
   
-  if(verbose){
-    
-    cat("\n")
-    cat(paste("Check genotyping error                        :",
-              rem.mk_i, "markers removed", "\n"))
-    
-  }
   
   # 5. remove monomorphic markers in the parents
   ##############################################
   
-  parent.MAF <- QC_MAF(mk.mat = geno.par, parallel = parallel,
-                       cluster = cluster)
-  
-  mono <- which(parent.MAF == 0)
-  miss <- which(is.na(parent.MAF))
-  
-  prob.mk.id <- c(mono, miss)
-  
-  if(is.null(prob.mk.id)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk.id)}
-  
-  if(length(prob.mk.id) > 0){
+  if(!skip_p_mono_rem){
     
-    prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
+    parent.MAF <- QC_MAF(mk.mat = geno.par, parallel = parallel,
+                         cluster = cluster)
     
-    geno.par <- geno.par[, -prob.mk.id]
-    geno.off <- geno.off[, -prob.mk.id]
-    nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
+    mono <- which(parent.MAF == 0)
+    miss <- which(is.na(parent.MAF))
+    
+    # monomorphic markers
+    
+    geno_par_mono <- geno_par[, mono]
+    
+    prob.mk.id <- c(mono, miss)
+    
+    if(is.null(prob.mk.id)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk.id)}
+    
+    if(length(prob.mk.id) > 0){
+      
+      prob.mk.list <- c(prob.mk.list, colnames(geno.par)[prob.mk.id])
+      
+      geno.par <- geno.par[, -prob.mk.id]
+      geno.off <- geno.off[, -prob.mk.id]
+      nb.mk.rem <- c(nb.mk.rem, rem.mk_i)
+      
+    }
+    
+    if(verbose){
+      
+      cat(paste("Remove monomorphic/missing marker in parents  :",
+                rem.mk_i, "markers removed", "\n"))
+      
+    }
     
   }
   
-  if(verbose){
-    
-    cat(paste("Remove monomorphic/missing marker in parents  :",
-              rem.mk_i, "markers removed", "\n"))
-    
-  }
   
   ### keep parent genotype and corresponding map to be used for
   # clustering. later
@@ -443,6 +483,8 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
     
     MAF.cr <- off.MAF[[2]]
     
+    mean(c(MAF.cr), na.rm = TRUE)
+    
     lim <- rep(MAF.cr.lim2, length(unique(cross.ind)))
     mk.sel <- rep(TRUE, dim(geno.off)[2])
     
@@ -611,20 +653,20 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   
   
   ### 11.2 genotypes (equalize also cross.ind and subcross.ind)
-    
-    pheno.aug <- data.frame(pheno, cross.ind, stringsAsFactors = FALSE)
-    
-    inter.geno.pheno <- intersect(rownames(geno.off), rownames(pheno.aug))
-    
-    pheno.aug <- pheno.aug[inter.geno.pheno, ]
-    cross.ind <- pheno.aug[, dim(pheno.aug)[2]]
-    pheno <- pheno.aug[, -dim(pheno.aug)[2], drop = FALSE]
-    pheno <- as.matrix(pheno)
-    colnames(pheno) <- colnames(mppData$pheno)
-   
+  
+  pheno.aug <- data.frame(pheno, cross.ind, stringsAsFactors = FALSE)
+  
+  inter.geno.pheno <- intersect(rownames(geno.off), rownames(pheno.aug))
+  
+  pheno.aug <- pheno.aug[inter.geno.pheno, ]
+  cross.ind <- pheno.aug[, dim(pheno.aug)[2]]
+  pheno <- pheno.aug[, -dim(pheno.aug)[2], drop = FALSE]
+  pheno <- as.matrix(pheno)
+  colnames(pheno) <- colnames(mppData$pheno)
+  
   
   ### 11.3 Warning message if user want to use less than 15 individual per
-    # crosses
+  # crosses
   
   freq <- table(cross.ind)
   
