@@ -82,18 +82,6 @@
 #' filtering. Only markers segregating with a MAF larger than \code{MAF.cr.lim2}
 #' in at least one cross will be kept for the analysis. Default = NULL.
 #' 
-#' @param set_geno_err_to_NA Optional \code{Logical} parameter indicating if the
-#' detected genotyping errors, for example A/T when reference marker alleles
-#' are expected to be A/C, should be replaced by NA. For that purpose,
-#' the function will use the reference allele list given in 'reference_allele'.
-#' Default = FALSE.
-#' 
-#' @param reference_allele Optional, two column \code{data.frame} containing
-#' the reference allele for each markers to be used if
-#' \code{set_geno_err_to_NA = TRUE}. Column 1: marker names identical as
-#' in the map. Column 2: reference marker score in format A/T, A/C, A/G, etc.
-#' Default = NULL.
-#' 
 #' @param skip_p_mono_rem Optional \code{Logical} value indicating if the
 #' markers with monomorphic parents should not be removed. Default = FALSE.
 #' 
@@ -153,7 +141,6 @@
 QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
                        MAF.pop.lim = 0.05, MAF.cr.lim = NULL,
                        MAF.cr.miss = TRUE, MAF.cr.lim2 = NULL,
-                       set_geno_err_to_NA = FALSE, reference_allele = NULL,
                        skip_p_mono_rem = FALSE, verbose = TRUE, n.cores = 1){
   
   
@@ -207,15 +194,6 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   prob.mk <- QC_GenotypingError(mk.mat = rbind(geno.par, geno.off),
                                 parallel = parallel, cluster = cluster)
   
-  if(set_geno_err_to_NA){
-    
-    mk_mat <- replace_prob_mk(geno.off, geno.par, prob.mk, reference_allele)
-    geno.off <- mk_mat$geno.off
-    geno.par <- mk_mat$geno.par
-    rm(mk_mat)
-    
-  } else{
-    
     if(is.null(prob.mk)) {rem.mk_i <- 0 } else {rem.mk_i <- length(prob.mk)}
     
     if(!is.null(prob.mk)){
@@ -237,7 +215,6 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
       
     }
     
-  }
   
   
   # 5. remove monomorphic markers in the parents
