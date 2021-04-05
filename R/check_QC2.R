@@ -7,8 +7,7 @@
 
 
 check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
-                      MAF.cr.lim, MAF.cr.lim2, n.cores, set_geno_err_to_NA,
-                      reference_allele){
+                      MAF.cr.lim, MAF.cr.lim2, n.cores){
   
   # test the format of the mppData
   
@@ -123,20 +122,5 @@ check_QC2 <- function(mppData, n.lim, MAF.pop.lim, mk.miss, gen.miss,
     
   }
   
-  if(set_geno_err_to_NA){
-    
-    if(is.null(reference_allele)){
-      
-      stop('reference_allele argument is not provided')
-      
-    }
-    
-    if(!identical(mppData$map[, 1], reference_allele[, 1])){
-      
-      stop('the marker list in mppData$map and in reference_allele are not strictly identical.')
-      
-    }
-    
-  }
 
 }

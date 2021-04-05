@@ -149,9 +149,7 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
   
   check_QC2(mppData = mppData, n.lim = n.lim, MAF.pop.lim = MAF.pop.lim,
             mk.miss = mk.miss, gen.miss = gen.miss, MAF.cr.lim = MAF.cr.lim,
-            MAF.cr.lim2 = MAF.cr.lim2, n.cores,
-            set_geno_err_to_NA = set_geno_err_to_NA,
-            reference_allele = reference_allele)
+            MAF.cr.lim2 = MAF.cr.lim2, n.cores)
   
   
   # 2. Restore the necessary objects from the mppData object
