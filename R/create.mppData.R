@@ -86,14 +86,16 @@
 #'                           par.per.cross = par.per.cross)
 #'                           
 #' @import ggplot2
+#' @import grDevices
+#' @import graphics
+#' @import igraph
 #' @import nlme
 #' @import parallel
 #' @import qtl
 #' @import methods
+#' @import stringr
 #' @import utils
-#' @import grDevices
-#' @import graphics
-#' @import igraph
+#' @import vcfR
 #' @importFrom stats anova as.formula coef complete.cases cor df.residual lm
 #' @importFrom stats model.matrix pchisq pt quantile runif vcov                           
 #' 
