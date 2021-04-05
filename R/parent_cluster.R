@@ -222,17 +222,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
   
   if(plot){
     
-    end.char <- substr(plot.loc, nchar(plot.loc), nchar(plot.loc))
-    
-    if(end.char == "/"){
-      
-      folder.loc <- paste0(plot.loc, "par_clu_plots")
-      
-    } else {
-      
-      folder.loc <- paste0(plot.loc, "/par_clu_plots")
-      
-    }
+    folder.loc <- file.path(plot.loc, paste0('haplo_plot_win', window, '_thre', threshold.quantile))
     
     dir.create(folder.loc)
     
@@ -263,7 +253,7 @@ parent_cluster <- function(haplo.map, consensus.map, marker.data,
         
         pdf(file)
         
-        print(plot(tc.i))
+        print(plot.clusthaplo.haplotypes(tc.i))
         
         dev.off()
         
