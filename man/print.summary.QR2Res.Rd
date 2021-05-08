@@ -4,7 +4,7 @@
 \alias{print.summary.QR2Res}
 \title{Print summary.QR2Res object}
 \usage{
-\method{print}{summary.QR2Res}(x, ...)
+print.summary.QR2Res(x, ...)
 }
 \arguments{
 \item{x}{object of class \code{summary.QR2Res}}

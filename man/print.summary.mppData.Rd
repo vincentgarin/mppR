@@ -4,7 +4,7 @@
 \alias{print.summary.mppData}
 \title{Print summary.mppData object}
 \usage{
-\method{print}{summary.mppData}(x, ...)
+print.summary.mppData(x, ...)
 }
 \arguments{
 \item{x}{object of class \code{summary.mppData}}

@@ -4,7 +4,7 @@
 \alias{print.summary.QeffRes}
 \title{Print summary.QeffRes object}
 \usage{
-\method{print}{summary.QeffRes}(x, ...)
+print.summary.QeffRes(x, ...)
 }
 \arguments{
 \item{x}{object of class \code{summary.QeffRes}}
