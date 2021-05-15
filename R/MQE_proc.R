@@ -22,8 +22,12 @@
 #' 
 #' \item{Estimation of the QTL genetic effects and R squared statistics.}
 #' 
-#' \item{Optional plot (\code{plot.MQE = TRUE}) of the last CIM run of the
-#' forward regression using the function.}
+#' \item{If \code{plot.MQE = TRUE}, plot of the last CIM run of the
+#' forward regression.}
+#' 
+#' \item{If \code{CI = TRUE}, confidence interval calculation based on a
+#' CIM- (CIM without cofactor on the selected chromosome) of the last run of the
+#' forward regression.}
 #' 
 #' }
 #' 
@@ -119,6 +123,8 @@
 #' 
 #' \item{if \code{plot.MQE = TRUE}, a plot of the last QTL detection run profile
 #' (plot_MQE.pdf).}
+#' 
+#' \item{If \code{CI = TRUE}, the QTL confidence intervals (QTL_CI.txt).}
 #' 
 #' }
 #'
@@ -253,7 +259,8 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       }  
       
       QTL_effect <- MQE_gen_effects(mppData = mppData, trait = trait,
-                                   QTL = QTL[, 1], Q.eff = QTL[, 5])
+                                   QTL = QTL[, 1], Q.eff = QTL[, 5],
+                                   ref.par = ref.par)
       
       R2 <- MQE_R2(mppData = mppData, trait = trait, QTL = QTL[, 1],
                    Q.eff = QTL[, 5], glb.only = FALSE)
@@ -273,7 +280,7 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       # 5. Optional plot and/or CI
       ############################
       
-      if(plot.MQE | CI){
+      if(plot.MQE){
         
         if(verbose){
           
@@ -288,29 +295,43 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
                        cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
                        chg.Qeff = TRUE, window = window, n.cores = n.cores)
         
-        if(plot.MQE){
+        main.plot <- paste("MQE", pop.name, trait.name)
+        
+        pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
+        
+        print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
+                       threshold = threshold, main = main.plot))
+        
+        dev.off()
+        
+      }
+      
+      if(CI){
+        
+        if(verbose){
           
-          main.plot <- paste("MQE", pop.name, trait.name)
-          
-          pdf(paste0(folder.loc, "/", "plot_MQE.pdf"), height = 10, width = 16)
-          
-          print(MQE_plot(mppData = mppData, Qprof = CIM, QTL = QTL, window = window,
-                         threshold = threshold, main = main.plot))
-          
-          dev.off()
+          cat("\n")
+          cat("CIM- on the last run")
+          cat("\n")
+          cat("\n")
           
         }
         
-        if (CI){
+        chr_l_max <- max(tapply(X = mppData$map$pos.cM,
+                            INDEX = factor(mppData$map$chr), FUN = max))
+        
+        CIM_m <- MQE_CIM(mppData = mppData, trait = trait, VCOV = 'h.err',
+                       cofactors = QTL[, 1], cof.Qeff = QTL[, 5],
+                       chg.Qeff = TRUE, window = chr_l_max + 100, n.cores = n.cores)
+        
           
-          QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM, drop = drop)
+          QTL.CI <- QTL_CI(QTL = QTL, Qprof = CIM_m, drop = drop)
           
           write.table(QTL.CI, file = file.path(folder.loc, "QTL_CI.txt"),
                       quote = FALSE, sep = "\t", row.names = FALSE)
           
         } else { QTL.CI <- NULL}
         
-      } else {QTL.CI <- NULL}
       
       # 6. results processing
       #######################
@@ -327,8 +348,12 @@ MQE_proc <- function(pop.name = "MPP_MQE", trait.name = "trait1",
       
       # QTL report
       
+      if(CI) {QTL.info <- data.frame(QTL[, c(1, 2, 4, 5)], QTL.CI[, 4:8],
+                                     stringsAsFactors = FALSE)
+      } else {QTL.info <-  QTL[, c(1, 2, 4, 5)]}
+      
       QTL_report(out.file = paste0(folder.loc, "/", "QTL_REPORT.txt"),
-                 main = paste(pop.name, trait.name), QTL.info = QTL,
+                 main = paste(pop.name, trait.name), QTL.info = QTL.info,
                  QTL.effects = QTL_effect, R2 = R2)
       
       # save general results

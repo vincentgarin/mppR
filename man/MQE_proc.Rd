@@ -117,6 +117,8 @@ global adjusted and non-adjusted R squared statistics. (QTL_genResults.txt).}
 \item{if \code{plot.MQE = TRUE}, a plot of the last QTL detection run profile
 (plot_MQE.pdf).}
 
+\item{If \code{CI = TRUE}, the QTL confidence intervals (QTL_CI.txt).}
+
 }
 }
 \description{
@@ -139,8 +141,12 @@ list of detected QTLs.}
 
 \item{Estimation of the QTL genetic effects and R squared statistics.}
 
-\item{Optional plot (\code{plot.MQE = TRUE}) of the last CIM run of the
-forward regression using the function.}
+\item{If \code{plot.MQE = TRUE}, plot of the last CIM run of the
+forward regression.}
+
+\item{If \code{CI = TRUE}, confidence interval calculation based on a
+CIM- (CIM without cofactor on the selected chromosome) of the last run of the
+forward regression.}
 
 }
 }
