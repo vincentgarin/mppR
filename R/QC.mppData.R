@@ -228,7 +228,7 @@ QC.mppData <- function(mppData, mk.miss = 0.1, gen.miss = 0.25, n.lim = 15,
     
     # monomorphic markers
     
-    geno_par_mono <- geno_par[, mono]
+    geno_par_mono <- geno.par[, mono]
     
     prob.mk.id <- c(mono, miss)
     

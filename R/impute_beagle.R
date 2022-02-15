@@ -163,6 +163,8 @@ system(cmd)
 
 # get the output
 
+################# continue here after downloading Java 8
+
 vcf_out <- read.vcfR(file = file.path(beagle.loc ,'out.gt.vcf.gz'))
 
 # remove the created files

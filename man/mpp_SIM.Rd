@@ -46,7 +46,7 @@ use. Default = 1.}
 \value{
 Return:
 
-\item{SIM }{\code{Data.frame} of class \code{QTLprof}. with five columns :
+\item{SIM}{\code{Data.frame} of class \code{QTLprof}. with five columns :
 1) QTL marker names; 2) chromosomes;
 3) interger position indicators on the chromosome;
 4) positions in centi-Morgan; and 5) -log10(p-val). And if
