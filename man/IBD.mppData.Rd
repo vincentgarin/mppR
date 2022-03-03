@@ -14,7 +14,12 @@ IBD.mppData(
   BC.gen = NULL,
   type.mating = NULL,
   error.prob = 1e-04,
-  map.function = "haldane"
+  map.function = "haldane",
+  geno_imp = FALSE,
+  imp_method = "maxmarginal",
+  min_prob = 0.95,
+  rem_geno_err = FALSE,
+  ch_size_threshold = 5
 )
 }
 \arguments{
@@ -62,6 +67,24 @@ Default = 0.0001.}
 \item{map.function}{\code{Character} expression specifying the type of map
 function used to infer the IBD probabilities. possibility to choose
 between "haldane", "kosambi","c-f","morgan". Default = "haldane".}
+
+\item{geno_imp}{\code{Logical} value spedifying if the marker data
+should be imputed by r/qtl. Default = FALSE}
+
+\item{imp_method}{\code{Character} vector specifying the selected method
+for imputation. Must be one of "imp","argmax", "no_dbl_XO", or "maxmarginal".
+For detail about imputation method see \code{fill.geno()} documentation.
+Default = "maxmarginal"}
+
+\item{min_prob}{\code{Numeric} value specifying the minimum probability for
+imputation if method "maxmarginal" is selected. Default = 0.95}
+
+\item{rem_geno_err}{\code{Logical} value specifying is the function should
+try to remove genotyping errors after imputation. Default = FALSE}
+
+\item{ch_size_threshold}{\code{Numeric} value specifying the minimum size
+of a chunk to be set as missing if removing genotyping error is selected.
+Default = 5.}
 }
 \value{
 an increased \code{mppData} object containing the the same elements

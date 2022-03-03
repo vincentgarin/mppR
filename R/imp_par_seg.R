@@ -35,7 +35,6 @@ imp_par_seg <- function(mppData){
   
   
   # Remove markers with genotyping error
-  
   prob.mk <- QC_GenotypingError(mk.mat = rbind(geno.par, geno.off),
                                 parallel = FALSE, cluster = 1)
   
@@ -47,11 +46,19 @@ imp_par_seg <- function(mppData){
     
   }
   
+  
   # initial percentage of NA
   miss_per <- sum(is.na(c(geno.par)))/(dim(geno.par)[1] * dim(geno.par)[2])
   
   allele.ref <- apply(X = rbind(geno.par, geno.off), MARGIN = 2,
                       FUN = allele.sc)[1:2, ]
+  
+  # detect the situation where it is impossible to get the reference alleles
+  test_seg <- apply(allele.ref, 2, FUN = function(x) sum(is.na(x)))
+  prob.mk <- (test_seg == 2)
+  geno.par <- geno.par[, !prob.mk]
+  geno.off <- geno.off[, !prob.mk]
+  allele.ref <- allele.ref[, !prob.mk]
   
   geno.par.clu <- c()
   crosses <- unique(cross.ind)
@@ -87,7 +94,7 @@ imp_par_seg <- function(mppData){
             
             # segregation
           } else {
-    
+            
             # segregation: Pi -> other allele than (Pj)
             all_Pj <- parents.gen[!is.na(parents.gen[, i]), i]
             parents.gen[is.na(parents.gen[, i]), i] <- allele.ref[allele.ref[, i] != all_Pj, i]
@@ -96,7 +103,7 @@ imp_par_seg <- function(mppData){
           
         }
       }
-          
+      
     }
     
     rownames(parents.gen) <- c(parents.line[1], parents.line[2])
