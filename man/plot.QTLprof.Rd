@@ -4,7 +4,7 @@
 \alias{plot.QTLprof}
 \title{plot QTL profile}
 \usage{
-plot.QTLprof(
+\method{plot}{QTLprof}(
   x,
   gen.eff = FALSE,
   mppData,
