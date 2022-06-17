@@ -96,8 +96,9 @@
 #' @import stringr
 #' @import utils
 #' @import vcfR
-#' @importFrom stats anova as.formula coef complete.cases cor df.residual lm
-#' @importFrom stats model.matrix pchisq pt quantile runif vcov                           
+#' @importFrom Matrix Matrix t
+#' @importFrom stats anova as.formula coef coefficients complete.cases cor df.residual lm
+#' @importFrom stats model.matrix na.omit pchisq pt quantile runif vcov                          
 #' 
 #' @export
 #' 

@@ -6,8 +6,6 @@ author:
 - Dietriech Borchardt^[KWS SAAT SE]
 - Fred van Eeuwijk^[Wageningen University]
 - Marcos Malosetti^[Wageningen University]
-header-includes:
-   - \usepackage{bm}
 output: rmarkdown::html_vignette
 bibliography: bibliography.bib
 link-citations: yes
@@ -606,4 +604,4 @@ The QTL analyses performed in ***mppR*** are all based on "exact" (complete REML
 The development of ***mppR*** is part of a project financed by KWS SAAT SE.
 :::
 
-## Reference
+## References
