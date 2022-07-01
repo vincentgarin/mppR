@@ -317,7 +317,7 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   
   QTL_report_GE(out.file = file.path(folder.loc, "QTL_REPORT.txt"),
                 main = paste(pop.name, trait.name, VCOV),
-                QTL.info = QTL[, c(1, 2, 4, 5)], QTL.effects = "par",
+                QTL.info = QTL[, c(1, 2, 4, 5)], QTL.effects = Q_eff,
                 R2 = R2)
   
   ### Return R object
