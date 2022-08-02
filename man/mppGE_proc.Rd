@@ -14,6 +14,8 @@ mppGE_proc(
   VCOV_data = "unique",
   thre.cof = 4,
   win.cof = 50,
+  cof_red = FALSE,
+  cof_pval_sign = 0.1,
   window = 20,
   thre.QTL = 4,
   win.QTL = 20,
@@ -58,6 +60,13 @@ threshold above which a position can be selected as cofactor. Default = 4.}
 
 \item{win.cof}{\code{Numeric} value in centi-Morgan representing the minimum
 distance between two selected cofactors. Default = 50.}
+
+\item{cof_red}{\code{Logical} value specifying if the cofactor matrix should
+be reduced by only keeping the significant allele by environment interaction.
+Default = FALSE}
+
+\item{cof_pval_sign}{\code{Numeric} value specifying the p-value significance
+of an allele by environment term to be kept in the model. Default = 0.1}
 
 \item{window}{\code{Numeric} distance (cM) on the left and the right of a
 cofactor position where it is not included in the model. Default = 20.}

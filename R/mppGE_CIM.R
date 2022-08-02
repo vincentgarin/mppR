@@ -38,6 +38,13 @@
 #' selected marker positions obtained with the function \code{QTL_select()} or
 #' a vector of \code{character} marker positions names.
 #' Default = NULL.
+#' 
+#' @param cof_red \code{Logical} value specifying if the cofactor matrix should
+#' be reduced by only keeping the significant allele by environment interaction.
+#' Default = FALSE
+#' 
+#' @param cof_pval_sign \code{Numeric} value specifying the p-value significance
+#' of an allele by environment term to be kept in the model. Default = 0.1 
 #'
 #' @param window \code{Numeric} distance (cM) on the left and the right of a
 #' cofactor position where it is not included in the model. Default = 20.
@@ -93,7 +100,8 @@
 
 
 mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
-                      cofactors = NULL, window = 20, n.cores = 1, maxIter = 100,
+                      cofactors = NULL, cof_red = FALSE, cof_pval_sign = 0.1,
+                      window = 20, n.cores = 1, maxIter = 100,
                       msMaxIter = 100)
 {
   
@@ -234,11 +242,20 @@ mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
     }
     
     # form the cofactor matrices
-    cof_mat_m <-  cof_mat_list[[sel_cof_comb]]
-    if(!is.null(cof_mat_m)){
-      cof_mat_m <- diag(nEnv) %x% cof_mat_m
-      cof_mat_m <- cof_mat_m[!NA_id, ]
-      colnames(cof_mat_m) <- paste0('cof', 1:ncol(cof_mat_m))
+    cof_mat <-  cof_mat_list[[sel_cof_comb]]
+    
+    if(!is.null(cof_mat)){
+      cof_mat <- diag(nEnv) %x% cof_mat
+      cof_mat <- cof_mat[!NA_id, ]
+      colnames(cof_mat) <- paste0('cof', 1:ncol(cof_mat))
+      
+      if(cof_red){
+        
+        cof_mat <- cof_mat_reduce(y = TraitEnv[!NA_id], cross_mat = cross_mat,
+                                    cof_mat = cof_mat, cof_pval_sign = cof_pval_sign)
+        
+      }
+      
     }
     
     #### possibility of PCA reduction
@@ -249,7 +266,7 @@ mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
                             y = TraitEnv[!NA_id], Vi = Vi,
                             mppData = mppData,  nEnv = nEnv, 
                             Q.eff = "par", cross_mat = cross_mat,
-                            cof_mat = cof_mat_m, NA_id = NA_id)
+                            cof_mat = cof_mat, NA_id = NA_id)
       
     } else {
       
@@ -257,7 +274,7 @@ mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
                          y = TraitEnv[!NA_id], Vi = Vi,
                          mppData = mppData,  nEnv = nEnv, 
                          Q.eff = "par", cross_mat = cross_mat,
-                         cof_mat = cof_mat_m, NA_id = NA_id)
+                         cof_mat = cof_mat, NA_id = NA_id)
       
     }
     

@@ -10,6 +10,8 @@ mppGE_CIM(
   VCOV = "UN",
   VCOV_data = "unique",
   cofactors = NULL,
+  cof_red = FALSE,
+  cof_pval_sign = 0.1,
   window = 20,
   n.cores = 1,
   maxIter = 100,
@@ -38,6 +40,13 @@ of a tested QTL position ("minus_cof"). Default = "unique"}
 selected marker positions obtained with the function \code{QTL_select()} or
 a vector of \code{character} marker positions names.
 Default = NULL.}
+
+\item{cof_red}{\code{Logical} value specifying if the cofactor matrix should
+be reduced by only keeping the significant allele by environment interaction.
+Default = FALSE}
+
+\item{cof_pval_sign}{\code{Numeric} value specifying the p-value significance
+of an allele by environment term to be kept in the model. Default = 0.1}
 
 \item{window}{\code{Numeric} distance (cM) on the left and the right of a
 cofactor position where it is not included in the model. Default = 20.}

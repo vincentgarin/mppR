@@ -57,6 +57,13 @@
 #'
 #' @param win.cof \code{Numeric} value in centi-Morgan representing the minimum
 #' distance between two selected cofactors. Default = 50.
+#' 
+#' @param cof_red \code{Logical} value specifying if the cofactor matrix should
+#' be reduced by only keeping the significant allele by environment interaction.
+#' Default = FALSE
+#' 
+#' @param cof_pval_sign \code{Numeric} value specifying the p-value significance
+#' of an allele by environment term to be kept in the model. Default = 0.1 
 #'
 #' @param window \code{Numeric} distance (cM) on the left and the right of a
 #' cofactor position where it is not included in the model. Default = 20.
@@ -152,7 +159,8 @@
 
 mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
                             EnvNames = NULL,  VCOV = "UN", VCOV_data = "unique",
-                            thre.cof = 4, win.cof = 50, window = 20, thre.QTL = 4,
+                            thre.cof = 4, win.cof = 50, cof_red = FALSE,
+                            cof_pval_sign = 0.1, window = 20, thre.QTL = 4,
                             win.QTL = 20, text.size = 18, n.cores = 1,
                             maxIter = 100, msMaxIter = 100, verbose = TRUE,
                             output.loc = NULL) {
@@ -217,6 +225,7 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   
   CIM <- mppGE_CIM(mppData = mppData, trait = trait,
                    VCOV = VCOV, VCOV_data = VCOV_data, cofactors = cofactors,
+                   cof_red = cof_red, cof_pval_sign = cof_pval_sign,
                    window = window, n.cores = n.cores, maxIter = maxIter,
                    msMaxIter = msMaxIter)
   
@@ -245,6 +254,15 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   
   # save CIM results
   save(QTL, file = file.path(folder.loc, "QTLs.RData"))
+  
+  if(verbose){
+    
+    cat("\n")
+    cat("QTL effects estimation")
+    cat("\n")
+    cat("\n")
+    
+  }
   
   
   ##### QTL effects #####
