@@ -96,10 +96,11 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   nQTL <- length(QTL.pos)
   
   QTL_list <- mapply(FUN = inc_mat_QTL, x = QTL.pos,
-                     MoreArgs = list(Q.eff = "par", mppData = mppData),
+                     MoreArgs = list(Q.eff = "par", mppData = mppData,
+                                     order.MAF = TRUE),
                      SIMPLIFY = FALSE)
   
-  QTL_list <- lapply(QTL_list, function(x) x[, -1])
+  QTL_list <- lapply(QTL_list, function(x) x[, -ncol(x)])
   
   nAllele <- sapply(QTL_list, function(x) ncol(x))
   
@@ -121,10 +122,9 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   QTL_nm <- paste0(rep(QTL_nm, nEnv), rep(paste0('_E', 1:nEnv), each = length(Q_nm)))
   
   # remove problematic character in parents names
-  QTL_nm <- gsub(pattern = '-', replacement = "", x = QTL_nm)
-  QTL_nm <- gsub(pattern = ' ', replacement = "", x = QTL_nm)
-  QTL_nm <- gsub(pattern = '/', replacement = "", x = QTL_nm)
-  QTL_nm <- gsub(pattern = '*', replacement = "", x = QTL_nm)
+  pb_chr <- c('-', ' ', '/', '*', '+', '_')
+  for(c in 1:length(pb_chr)){QTL_nm <- gsub(pattern = pb_chr[c],
+                                            replacement = "", x = QTL_nm)}
   
   QTL_mat <- diag(nEnv) %x% QTL_mat
   colnames(QTL_mat) <- QTL_nm
@@ -147,9 +147,6 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   
   m <- lme_comp(fix_form = fix_form, VCOV = VCOV, data = d,
                 maxIter = maxIter, msMaxIter = msMaxIter)
-  
-  Vi <- getVCOV(mppData = mppData, model = m, VCOV = VCOV,
-                data = d, nEnv = nEnv, inv = TRUE)
   
   ##### Get QTL effect (Beta), standard error, Wald test #####
   
@@ -174,11 +171,10 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   
   # if(Q.eff == 'par'){
     
-    p_nm <- mppData$parents
-    p_nm <- gsub(pattern = '-', replacement = "", x = p_nm)
-    p_nm <- gsub(pattern = ' ', replacement = "", x = p_nm)
-    p_nm <- gsub(pattern = '/', replacement = "", x = p_nm)
-    p_nm <- gsub(pattern = '*', replacement = "", x = p_nm)
+  p_nm <- mppData$parents
+  pb_chr <- c('-', ' ', '/', '*', '+', '_')
+  for(c in 1:length(pb_chr)){p_nm <- gsub(pattern = pb_chr[c],
+                                          replacement = "", x = p_nm)}
     
     ref_QTL <- rep(paste0('QTL_', 1:nQTL), each = (mppData$n.par * nEnv))
     ref_QTL <- paste0(ref_QTL, '_', rep(p_nm, nEnv))
