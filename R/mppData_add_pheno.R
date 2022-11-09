@@ -9,7 +9,7 @@
 #' @param mppData An object of class \code{mppData}.
 #' See \code{\link{mppData_form}} for details.
 #' 
-#' @param pheno Two columns \code{data.frame} with : 1) \code{character}
+#' @param pheno \code{data.frame} with : 1) \code{character}
 #' genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
 #' identifiers must be identical to \code{mppData$geno.id}.}
 #' 

@@ -10,7 +10,7 @@ mppData_add_pheno(mppData, pheno)
 \item{mppData}{An object of class \code{mppData}.
 See \code{\link{mppData_form}} for details.}
 
-\item{pheno}{Two columns \code{data.frame} with : 1) \code{character}
+\item{pheno}{\code{data.frame} with : 1) \code{character}
 genotypes identifiers; 2) \code{numeric} trait values. \strong{The genotypes
 identifiers must be identical to \code{mppData$geno.id}.}}
 }

@@ -104,6 +104,15 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   
   nAllele <- sapply(QTL_list, function(x) ncol(x))
   
+  # modify the names
+  for(i in 1:length(QTL_list)){
+    
+    QTL_nm <- colnames(QTL_list[[i]])
+    pb_chr <- c('-', ' ', '/', '*', '+', '_')
+    for(c in 1:length(pb_chr)){QTL_nm <- gsub(pattern = pb_chr[c],
+                                              replacement = "", x = QTL_nm)}
+    colnames(QTL_list[[i]]) <- QTL_nm
+  }
   
   # combined QTL matrices
   QTL_mat <- do.call(cbind, QTL_list)
@@ -120,11 +129,6 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   Q_id <- paste0('QTL_', rep(1:nQTL, nAllele))
   QTL_nm <- paste0(Q_id, '_', Q_nm)
   QTL_nm <- paste0(rep(QTL_nm, nEnv), rep(paste0('_E', 1:nEnv), each = length(Q_nm)))
-  
-  # remove problematic character in parents names
-  pb_chr <- c('-', ' ', '/', '*', '+', '_')
-  for(c in 1:length(pb_chr)){QTL_nm <- gsub(pattern = pb_chr[c],
-                                            replacement = "", x = QTL_nm)}
   
   QTL_mat <- diag(nEnv) %x% QTL_mat
   colnames(QTL_mat) <- QTL_nm
@@ -170,32 +174,29 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   #### process the results ####
   
   # if(Q.eff == 'par'){
-    
-  p_nm <- mppData$parents
-  pb_chr <- c('-', ' ', '/', '*', '+', '_')
-  for(c in 1:length(pb_chr)){p_nm <- gsub(pattern = pb_chr[c],
-                                          replacement = "", x = p_nm)}
-    
-    ref_QTL <- rep(paste0('QTL_', 1:nQTL), each = (mppData$n.par * nEnv))
-    ref_QTL <- paste0(ref_QTL, '_', rep(p_nm, nEnv))
-    ref_QTL <- paste0(ref_QTL, '_', rep(paste0('E', 1:nEnv), each = mppData$n.par))
-    ref_QTL <- data.frame(ref_QTL)
-    
-    res_tab <- data.frame(ref_QTL = rownames(res_tab), res_tab)
-    
-    res_tab <- merge(x = ref_QTL, y = res_tab, by = 'ref_QTL', all.x = TRUE)
-    rownames(res_tab) <- res_tab$ref_QTL
-    res_tab <- res_tab[ref_QTL$ref_QTL, ]
-    res_tab <- res_tab[, -1]
-    
-    Q_f <- strsplit(x = rownames(res_tab), split = '_')
-    Q_f_1 <- unlist(lapply(Q_f, `[[`, 1))
-    Q_f_2 <- unlist(lapply(Q_f, `[[`, 2))
-    Q_f <- paste0(Q_f_1, '_', Q_f_2)
-    Q_f <- factor(Q_f, levels = paste0('QTL_', unique(Q_f_2)))
-    
-    Qeff.mat <- split(x = res_tab, f = Q_f)
-    
+  
+  p_nm <- mdf_par_name(mppData$parents)
+  
+  ref_QTL <- rep(paste0('QTL_', 1:nQTL), each = (mppData$n.par * nEnv))
+  ref_QTL <- paste0(ref_QTL, '_', rep(p_nm, nEnv))
+  ref_QTL <- paste0(ref_QTL, '_', rep(paste0('E', 1:nEnv), each = mppData$n.par))
+  ref_QTL <- data.frame(ref_QTL)
+  
+  res_tab <- data.frame(ref_QTL = rownames(res_tab), res_tab)
+  
+  res_tab <- merge(x = ref_QTL, y = res_tab, by = 'ref_QTL', all.x = TRUE)
+  rownames(res_tab) <- res_tab$ref_QTL
+  res_tab <- res_tab[ref_QTL$ref_QTL, ]
+  res_tab <- res_tab[, -1]
+  
+  Q_f <- strsplit(x = rownames(res_tab), split = '_')
+  Q_f_1 <- unlist(lapply(Q_f, `[[`, 1))
+  Q_f_2 <- unlist(lapply(Q_f, `[[`, 2))
+  Q_f <- paste0(Q_f_1, '_', Q_f_2)
+  Q_f <- factor(Q_f, levels = paste0('QTL_', unique(Q_f_2)))
+  
+  Qeff.mat <- split(x = res_tab, f = Q_f)
+  
   # } else if (Q.eff == 'anc'){
   #   
   #   # Later
