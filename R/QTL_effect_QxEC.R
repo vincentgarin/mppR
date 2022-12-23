@@ -76,6 +76,10 @@
 #' Default = FLASE
 #' 
 #' @param Qmain_QxE results from \code{\link{QTL_effect_main_QxE}}
+#' 
+#' @param QTLxEC_plot \code{Logical} value specifying if the data to
+#' plot sensitivity curve with the function plot_QTLxEC should be returned.
+#' Default = FALSE
 #'
 #' @param maxIter maximum number of iterations for the lme optimization algorithm.
 #' Default = 100.
@@ -139,7 +143,7 @@
 QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
                             QTL = NULL, QmainQi = TRUE, thre_QTL = 2,
                             all_main = TRUE, EC, EC_forward = FALSE,
-                            Qmain_QxE = NULL,
+                            Qmain_QxE = NULL, QTLxEC_plot = FALSE,
                             maxIter = 100, msMaxIter = 100){
   
   #### 1. Check some arguments ####
@@ -336,11 +340,38 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
     #### 10. results processing ####
     
     Beta <- m$coefficients$fixed
+    
+    if(QTLxEC_plot){
+     
+      # reference table
+      tab_ref <- expand.grid(paste0('E', 1:nEnv) , mppData$par.per.cross[, 1],
+                             stringsAsFactors = FALSE)
+      tab_ref <- tab_ref[, 2:1]
+      colnames(tab_ref) <- c('cross', 'env')
+      tab_ref$cr_env_int <- NA
+      
+      cr_env_int <- Beta[grep(pattern = 'cross_env', x = names(Beta))]
+      names(cr_env_int) <- substr(x = names(cr_env_int), 10, nchar(names(cr_env_int)))
+      tab_ref$cr_env_int <- cr_env_int[paste0(tab_ref$cross, '_', tab_ref$env)]
+      
+      par_lk <- mdf_par_name(mppData$par.per.cross[, 3])
+      names(par_lk) <- mppData$par.per.cross[, 1]
+      
+      d_int <- data.frame(cross = tab_ref$cross, par = par_lk[tab_ref$cross],
+                          env = tab_ref$env, EC = NA, cr_env_int = tab_ref$cr_env_int)
+      
+      # add EC information
+      EC_lk <- EC[, 1]
+      names(EC_lk) <- paste0('E', 1:nEnv)
+      d_int$EC <- EC_lk[d_int$env]
+       
+    }
+    
+    # QTL effect
     Q_ind <- grepl(pattern = 'QTL', x = names(Beta))
     B_QTL <- Beta[Q_ind]
     B_QTL_var <- diag(m$varFix)[Q_ind]
     
-    # W_test
     W_Qa <- rep(NA, length(B_QTL))
     for(q in 1:length(W_Qa)) W_Qa[q] <- (B_QTL[q]^2)/B_QTL_var[q]
     W_Qa <- pchisq(W_Qa, 1, lower.tail = FALSE)
@@ -357,6 +388,11 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
     # table of the QTL effect per parents
     Q_res <- vector(mode = 'list', length = nQTL)
     d_ref <- data.frame(par = par_id)
+    
+    if(QTLxEC_plot){
+      Q_res_plot <- matrix(NA, nrow = nrow(d_int), ncol = nQTL)
+      colnames(Q_res_plot) <- paste0('QTL', 1:nQTL)
+    }
     
     for(q in 1:nQTL){
       
@@ -380,11 +416,38 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
       
       Q_res[[q]] <- d_q
       
+      if(QTLxEC_plot){
+        
+        # QTL sensitivity coeff
+        d_QS <- d_q[, c(1, 3, 4)]
+        d_QS <- d_QS[!is.na(d_QS[, 2]) & d_QS[, 3] > thre_QTL, ]
+        
+        if(nrow(d_QS) > 0){
+          
+          Qp_EC <- EC %*% t(d_QS[, 2]) +  t(matrix(d_QS[, 1])) %x% matrix(rep(1, nEnv))
+          Q_res_plot[d_int$par %in% rownames(d_QS), q] <- c(Qp_EC)
+          
+        }
+        
+      }
+      
     }
     
     names(Q_res) <- paste0('QTL', 1:nQTL)
     
-    return(list(Qeff_main_QxE = Qeff, Qeff_EC = Q_res))
+    if(QTLxEC_plot){
+      
+      Q_res_plot <- data.frame(d_int, Q_res_plot)
+      
+      return(list(Qeff_main_QxE = Qeff, Qeff_EC = Q_res, Q_res_plot = Q_res_plot))
+      
+    } else {
+      
+      return(list(Qeff_main_QxE = Qeff, Qeff_EC = Q_res))
+      
+    }
+    
+    
     
     
   } else {

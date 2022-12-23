@@ -84,7 +84,7 @@
 #' mppData <- create.mppData(geno.off = geno.off, geno.par = geno.par,
 #'                           map = map, pheno = pheno, cross.ind = cross.ind,
 #'                           par.per.cross = par.per.cross)
-#'                           
+#'
 #' @import ggplot2
 #' @import grDevices
 #' @import graphics
@@ -96,6 +96,7 @@
 #' @import stringr
 #' @import utils
 #' @import vcfR
+#' @importFrom dplyr arrange group_by mutate summarise
 #' @importFrom Matrix Matrix t
 #' @importFrom stats anova as.formula coef coefficients complete.cases cor df.residual lm
 #' @importFrom stats model.matrix na.omit pchisq pt quantile runif vcov                          

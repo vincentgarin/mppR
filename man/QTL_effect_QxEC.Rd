@@ -16,6 +16,7 @@ QTL_effect_QxEC(
   EC,
   EC_forward = FALSE,
   Qmain_QxE = NULL,
+  QTLxEC_plot = FALSE,
   maxIter = 100,
   msMaxIter = 100
 )
@@ -62,6 +63,10 @@ iterate over the EC to find (nEnv - 1) subset that is the most significant.
 Default = FLASE}
 
 \item{Qmain_QxE}{results from \code{\link{QTL_effect_main_QxE}}}
+
+\item{QTLxEC_plot}{\code{Logical} value specifying if the data to
+plot sensitivity curve with the function plot_QTLxEC should be returned.
+Default = FALSE}
 
 \item{maxIter}{maximum number of iterations for the lme optimization algorithm.
 Default = 100.}

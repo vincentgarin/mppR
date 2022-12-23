@@ -25,21 +25,22 @@ Description: Process data from multi-parent populations (MPP) QTL
     experiment, perform QTL detection, and visualize the results.
 License: GPL (>=2)
 Imports:
-    cowplot,
-    ggplot2,
-    graphics,
-    grDevices,
-    methods,
-    Matrix,
-    nlme,
-    parallel,
-    qtl,
-    RColorBrewer,
-    stats,
-    stringr,
-    utils,
-    igraph,
-    vcfR
+  dplyr,
+cowplot,
+ggplot2,
+graphics,
+grDevices,
+methods,
+Matrix,
+nlme,
+parallel,
+qtl,
+RColorBrewer,
+stats,
+stringr,
+utils,
+igraph,
+vcfR
 Depends:
     R(>= 2.10.0)
 Suggests:
@@ -48,7 +49,7 @@ Suggests:
     knitr,
     rmarkdown,
     testthat
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.2
 Encoding: UTF-8
 URL: https://github.com/vincentgarin/mppR
 BugReports: https://github.com/vincentgarin/mppR/issues
