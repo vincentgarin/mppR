@@ -46,11 +46,18 @@
 #' environmental variance covariance structure allowing a specific genotypic
 #' covariance for each pair of environments. Default = 'UN'
 #' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
+#' 
 #' @param VCOV_data \code{Character} specifying if the reference VCOV of the
 #' CIM profile computation should be formed  taking all cofactors into
 #' consideration ("unique") or if different VCOVs should be formed by removing
 #' the cofactor information that is too close of a tested cofactor position
 #' ("minus_cof"). Default = "unique"
+#' 
+#' @param SIM_only \code{Logical} value specifying if the procedure should
+#' only calculate a SIM profile (no CIM). This option can be used with
+#' large dataset to save time. Default = FALSE
 #'
 #' @param thre.cof \code{Numeric} value representing the -log10(p-value)
 #' threshold above which a position can be selected as cofactor. Default = 4.
@@ -158,12 +165,12 @@
 
 
 mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
-                            EnvNames = NULL,  VCOV = "UN", VCOV_data = "unique",
-                            thre.cof = 4, win.cof = 50, cof_red = FALSE,
-                            cof_pval_sign = 0.1, window = 20, thre.QTL = 4,
-                            win.QTL = 20, text.size = 18, n.cores = 1,
-                            maxIter = 100, msMaxIter = 100, verbose = TRUE,
-                            output.loc = NULL) {
+                       EnvNames = NULL,  VCOV = "UN", ref_par = NULL,
+                       VCOV_data = "unique", SIM_only = FALSE, thre.cof = 4,
+                       win.cof = 50, cof_red = FALSE, cof_pval_sign = 0.1,
+                       window = 20, thre.QTL = 4, win.QTL = 20, text.size = 18,
+                       n.cores = 1, maxIter = 100, msMaxIter = 100, verbose = TRUE,
+                       output.loc = NULL) {
   
   # add function to check the parameters
   
@@ -193,8 +200,8 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   }
   
   SIM <- mppGE_SIM(mppData = mppData, trait = trait,
-                   VCOV = VCOV, n.cores = n.cores, maxIter = maxIter,
-                   msMaxIter = msMaxIter)
+                   VCOV = VCOV, ref_par = ref_par, n.cores = n.cores,
+                   maxIter = maxIter, msMaxIter = msMaxIter)
   
   # save SIM results in output location
   save(SIM, file = file.path(folder.loc, "SIM.RData"))
@@ -212,6 +219,8 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
     
   }
   
+  if(!SIM_only){
+  
   ##### Multi-QTL model search - CIM #####
   
   if(verbose){
@@ -224,9 +233,10 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   }
   
   CIM <- mppGE_CIM(mppData = mppData, trait = trait,
-                   VCOV = VCOV, VCOV_data = VCOV_data, cofactors = cofactors,
-                   cof_red = cof_red, cof_pval_sign = cof_pval_sign,
-                   window = window, n.cores = n.cores, maxIter = maxIter,
+                   VCOV = VCOV, ref_par = ref_par, VCOV_data = VCOV_data,
+                   cofactors = cofactors, cof_red = cof_red,
+                   cof_pval_sign = cof_pval_sign, window = window,
+                   n.cores = n.cores, maxIter = maxIter,
                    msMaxIter = msMaxIter)
   
   # save the list of cofactors
@@ -241,7 +251,7 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   if (is.null(QTL)) { # test if QTL have been selected
     
     message("No QTL position detected based on the (last) CIM profile.")
-    # return(NULL)
+    
     QTL <- cofactors
     CIM_fail <- TRUE
     
@@ -249,11 +259,18 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
     
     CIM_fail <- FALSE
     
-    
   }
   
   # save CIM results
   save(QTL, file = file.path(folder.loc, "QTLs.RData"))
+  
+  } else { # SIM only so QTL -> cofactors
+    
+    QTL <- cofactors
+    CIM_fail <- TRUE
+    save(QTL, file = file.path(folder.loc, "QTLs.RData"))
+    
+  }
   
   if(verbose){
     
@@ -267,8 +284,8 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   
   ##### QTL effects #####
   Q_eff <- QTL_effect_GE(mppData = mppData, trait = trait,
-                          QTL = QTL, VCOV = VCOV, maxIter = maxIter,
-                          msMaxIter = msMaxIter)
+                          QTL = QTL, VCOV = VCOV, ref_par = ref_par,
+                         maxIter = maxIter, msMaxIter = msMaxIter)
   
   save(Q_eff, file = file.path(folder.loc, "QTL_effects.RData"))
   

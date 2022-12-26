@@ -30,7 +30,7 @@
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{QC.mppData}}, \code{\link{subset.mppData}}
+#' @seealso \code{\link{QC.mppData}}, \code{\link{subset}}
 #' 
 #' @examples
 #' 

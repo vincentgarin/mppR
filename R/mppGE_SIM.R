@@ -22,6 +22,9 @@
 #' cross-specific within environment error term. 'UN' for unstructured
 #' environmental variance covariance structure allowing a specific genotypic
 #' covariance for each pair of environments. Default = 'UN'
+#' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #'
 #' @param n.cores \code{Numeric}. Specify here the number of cores you like to
 #' use. Default = 1.
@@ -72,12 +75,12 @@
 #' @export
 #'
 
-mppGE_SIM <- function(mppData, trait, VCOV = "UN", n.cores = 1, maxIter = 100,
-                      msMaxIter = 100) {
+mppGE_SIM <- function(mppData, trait, VCOV = "UN", ref_par = NULL, n.cores = 1,
+                      maxIter = 100, msMaxIter = 100) {
   
   ### 1. Check data format and arguments
   check_mod_mppGE(mppData = mppData, trait = trait, Q.eff = "par", VCOV = VCOV,
-                  QTL_ch = FALSE, fast = TRUE)
+                  QTL_ch = FALSE, fast = TRUE, ref_par = ref_par)
   
   
   ### 2. Form required elements for the analysis
@@ -110,14 +113,16 @@ mppGE_SIM <- function(mppData, trait, VCOV = "UN", n.cores = 1, maxIter = 100,
     log.pval <- parLapply(cl = cluster, X = vect.pos, fun = W_QTL,
                           y = TraitEnv[!NA_id], Vi = Vi,
                           mppData = mppData,  nEnv = nEnv, 
-                          Q.eff = "par", cross_mat = cross_mat, NA_id = NA_id)
+                          Q.eff = "par", cross_mat = cross_mat, NA_id = NA_id,
+                          ref_par = ref_par)
     
   } else {
     
     log.pval <- lapply(X = vect.pos, FUN = W_QTL,
                        y = TraitEnv[!NA_id], Vi = Vi,
                        mppData = mppData,  nEnv = nEnv, 
-                       Q.eff = "par", cross_mat = cross_mat, NA_id = NA_id)
+                       Q.eff = "par", cross_mat = cross_mat, NA_id = NA_id,
+                       ref_par = ref_par)
     
   }
   

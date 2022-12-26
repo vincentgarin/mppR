@@ -107,7 +107,7 @@
 #' 
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
-#' These results can be ploted with the function \code{\link{plot.QTLprof}}
+#' These results can be ploted with the function \code{\link{plot}}
 #' to visualize a genome-wide decomposition of the genetic effects.
 #' \strong{This functionality is ony available for the cross-specific,
 #' parental and ancestral models.}
@@ -128,7 +128,7 @@
 #' @author Vincent Garin
 #' 
 #' @seealso \code{\link{mppData_form}}, \code{\link{parent_cluster}},
-#' \code{\link{plot.QTLprof}}, \code{\link{USNAM_parClu}}
+#' \code{\link{plot}}, \code{\link{USNAM_parClu}}
 #' 
 #' @references
 #' 

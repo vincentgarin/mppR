@@ -85,6 +85,7 @@
 #'                           map = map, pheno = pheno, cross.ind = cross.ind,
 #'                           par.per.cross = par.per.cross)
 #'
+#' @import cowplot
 #' @import ggplot2
 #' @import grDevices
 #' @import graphics

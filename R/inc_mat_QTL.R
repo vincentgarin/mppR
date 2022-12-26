@@ -21,6 +21,8 @@
 #' incidence matrix. The colum will be ordred from the least to the most frequent
 #' allele. Default = FALSE.
 #' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #' 
 #' @return Return:
 #' 
@@ -54,7 +56,7 @@
 #' 
 
 
-inc_mat_QTL <- function(x, mppData, Q.eff, order.MAF = FALSE) {
+inc_mat_QTL <- function(x, mppData, Q.eff, order.MAF = FALSE, ref_par = NULL) {
   
   pos <- unlist(mppData$map[x, c(2,3)])
   
@@ -153,7 +155,15 @@ inc_mat_QTL <- function(x, mppData, Q.eff, order.MAF = FALSE) {
       
     }
     
-  } 
+  }
+  
+  if((Q.eff == "par") & !is.null(ref_par)){
+    
+    name.Qmat <- colnames(QTL.mat)
+    name.Qmat <- name.Qmat[name.Qmat != ref_par]
+    QTL.mat <- QTL.mat[, c(name.Qmat, ref_par)]
+    
+  }
   
   return(QTL.mat)
   

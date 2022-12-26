@@ -20,6 +20,9 @@
 #' cross-specific within environment error term. 'UN' for unstructured
 #' environmental variance covariance structure allowing a specific genotypic
 #' covariance for each pair of environments. Default = 'UN'
+#' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected marker positions obtained with the function QTL_select() or
@@ -70,12 +73,13 @@
 #' @export
 #'
 
-QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
+QTL_effect_GE <- function(mppData, trait, VCOV = "UN", ref_par = NULL, QTL = NULL,
                           maxIter = 100, msMaxIter = 100){
   
   #### 1. Check data format and arguments ####
   check_mod_mppGE(mppData = mppData, trait = trait, Q.eff = "par", VCOV = VCOV,
-                  QTL_ch = TRUE, QTL = QTL, fast = TRUE, CIM = FALSE)
+                  QTL_ch = TRUE, QTL = QTL, fast = TRUE, CIM = FALSE,
+                  ref_par = ref_par)
   
   #### 2. Form required elements for the analysis ####
   nEnv <- length(trait)
@@ -97,7 +101,7 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   
   QTL_list <- mapply(FUN = inc_mat_QTL, x = QTL.pos,
                      MoreArgs = list(Q.eff = "par", mppData = mppData,
-                                     order.MAF = TRUE),
+                                     order.MAF = TRUE, ref_par = ref_par),
                      SIMPLIFY = FALSE)
   
   QTL_list <- lapply(QTL_list, function(x) x[, -ncol(x)])
@@ -107,11 +111,7 @@ QTL_effect_GE <- function(mppData, trait, VCOV = "UN", QTL = NULL,
   # modify the names
   for(i in 1:length(QTL_list)){
     
-    QTL_nm <- colnames(QTL_list[[i]])
-    pb_chr <- c('-', ' ', '/', '*', '+', '_')
-    for(c in 1:length(pb_chr)){QTL_nm <- gsub(pattern = pb_chr[c],
-                                              replacement = "", x = QTL_nm)}
-    colnames(QTL_list[[i]]) <- QTL_nm
+    colnames(QTL_list[[i]]) <- mdf_par_name(nm = colnames(QTL_list[[i]]))
   }
   
   # combined QTL matrices

@@ -4,7 +4,7 @@
 \alias{inc_mat_QTL}
 \title{QTL incidence matrix}
 \usage{
-inc_mat_QTL(x, mppData, Q.eff, order.MAF = FALSE)
+inc_mat_QTL(x, mppData, Q.eff, order.MAF = FALSE, ref_par = NULL)
 }
 \arguments{
 \item{x}{\code{Integer} value indicating the genetic position on the map
@@ -21,6 +21,9 @@ for ancestral; 4) "biall" for a bi-allelic. For more details see
 should be ordered by allele frequency for a parental and ancestral QTL
 incidence matrix. The colum will be ordred from the least to the most frequent
 allele. Default = FALSE.}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 }
 \value{
 Return:

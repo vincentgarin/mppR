@@ -38,7 +38,7 @@
 #'
 #' @param trait \code{Character vector} specifying which traits (environments) should be used.
 #' 
-#' @param env_id. \code{Character} vector specifying the environment names.
+#' @param env_id \code{Character} vector specifying the environment names.
 #' By default, E1, ... En
 #' 
 #' @param VCOV VCOV \code{Character} expression defining the type of variance
@@ -48,6 +48,9 @@
 #' cross-specific within environment error term. 'UN' for unstructured
 #' environmental variance covariance structure allowing a specific genotypic
 #' covariance for each pair of environments. Default = 'UN'
+#' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected marker positions obtained with the function QTL_select() or
@@ -109,12 +112,13 @@
 #'
 
 QTL_effect_main_QxE <- function(mppData, trait, env_id = NULL, VCOV = "UN",
-                                QTL = NULL, QmainQi = TRUE,
+                                ref_par = NULL, QTL = NULL, QmainQi = TRUE,
                                 maxIter = 100, msMaxIter = 100){
   
   #### 1. Check data format and arguments ####
   check_mod_mppGE(mppData = mppData, trait = trait, Q.eff = "par", VCOV = VCOV,
-                  QTL_ch = TRUE, QTL = QTL, fast = TRUE, CIM = FALSE)
+                  QTL_ch = TRUE, QTL = QTL, fast = TRUE, CIM = FALSE,
+                  ref_par = ref_par)
   
   if(!is.null(env_id)){
     
@@ -152,7 +156,7 @@ QTL_effect_main_QxE <- function(mppData, trait, env_id = NULL, VCOV = "UN",
   
   QTL_list <- mapply(FUN = inc_mat_QTL, x = QTL.pos,
                      MoreArgs = list(Q.eff = "par", mppData = mppData,
-                                     order.MAF = TRUE),
+                                     order.MAF = TRUE, ref_par = ref_par),
                      SIMPLIFY = FALSE)
   
   QTL_list <- lapply(QTL_list, function(x) x[, -ncol(x)])

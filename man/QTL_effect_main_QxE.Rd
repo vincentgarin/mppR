@@ -9,6 +9,7 @@ QTL_effect_main_QxE(
   trait,
   env_id = NULL,
   VCOV = "UN",
+  ref_par = NULL,
   QTL = NULL,
   QmainQi = TRUE,
   maxIter = 100,
@@ -20,6 +21,9 @@ QTL_effect_main_QxE(
 
 \item{trait}{\code{Character vector} specifying which traits (environments) should be used.}
 
+\item{env_id}{\code{Character} vector specifying the environment names.
+By default, E1, ... En}
+
 \item{VCOV}{VCOV \code{Character} expression defining the type of variance
 covariance structure used. 'CS' for compound symmetry assuming a unique
 genetic covariance between environments. 'CSE' for cross-specific within
@@ -27,6 +31,9 @@ environment error term. 'CS_CSE' for both compound symmetry plus
 cross-specific within environment error term. 'UN' for unstructured
 environmental variance covariance structure allowing a specific genotypic
 covariance for each pair of environments. Default = 'UN'}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected marker positions obtained with the function QTL_select() or
@@ -41,9 +48,6 @@ Default = 100.}
 
 \item{msMaxIter}{maximum number of iterations for the optimization step inside
 the lme optimization. Default = 100.}
-
-\item{env_id.}{\code{Character} vector specifying the environment names.
-By default, E1, ... En}
 }
 \value{
 Return:

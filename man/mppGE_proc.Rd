@@ -11,7 +11,9 @@ mppGE_proc(
   trait,
   EnvNames = NULL,
   VCOV = "UN",
+  ref_par = NULL,
   VCOV_data = "unique",
+  SIM_only = FALSE,
   thre.cof = 4,
   win.cof = 50,
   cof_red = FALSE,
@@ -49,11 +51,18 @@ cross-specific within environment error term. 'UN' for unstructured
 environmental variance covariance structure allowing a specific genotypic
 covariance for each pair of environments. Default = 'UN'}
 
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
+
 \item{VCOV_data}{\code{Character} specifying if the reference VCOV of the
 CIM profile computation should be formed  taking all cofactors into
 consideration ("unique") or if different VCOVs should be formed by removing
 the cofactor information that is too close of a tested cofactor position
 ("minus_cof"). Default = "unique"}
+
+\item{SIM_only}{\code{Logical} value specifying if the procedure should
+only calculate a SIM profile (no CIM). This option can be used with
+large dataset to save time. Default = FALSE}
 
 \item{thre.cof}{\code{Numeric} value representing the -log10(p-value)
 threshold above which a position can be selected as cofactor. Default = 4.}

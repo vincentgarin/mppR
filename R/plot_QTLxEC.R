@@ -72,6 +72,10 @@ plot_QTLxEC <- function(Qeff, Q_id, RP = "RP", EC_id = 'EC', trait_id = 'trait',
                         main = 'QTLxEC', keep_par = NULL, rem_par = NULL,
                         text_size = 14){
   
+  # define variables initially (silence note CRAN)
+  env <- EC <- cr_env_int <- int <- slope <- min_EC <- max_EC <- p_max <- NULL
+  parents <- tr_val <- desc <- NULL
+  
   d <- Qeff$Q_res_plot
   
   # select the QTL column

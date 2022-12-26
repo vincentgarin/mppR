@@ -58,11 +58,15 @@
 #' mppData_sub <- subset(x = mppData, mk.list = mk.list,
 #' gen.list = gen.list)
 #' 
+#' @rdname subset
 #' @export
-#' 
+subset <- function(x, ...){
+  UseMethod("subset")
+}
 
-
-
+#' @rdname subset
+#' @method subset mppData
+#' @export
 subset.mppData <- function(x, mk.list = NULL, gen.list = NULL, ...) {
   
   # 1. Check data.format and arguments

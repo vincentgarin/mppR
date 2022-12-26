@@ -5,8 +5,9 @@
 # Function to check the argument to compute a mpp GxE model
 
 check_mod_mppGE <- function(mppData, trait, Q.eff, VCOV, CIM=FALSE,
-                            cofactors=NULL, QTL_ch=FALSE, QTL=NULL, GE=TRUE,
-                            fast = FALSE, plot_data=NULL, exp_des_form=NULL){
+                            cofactors=NULL, QTL_ch=FALSE, QTL=NULL, ref_par=NULL,
+                            GE=TRUE, fast = FALSE, plot_data=NULL,
+                            exp_des_form=NULL){
 
  # 1. check mppData
  #####
@@ -207,6 +208,12 @@ check_mod_mppGE <- function(mppData, trait, Q.eff, VCOV, CIM=FALSE,
 
   ########
 
+  #### check ref_par ####
+  
+  if(!is.null(ref_par)){
+  check_ref_par(ref_par = ref_par, parents = mppData$parents)
+  }
+  
   # Now split into GE and oneS
 
   if(GE){

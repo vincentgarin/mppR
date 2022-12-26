@@ -31,11 +31,11 @@
 #' scanned chromosome) of the last run of the forward regression.}
 #' 
 #' \item{If \code{plot.Qprof = TRUE}, plot  of the last run of the forward
-#' regression using \code{\link{plot.QTLprof}}.}
+#' regression using \code{\link{plot}}.}
 #' 
 #' \item{If \code{plot.gen.eff = TRUE}, plot of the genetic effect distribution
 #' along the genome of the last run of the forward regression using
-#' \code{\link{plot.QTLprof}}.}
+#' \code{\link{plot}}.}
 #' 
 #' }
 #' 
@@ -102,7 +102,7 @@
 #' 
 #' @param plot.gen.eff \code{Logical} value. If \code{plot.gen.eff = TRUE},
 #' the function will save the decomposed genetic effects per cross/parent.
-#' These results can be ploted with the function \code{\link{plot.QTLprof}}
+#' These results can be ploted with the function \code{\link{plot}}
 #' to visualize a genome-wide decomposition of the genetic effects. This
 #' plot will be realized on the last run of the forward regression.
 #' \strong{This functionality is ony available for the cross-specific,
@@ -169,13 +169,13 @@
 #' \item{If \code{plot.Qprof = TRUE}, the plot of the last regression run
 #' (QTL_profile.pdf). If \code{plot.gen.eff = TRUE}, plot of the genetic
 #' effects per cross or parents (gen_eff.pdf) with dashed lines representing
-#' the QTL positions. For more details see \code{\link{plot.QTLprof}}}
+#' the QTL positions. For more details see \code{\link{plot}}}
 #' 
 #' }
 #' 
 #' @author Vincent Garin
 #' 
-#' @seealso \code{\link{mpp_SIM}}, \code{\link{plot.QTLprof}},
+#' @seealso \code{\link{mpp_SIM}}, \code{\link{plot}},
 #' \code{\link{QTL_gen_effects}}, \code{\link{QTL_forward}}, \code{\link{QTL_R2}}
 #'
 #' @examples

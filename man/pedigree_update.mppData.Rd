@@ -53,7 +53,7 @@ pedigree = pedigree.new)
 
 }
 \seealso{
-\code{\link{QC.mppData}}, \code{\link{subset.mppData}}
+\code{\link{QC.mppData}}, \code{\link{subset}}
 }
 \author{
 Vincent Garin

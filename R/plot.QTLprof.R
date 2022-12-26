@@ -79,6 +79,8 @@
 #' @param text.size \code{Numeric} value specifying the size of graph axis text
 #' elements. Default = 18.
 #' 
+#' @param y Ignored.
+#' 
 #' @param ... Ignored.
 #' 
 #' @author Vincent Garin
@@ -99,12 +101,16 @@
 #' QTL <- QTL_select(SIM)
 #' plot(x = SIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr", QTL = QTL)
 #' 
+#' @rdname plot
 #' @export
-#' 
+plot <- function(x, y, ...) UseMethod("plot")
 
+#' @rdname plot
+#' @method plot QTLprof
+#' @export
 plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,
                          type = "l", main = "QTL profile", threshold = 3,
-                         text.size = 18, ...)
+                         text.size = 18, y, ...)
 {
   
   if(!inherits(x, "QTLprof")){stop("'x' is not of class ", dQuote("QTLprof"))}

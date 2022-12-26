@@ -48,6 +48,9 @@
 #'
 #' @param window \code{Numeric} distance (cM) on the left and the right of a
 #' cofactor position where it is not included in the model. Default = 20.
+#' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #'
 #' @param n.cores \code{Numeric}. Specify here the number of cores you like to
 #' use. Default = 1.
@@ -101,14 +104,14 @@
 
 mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
                       cofactors = NULL, cof_red = FALSE, cof_pval_sign = 0.1,
-                      window = 20, n.cores = 1, maxIter = 100,
+                      window = 20, ref_par = NULL, n.cores = 1, maxIter = 100,
                       msMaxIter = 100)
 {
   
   #### 1. Check data format and arguments ####
   check_mod_mppGE(mppData = mppData, trait = trait, Q.eff = "par", VCOV = VCOV,
                   QTL_ch = FALSE, fast = TRUE, CIM = TRUE,
-                  cofactors = cofactors)
+                  cofactors = cofactors, ref_par = ref_par)
   
   #### 2. Form required elements for the analysis ####
   nEnv <- length(trait)
@@ -266,7 +269,7 @@ mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
                             y = TraitEnv[!NA_id], Vi = Vi,
                             mppData = mppData,  nEnv = nEnv, 
                             Q.eff = "par", cross_mat = cross_mat,
-                            cof_mat = cof_mat, NA_id = NA_id)
+                            cof_mat = cof_mat, NA_id = NA_id, ref_par = ref_par)
       
     } else {
       
@@ -274,7 +277,7 @@ mppGE_CIM <- function(mppData, trait, VCOV = 'UN', VCOV_data = "unique",
                          y = TraitEnv[!NA_id], Vi = Vi,
                          mppData = mppData,  nEnv = nEnv, 
                          Q.eff = "par", cross_mat = cross_mat,
-                         cof_mat = cof_mat, NA_id = NA_id)
+                         cof_mat = cof_mat, NA_id = NA_id, ref_par = ref_par)
       
     }
     

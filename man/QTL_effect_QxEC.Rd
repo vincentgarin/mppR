@@ -9,14 +9,14 @@ QTL_effect_QxEC(
   trait,
   env_id = NULL,
   VCOV = "UN",
+  ref_par = NULL,
   QTL = NULL,
   QmainQi = TRUE,
   thre_QTL = 2,
   all_main = TRUE,
   EC,
-  EC_forward = FALSE,
   Qmain_QxE = NULL,
-  QTLxEC_plot = FALSE,
+  QTLxEC_plot = TRUE,
   maxIter = 100,
   msMaxIter = 100
 )
@@ -26,6 +26,9 @@ QTL_effect_QxEC(
 
 \item{trait}{\code{Character vector} specifying which traits (environments) should be used.}
 
+\item{env_id}{\code{Character} vector specifying the environment names.
+By default, E1, ... En}
+
 \item{VCOV}{VCOV \code{Character} expression defining the type of variance
 covariance structure used. 'CS' for compound symmetry assuming a unique
 genetic covariance between environments. 'CSE' for cross-specific within
@@ -33,6 +36,9 @@ environment error term. 'CS_CSE' for both compound symmetry plus
 cross-specific within environment error term. 'UN' for unstructured
 environmental variance covariance structure allowing a specific genotypic
 covariance for each pair of environments. Default = 'UN'}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected marker positions obtained with the function QTL_select() or
@@ -55,27 +61,17 @@ effect if the QTLxE term is significant. Default = TRUE.}
 covariates (EC) as column. The cell i, j of EC specify the value of the
 jth EC in environment i.}
 
-\item{EC_forward}{\code{Logical} value specifying if the environmental
-covariates (EC) should be introduced using a forward selection procedure.
-This is useful if the number of EC is larger than the number of environment
-because only (nEnv - 1) EC can be fitted in the model. The the function will
-iterate over the EC to find (nEnv - 1) subset that is the most significant.
-Default = FLASE}
-
 \item{Qmain_QxE}{results from \code{\link{QTL_effect_main_QxE}}}
 
 \item{QTLxEC_plot}{\code{Logical} value specifying if the data to
 plot sensitivity curve with the function plot_QTLxEC should be returned.
-Default = FALSE}
+Default = TRUE}
 
 \item{maxIter}{maximum number of iterations for the lme optimization algorithm.
 Default = 100.}
 
 \item{msMaxIter}{maximum number of iterations for the optimization step inside
 the lme optimization. Default = 100.}
-
-\item{env_id.}{\code{Character} vector specifying the environment names.
-By default, E1, ... En}
 }
 \value{
 Return:

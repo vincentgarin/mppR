@@ -8,6 +8,7 @@ mppGE_SIM(
   mppData,
   trait,
   VCOV = "UN",
+  ref_par = NULL,
   n.cores = 1,
   maxIter = 100,
   msMaxIter = 100
@@ -26,6 +27,9 @@ environment error term. 'CS_CSE' for both compound symmetry plus
 cross-specific within environment error term. 'UN' for unstructured
 environmental variance covariance structure allowing a specific genotypic
 covariance for each pair of environments. Default = 'UN'}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 
 \item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
 use. Default = 1.}

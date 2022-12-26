@@ -33,6 +33,9 @@ average ('mean').}
 \item{min_win}{Numerical value indicating the minimum size of the range
 between start and end day when the EC values are measured. Default = 20}
 
+\item{sel_criteria}{Character specifying the selection criteria.
+Default = 'global'}
+
 \item{plot}{Logical value indicating if a plot of the EC effects over time
 should be returned. Default = FALSE,}
 

@@ -23,6 +23,9 @@
 #' @param min_win Numerical value indicating the minimum size of the range
 #' between start and end day when the EC values are measured. Default = 20
 #' 
+#' @param sel_criteria Character specifying the selection criteria.
+#' Default = 'global'
+#' 
 #' @param plot Logical value indicating if a plot of the EC effects over time
 #' should be returned. Default = FALSE,
 #' 
@@ -144,7 +147,7 @@ EC_effect <- function(trait_env_mean, crop_duration, EC_list, type,
     
     if(plot){
       
-      pl <- ggplot(d_res, aes(x=start_day, y=end_day)) +
+      pl <- ggplot(d_res, aes_string(x=start_day, y=end_day)) +
         geom_tile(aes(fill = R2 * sign)) +
         scale_fill_gradient2(low = "red", mid = "white", high = "blue",
                              guide = guide_colorbar(order = 1)) +

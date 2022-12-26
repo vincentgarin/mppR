@@ -36,7 +36,7 @@
 #'
 #' @param trait \code{Character vector} specifying which traits (environments) should be used.
 #' 
-#' @param env_id. \code{Character} vector specifying the environment names.
+#' @param env_id \code{Character} vector specifying the environment names.
 #' By default, E1, ... En
 #' 
 #' @param VCOV VCOV \code{Character} expression defining the type of variance
@@ -46,6 +46,9 @@
 #' cross-specific within environment error term. 'UN' for unstructured
 #' environmental variance covariance structure allowing a specific genotypic
 #' covariance for each pair of environments. Default = 'UN'
+#' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #'
 #' @param QTL Object of class \code{QTLlist} representing a list of
 #' selected marker positions obtained with the function QTL_select() or
@@ -68,18 +71,11 @@
 #' covariates (EC) as column. The cell i, j of EC specify the value of the
 #' jth EC in environment i.
 #' 
-#' @param EC_forward \code{Logical} value specifying if the environmental
-#' covariates (EC) should be introduced using a forward selection procedure.
-#' This is useful if the number of EC is larger than the number of environment
-#' because only (nEnv - 1) EC can be fitted in the model. The the function will
-#' iterate over the EC to find (nEnv - 1) subset that is the most significant.
-#' Default = FLASE
-#' 
 #' @param Qmain_QxE results from \code{\link{QTL_effect_main_QxE}}
 #' 
 #' @param QTLxEC_plot \code{Logical} value specifying if the data to
 #' plot sensitivity curve with the function plot_QTLxEC should be returned.
-#' Default = FALSE
+#' Default = TRUE
 #'
 #' @param maxIter maximum number of iterations for the lme optimization algorithm.
 #' Default = 100.
@@ -141,9 +137,9 @@
 #'
 
 QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
-                            QTL = NULL, QmainQi = TRUE, thre_QTL = 2,
-                            all_main = TRUE, EC, EC_forward = FALSE,
-                            Qmain_QxE = NULL, QTLxEC_plot = FALSE,
+                            ref_par = NULL, QTL = NULL, QmainQi = TRUE,
+                            thre_QTL = 2, all_main = TRUE, EC,
+                            Qmain_QxE = NULL, QTLxEC_plot = TRUE,
                             maxIter = 100, msMaxIter = 100){
   
   #### 1. Check some arguments ####
@@ -163,12 +159,12 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
   } else {
     
     Qeff <- QTL_effect_main_QxE(mppData = mppData, trait = trait,
-                                env_id = env_id, VCOV = VCOV, QTL = QTL,
-                                QmainQi = QmainQi, maxIter = maxIter,
+                                env_id = env_id, VCOV = VCOV, ref_par = ref_par,
+                                QTL = QTL, QmainQi = QmainQi, maxIter = maxIter,
                                 msMaxIter = msMaxIter)
   }
   
- 
+  
   
   #### 3. Determine the significance of QTLxE ####
   
@@ -178,7 +174,7 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
   # Check if there is at least some QTLxE term significant
   QxE_sign_vect <- c(Q_dist$QTLxE)
   if(any(QxE_sign_vect[!is.na(QxE_sign_vect)])){
-   
+    
     if(all_main){
       
       Q_dist_main <- Q_dist[[1]]
@@ -213,7 +209,7 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
     
     QTL_list <- mapply(FUN = inc_mat_QTL, x = QTL.pos,
                        MoreArgs = list(Q.eff = "par", mppData = mppData,
-                                       order.MAF = TRUE),
+                                       order.MAF = TRUE, ref_par = ref_par),
                        SIMPLIFY = FALSE)
     
     QTL_list <- lapply(QTL_list, function(x) x[, -ncol(x)])
@@ -265,84 +261,18 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
     
     #### 9. QTL main + EC mixed model computation ####
     
-    # Either forward...  
-    if(EC_forward){
-      
-      # Calcuate the reference AIC
-      d_m <- data.frame(d, QTL_mat_main)
-      d_m <- remove_singularities(d_m)
-      Q_id <- colnames(d_m)[5:ncol(d_m)]
-      fix_form <- paste0('trait~-1 + cross_env+', paste(Q_id, collapse = '+'))
-      m <- lme_comp(fix_form = fix_form, VCOV = VCOV, data = d_m,
-                    maxIter = maxIter, msMaxIter = msMaxIter)
-      
-      AIC_ref <- AIC(m)
-      max_EC <- nEnv-1
-      EC_sign <- TRUE
-      EC_fix <- c()
-      EC_var <- EC
-      n_EC_coeff <- 1
-      
-      while(EC_sign){
-        
-        # iterate over the EC to introduce
-        AIC_vect <- c()
-        model_list <- vector(mode = 'list', length = ncol(EC_var))
-        for(i in 1:ncol(EC_var)){
-          
-          # form the EC matrix
-          EC_mat <- cbind(EC_fix, EC_var[, i, drop = FALSE])
-          
-          QTL_mat_EC_i <- form_QTLxEC_mat(QTL_list = QTL_list, EC = EC_mat,
-                                          Q_dist = Q_dist)
-          
-          # calculate the MM
-          M_i <- MM_QTL(d = data.frame(d, QTL_mat_main, QTL_mat_EC_i), 
-                        VCOV = VCOV, maxIter = 100, msMaxIter = 100)
-          
-          # fill the AIC vect and model list
-          AIC_vect <- c(AIC_vect, M_i$AIC)
-          model_list[[i]] <- M_i$m
-          
-        }
-        
-        AIC_min_var <- which.min(AIC_vect)
-        AIC_min <- AIC_vect[AIC_min_var]
-        
-        if(AIC_min < AIC_ref){
-          
-          EC_fix <- cbind(EC_fix, EC_var[, AIC_min_var, drop = FALSE])
-          EC_var <- EC_var[, -AIC_min_var, drop = FALSE]
-          AIC_ref <- AIC_min
-          n_EC_coeff <- n_EC_coeff + 1
-          m <- model_list[[AIC_min_var]]
-          
-          if(n_EC_coeff > max_EC){EC_sign <-  FALSE}
-          
-        } else {EC_sign <-  FALSE}
-        
-      }
-      
-      EC <- EC_fix
-      n_EC <- ncol(EC)
-      rm(model_list)
-      
-    } else { # ... or no forward selection
-      
-      QTL_mat_EC <- form_QTLxEC_mat(QTL_list = QTL_list, EC = EC, Q_dist = Q_dist)
-      M_i <- MM_QTL(d = data.frame(d, QTL_mat_main, QTL_mat_EC),
-                    VCOV = VCOV, maxIter = 100, msMaxIter = 100)
-      m <- M_i$m
-      rm(M_i)
-      
-    }
+    QTL_mat_EC <- form_QTLxEC_mat(QTL_list = QTL_list, EC = EC, Q_dist = Q_dist)
+    M_i <- MM_QTL(d = data.frame(d, QTL_mat_main, QTL_mat_EC),
+                  VCOV = VCOV, maxIter = 100, msMaxIter = 100)
+    m <- M_i$m
+    rm(M_i)
     
     #### 10. results processing ####
     
     Beta <- m$coefficients$fixed
     
     if(QTLxEC_plot){
-     
+      
       # reference table
       tab_ref <- expand.grid(paste0('E', 1:nEnv) , mppData$par.per.cross[, 1],
                              stringsAsFactors = FALSE)
@@ -364,7 +294,7 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
       EC_lk <- EC[, 1]
       names(EC_lk) <- paste0('E', 1:nEnv)
       d_int$EC <- EC_lk[d_int$env]
-       
+      
     }
     
     # QTL effect

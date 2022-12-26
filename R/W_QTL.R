@@ -6,10 +6,11 @@
 # for a multi-allelic QTL position and the same for each QTL alleles.
 
 W_QTL <- function(x, y, Vi, mppData, Q.eff, cross_mat, cof_mat = NULL,
-                  nEnv, NA_id){
+                  nEnv, NA_id, ref_par=NULL){
   
   # form the QTL effect
-  QTL <- inc_mat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE)
+  QTL <- inc_mat_QTL(x = x, mppData = mppData, Q.eff = Q.eff, order.MAF = TRUE,
+                     ref_par = ref_par)
   Q_nm <- colnames(QTL)
   
   # remove singularities in QTL term

@@ -13,6 +13,7 @@ mppGE_CIM(
   cof_red = FALSE,
   cof_pval_sign = 0.1,
   window = 20,
+  ref_par = NULL,
   n.cores = 1,
   maxIter = 100,
   msMaxIter = 100
@@ -50,6 +51,9 @@ of an allele by environment term to be kept in the model. Default = 0.1}
 
 \item{window}{\code{Numeric} distance (cM) on the left and the right of a
 cofactor position where it is not included in the model. Default = 20.}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 
 \item{n.cores}{\code{Numeric}. Specify here the number of cores you like to
 use. Default = 1.}

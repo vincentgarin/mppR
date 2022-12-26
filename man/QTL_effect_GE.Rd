@@ -8,6 +8,7 @@ QTL_effect_GE(
   mppData,
   trait,
   VCOV = "UN",
+  ref_par = NULL,
   QTL = NULL,
   maxIter = 100,
   msMaxIter = 100
@@ -25,6 +26,9 @@ environment error term. 'CS_CSE' for both compound symmetry plus
 cross-specific within environment error term. 'UN' for unstructured
 environmental variance covariance structure allowing a specific genotypic
 covariance for each pair of environments. Default = 'UN'}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 
 \item{QTL}{Object of class \code{QTLlist} representing a list of
 selected marker positions obtained with the function QTL_select() or
