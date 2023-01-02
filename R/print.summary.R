@@ -28,13 +28,6 @@
 #' Q_R2 <- QTL_R2(mppData = mppData, QTL = QTL, Q.eff = "cr")
 #' summary(Q_R2)
 #' 
-#' @rdname print
-#' @export
-print <- function(x, ...){
-  UseMethod("print")
-}
-
-#' @rdname print
 #' @method print summary.mppData
 #' @export
 print.summary.mppData <- function(x, ...){
@@ -51,7 +44,6 @@ print.summary.mppData <- function(x, ...){
   
 }
 
-#' @rdname print
 #' @method print summary.QeffRes
 #' @export
 print.summary.QeffRes <- function(x, ...){
@@ -97,7 +89,6 @@ print.summary.QeffRes <- function(x, ...){
   
 }
 
-#' @rdname print
 #' @method print summary.QR2Res
 #' @export
 print.summary.QR2Res <- function(x, ...){

@@ -335,16 +335,20 @@ mppGE_proc <- function(pop.name = "MPP", trait.name = "trait1", mppData, trait,
   
   pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
   
-  print(plot(x = Qprof, QTL = cofactors, type = t_plot, main = main_prof,
-             threshold = thre.QTL, text.size = text.size))
+  pl <- plot(x = Qprof, QTL = cofactors, type = t_plot, main = main_prof,
+             threshold = thre.QTL, text.size = text.size)
+  
+  print(pl)
   
   dev.off()
   
   pdf(file.path(folder.loc, "gen_eff.pdf"), height = 10, width = 16)
   
-  print(plot_allele_eff_GE(mppData = mppData, nEnv = length(trait),
-                           EnvNames = EnvNames, Qprof = Qprof, Q.eff = "par",
-                           QTL = QTL, main = main.Qeff, text.size = text.size))
+  pl <- plot_allele_eff_GE(mppData = mppData, nEnv = length(trait),
+                     EnvNames = EnvNames, Qprof = Qprof, Q.eff = "par",
+                     QTL = QTL, main = main.Qeff, text.size = text.size)
+  
+  print(pl)
   
   dev.off()
   

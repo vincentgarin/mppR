@@ -101,11 +101,6 @@
 #' QTL <- QTL_select(SIM)
 #' plot(x = SIM, gen.eff = TRUE, mppData = mppData, Q.eff = "cr", QTL = QTL)
 #' 
-#' @rdname plot
-#' @export
-plot <- function(x, y, ...) UseMethod("plot")
-
-#' @rdname plot
 #' @method plot QTLprof
 #' @export
 plot.QTLprof <- function(x, gen.eff = FALSE, mppData, Q.eff, QTL = NULL,

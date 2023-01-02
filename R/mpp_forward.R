@@ -382,8 +382,10 @@ mpp_forward <- function(pop.name = "MPP", trait.name = "trait1", mppData,
           
           pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
           
-          print(plot.QTLprof(x = CIM_p, type = "h", main = main.cim,
-                             threshold = threshold, text.size = text.size))
+          pl <- plot(x = CIM_p, type = "h", main = main.cim,
+               threshold = threshold, text.size = text.size)
+          
+          print(pl)
           
           dev.off()
           
@@ -393,8 +395,10 @@ mpp_forward <- function(pop.name = "MPP", trait.name = "trait1", mppData,
           
           pdf(file.path(folder.loc, "QTL_profile.pdf"), height = 10, width = 16)
           
-          print(plot.QTLprof(x = CIM_p, QTL = QTL, type = "l", main = main.cim,
-                             threshold = threshold, text.size = text.size))
+          pl <- plot(x = CIM_p, QTL = QTL, type = "l", main = main.cim,
+               threshold = threshold, text.size = text.size)
+          
+          print(pl)
           
           dev.off()
           
@@ -408,8 +412,10 @@ mpp_forward <- function(pop.name = "MPP", trait.name = "trait1", mppData,
         
         pdf(file.path(folder.loc, "gen_eff.pdf"), height = 10, width = 16)
         
-        print(plot.QTLprof(x = CIM_p, gen.eff = TRUE, mppData = mppData,  Q.eff = Q.eff,
-                           QTL = QTL, main = main.Qeff, text.size = text.size))
+        pl <- plot(x = CIM_p, gen.eff = TRUE, mppData = mppData,  Q.eff = Q.eff,
+             QTL = QTL, main = main.Qeff, text.size = text.size)
+        
+        print(pl)
         
         dev.off()
         
