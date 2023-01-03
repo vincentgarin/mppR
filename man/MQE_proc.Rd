@@ -4,10 +4,21 @@
 \alias{MQE_proc}
 \title{Multi-QTL effect MPP analysis}
 \usage{
-MQE_proc(pop.name = "MPP_MQE", trait.name = "trait1", mppData = NULL,
-  trait = 1, Q.eff, threshold = 4, window = 30, backward = TRUE,
-  alpha.bk = 0.05, plot.MQE = FALSE, n.cores = 1, verbose = TRUE,
-  output.loc)
+MQE_proc(
+  pop.name = "MPP_MQE",
+  trait.name = "trait1",
+  mppData = NULL,
+  trait = 1,
+  Q.eff,
+  threshold = 4,
+  window = 30,
+  backward = TRUE,
+  alpha.bk = 0.05,
+  plot.MQE = FALSE,
+  n.cores = 1,
+  verbose = TRUE,
+  output.loc
+)
 }
 \arguments{
 \item{pop.name}{\code{Character} name of the studied population.
@@ -105,7 +116,7 @@ possible assumptions for the QTL effect at different loci. The function
 use.}
 
 \item{Optional backward elimination (\code{backward = TRUE}) on the final
-list of detected QTLs.}
+list of detected QTLs.} 
 
 \item{Estimation of the QTL genetic effects and R squared statistics.}
 
