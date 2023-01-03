@@ -1,3 +1,13 @@
+## package update 1.3.0
+
+Corrections of some problems in few functions. Addition of new options and
+functions.
+
+## Test environments
+* Local machine (Windows 10), R 4.0.5
+* Linux (Travis CI)
+* win-builder (devel)
+
 ## package update 1.2.1
 
 Changes due to the fact that package ‘synbreed’ was removed from the CRAN repository. I removed the part of my code depending on synbreed.
