@@ -1,3 +1,12 @@
+## package update 1.4.0
+
+Addition of new functions and a vignette to extend the package scope.
+
+## Test environments
+* Local machine (Windows 10), R 4.2.2
+* Linux Ubuntu (R hub)
+* win-builder (devel)
+
 ## package update 1.3.0
 
 Corrections of some problems in few functions. Addition of new options and
