@@ -2,7 +2,7 @@
 # formula_backward #
 ####################
 
-# function to produce a series of formula for mixed model computation in a
+# function to produce a series of formula for linear mixed model computation in a
 # backward elimination.
 
 # arguments
