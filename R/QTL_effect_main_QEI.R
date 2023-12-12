@@ -27,9 +27,12 @@
 #' @param env_id \code{Character} vector specifying the environment names.
 #' By default, E1, ... En
 #' 
-#' @param env_ref Optional \code{Character} expression defining the environment
+#' @param ref_env Optional \code{Character} expression defining the environment
 #' that will be used as reference for the parental model. By default, the last
 #' environment is set as reference.
+#' 
+#' @param ref_par Optional \code{Character} expression defining the parental
+#' allele that will be used as reference for the parental model. Default = NULL
 #'
 #' @param VCOV VCOV \code{Character} expression defining the type of variance
 #' covariance structure used. 'CS' for compound symmetry assuming a unique
@@ -94,15 +97,15 @@
 #' @export
 #'
 
-QTL_effect_main_QEI <- function(mppData, trait, env_id = NULL, env_ref = NULL,
-                                VCOV = "UN", QTL = NULL,
+QTL_effect_main_QEI <- function(mppData, trait, env_id = NULL, ref_env = NULL,
+                                ref_par = NULL, VCOV = "UN", QTL = NULL,
                                 maxIter = 100, msMaxIter = 100){
   
   #### 1. Check data format and arguments ----
   check_mod_mppGE(mppData = mppData, trait = trait, Q.eff = "par", VCOV = VCOV,
                   QTL_ch = TRUE, QTL = QTL, fast = TRUE, CIM = FALSE)
   
-  if(!is.null(env_ref) & is.null(env_id)){
+  if(!is.null(ref_env) & is.null(env_id)){
     stop("To identify the reference environment, you must provide the vector of environment name 'env_id'.")
   }
   
@@ -127,7 +130,7 @@ QTL_effect_main_QEI <- function(mppData, trait, env_id = NULL, env_ref = NULL,
   
   QTL_list <- mapply(FUN = inc_mat_QTL, x = QTL.pos,
                      MoreArgs = list(Q.eff = "par", mppData = mppData,
-                                     order.MAF = TRUE),
+                                     order.MAF = TRUE, ref_par = ref_par),
                      SIMPLIFY = FALSE)
   
   QTL_list <- lapply(QTL_list, function(x) x[, -ncol(x)])
@@ -135,13 +138,13 @@ QTL_effect_main_QEI <- function(mppData, trait, env_id = NULL, env_ref = NULL,
   nAllele <- sapply(QTL_list, function(x) ncol(x))
   
   # modify the names and define ref parents
-  ref_par <- rep(NA, nQTL)
+  ref_pars <- rep(NA, nQTL)
   p_nm <- mdf_par_name(mppData$parents)
   
   for(i in 1:nQTL){
     
     colnames(QTL_list[[i]]) <- mdf_par_name(nm = colnames(QTL_list[[i]]))
-    ref_par[i] <- p_nm[-which(p_nm %in% colnames(QTL_list[[i]]))]
+    ref_pars[i] <- p_nm[-which(p_nm %in% colnames(QTL_list[[i]]))]
     
   }
   
@@ -167,8 +170,8 @@ QTL_effect_main_QEI <- function(mppData, trait, env_id = NULL, env_ref = NULL,
     QTL_nm_i <- paste0('QTL', i, '_', rep(env_id, each = n_allele_i))
     QTL_nm_i <- paste0(QTL_nm_i, '_', rep(colnames(QTL_list[[i]]), nEnv))
     
-    if(!is.null(env_ref)){
-      env_nb <- which(env_id == env_ref)
+    if(!is.null(ref_env)){
+      env_nb <- which(env_id == ref_env)
       st_pt <- seq(1, length(QTL_nm_i), by = n_allele_i)[env_nb]
       rem_pos <- st_pt:(st_pt + n_allele_i - 1)
       QTL_nm_i <- QTL_nm_i[-rem_pos]
@@ -207,7 +210,7 @@ QTL_effect_main_QEI <- function(mppData, trait, env_id = NULL, env_ref = NULL,
   #### 6. estimation of the Wald statistic for the main and QEI component for each parent ----
   
   Q_sign <- W_test_Qmain_QEI(m = m, nQTL = nQTL, n_par = length(mppData$parents),
-                             ref_par = ref_par)
+                             ref_par = ref_pars)
   
   names(Q_sign) <- paste0('QTL', 1:nQTL)
   

@@ -8,7 +8,8 @@ QTL_effect_main_QEI(
   mppData,
   trait,
   env_id = NULL,
-  env_ref = NULL,
+  ref_env = NULL,
+  ref_par = NULL,
   VCOV = "UN",
   QTL = NULL,
   maxIter = 100,
@@ -23,9 +24,12 @@ QTL_effect_main_QEI(
 \item{env_id}{\code{Character} vector specifying the environment names.
 By default, E1, ... En}
 
-\item{env_ref}{Optional \code{Character} expression defining the environment
+\item{ref_env}{Optional \code{Character} expression defining the environment
 that will be used as reference for the parental model. By default, the last
 environment is set as reference.}
+
+\item{ref_par}{Optional \code{Character} expression defining the parental
+allele that will be used as reference for the parental model. Default = NULL}
 
 \item{VCOV}{VCOV \code{Character} expression defining the type of variance
 covariance structure used. 'CS' for compound symmetry assuming a unique

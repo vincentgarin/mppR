@@ -137,7 +137,7 @@
 #'
 
 QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
-                            ref_par = NULL, QTL = NULL, QmainQi = TRUE,
+                            par_ref = NULL, QTL = NULL, QmainQi = TRUE,
                             thre_QTL = 2, all_main = TRUE, EC,
                             Qmain_QxE = NULL, QTLxEC_plot = TRUE,
                             maxIter = 100, msMaxIter = 100){
@@ -159,7 +159,7 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
   } else {
     
     Qeff <- QTL_effect_main_QxE(mppData = mppData, trait = trait,
-                                env_id = env_id, VCOV = VCOV, ref_par = ref_par,
+                                env_id = env_id, VCOV = VCOV, ref_par = par_ref,
                                 QTL = QTL, QmainQi = QmainQi, maxIter = maxIter,
                                 msMaxIter = msMaxIter)
   }
@@ -209,7 +209,7 @@ QTL_effect_QxEC <- function(mppData, trait, env_id = NULL, VCOV = "UN",
     
     QTL_list <- mapply(FUN = inc_mat_QTL, x = QTL.pos,
                        MoreArgs = list(Q.eff = "par", mppData = mppData,
-                                       order.MAF = TRUE, ref_par = ref_par),
+                                       order.MAF = TRUE, ref_par = par_ref),
                        SIMPLIFY = FALSE)
     
     QTL_list <- lapply(QTL_list, function(x) x[, -ncol(x)])
