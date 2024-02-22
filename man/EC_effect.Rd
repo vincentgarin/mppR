@@ -66,11 +66,6 @@ Determine the effect of environmental covariates (EC) on the mean of a
 trait across environments and the time range where this effect is the
 strongest. The procedure was originally proposed by Li et al. (2018).
 }
-\examples{
-
-# Not yet
-
-}
 \references{
 Li, X., Guo, T., Mu, Q., Li, X., & Yu, J. (2018). Genomic and environmental
 determinants and their interplay underlying phenotypic plasticity.

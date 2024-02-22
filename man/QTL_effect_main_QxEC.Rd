@@ -2,7 +2,7 @@
 % Please edit documentation in R/QTL_effect_main_QxEC.R
 \name{QTL_effect_main_QxEC}
 \alias{QTL_effect_main_QxEC}
-\title{Estimation of a model with main and QTL by environment interaction}
+\title{Estimation of a model with main and QTL by environmental sensitivity terms}
 \usage{
 QTL_effect_main_QxEC(
   mppData,
@@ -55,13 +55,13 @@ thre_QTL = 2, which correspond to a p-value of 0.01.}
 covariates (EC) as column. The cell i, j of EC specify the value of the
 jth EC in environment i.}
 
+\item{Qmain_QEI}{results from \code{\link{QTL_effect_main_QEI}}}
+
 \item{maxIter}{maximum number of iterations for the lme optimization algorithm.
 Default = 100.}
 
 \item{msMaxIter}{maximum number of iterations for the optimization step inside
 the lme optimization. Default = 100.}
-
-\item{Qmain_QxE}{results from \code{\link{QTL_effect_main_QEI}}}
 }
 \value{
 Return:
@@ -82,27 +82,30 @@ respect to the reference parent}
 }
 }
 \description{
-Determination of which parental QTL effect show a significant interaction
-with the environment. Then, the function try to characterize the nature
-of the QTLxE effect by estimating the sensitivity of the parental allelic
-effects showing significant QTLxE interaction to environmental covariates
-provided by the user.
+After estimating which parental allelic effects have a significant interaction
+with the environment (QEI), the function extends the model for the allelic
+effect with a significant QEI to characterize this interaction in terms of
+sensitivity to (a) specific environmental covariate(s).
 }
 \details{
 The function first estimate the parental QTL allele main and QTLxE effect
-using the function \code{\link{QTL_effect_main_QEI}}. The function consider
-that a parental QTL allele significantly interact with the environment if the
-QTLxE term is significant at the thre_QTL level. thre_QTL is expressed in
-terms of -log10(p-val). For example, for p-val = 0.01,
-thre_QTL = -log10(p-val) = 2. Finally, given the information about
-QTL allele with a significant environmental interaction, the function replaces
-the QTLxE term with a QTLxEC term representing interaction between
-the parental QTL allele and the environmental covariate (EC). The QTLxEC term
-can be interpreted as a sensitivity of the QTL to the variation of the EC in
-the different environments.
+using the function \code{\link{QTL_effect_main_QEI}}. Optionally the output
+of \code{\link{QTL_effect_main_QEI}} can be passed through the `Qmain_QEI`
+argument. The function consider that a parental QTL allele significantly
+interacts with the environment if its QTLxE term is significant at the
+`thre_QTL` level. Thre_QTL is expressed in terms of -log10(p-val).
+For example, for p-val = 0.01, thre_QTL = -log10(p-val) = 2. Given this
+information, the effect of the parental QTL allele with a significant QEI
+are extended like that \eqn{\beta_{pj} = EC_j*S_p+l_{p\epsilon}} where
+\eqn{EC_j} represents the EC value in environment j associated with the
+sensitivity term \eqn{S_p}. The \eqn{S_{p}} determines the rate of change of
+the parental QTL allelic additive effect given an extra unit of EC. Finally,
+\eqn{l_{p\epsilon}} is a residual effect. The fitted model becomes:
+
+\eqn{\underline{y}_{icj} = E_{j} + C_{cj} + \sum_{q=1}^{n_{QTL}} x_{i_{q}p} (\alpha_p + \beta_{pj}) + x_{i_{q}pxE} (\alpha_p + EC_j*S_p+l_{p\epsilon}) + \underline{GE}_{icj} + \underline{e}_{icj}}
 
 The estimation is performed using an exact mixed model with function from R
-package \code{nlme}. The significance of the allele effect is assessed using a 
+package \code{nlme}. The significance of \eqn{S_{p}} is assessed using a 
 Wald test.
 }
 \examples{

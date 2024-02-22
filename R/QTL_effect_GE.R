@@ -7,7 +7,14 @@
 #' Estimate the QTL parental allelic effects within environment. The estimation
 #' is performed using an exact mixed model with function from R package
 #' \code{nlme}. The significance of the allele effect is assessed using a 
-#' Wald test. 
+#' Wald test.
+#' 
+#' @details
+#' The estimated model is the following:
+#' 
+#' \eqn{\underline{y}_{icj} = E_{j} + C_{cj} + \sum_{q=1}^{n_{QTL}} x_{i_{q}p} * \beta_{pj} + \underline{GE}_{icj} + \underline{e}_{icj}}
+#'
+#' For further details see the vignette.
 #'
 #' @param mppData An object of class \code{mppData}.
 #'

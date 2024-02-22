@@ -1,8 +1,8 @@
 Package: mppR
 Type: Package
 Title: Multi-parent population QTL analysis
-Version: 1.4.0.9000
-Date: 2020-03-24
+Version: 1.5.0.9000
+Date: 2024-02-22
 Authors@R:
     c(person(   given = "Vincent",
                 family = "Garin",

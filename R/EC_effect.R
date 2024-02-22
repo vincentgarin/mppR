@@ -57,10 +57,6 @@
 #' Li, X., Guo, T., Mu, Q., Li, X., & Yu, J. (2018). Genomic and environmental
 #' determinants and their interplay underlying phenotypic plasticity.
 #' Proceedings of the National Academy of Sciences, 115(26), 6679-6684.
-#'
-#' @examples
-#' 
-#' # Not yet
 #' 
 #' @export
 
@@ -131,8 +127,8 @@ EC_effect <- function(trait_env_mean, crop_duration, EC_list, type,
                         R2 = c(EC_res_r2), sign = c(EC_res_sign))
     
     d_sort <- d_res[order(d_res$R2, decreasing = TRUE), ]
-    start_opt <- d_sort$start_day[1]
-    end_opt <- d_sort$end_day[1]
+    start_opt <- d_sort[1, 1]
+    end_opt <- d_sort[1, 3]
     R2 <- d_sort$R2[1]
     R2_sign <- d_sort$sign[1]
     R2_glb <- mean(d_sort$R2, na.rm = TRUE)
@@ -147,7 +143,7 @@ EC_effect <- function(trait_env_mean, crop_duration, EC_list, type,
     
     if(plot){
       
-      pl <- ggplot(d_res, aes_string(x=start_day, y=end_day)) +
+      pl <- ggplot(d_res, aes_string(x=.data$start_day, y=.data$end_day)) +
         geom_tile(aes(fill = R2 * sign)) +
         scale_fill_gradient2(low = "red", mid = "white", high = "blue",
                              guide = guide_colorbar(order = 1)) +

@@ -2,7 +2,7 @@
 % Please edit documentation in R/QTL_effect_main_QEI.R
 \name{QTL_effect_main_QEI}
 \alias{QTL_effect_main_QEI}
-\title{Estimation of main and QTL by environment interaction model}
+\title{Main and QTL by environment interaction model}
 \usage{
 QTL_effect_main_QEI(
   mppData,
@@ -68,18 +68,22 @@ elements:
 }
 }
 \description{
-Evaluation ...
+The function estimate a QTL model where each parental QTL allelic effect is
+decomposed into a main effect and a QTL by environment effect (QEI). It allows
+the user to determine which parental allelic effects have a significant
+interaction with the environment.
 }
 \details{
-The function estimate the QTL parent allele main effect across environments
-as well the QTLxE effect. The significance of the QTL parental main effect
-as well as the QTLxE effect are also estimated and returned as -log10(p-value).
+The function estimate the following model
 
-The function use ...
+\eqn{y_{icj} = E_j + C_{c_j} + \sum_{q=1}^{n_{QTL}}{x_{i_{q}p}*(\alpha_{p} + \beta_{pj})} + GE_{ijc} + e_{ijc}}
 
-The QTL main allelic effect is the deviation of the parental allelic effect
-with respect to the reference parent (e.g. the central or recurrent parent
-in a NAM population) ...
+where the QTL effect is decomposed into \eqn{\alpha_{p}} that represent the
+main parental allelic effect across environments and \eqn{\beta_{pj}} which is
+the QEI effect. allelic effects must be interpreted as deviation with respect
+to the reference parent ('ref_par') in the reference environment ('ref_env').
+By default the reference parent is the one with the highest allelic frequency
+(e.g. central parent in a NAM population).
 
 The estimation is performed using an exact mixed model with function from R
 package \code{nlme}. The significance of the allele effect is assessed using a 
