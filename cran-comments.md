@@ -1,3 +1,12 @@
+## package update 1.5.0
+
+Replacement of two function and fixation of a bug
+
+## Test environments
+* Local machine (Windows 11), R 4.3.2
+* Linux Ubuntu (R hub)
+* win-builder (devel)
+
 ## package update 1.4.0
 
 Addition of new functions and a vignette to extend the package scope.
@@ -20,6 +29,8 @@ functions.
 ## package update 1.2.1
 
 Changes due to the fact that package ‘synbreed’ was removed from the CRAN repository. I removed the part of my code depending on synbreed.
+
+There is a note concerning the family name of an article (Diallo, Tekete, Thera and Rami). Those names are correct.
 
 ## Test environments
 * Local machine (Windows 10), R 3.6.2

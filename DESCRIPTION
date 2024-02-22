@@ -20,7 +20,7 @@ Description: Analysis of experimental multi-parent populations to detect regions
              is described in Garin, Wimmer, Mezmouk, Malosetti and van Eeuwijk (2017)
              <doi:10.1007/s00122-017-2923-3>, in Garin, Malosetti
              and van Eeuwijk (2020) <doi: 10.1007/s00122-020-03621-0>,
-             and Garin et al. (2024) <doi: 10.1093/genetics/iyae003>.
+             and in Garin, Diallo, Tekete, Thera, ..., and Rami (2024) <doi: 10.1093/genetics/iyae003>.
 License: GPL-3
 Imports:
     dplyr,
