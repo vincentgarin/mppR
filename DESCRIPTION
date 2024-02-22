@@ -1,7 +1,7 @@
 Package: mppR
 Type: Package
-Version: 1.4.0
-Date: 2023-01-03
+Version: 1.5.0
+Date: 2024-02-22
 Title: Multi-Parent Population QTL Analysis
 Authors@R: c(person("Vincent", "Garin", role = c("aut", "cre"),
              email = "vincent.garin6@gmail.com",
@@ -18,8 +18,9 @@ Description: Analysis of experimental multi-parent populations to detect regions
              association mapping). The functions cover data processing,
              QTL detection, and results visualization. The implemented methodology
              is described in Garin, Wimmer, Mezmouk, Malosetti and van Eeuwijk (2017)
-             <doi:10.1007/s00122-017-2923-3> as well as in Garin, Malosetti
-             and van Eeuwijk (2020) <doi: 10.1007/s00122-020-03621-0>.
+             <doi:10.1007/s00122-017-2923-3>, in Garin, Malosetti
+             and van Eeuwijk (2020) <doi: 10.1007/s00122-020-03621-0>,
+             and Garin et al. (2024) <doi: 10.1093/genetics/iyae003>.
 License: GPL-3
 Imports:
     dplyr,
